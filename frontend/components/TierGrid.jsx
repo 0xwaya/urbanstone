@@ -40,7 +40,7 @@ export default function TierGrid({ tiers }) {
                 type="button"
                 onClick={() => setActiveSlab(slab)}
                 className="text-left bg-surface border border-border rounded-lg p-4 hover:border-accent hover:-translate-y-1 hover:shadow-xl transition"
-                aria-label={`View ${slab.name} slab image`}
+                aria-label={`View ${slab.name} material image`}
               >
                 {slab.image ? (
                   <Image
@@ -70,7 +70,7 @@ export default function TierGrid({ tiers }) {
               type="button"
               onClick={() => setActiveSlab(null)}
               className="absolute top-4 right-4 text-sm text-muted hover:text-text"
-              aria-label="Close slab preview"
+              aria-label="Close material preview"
             >
               Close
             </button>
@@ -79,7 +79,7 @@ export default function TierGrid({ tiers }) {
             {activeSlab.imageLarge || activeSlab.image ? (
               <Image
                 src={activeSlab.imageLarge || activeSlab.image}
-                alt={`${activeSlab.name} full slab`}
+                alt={`${activeSlab.name} full material`}
                 width={1440}
                 height={960}
                 sizes="100vw"

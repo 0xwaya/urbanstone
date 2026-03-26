@@ -18,7 +18,7 @@ module.exports = {
                 border: 'rgb(var(--border) / <alpha-value>)',
             },
             boxShadow: {
-                soft: '0 20px 45px -24px rgba(63, 45, 27, 0.32)',
+                soft: '0 22px 50px -26px rgba(8, 15, 33, 0.6)',
             },
             fontFamily: {
                 display: ['Cormorant Garamond', 'serif'],

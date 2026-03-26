@@ -5,15 +5,27 @@
 @tailwind utilities;
 
 :root {
+  color-scheme: dark;
+  --bg: 8 12 24;
+  --surface: 14 22 38;
+  --panel: 19 30 52;
+  --text: 231 238 248;
+  --muted: 151 164 186;
+  --accent: 74 144 226;
+  --accent-dark: 41 98 177;
+  --border: 52 72 102;
+}
+
+html[data-theme="light"] {
   color-scheme: light;
-  --bg: 244 239 231;
-  --surface: 255 251 246;
-  --panel: 245 238 227;
-  --text: 39 31 24;
-  --muted: 110 97 84;
-  --accent: 176 82 46;
-  --accent-dark: 137 55 25;
-  --border: 222 208 190;
+  --bg: 238 243 252;
+  --surface: 248 250 255;
+  --panel: 229 236 248;
+  --text: 27 39 58;
+  --muted: 92 110 138;
+  --accent: 54 105 187;
+  --accent-dark: 33 76 145;
+  --border: 190 205 228;
 }
 
 html {
@@ -25,17 +37,20 @@ body {
   background:
     radial-gradient(
       circle at top left,
-      rgba(176, 82, 46, 0.16),
+      rgba(74, 144, 226, 0.18),
       transparent 28%
     ),
     radial-gradient(
       circle at 80% 20%,
-      rgba(104, 132, 102, 0.14),
+      rgba(125, 211, 252, 0.12),
       transparent 24%
     ),
-    linear-gradient(180deg, rgba(255, 251, 246, 0.94), rgba(244, 239, 231, 1));
+    linear-gradient(180deg, rgba(12, 18, 34, 0.96), rgba(8, 12, 24, 1));
   color: rgb(var(--text));
   font-family: "Manrope", ui-sans-serif, system-ui, sans-serif;
+  transition:
+    background 0.25s ease,
+    color 0.25s ease;
 }
 
 a {
@@ -57,7 +72,7 @@ a {
   height: 28rem;
   background: linear-gradient(
     135deg,
-    rgba(255, 255, 255, 0.45),
+    rgba(148, 163, 184, 0.12),
     rgba(255, 255, 255, 0)
   );
   filter: blur(0.5px);
@@ -79,7 +94,7 @@ a {
   width: 100%;
   border-radius: 1rem;
   border: 1px solid rgb(var(--border));
-  background: rgba(255, 255, 255, 0.8);
+  background: rgba(9, 16, 30, 0.78);
   padding: 0.85rem 1rem;
   color: rgb(var(--text));
   outline: none;
@@ -91,12 +106,12 @@ a {
 
 .form-input:focus {
   border-color: rgb(var(--accent));
-  box-shadow: 0 0 0 4px rgba(176, 82, 46, 0.14);
+  box-shadow: 0 0 0 4px rgba(74, 144, 226, 0.18);
 }
 
 .form-error {
   margin-top: 0.5rem;
   display: block;
   font-size: 0.875rem;
-  color: #9f3a2b;
+  color: #fda4af;
 }

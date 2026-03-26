@@ -18,7 +18,7 @@ export default function LeadForm() {
     const [status, setStatus] = useState({ type: 'idle', message: '' });
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const companyPhone = process.env.NEXT_PUBLIC_COMPANY_PHONE || '(513) 655-5544';
+    const companyPhone = process.env.NEXT_PUBLIC_COMPANY_PHONE || '(513) 307-5840';
     const companyEmail = process.env.NEXT_PUBLIC_LEAD_EMAIL || 'sales@amazongranite.com';
 
     const handleChange = (event) => {
@@ -159,11 +159,11 @@ export default function LeadForm() {
 
             <div className="mt-4 min-h-6 text-sm" aria-live="polite">
                 {status.message && (
-                    <p className={status.type === 'error' ? 'text-[#9f3a2b]' : 'text-[#1e6a52]'}>{status.message}</p>
+                    <p className={status.type === 'error' ? 'text-rose-300' : 'text-cyan-300'}>{status.message}</p>
                 )}
             </div>
 
-            <div id="contact" className="mt-6 rounded-2xl border border-border bg-white/70 p-4 text-sm text-muted">
+            <div id="contact" className="mt-6 rounded-2xl border border-border bg-surface/75 p-4 text-sm text-muted">
                 <div className="font-semibold text-text">Need a direct response?</div>
                 <div className="mt-2 flex flex-wrap gap-3">
                     <a className="inline-flex rounded-full border border-border px-3 py-2 font-semibold text-text transition hover:border-accent" href={`tel:${toTelHref(companyPhone)}`}>

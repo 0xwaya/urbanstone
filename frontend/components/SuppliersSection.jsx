@@ -48,7 +48,7 @@ export default function SuppliersSection() {
     } catch {
       setLoadErrors((current) => ({
         ...current,
-        [supplierName]: 'The featured slab gallery is temporarily unavailable. Use the supplier portal link while we restore it.',
+        [supplierName]: 'The featured materials gallery is temporarily unavailable. Use the supplier portal link while we restore it.',
       }));
     } finally {
       setLoadingSupplierName('');
@@ -59,11 +59,11 @@ export default function SuppliersSection() {
     <section id="suppliers" className="py-10">
       <div className="flex items-end justify-between mb-6">
         <div>
-          <div className="eyebrow">Stone library</div>
-          <h2 className="font-display text-4xl font-semibold">Trending Stone Selections</h2>
-          <p className="text-muted">Featured best sellers with expandable slab imagery.</p>
+          <div className="eyebrow">Materials library</div>
+          <h2 className="font-display text-4xl font-semibold">Curated Countertop Materials</h2>
+          <p className="text-muted">Featured countertop options with expandable material imagery.</p>
         </div>
-        <div className="text-sm text-muted">Summary first, slabs on demand</div>
+        <div className="text-sm text-muted">3 materials first, full gallery on demand</div>
       </div>
       {supplierSummaries.map((summary) => (
         <SupplierHero
