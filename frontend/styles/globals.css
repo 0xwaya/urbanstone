@@ -1,0 +1,102 @@
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Manrope:wght@400;500;600;700;800&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+  --bg: 244 239 231;
+  --surface: 255 251 246;
+  --panel: 245 238 227;
+  --text: 39 31 24;
+  --muted: 110 97 84;
+  --accent: 176 82 46;
+  --accent-dark: 137 55 25;
+  --border: 222 208 190;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+  background:
+    radial-gradient(
+      circle at top left,
+      rgba(176, 82, 46, 0.16),
+      transparent 28%
+    ),
+    radial-gradient(
+      circle at 80% 20%,
+      rgba(104, 132, 102, 0.14),
+      transparent 24%
+    ),
+    linear-gradient(180deg, rgba(255, 251, 246, 0.94), rgba(244, 239, 231, 1));
+  color: rgb(var(--text));
+  font-family: "Manrope", ui-sans-serif, system-ui, sans-serif;
+}
+
+a {
+  color: inherit;
+}
+
+* {
+  border-color: rgb(var(--border));
+}
+
+.page-shell {
+  position: relative;
+}
+
+.page-shell::before {
+  content: "";
+  position: absolute;
+  inset: 2rem 0 auto;
+  height: 28rem;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.45),
+    rgba(255, 255, 255, 0)
+  );
+  filter: blur(0.5px);
+  pointer-events: none;
+  z-index: -1;
+}
+
+.eyebrow {
+  margin-bottom: 0.75rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: rgb(var(--muted));
+}
+
+.form-input {
+  display: block;
+  width: 100%;
+  border-radius: 1rem;
+  border: 1px solid rgb(var(--border));
+  background: rgba(255, 255, 255, 0.8);
+  padding: 0.85rem 1rem;
+  color: rgb(var(--text));
+  outline: none;
+  transition:
+    border-color 0.18s ease,
+    box-shadow 0.18s ease,
+    transform 0.18s ease;
+}
+
+.form-input:focus {
+  border-color: rgb(var(--accent));
+  box-shadow: 0 0 0 4px rgba(176, 82, 46, 0.14);
+}
+
+.form-error {
+  margin-top: 0.5rem;
+  display: block;
+  font-size: 0.875rem;
+  color: #9f3a2b;
+}

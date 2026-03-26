@@ -1,7 +1,29 @@
-import { useState } from 'react';
+import Image from 'next/image';
+import { useEffect, useState } from 'react';
 
 export default function TierGrid({ tiers }) {
   const [activeSlab, setActiveSlab] = useState(null);
+
+  useEffect(() => {
+    if (!activeSlab) {
+      return undefined;
+    }
+
+    const previousOverflow = document.body.style.overflow;
+    const handleKeydown = (event) => {
+      if (event.key === 'Escape') {
+        setActiveSlab(null);
+      }
+    };
+
+    document.body.style.overflow = 'hidden';
+    window.addEventListener('keydown', handleKeydown);
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener('keydown', handleKeydown);
+    };
+  }, [activeSlab]);
 
   return (
     <div className="space-y-6">
@@ -21,7 +43,15 @@ export default function TierGrid({ tiers }) {
                 aria-label={`View ${slab.name} slab image`}
               >
                 {slab.image ? (
-                  <img src={slab.image} alt={slab.name} className="h-24 w-full rounded-md object-cover mb-3" />
+                  <Image
+                    src={slab.image}
+                    alt={slab.name}
+                    width={320}
+                    height={96}
+                    sizes="(min-width: 1024px) 16vw, (min-width: 640px) 40vw, 100vw"
+                    className="mb-3 h-24 w-full rounded-md object-cover"
+                    loading="lazy"
+                  />
                 ) : (
                   <div className="h-24 rounded-md bg-gradient-to-br from-panel to-bg border border-border mb-3" />
                 )}
@@ -34,8 +64,8 @@ export default function TierGrid({ tiers }) {
       ))}
 
       {activeSlab && (
-        <div className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center p-6" role="dialog" aria-modal="true">
-          <div className="bg-surface border border-border rounded-2xl max-w-4xl w-full p-6 relative">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-6" role="dialog" aria-modal="true" onClick={() => setActiveSlab(null)}>
+          <div className="relative w-full max-w-4xl rounded-2xl border border-border bg-surface p-6" onClick={(event) => event.stopPropagation()}>
             <button
               type="button"
               onClick={() => setActiveSlab(null)}
@@ -47,10 +77,14 @@ export default function TierGrid({ tiers }) {
             <div className="text-xl font-semibold mb-2">{activeSlab.name}</div>
             <div className="text-sm text-muted mb-4">{activeSlab.notes}</div>
             {activeSlab.imageLarge || activeSlab.image ? (
-              <img
+              <Image
                 src={activeSlab.imageLarge || activeSlab.image}
                 alt={`${activeSlab.name} full slab`}
+                width={1440}
+                height={960}
+                sizes="100vw"
                 className="w-full max-h-[70vh] object-contain rounded-xl border border-border"
+                loading="eager"
               />
             ) : (
               <div className="h-96 rounded-xl bg-gradient-to-br from-panel to-bg border border-border" />

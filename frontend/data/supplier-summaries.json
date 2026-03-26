@@ -1,0 +1,46 @@
+[
+  {
+    "name": "MSI Surfaces",
+    "portal": "https://www.msisurfaces.com/",
+    "logo": "/logos/msi_logo.png",
+    "note": "Top-selling quartz and natural stone collections with consistent availability.",
+    "featuredCount": 5
+  },
+  {
+    "name": "Daltile Stone Center",
+    "portal": "https://www.daltile.com/",
+    "logo": "/logos/daltile-logo-png.png",
+    "note": "Natural stone and slab center with popular neutral palettes.",
+    "featuredCount": 5
+  },
+  {
+    "name": "Quartz America",
+    "portal": "https://myquartzamerica.com/",
+    "logo": "/logos/quartz america.png",
+    "note": "Premium quartz slabs with modern and classic palettes.",
+    "featuredCount": 5
+  },
+  {
+    "name": "Avani",
+    "portal": "https://www.avanimarble.com/",
+    "logo": "/logos/avani.png",
+    "note": "Granite, marble, quartzite sourced from global quarries.",
+    "featuredCount": 5,
+    "phone": "(614) 372-5508",
+    "hours": {
+      "mon_fri": "8:00 AM – 5:00 PM",
+      "sat": "9:00 AM – 1:00 PM"
+    },
+    "address": "4051 Fondorf Dr Unit 3, Columbus, OH 43228",
+    "gallery": "https://avanigranites.com/gallery/",
+    "heroImage": "/materials/avani/Avani-hero image.webp",
+    "heroBackground": "#F9F5EF"
+  },
+  {
+    "name": "Citi Quartz",
+    "portal": "https://www.citiquartz.com/",
+    "logo": "/logos/citi-quartz logo.png",
+    "note": "Engineered quartz with bold and classic options.",
+    "featuredCount": 5
+  }
+]

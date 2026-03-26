@@ -1,0 +1,82 @@
+import {
+    buildLeadForwardPayload,
+    getClientIp,
+    getRateLimitStore,
+    isRateLimited,
+    isSameOriginRequest,
+    sanitizeLeadPayload,
+} from '../../lib/lead';
+
+const RATE_LIMIT_MAX = 5;
+const RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000;
+
+export const config = {
+    api: {
+        bodyParser: {
+            sizeLimit: '1mb',
+        },
+    },
+};
+
+async function relayLead(payload) {
+    const response = await fetch(process.env.LEAD_WEBHOOK_URL, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+        signal: AbortSignal.timeout(5000),
+    });
+
+    if (!response.ok) {
+        throw new Error(`Lead relay failed with status ${response.status}`);
+    }
+}
+
+export default async function handler(request, response) {
+    response.setHeader('Cache-Control', 'no-store');
+
+    if (request.method !== 'POST') {
+        response.setHeader('Allow', 'POST');
+        return response.status(405).json({ message: 'Method not allowed.' });
+    }
+
+    if (!isSameOriginRequest(request)) {
+        return response.status(403).json({ message: 'Origin check failed.' });
+    }
+
+    const contentType = request.headers['content-type'] || '';
+    if (!contentType.includes('application/json')) {
+        return response.status(415).json({ message: 'Use application/json for lead submissions.' });
+    }
+
+    const rateLimitStore = getRateLimitStore();
+    const ipAddress = getClientIp(request);
+
+    if (isRateLimited(rateLimitStore, ipAddress, RATE_LIMIT_MAX, RATE_LIMIT_WINDOW_MS)) {
+        return response.status(429).json({ message: 'Too many lead submissions from this address. Try again shortly.' });
+    }
+
+    const result = sanitizeLeadPayload(request.body);
+    if (!result.ok) {
+        return response.status(400).json({
+            message: 'Please correct the highlighted fields and try again.',
+            errors: result.errors,
+        });
+    }
+
+    if (!process.env.LEAD_WEBHOOK_URL) {
+        return response.status(503).json({
+            message: 'Lead delivery is not configured. Set LEAD_WEBHOOK_URL before production deployment.',
+        });
+    }
+
+    try {
+        await relayLead(buildLeadForwardPayload(result.data, request));
+        return response.status(202).json({ message: 'Thanks. Your request is in the queue and we will follow up shortly.' });
+    } catch {
+        return response.status(502).json({
+            message: 'Lead delivery is temporarily unavailable. Please call or email us directly while we restore it.',
+        });
+    }
+}
