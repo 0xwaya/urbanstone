@@ -1,0 +1,194 @@
+{
+  "suppliers": [
+    {
+      "name": "MSI Surfaces",
+      "portal": "https://www.msisurfaces.com/",
+      "logo": "/logos/msi_logo.png",
+      "note": "Top-selling quartz and natural stone collections with consistent availability.",
+      "stones": [
+        {
+          "name": "Calacatta Laza",
+          "pageUrl": "https://www.msisurfaces.com/quartz-countertops/calacatta-laza/",
+          "imageSelector": "meta[property='og:image']",
+          "imageAttr": "content"
+        },
+        {
+          "name": "Calacatta Miraggio Gold",
+          "pageUrl": "https://www.msisurfaces.com/quartz-countertops/calacatta-miraggio-gold/",
+          "imageSelector": "meta[property='og:image']",
+          "imageAttr": "content"
+        },
+        {
+          "name": "Carrara Morro",
+          "pageUrl": "https://www.msisurfaces.com/quartz-countertops/carrara-morro/",
+          "imageSelector": "meta[property='og:image']",
+          "imageAttr": "content"
+        },
+        {
+          "name": "Fossil Gray",
+          "pageUrl": "https://www.msisurfaces.com/quartz-countertops/fossil-gray/",
+          "imageSelector": "meta[property='og:image']",
+          "imageAttr": "content"
+        },
+        {
+          "name": "Carrara Lumos",
+          "pageUrl": "https://www.msisurfaces.com/quartz-countertops/carrara-lumos/",
+          "imageSelector": "meta[property='og:image']",
+          "imageAttr": "content"
+        }
+      ]
+    },
+    {
+      "name": "Daltile Stone Center",
+      "portal": "https://www.daltile.com/",
+      "logo": "/logos/daltile-logo-png.png",
+      "note": "Natural stone and slab center with popular neutral palettes.",
+      "stones": [
+        {
+          "name": "Carrara Mist",
+          "pageUrl": "https://www.daltile.com/",
+          "imageSelector": "meta[property='og:image']",
+          "imageAttr": "content"
+        },
+        {
+          "name": "Cloud Grey",
+          "pageUrl": "https://www.daltile.com/",
+          "imageSelector": "meta[property='og:image']",
+          "imageAttr": "content"
+        },
+        {
+          "name": "Ivory Drift",
+          "pageUrl": "https://www.daltile.com/",
+          "imageSelector": "meta[property='og:image']",
+          "imageAttr": "content"
+        },
+        {
+          "name": "Pearl White",
+          "pageUrl": "https://www.daltile.com/",
+          "imageSelector": "meta[property='og:image']",
+          "imageAttr": "content"
+        },
+        {
+          "name": "Arctic Frost",
+          "pageUrl": "https://www.daltile.com/",
+          "imageSelector": "meta[property='og:image']",
+          "imageAttr": "content"
+        }
+      ]
+    },
+    {
+      "name": "Quartz America",
+      "portal": "https://myquartzamerica.com/",
+      "logo": "/logos/quartz america.png",
+      "note": "Premium quartz slabs with modern and classic palettes.",
+      "stones": [
+        {
+          "name": "Pure White",
+          "pageUrl": "https://myquartzamerica.com/",
+          "imageSelector": "meta[property='og:image']",
+          "imageAttr": "content"
+        },
+        {
+          "name": "Frost Grey",
+          "pageUrl": "https://myquartzamerica.com/",
+          "imageSelector": "meta[property='og:image']",
+          "imageAttr": "content"
+        },
+        {
+          "name": "Nimbus",
+          "pageUrl": "https://myquartzamerica.com/",
+          "imageSelector": "meta[property='og:image']",
+          "imageAttr": "content"
+        },
+        {
+          "name": "Snowfall",
+          "pageUrl": "https://myquartzamerica.com/",
+          "imageSelector": "meta[property='og:image']",
+          "imageAttr": "content"
+        },
+        {
+          "name": "Glacier",
+          "pageUrl": "https://myquartzamerica.com/",
+          "imageSelector": "meta[property='og:image']",
+          "imageAttr": "content"
+        }
+      ]
+    },
+    {
+      "name": "Avani",
+      "portal": "https://www.avanimarble.com/",
+      "logo": "/logos/avani.png",
+      "note": "Granite, marble, quartzite sourced from global quarries.",
+      "stones": [
+        {
+          "name": "Galaxy Black",
+          "pageUrl": "https://www.avanimarble.com/",
+          "imageSelector": "meta[property='og:image']",
+          "imageAttr": "content"
+        },
+        {
+          "name": "Bianco Romano",
+          "pageUrl": "https://www.avanimarble.com/",
+          "imageSelector": "meta[property='og:image']",
+          "imageAttr": "content"
+        },
+        {
+          "name": "Fantasy Brown",
+          "pageUrl": "https://www.avanimarble.com/",
+          "imageSelector": "meta[property='og:image']",
+          "imageAttr": "content"
+        },
+        {
+          "name": "River White",
+          "pageUrl": "https://www.avanimarble.com/",
+          "imageSelector": "meta[property='og:image']",
+          "imageAttr": "content"
+        },
+        {
+          "name": "Viscon White",
+          "pageUrl": "https://www.avanimarble.com/",
+          "imageSelector": "meta[property='og:image']",
+          "imageAttr": "content"
+        }
+      ]
+    },
+    {
+      "name": "Citi Quartz",
+      "portal": "https://www.citiquartz.com/",
+      "logo": "/logos/citi-quartz logo.png",
+      "note": "Engineered quartz with bold and classic options.",
+      "stones": [
+        {
+          "name": "Calacatta Rio",
+          "pageUrl": "https://www.citiquartz.com/",
+          "imageSelector": "meta[property='og:image']",
+          "imageAttr": "content"
+        },
+        {
+          "name": "Glacier White",
+          "pageUrl": "https://www.citiquartz.com/",
+          "imageSelector": "meta[property='og:image']",
+          "imageAttr": "content"
+        },
+        {
+          "name": "Stella Grey",
+          "pageUrl": "https://www.citiquartz.com/",
+          "imageSelector": "meta[property='og:image']",
+          "imageAttr": "content"
+        },
+        {
+          "name": "Latte Beige",
+          "pageUrl": "https://www.citiquartz.com/",
+          "imageSelector": "meta[property='og:image']",
+          "imageAttr": "content"
+        },
+        {
+          "name": "Calacatta Verona",
+          "pageUrl": "https://www.citiquartz.com/",
+          "imageSelector": "meta[property='og:image']",
+          "imageAttr": "content"
+        }
+      ]
+    }
+  ]
+}

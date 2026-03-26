@@ -1,0 +1,15 @@
+{
+  "name": "supplier-scraper",
+  "version": "1.0.0",
+  "description": "This module will scrape gallery stone slab images, descriptions, and pricing tiers from the websites of suppliers such as Daltile Stone Center, Quart America, Avani, MSI, Stonemart, and Citi Quartz.",
+  "main": "scrape_featured_stones.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cheerio": "^1.2.0"
+  }
+}
