@@ -4,7 +4,13 @@
     "portal": "https://www.msisurfaces.com/",
     "logo": "/logos/msi_logo.png",
     "note": "Top-selling quartz and natural stone collections with consistent availability.",
-    "featuredCount": 3
+    "featuredCount": 3,
+    "address": "8556 Trade Center Drive, Suite 300, West Chester, OH 45069",
+    "phone": "(513) 712-5300",
+    "hoursLines": [
+      "Mon, Wed-Fri 8:00 AM - 5:00 PM",
+      "Tue 8:00 AM - 6:00 PM"
+    ]
   },
   {
     "name": "Daltile Stone Center",
@@ -12,6 +18,13 @@
     "logo": "/logos/daltile-logo-png.png",
     "note": "Natural stone and slab center with popular neutral palettes.",
     "featuredCount": 3,
+    "address": "4650 Lake Forest Dr, Ste 540, Cincinnati, OH 45242",
+    "phone": "+1 513 791 7832",
+    "hoursLines": [
+      "Mon-Fri 7:30 AM - 4:00 PM",
+      "Sat 9:00 AM - 1:00 PM",
+      "Sun Closed"
+    ],
     "heroImage": "https://www.daltile.com/-/media/project/daltilecom/shared/surfaces/stone/slab/carrara.jpg",
     "heroBackground": "#0f1726"
   },
@@ -20,7 +33,12 @@
     "portal": "https://myquartzamerica.com/",
     "logo": "/logos/quartz america.png",
     "note": "Premium quartz slabs with modern and classic palettes.",
-    "featuredCount": 3
+    "featuredCount": 3,
+    "address": "9230 Seward Road, Fairfield, OH 45014",
+    "phone": "+1 513 330 5152",
+    "hoursLines": [
+      "Mon-Fri 8:30 AM - 5:00 PM"
+    ]
   },
   {
     "name": "Avani",
@@ -43,6 +61,11 @@
     "portal": "https://www.citiquartz.com/",
     "logo": "/logos/citi-quartz logo.png",
     "note": "Engineered quartz with bold and classic options.",
-    "featuredCount": 3
+    "featuredCount": 3,
+    "address": "3217 Profit Dr, Fairfield, OH 45014",
+    "phone": "(513) 330-6200",
+    "hoursLines": [
+      "By appointment only"
+    ]
   }
 ]

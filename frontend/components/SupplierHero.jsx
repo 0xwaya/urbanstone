@@ -12,6 +12,9 @@ export default function SupplierHero({
   onToggleGallery,
 }) {
   const [logoVisible, setLogoVisible] = useState(Boolean(supplier.logo));
+  const hoursLines = supplier.hoursLines || (supplier.hours
+    ? [`Mon-Fri ${supplier.hours.mon_fri}${supplier.hours.sat ? ` · Sat ${supplier.hours.sat}` : ''}`]
+    : []);
   const initials = supplier.name
     .split(' ')
     .filter(Boolean)
@@ -48,11 +51,11 @@ export default function SupplierHero({
             <div className="mt-3 text-sm text-muted space-y-1">
               <div><span className="font-semibold text-text">Address:</span> {supplier.address}</div>
               {supplier.phone && <div><span className="font-semibold text-text">Phone:</span> {supplier.phone}</div>}
-              {supplier.hours && (
-                <div>
-                  <span className="font-semibold text-text">Hours:</span> Mon–Fri {supplier.hours.mon_fri} · Sat {supplier.hours.sat}
+              {hoursLines.length > 0 ? hoursLines.map((line) => (
+                <div key={line}>
+                  <span className="font-semibold text-text">Hours:</span> {line}
                 </div>
-              )}
+              )) : null}
             </div>
           )}
           <div className="flex flex-wrap gap-3 mt-3 text-sm">
