@@ -41,14 +41,23 @@ export default function SuppliersSection() {
         throw new Error('Supplier catalog not found.');
       }
 
+      const slicedSupplier = {
+        ...supplier,
+        tiers: supplier.tiers.map((tier) => ({
+          ...tier,
+          range: 'Top 3',
+          slabs: tier.slabs.slice(0, 3),
+        })),
+      };
+
       setDetailedSuppliers((current) => ({
         ...current,
-        [supplierName]: supplier,
+        [supplierName]: slicedSupplier,
       }));
     } catch {
       setLoadErrors((current) => ({
         ...current,
-        [supplierName]: 'The featured materials gallery is temporarily unavailable. Use the supplier portal link while we restore it.',
+        [supplierName]: 'The featured slab gallery is temporarily unavailable. Use the supplier portal link while we restore it.',
       }));
     } finally {
       setLoadingSupplierName('');
@@ -61,9 +70,9 @@ export default function SuppliersSection() {
         <div>
           <div className="eyebrow">Materials library</div>
           <h2 className="font-display text-4xl font-semibold">Curated Countertop Materials</h2>
-          <p className="text-muted">Featured countertop options with expandable material imagery.</p>
+          <p className="text-muted">Load curated supplier slabs on demand to inspect countertop-ready options.</p>
         </div>
-        <div className="text-sm text-muted">3 materials first, full gallery on demand</div>
+        <div className="text-sm text-muted">Hidden by default, loaded on demand</div>
       </div>
       {supplierSummaries.map((summary) => (
         <SupplierHero

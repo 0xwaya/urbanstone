@@ -4,108 +4,30 @@
     "portal": "https://www.msisurfaces.com/",
     "logo": "/logos/msi_logo.png",
     "note": "Top-selling quartz and natural stone collections with consistent availability.",
-    "featuredCount": 5,
-    "previewSlabs": [
-      {
-        "name": "Calacatta Laza",
-        "notes": "High-demand marble look quartz",
-        "image": "https://cdn.msisurfaces.com/images/quartz-countertops/q.jpg",
-        "imageLarge": "https://cdn.msisurfaces.com/images/quartz-countertops/q.jpg"
-      },
-      {
-        "name": "Calacatta Miraggio Gold",
-        "notes": "Premium veining, luxury kitchens",
-        "image": "https://cdn.msisurfaces.com/images/quartz-countertops/q.jpg",
-        "imageLarge": "https://cdn.msisurfaces.com/images/quartz-countertops/q.jpg"
-      },
-      {
-        "name": "Carrara Morro",
-        "notes": "Classic bright white quartz",
-        "image": "https://cdn.msisurfaces.com/images/backsplash-tile/backsplash.jpg",
-        "imageLarge": "https://cdn.msisurfaces.com/images/backsplash-tile/backsplash.jpg"
-      }
-    ]
+    "featuredCount": 3
   },
   {
     "name": "Daltile Stone Center",
     "portal": "https://www.daltile.com/",
     "logo": "/logos/daltile-logo-png.png",
     "note": "Natural stone and slab center with popular neutral palettes.",
-    "featuredCount": 5,
-    "previewSlabs": [
-      {
-        "name": "Carrara Mist",
-        "notes": "Bright marble look, high demand",
-        "image": "https://www.daltile.com/-/media/project/daltilecom/shared/surfaces/stone/slab/carrara.jpg",
-        "imageLarge": "https://www.daltile.com/-/media/project/daltilecom/shared/surfaces/stone/slab/carrara.jpg"
-      },
-      {
-        "name": "Cloud Grey",
-        "notes": "Light veining, clean finish",
-        "image": "https://www.daltile.com/-/media/project/daltilecom/shared/surfaces/stone/slab/gray.jpg",
-        "imageLarge": "https://www.daltile.com/-/media/project/daltilecom/shared/surfaces/stone/slab/gray.jpg"
-      },
-      {
-        "name": "Ivory Drift",
-        "notes": "Warm neutral, steady seller",
-        "image": "https://www.daltile.com/-/media/project/daltilecom/shared/surfaces/stone/slab/ivory.jpg",
-        "imageLarge": "https://www.daltile.com/-/media/project/daltilecom/shared/surfaces/stone/slab/ivory.jpg"
-      }
-    ]
+    "featuredCount": 3,
+    "heroImage": "https://www.daltile.com/-/media/project/daltilecom/shared/surfaces/stone/slab/carrara.jpg",
+    "heroBackground": "#0f1726"
   },
   {
     "name": "Quartz America",
     "portal": "https://myquartzamerica.com/",
     "logo": "/logos/quartz america.png",
     "note": "Premium quartz slabs with modern and classic palettes.",
-    "featuredCount": 5,
-    "previewSlabs": [
-      {
-        "name": "Pure White",
-        "notes": "Clean, bright base",
-        "image": "https://myquartzamerica.com/wp-content/uploads/2024/12/ORCA-4.jpg",
-        "imageLarge": "https://myquartzamerica.com/wp-content/uploads/2024/12/ORCA-4.jpg"
-      },
-      {
-        "name": "Frost Grey",
-        "notes": "Soft grey movement",
-        "image": "https://myquartzamerica.com/wp-content/uploads/2024/12/ORCA-3.jpg",
-        "imageLarge": "https://myquartzamerica.com/wp-content/uploads/2024/12/ORCA-3.jpg"
-      },
-      {
-        "name": "Nimbus",
-        "notes": "Cloudy veining",
-        "image": "https://myquartzamerica.com/wp-content/uploads/2024/12/ORCA-2.jpg",
-        "imageLarge": "https://myquartzamerica.com/wp-content/uploads/2024/12/ORCA-2.jpg"
-      }
-    ]
+    "featuredCount": 3
   },
   {
     "name": "Avani",
     "portal": "https://www.avanimarble.com/",
     "logo": "/logos/avani.png",
     "note": "Granite, marble, quartzite sourced from global quarries.",
-    "featuredCount": 5,
-    "previewSlabs": [
-      {
-        "name": "Crystal Cream (1007)",
-        "notes": "3cm quartz",
-        "image": "/materials/avani/KY-1007- Crystal cream 3cm quartz .jpg",
-        "imageLarge": "/materials/avani/KY-1007- Crystal cream 3cm quartz .jpg"
-      },
-      {
-        "name": "Calacatta Aurus (5035)",
-        "notes": "3cm quartz",
-        "image": "/materials/avani/KY-5035-Calacatta Aurus 3cm quartz.jpg",
-        "imageLarge": "/materials/avani/KY-5035-Calacatta Aurus 3cm quartz.jpg"
-      },
-      {
-        "name": "Calacatta Andromeda (5040)",
-        "notes": "3cm quartz",
-        "image": "/materials/avani/KY-5040 - Calacatta andromeda 3cm quartz.jpg",
-        "imageLarge": "/materials/avani/KY-5040 - Calacatta andromeda 3cm quartz.jpg"
-      }
-    ],
+    "featuredCount": 3,
     "phone": "(614) 372-5508",
     "hours": {
       "mon_fri": "8:00 AM – 5:00 PM",
@@ -121,26 +43,6 @@
     "portal": "https://www.citiquartz.com/",
     "logo": "/logos/citi-quartz logo.png",
     "note": "Engineered quartz with bold and classic options.",
-    "featuredCount": 5,
-    "previewSlabs": [
-      {
-        "name": "Calacatta Rio",
-        "notes": "Bold marble veining",
-        "image": "https://www.citiquartz.com/wp-content/uploads/2026/01/7066-scaled.jpg",
-        "imageLarge": "https://www.citiquartz.com/wp-content/uploads/2026/01/7066-scaled.jpg"
-      },
-      {
-        "name": "Glacier White",
-        "notes": "Pure white base",
-        "image": "https://www.citiquartz.com/wp-content/uploads/2026/01/CT9707-1-scaled.jpg",
-        "imageLarge": "https://www.citiquartz.com/wp-content/uploads/2026/01/CT9707-1-scaled.jpg"
-      },
-      {
-        "name": "Stella Grey",
-        "notes": "Subtle modern grey",
-        "image": "https://www.citiquartz.com/wp-content/uploads/2026/01/PT12-scaled.jpg",
-        "imageLarge": "https://www.citiquartz.com/wp-content/uploads/2026/01/PT12-scaled.jpg"
-      }
-    ]
+    "featuredCount": 3
   }
 ]
