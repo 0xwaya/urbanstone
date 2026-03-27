@@ -42,18 +42,18 @@ export const homepageFaqContent = {
 
 export const homepageLeadFormContent = {
     eyebrow: 'Request a quote',
-    title: 'Get a Quartz, Granite, or Quartzite Countertop Estimate',
-    description: 'Send your layout, measurements, and material preference for quartz countertops, granite countertops, or quartzite countertops in Cincinnati and the surrounding 50-mile service area.',
-    placeholder: 'Kitchen or bath location, preferred material, neighborhood or city, timeline, and any measurements you already have.',
+    title: 'Start with a Fast Estimate',
+    description: 'Send your layout, measurements, and material preference. We will review the right slab direction and next steps for your project.',
+    placeholder: 'Kitchen or bath location, preferred material, timeline, and any measurements you already have.',
     submitLabel: 'Send estimate request',
     submittingLabel: 'Sending request...',
     directResponseTitle: 'Need a direct response?',
-    coverageText: 'We respond to countertop estimate requests for Cincinnati, Mason, West Chester, Fairfield, Hamilton, Blue Ash, Loveland, Milford, Anderson Township, Covington, Newport, Florence, Erlanger, and nearby communities.',
+    coverageText: 'We respond to countertop estimate requests across Cincinnati and nearby communities throughout greater Cincinnati and Northern Kentucky.',
 };
 
 export const homepageAnnouncement = {
     eyebrow: 'Current update',
     title: 'Amazon Granite LLC is currently rebranding to Urban Stone Collective.',
     detail: 'Same Cincinnati-area countertop fabrication, same slab sourcing workflow, same fast scheduling. The new brand system is not fully rolled out yet.',
-    tags: ['3-5 day turnaround', 'Greater Cincinnati coverage', 'Quartz, Granite, Quartzite'],
+    tags: ['3-5 day turnaround', 'Curated suppliers'],
 };

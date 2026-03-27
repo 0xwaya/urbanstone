@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import LogoMark from './LogoMark';
 import ThemeToggle from './ThemeToggle';
 import { useState } from 'react';
@@ -25,7 +26,7 @@ export default function TopNav() {
                                 </div>
                                 <span className="nav-brand-badge">LLC</span>
                             </div>
-                            <div className="hidden font-display text-xl font-semibold leading-[1.05] sm:text-2xl">Quartz, granite, and quartzite countertops</div>
+                            <div className="hidden font-display text-xl font-semibold leading-[1.05] sm:text-2xl">Countertops with fast turnaround</div>
                         </div>
                     </a>
 
@@ -71,11 +72,11 @@ export default function TopNav() {
                             <a className="rounded-xl px-3 py-2 transition hover:bg-surface/80 hover:text-accent" href="#suppliers" onClick={() => setIsMenuOpen(false)}>
                                 Materials
                             </a>
+                            <Link className="rounded-xl px-3 py-2 transition hover:bg-surface/80 hover:text-accent" href="/coverage" onClick={() => setIsMenuOpen(false)}>
+                                Service Areas
+                            </Link>
                             <a className="rounded-xl bg-accent px-3 py-2 font-semibold text-white transition hover:bg-accentDark" href="#quote" onClick={() => setIsMenuOpen(false)}>
                                 Get an Estimate
-                            </a>
-                            <a className="rounded-xl px-3 py-2 transition hover:bg-surface/80 hover:text-accent" href="#contact" onClick={() => setIsMenuOpen(false)}>
-                                Contact
                             </a>
                         </div>
 

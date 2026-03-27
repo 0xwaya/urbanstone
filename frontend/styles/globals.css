@@ -114,9 +114,9 @@ a {
 .nav-brand-wordmark {
   min-width: 0;
   font-family: "Cormorant Garamond", serif;
-  font-size: clamp(1.08rem, 3.8vw, 1.78rem);
+  font-size: clamp(1.5rem, 5vw, 2.3rem);
   font-weight: 800;
-  line-height: 0.9;
+  line-height: 0.86;
   letter-spacing: 0.01em;
   color: rgb(184 184 180);
   text-shadow:

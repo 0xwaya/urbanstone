@@ -2,7 +2,6 @@ import Head from 'next/head';
 import TopNav from '../components/TopNav';
 import Hero from '../components/Hero';
 import FeaturesBar from '../components/FeaturesBar';
-import ServiceAreasSection from '../components/ServiceAreasSection';
 import SuppliersSection from '../components/SuppliersSection';
 import LeadForm from '../components/LeadForm';
 import FAQSection from '../components/FAQSection';
@@ -109,7 +108,6 @@ export default function Home() {
           <main>
             <Hero />
             <FeaturesBar announcement={homepageAnnouncement} />
-            <ServiceAreasSection />
             <div className="my-8 h-px bg-gradient-to-r from-transparent via-accent/40 to-transparent sm:my-10" />
             <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
               <div className="lg:col-span-2">
