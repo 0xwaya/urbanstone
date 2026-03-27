@@ -80,8 +80,7 @@ export default function SupplierHero({
           </div>
         </div>
         <div
-          className={`h-32 rounded-xl border border-border flex items-center justify-center text-muted overflow-hidden p-2 ${supplier.heroImage ? 'bg-surface' : 'bg-gradient-to-br from-panel to-bg'
-            }`}
+          className={`h-32 rounded-xl border border-border flex items-center justify-center text-muted overflow-hidden ${supplier.heroImage ? 'bg-surface p-0' : 'bg-gradient-to-br from-panel to-bg p-2'}`}
           style={supplier.heroBackground ? { backgroundColor: supplier.heroBackground } : undefined}
         >
           {supplier.heroImage ? (
@@ -91,7 +90,7 @@ export default function SupplierHero({
               width={512}
               height={256}
               sizes="(min-width: 1024px) 33vw, 100vw"
-              className="h-full w-full object-contain"
+              className="h-full w-full object-contain object-center"
               loading="lazy"
             />
           ) : (

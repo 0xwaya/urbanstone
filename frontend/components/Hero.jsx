@@ -30,11 +30,8 @@ export default function Hero() {
         <div className="mt-2 font-display text-4xl font-semibold">Urban Stone Collective</div>
         <div className="mt-2 max-w-md text-muted">Final brand reveal after launch, with the current site acting as the high-conviction sales layer during rollout.</div>
         <div className="mt-6 grid gap-4 rounded-2xl border border-border bg-surface p-5 md:grid-cols-[auto_1fr] md:items-center">
-          <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-panel/80 text-center">
-            <div className="leading-none">
-              <div className="font-display text-xl">US</div>
-              <div className="text-[10px] uppercase tracking-[0.2em] text-muted">UrbanStone</div>
-            </div>
+          <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-[#F2F2F0] text-[#0A0A0A] text-center">
+            <div className="font-display text-2xl tracking-[0.12em]">USC</div>
           </div>
           <div>
             <div className="text-xs uppercase tracking-[0.2em] text-muted">UrbanStone Brand Sample</div>
