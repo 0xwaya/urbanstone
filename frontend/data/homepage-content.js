@@ -52,8 +52,8 @@ export const homepageLeadFormContent = {
 };
 
 export const homepageAnnouncement = {
-    eyebrow: 'Featured',
-    title: 'Fast turnaround, curated slabs, and a cleaner client experience.',
-    detail: 'Premium countertop sourcing and fabrication across greater Cincinnati, with the Urban Stone Collective rebrand rolling out quietly in the background.',
-    tags: ['3-5 day install', 'Curated suppliers'],
+    eyebrow: 'Rebrand update',
+    title: 'Urban Stone Collective is now live at urbanstone.co.',
+    detail: 'Amazon Granite LLC remains the legal entity, while the public-facing brand has moved to Urban Stone Collective. Same team, curated suppliers, and fast turnaround.',
+    tags: ['urbanstone.co live', '3-5 day install'],
 };
