@@ -36,7 +36,7 @@ export default function Hero() {
           <div>
             <div className="text-xs uppercase tracking-[0.2em] text-muted">UrbanStone Brand Sample</div>
             <div className="mt-2 font-display text-2xl">
-              Urban<span className="italic text-accent">Stone</span>
+              Urban<span className="italic text-[#C9A96E]">Stone</span>
             </div>
             <div className="mt-2 text-sm text-muted">
               Precision-fabricated stone for architects, designers, and builders who demand more.
@@ -49,7 +49,7 @@ export default function Hero() {
               <span className="h-3 w-6 rounded-sm border border-border" style={{ background: "#0A0A0A" }} />
               <span className="h-3 w-6 rounded-sm border border-border" style={{ background: "#111113" }} />
               <span className="h-3 w-6 rounded-sm border border-border" style={{ background: "#161618" }} />
-              <span className="h-3 w-6 rounded-sm border border-border" style={{ background: "#4A90E2" }} />
+              <span className="h-3 w-6 rounded-sm border border-border" style={{ background: "#9B7A44" }} />
               <span className="h-3 w-6 rounded-sm border border-border" style={{ background: "#C9A96E" }} />
               <span className="h-3 w-6 rounded-sm border border-border" style={{ background: "#E2C896" }} />
               <span className="uppercase tracking-[0.2em] text-[10px]">Palette Sample</span>
