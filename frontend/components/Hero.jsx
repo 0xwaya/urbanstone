@@ -36,14 +36,22 @@ export default function Hero() {
             <LogoMark />
           </div>
           <div>
-            <div className="text-sm uppercase tracking-[0.2em] text-muted">Launch posture</div>
-            <div className="mt-2 text-xl font-semibold">Luxury visuals, contractor-grade responsiveness</div>
-            <div className="mt-2 text-sm text-muted">Use this build as the deployable baseline while the broader rebrand and CRM plumbing are completed.</div>
+            <div className="text-xs uppercase tracking-[0.2em] text-muted">UrbanStone Brand Sample</div>
+            <div className="mt-2 font-display text-2xl">
+              Urban<span className="italic text-accent">Stone</span>
+            </div>
+            <div className="mt-2 text-sm text-muted">
+              Precision-fabricated stone for architects, designers, and builders who demand more.
+            </div>
+            <div className="mt-3 flex flex-wrap gap-2 text-[11px] uppercase tracking-[0.15em]">
+              <span className="rounded-full border border-border bg-panel px-3 py-1 text-muted">Explore Brand Kit</span>
+              <span className="rounded-full border border-border px-3 py-1 text-muted">View Wireframe</span>
+            </div>
             <div className="mt-3 flex items-center gap-2 text-xs text-muted">
               <span className="h-3 w-6 rounded-sm border border-border" style={{ background: "#0A0A0A" }} />
               <span className="h-3 w-6 rounded-sm border border-border" style={{ background: "#C9A96E" }} />
               <span className="h-3 w-6 rounded-sm border border-border" style={{ background: "#E2C896" }} />
-              <span className="uppercase tracking-[0.2em] text-[10px]">UrbanStone Sample</span>
+              <span className="uppercase tracking-[0.2em] text-[10px]">Palette Sample</span>
             </div>
           </div>
         </div>
