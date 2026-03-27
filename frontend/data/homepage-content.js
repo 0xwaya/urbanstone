@@ -34,9 +34,9 @@ export const homepageFaqItems = [
 ];
 
 export const homepageFaqContent = {
-    eyebrow: 'Countertop FAQ',
-    title: 'Frequently Asked Questions About Countertops in Cincinnati',
-    description: 'These answers cover the material and service questions people ask most often when comparing quartz countertops, granite countertops, and quartzite countertops in the Cincinnati area.',
+    eyebrow: 'Q&A',
+    title: 'Frequently Asked Questions',
+    description: 'A quick overview of the material, timing, and service questions clients ask most often before moving forward.',
     items: homepageFaqItems,
 };
 
@@ -54,6 +54,6 @@ export const homepageLeadFormContent = {
 export const homepageAnnouncement = {
     eyebrow: 'Current update',
     title: 'Amazon Granite LLC is currently rebranding to Urban Stone Collective.',
-    detail: 'Same Cincinnati-area countertop fabrication, same slab sourcing workflow, same fast scheduling. The new brand system is not fully rolled out yet.',
+    detail: 'The core service, supplier relationships, and fabrication workflow remain the same while the new brand system rolls out.',
     tags: ['3-5 day turnaround', 'Curated suppliers'],
 };

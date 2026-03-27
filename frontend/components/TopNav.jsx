@@ -75,6 +75,9 @@ export default function TopNav() {
                             <Link className="rounded-xl px-3 py-2 transition hover:bg-surface/80 hover:text-accent" href="/coverage" onClick={() => setIsMenuOpen(false)}>
                                 Service Areas
                             </Link>
+                            <a className="rounded-xl px-3 py-2 transition hover:bg-surface/80 hover:text-accent" href="#faq" onClick={() => setIsMenuOpen(false)}>
+                                Q&A
+                            </a>
                             <a className="rounded-xl bg-accent px-3 py-2 font-semibold text-white transition hover:bg-accentDark" href="#quote" onClick={() => setIsMenuOpen(false)}>
                                 Get an Estimate
                             </a>

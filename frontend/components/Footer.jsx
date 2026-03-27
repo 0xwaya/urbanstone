@@ -41,7 +41,7 @@ export default function Footer() {
                             <div className="eyebrow">Coverage hub</div>
                             <div className="mt-2 text-xl font-semibold text-text">Explore city and material pages</div>
                             <p className="mt-3 max-w-[26rem] text-sm leading-7 text-muted">
-                                Use the coverage hub to move between Cincinnati-area location pages and higher-intent material pages for quartz countertops, granite countertops, and quartzite countertops.
+                                Use the coverage hub to browse service areas and material pages without crowding the main landing page.
                             </p>
                             <Link href="/coverage" className="mt-4 inline-flex font-semibold text-text transition hover:text-accent">
                                 Open coverage hub
@@ -78,7 +78,7 @@ export default function Footer() {
                                 Built for fast countertop decisions and cleaner installs across greater Cincinnati.
                             </div>
                             <p className="mt-3 max-w-[32rem] text-sm leading-7 text-muted sm:text-base">
-                                Urban Stone Collective is the new DBA for Amazon Granite LLC, continuing quartz countertop, granite countertop, and quartzite countertop sourcing, fabrication, and installation across Cincinnati, Mason, West Chester, Fairfield, Hamilton, Blue Ash, Loveland, Milford, Covington, Newport, Florence, and nearby areas.
+                                Urban Stone Collective is the new DBA for Amazon Granite LLC, continuing the same countertop sourcing, fabrication, and installation service across greater Cincinnati and Northern Kentucky.
                             </p>
                         </div>
 
