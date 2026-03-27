@@ -43,9 +43,6 @@ export default function Footer() {
                                 <Link href="/coverage" className="inline-flex items-center justify-center rounded-full border border-border bg-surface/80 px-4 py-2 text-sm font-semibold text-text transition hover:border-accent hover:text-accent">
                                     Browse service areas
                                 </Link>
-                                <Link href="/#faq" className="inline-flex items-center justify-center rounded-full border border-border bg-surface/80 px-4 py-2 text-sm font-semibold text-text transition hover:border-accent hover:text-accent">
-                                    Read Q&A
-                                </Link>
                                 <Link href="/#quote" className="inline-flex items-center justify-center rounded-full bg-accent px-4 py-2 text-sm font-semibold text-white transition hover:bg-accentDark">
                                     Request an estimate
                                 </Link>

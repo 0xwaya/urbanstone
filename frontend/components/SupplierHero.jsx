@@ -7,18 +7,29 @@ const TierGrid = dynamic(() => import('./TierGrid'));
 const supplierHeroImageTreatments = {
   'MSI Surfaces': {
     imageClassName: 'scale-[1.14]',
+    logoShellClassName: 'supplier-logo-shell supplier-logo-shell--white p-1.5',
+    compactLogoShellClassName: 'supplier-logo-shell supplier-logo-shell--white p-1.5',
   },
   'Daltile Stone Center': {
-    imageClassName: 'scale-[1.08]',
+    imageClassName: 'scale-[1.12]',
+    frameClassName: 'supplier-hero-frame--bright p-1.5 sm:p-2',
+    logoShellClassName: 'supplier-logo-shell supplier-logo-shell--white min-w-[3.9rem] p-1.5',
+    compactLogoShellClassName: 'supplier-logo-shell supplier-logo-shell--white min-w-[3.25rem] p-1.5',
   },
   'Quartz America': {
     imageClassName: 'scale-[1.12]',
+    logoShellClassName: 'supplier-logo-shell supplier-logo-shell--white p-1.5',
+    compactLogoShellClassName: 'supplier-logo-shell supplier-logo-shell--white p-1.5',
   },
   'Avani': {
     hideHeroImage: true,
+    logoShellClassName: 'supplier-logo-shell supplier-logo-shell--white p-1',
+    compactLogoShellClassName: 'supplier-logo-shell supplier-logo-shell--white p-1',
   },
   'Citi Quartz': {
     imageClassName: 'scale-[1.26]',
+    logoShellClassName: 'supplier-logo-shell supplier-logo-shell--white p-1',
+    compactLogoShellClassName: 'supplier-logo-shell supplier-logo-shell--white p-1',
   },
 };
 
@@ -40,14 +51,17 @@ export default function SupplierHero({
     .map((word) => word[0])
     .join('')
     .toUpperCase();
-  const logoShellClassName = 'flex h-12 min-w-[3.5rem] items-center justify-center rounded-xl border border-border/80 bg-panel/75 p-2.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.55)]';
-  const compactLogoShellClassName = 'flex h-10 min-w-[3rem] items-center justify-center rounded-xl border border-border/80 bg-panel/75 p-2.5';
   const heroImageTreatment = supplierHeroImageTreatments[supplier.name] || {};
   const shouldShowHeroImage = supplier.heroImage && !heroImageTreatment.hideHeroImage;
+  const heroFrameClassName = shouldShowHeroImage
+    ? `supplier-hero-frame p-3 sm:p-4 ${heroImageTreatment.frameClassName || ''}`.trim()
+    : 'bg-gradient-to-br from-panel to-bg p-3';
+  const logoShellClassName = `supplier-logo-shell ${heroImageTreatment.logoShellClassName || 'bg-panel/75 p-2.5'}`.trim();
+  const compactLogoShellClassName = `supplier-logo-shell supplier-logo-shell--compact ${heroImageTreatment.compactLogoShellClassName || 'bg-panel/75 p-2.5'}`.trim();
 
   return (
-    <section className="bg-surface border border-border rounded-2xl p-8 mb-10">
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-center">
+    <section className="mb-8 rounded-2xl border border-border bg-surface p-6 sm:mb-10 sm:p-8">
+      <div className="grid grid-cols-1 items-center gap-5 sm:gap-6 lg:grid-cols-3">
         <div className="lg:col-span-2">
           <div className="flex items-center gap-4">
             {logoVisible ? (
@@ -104,8 +118,7 @@ export default function SupplierHero({
           </div>
         </div>
         <div
-          className={`h-32 rounded-xl border border-border flex items-center justify-center text-muted overflow-hidden ${shouldShowHeroImage ? 'bg-surface/75 p-3 sm:p-4' : 'bg-gradient-to-br from-panel to-bg p-3'}`}
-          style={supplier.heroBackground ? { backgroundColor: supplier.heroBackground } : undefined}
+          className={`h-32 rounded-xl border border-border flex items-center justify-center text-muted overflow-hidden ${heroFrameClassName}`}
         >
           {shouldShowHeroImage ? (
             <Image
