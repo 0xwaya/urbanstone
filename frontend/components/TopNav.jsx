@@ -68,24 +68,27 @@ export default function TopNav() {
 
                 {isMenuOpen ? (
                     <div className="mt-3 rounded-2xl border border-border bg-panel/70 p-3 lg:hidden">
-                        <div className="flex flex-col gap-2 text-sm font-medium text-text">
-                            <a className="rounded-xl px-3 py-2 transition hover:bg-surface/80 hover:text-accent" href="#suppliers" onClick={() => setIsMenuOpen(false)}>
-                                Materials
-                            </a>
-                            <Link className="rounded-xl px-3 py-2 transition hover:bg-surface/80 hover:text-accent" href="/coverage" onClick={() => setIsMenuOpen(false)}>
-                                Service Areas
-                            </Link>
-                            <a className="rounded-xl px-3 py-2 transition hover:bg-surface/80 hover:text-accent" href="#faq" onClick={() => setIsMenuOpen(false)}>
-                                Q&A
-                            </a>
-                            <a className="rounded-xl bg-accent px-3 py-2 font-semibold text-white transition hover:bg-accentDark" href="#quote" onClick={() => setIsMenuOpen(false)}>
+                        <div className="rounded-[1.5rem] border border-border/80 bg-surface/75 p-3 shadow-soft">
+                            <div className="text-[11px] font-semibold uppercase tracking-[0.22em] text-muted">Menu</div>
+                            <a className="mt-3 inline-flex w-full items-center justify-center rounded-full bg-accent px-4 py-3 text-base font-semibold text-white shadow-[0_16px_40px_rgba(61,110,196,0.24)] transition hover:bg-accentDark" href="#quote" onClick={() => setIsMenuOpen(false)}>
                                 Get an Estimate
                             </a>
+                            <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-3">
+                                <a className="rounded-xl border border-border bg-panel/70 px-3 py-2.5 text-center transition hover:border-accent hover:text-accent" href="#suppliers" onClick={() => setIsMenuOpen(false)}>
+                                    Materials
+                                </a>
+                                <Link className="rounded-xl border border-border bg-panel/70 px-3 py-2.5 text-center transition hover:border-accent hover:text-accent" href="/coverage" onClick={() => setIsMenuOpen(false)}>
+                                    Service Areas
+                                </Link>
+                                <a className="rounded-xl border border-border bg-panel/70 px-3 py-2.5 text-center transition hover:border-accent hover:text-accent" href="#faq" onClick={() => setIsMenuOpen(false)}>
+                                    Q&amp;A
+                                </a>
+                            </div>
                         </div>
 
                         <div className="mt-4 rounded-[1.75rem] border border-border bg-surface/80 p-4 shadow-soft">
-                            <div className="text-sm font-medium text-text">Contact</div>
-                            <div className="mt-3 grid grid-cols-1 gap-3">
+                            <div className="text-[11px] font-semibold uppercase tracking-[0.22em] text-muted">Direct contact</div>
+                            <div className="mt-3 grid grid-cols-2 gap-3">
                                 <a
                                     className="inline-flex items-center justify-center rounded-full bg-accent px-4 py-3 text-base font-semibold text-white shadow-[0_16px_40px_rgba(61,110,196,0.24)] transition hover:bg-accentDark"
                                     href={`tel:${toTelHref(companyPhone)}`}
@@ -102,7 +105,7 @@ export default function TopNav() {
                                 </a>
                             </div>
                         </div>
-                        <div className="mt-3 flex justify-start">
+                        <div className="mt-3 border-t border-border/80 pt-3 flex justify-start">
                             <ThemeToggle />
                         </div>
                     </div>

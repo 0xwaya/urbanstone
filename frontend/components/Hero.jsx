@@ -10,12 +10,12 @@ export default function Hero() {
           We source premium slabs from curated suppliers and fabricate custom quartz, granite, and quartzite countertops
           with a 3-5 day turnaround from deposit to install.
         </p>
-        <div className="mt-6 flex flex-wrap gap-3 text-sm">
-          <span className="rounded-full border border-border bg-panel px-3 py-1 text-sm">3-5 Day Install</span>
-          <span className="rounded-full border border-border bg-panel px-3 py-1 text-sm">Curated Supplier Network</span>
-          <span className="rounded-full border border-border bg-panel px-3 py-1 text-sm">1-Year Install Guarantee</span>
+        <div className="mt-5 flex flex-wrap gap-2.5 sm:mt-6 sm:gap-3">
+          <span className="hero-chip hero-chip--accent">3-5 Day Install</span>
+          <span className="hero-chip">Curated Supplier Network</span>
+          <span className="hero-chip">1-Year Install Guarantee</span>
         </div>
-        <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:gap-4">
+        <div className="mt-7 flex flex-col gap-3 sm:mt-6 sm:flex-row sm:flex-wrap sm:gap-4">
           <a className="inline-flex items-center justify-center rounded-md bg-accent px-5 py-3 font-semibold text-white transition hover:-translate-y-0.5 hover:bg-accentDark hover:shadow-xl" href="#quote">
             Request Estimate
           </a>

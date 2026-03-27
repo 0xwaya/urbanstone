@@ -63,7 +63,7 @@ export default function SupplierHero({
     <section className="mb-8 rounded-2xl border border-border bg-surface p-6 sm:mb-10 sm:p-8">
       <div className="grid grid-cols-1 items-center gap-5 sm:gap-6 lg:grid-cols-3">
         <div className="lg:col-span-2">
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3 sm:gap-4">
             {logoVisible ? (
               <div className={logoShellClassName}>
                 <Image
@@ -82,11 +82,11 @@ export default function SupplierHero({
                 {initials}
               </div>
             )}
-            <h3 className="text-2xl font-semibold">{supplier.name}</h3>
+            <h3 className="text-[1.35rem] font-semibold leading-tight sm:text-2xl">{supplier.name}</h3>
           </div>
-          <p className="text-muted mt-2">{supplier.note}</p>
+          <p className="mt-3 text-sm leading-6 text-muted sm:text-base">{supplier.note}</p>
           {supplier.address && (
-            <div className="mt-3 text-sm text-muted space-y-1">
+            <div className="mt-4 space-y-1.5 text-sm text-muted">
               <div><span className="font-semibold text-text">Address:</span> {supplier.address}</div>
               {supplier.phone && <div><span className="font-semibold text-text">Phone:</span> {supplier.phone}</div>}
               {hoursLines.length > 0 ? hoursLines.map((line) => (
@@ -96,7 +96,7 @@ export default function SupplierHero({
               )) : null}
             </div>
           )}
-          <div className="flex flex-wrap gap-3 mt-3 text-sm">
+          <div className="mt-4 flex flex-wrap gap-2.5 text-sm sm:gap-3">
             <a className="text-accent" href={supplier.portal} target="_blank" rel="noreferrer">
               Visit Supplier Portal
             </a>
@@ -156,22 +156,22 @@ export default function SupplierHero({
         </div>
       </div>
       {showGallery && supplier.tiers ? (
-        <div className="mt-8">
+        <div className="mt-7 sm:mt-8">
           <TierGrid tiers={supplier.tiers} />
         </div>
       ) : null}
       {!showGallery ? (
-        <div className="mt-8 rounded-xl border border-border bg-panel px-4 py-3 text-sm text-muted">
+        <div className="mt-6 rounded-xl border border-border bg-panel/85 px-4 py-3 text-sm leading-6 text-muted sm:mt-8">
           Curated slab selections stay hidden until you load them to keep the homepage fast.
         </div>
       ) : null}
       {showGallery && isLoadingGallery ? (
-        <div className="mt-8 rounded-xl border border-border bg-panel px-4 py-3 text-sm text-muted">
+        <div className="mt-6 rounded-xl border border-border bg-panel/85 px-4 py-3 text-sm text-muted sm:mt-8">
           Loading slabs...
         </div>
       ) : null}
       {showGallery && galleryError ? (
-        <div className="mt-8 rounded-xl border border-border bg-panel px-4 py-3 text-sm text-[#9f3a2b]">
+        <div className="mt-6 rounded-xl border border-border bg-panel/85 px-4 py-3 text-sm text-[#9f3a2b] sm:mt-8">
           {galleryError}
         </div>
       ) : null}
