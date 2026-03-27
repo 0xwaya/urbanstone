@@ -74,10 +74,10 @@ export default function SuppliersSection() {
       <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <div className="eyebrow">Materials library</div>
-          <h2 className="font-display text-3xl font-semibold sm:text-4xl">Curated Countertop Materials</h2>
-          <p className="text-muted">Load curated supplier slabs on demand to inspect countertop-ready options.</p>
+          <h2 className="font-display text-3xl font-semibold sm:text-4xl">Quartz, Granite, and Quartzite Countertop Materials</h2>
+          <p className="text-muted">Load curated supplier slabs on demand to inspect quartz countertop colors, granite slabs, and quartzite countertop options for Cincinnati-area projects.</p>
         </div>
-        <div className="text-sm text-muted">Hidden by default, loaded on demand</div>
+        <div className="text-sm text-muted">Countertop-ready slabs, loaded on demand</div>
       </div>
       {sortedSupplierSummaries.map((summary) => (
         <SupplierHero

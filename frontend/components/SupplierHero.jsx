@@ -4,6 +4,24 @@ import { useState } from 'react';
 
 const TierGrid = dynamic(() => import('./TierGrid'));
 
+const supplierHeroImageTreatments = {
+  'MSI Surfaces': {
+    imageClassName: 'scale-[1.14]',
+  },
+  'Daltile Stone Center': {
+    imageClassName: 'scale-[1.08]',
+  },
+  'Quartz America': {
+    imageClassName: 'scale-[1.12]',
+  },
+  'Avani': {
+    hideHeroImage: true,
+  },
+  'Citi Quartz': {
+    imageClassName: 'scale-[1.26]',
+  },
+};
+
 export default function SupplierHero({
   supplier,
   showGallery = false,
@@ -24,6 +42,8 @@ export default function SupplierHero({
     .toUpperCase();
   const logoShellClassName = 'flex h-12 min-w-[3.5rem] items-center justify-center rounded-xl border border-border/80 bg-panel/75 p-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.55)]';
   const compactLogoShellClassName = 'flex h-10 min-w-[3rem] items-center justify-center rounded-xl border border-border/80 bg-panel/75 p-2';
+  const heroImageTreatment = supplierHeroImageTreatments[supplier.name] || {};
+  const shouldShowHeroImage = supplier.heroImage && !heroImageTreatment.hideHeroImage;
 
   return (
     <section className="bg-surface border border-border rounded-2xl p-8 mb-10">
@@ -84,17 +104,17 @@ export default function SupplierHero({
           </div>
         </div>
         <div
-          className={`h-32 rounded-xl border border-border flex items-center justify-center text-muted overflow-hidden ${supplier.heroImage ? 'bg-surface p-0' : 'bg-gradient-to-br from-panel to-bg p-2'}`}
+          className={`h-32 rounded-xl border border-border flex items-center justify-center text-muted overflow-hidden ${shouldShowHeroImage ? 'bg-surface/75 p-2' : 'bg-gradient-to-br from-panel to-bg p-2'}`}
           style={supplier.heroBackground ? { backgroundColor: supplier.heroBackground } : undefined}
         >
-          {supplier.heroImage ? (
+          {shouldShowHeroImage ? (
             <Image
               src={supplier.heroImage}
               alt={`${supplier.name} hero`}
               width={512}
               height={256}
               sizes="(min-width: 1024px) 33vw, 100vw"
-              className="h-full w-full object-cover object-center"
+              className={`supplier-hero-image h-full w-full object-contain object-center ${heroImageTreatment.imageClassName || ''}`.trim()}
               loading="lazy"
             />
           ) : (

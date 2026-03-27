@@ -4,6 +4,8 @@ Standalone Next.js pages application for the Amazon Granite marketing site.
 
 This frontend includes the current live mobile layout pass for navigation, hero spacing, supplier browsing, and quote capture.
 
+SEO/CRO architecture notes and diagrams live in `SEO_CRO_STRUCTURE.md`.
+
 ## Requirements
 
 - Node.js 20.11 or newer
@@ -20,6 +22,7 @@ This frontend includes the current live mobile layout pass for navigation, hero 
 
 - `NEXT_PUBLIC_COMPANY_PHONE`: phone number rendered in the UI.
 - `NEXT_PUBLIC_LEAD_EMAIL`: fallback email address rendered in the UI.
+- `NEXT_PUBLIC_SITE_URL`: canonical production origin used for metadata, robots, and sitemap output.
 - `LEAD_WEBHOOK_URL`: required for successful lead delivery from `/api/lead`.
 
 If `LEAD_WEBHOOK_URL` is not set, the form stays visible but the API intentionally returns a configuration error instead of silently dropping leads.

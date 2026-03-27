@@ -19,7 +19,7 @@ export default function ChatWidget() {
                 <div className="flex items-start justify-between gap-3">
                     <div>
                         <div className="eyebrow">Fast response</div>
-                        <div className="font-display text-2xl font-semibold leading-tight sm:text-3xl">Need a countertop estimate today?</div>
+                        <div className="font-display text-2xl font-semibold leading-tight sm:text-3xl">Need quartz, granite, or quartzite pricing today?</div>
                     </div>
                     <button
                         type="button"
@@ -30,7 +30,7 @@ export default function ChatWidget() {
                         ×
                     </button>
                 </div>
-                <p className="mt-2 text-sm text-muted">Use the estimate form, call for scheduling, or send photos, measurements, and layout details by email.</p>
+                <p className="mt-2 text-sm text-muted">Use the estimate form, call for scheduling, or send photos, measurements, and layout details for Cincinnati-area countertop projects by email.</p>
                 <div className="mt-4 flex flex-wrap gap-2">
                     <a className="inline-flex rounded-full bg-accent px-3 py-2 text-sm font-semibold text-white transition hover:bg-accentDark" href="#quote">
                         Open form

@@ -1,36 +1,24 @@
-const features = [
-    {
-        label: 'Lead time',
-        value: '3-5 days',
-        detail: 'Measured, fabricated, and installed on a tight residential schedule.',
-    },
-    {
-        label: 'Suppliers',
-        value: '5 curated partners',
-        detail: 'A mix of large national inventory and regional showroom access.',
-    },
-    {
-        label: 'Material format',
-        value: '3cm slabs',
-        detail: 'Focused on durable countertop installs with practical sourcing.',
-    },
-    {
-        label: 'Service footprint',
-        value: 'Cincinnati metro',
-        detail: 'Built for homeowners, investors, and fast-moving renovation teams.',
-    },
-];
+import { homepageAnnouncement } from '../data/homepage-content';
 
-export default function FeaturesBar() {
+export default function FeaturesBar({ announcement = homepageAnnouncement }) {
     return (
-        <section aria-label="Key business highlights" className="grid gap-3 py-3 sm:gap-4 sm:py-4 md:grid-cols-2 xl:grid-cols-4">
-            {features.map((feature) => (
-                <article key={feature.label} className="rounded-2xl border border-border bg-surface/75 p-4 shadow-soft sm:p-5">
-                    <div className="text-xs uppercase tracking-[0.24em] text-muted">{feature.label}</div>
-                    <div className="mt-3 text-2xl font-semibold text-text">{feature.value}</div>
-                    <p className="mt-2 text-sm text-muted">{feature.detail}</p>
-                </article>
-            ))}
+        <section aria-label="Current business announcement" className="py-2 sm:py-3">
+            <article className="rounded-2xl border border-border bg-surface/75 px-4 py-3 shadow-soft sm:px-5 sm:py-4">
+                <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                    <div className="max-w-3xl">
+                        <div className="text-xs uppercase tracking-[0.24em] text-muted">{announcement.eyebrow}</div>
+                        <div className="mt-1.5 text-base font-semibold text-text sm:text-lg">{announcement.title}</div>
+                        <p className="mt-1.5 text-sm leading-6 text-muted">{announcement.detail}</p>
+                    </div>
+                    <div className="flex flex-wrap gap-2 text-xs uppercase tracking-[0.18em] text-muted sm:justify-end">
+                        {announcement.tags.map((tag) => (
+                            <span key={tag} className="rounded-full border border-border bg-panel/70 px-3 py-2">
+                                {tag}
+                            </span>
+                        ))}
+                    </div>
+                </div>
+            </article>
         </section>
     );
 }

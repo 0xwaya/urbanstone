@@ -24,6 +24,7 @@ export function sanitizeLeadPayload(payload = {}) {
         email: normalizeField(payload.email, 120).toLowerCase(),
         phone: normalizeField(payload.phone, 24),
         projectDetails: normalizeMultiline(payload.projectDetails, 1200),
+        routeId: normalizeField(payload.routeId, 80),
         website: normalizeField(payload.website, 120),
     };
 
@@ -122,6 +123,7 @@ export function buildLeadForwardPayload(lead, request) {
             ip: getClientIp(request),
             userAgent: request.headers['user-agent'] || 'unknown',
             referer: request.headers.referer || null,
+            routeId: lead.routeId || 'homepage',
         },
     };
 }

@@ -16,7 +16,7 @@ const themeInitScript = `(function () {
 
 export default function Document() {
     return (
-        <Html>
+        <Html lang="en">
             <Head>
                 <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
             </Head>

@@ -12,7 +12,18 @@ function toTelHref(value) {
     return value.replace(/[^\d+]/g, '');
 }
 
-export default function LeadForm() {
+const defaultContent = {
+    eyebrow: 'Request a quote',
+    title: 'Get a Quartz, Granite, or Quartzite Countertop Estimate',
+    description: 'Send your layout, measurements, and material preference for quartz countertops, granite countertops, or quartzite countertops in Cincinnati and the surrounding 50-mile service area.',
+    placeholder: 'Kitchen or bath location, preferred material, neighborhood or city, timeline, and any measurements you already have.',
+    submitLabel: 'Send estimate request',
+    submittingLabel: 'Sending request...',
+    directResponseTitle: 'Need a direct response?',
+    coverageText: 'We respond to countertop estimate requests for Cincinnati, Mason, West Chester, Fairfield, Hamilton, Blue Ash, Loveland, Milford, Anderson Township, Covington, Newport, Florence, Erlanger, and nearby communities.',
+};
+
+export default function LeadForm({ content, routeId = 'homepage' }) {
     const [form, setForm] = useState(initialForm);
     const [errors, setErrors] = useState({});
     const [status, setStatus] = useState({ type: 'idle', message: '' });
@@ -20,6 +31,7 @@ export default function LeadForm() {
 
     const companyPhone = process.env.NEXT_PUBLIC_COMPANY_PHONE || '(513) 307-5840';
     const companyEmail = process.env.NEXT_PUBLIC_LEAD_EMAIL || 'sales@urbanstone.co';
+    const formContent = { ...defaultContent, ...(content || {}) };
 
     const handleChange = (event) => {
         const { name, value } = event.target;
@@ -41,12 +53,17 @@ export default function LeadForm() {
         setStatus({ type: 'idle', message: '' });
 
         try {
+            const requestPayload = {
+                ...form,
+                routeId,
+            };
+
             const response = await fetch('/api/lead', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(form),
+                body: JSON.stringify(requestPayload),
             });
 
             const payload = await response.json().catch(() => ({}));
@@ -78,10 +95,10 @@ export default function LeadForm() {
 
     return (
         <section id="quote" className="rounded-3xl border border-border bg-panel p-5 shadow-soft sm:p-6 lg:sticky lg:top-24">
-            <div className="eyebrow">Request a quote</div>
-            <h2 className="font-display text-3xl font-semibold sm:text-4xl">Start with a fast estimate</h2>
+            <div className="eyebrow">{formContent.eyebrow}</div>
+            <h2 className="font-display text-3xl font-semibold sm:text-4xl">{formContent.title}</h2>
             <p className="mt-2 text-sm leading-6 text-muted">
-                Send project details and we will use the configured lead destination for follow-up. Direct contact options stay visible as a fallback.
+                {formContent.description}
             </p>
 
             <form className="mt-6 space-y-4" onSubmit={handleSubmit} noValidate>
@@ -146,14 +163,14 @@ export default function LeadForm() {
                         value={form.projectDetails}
                         onChange={handleChange}
                         autoComplete="off"
-                        placeholder="Kitchen, baths, material preferences, timeline, and any measurements you already have."
+                        placeholder={formContent.placeholder}
                         required
                     />
                     {errors.projectDetails && <span className="form-error">{errors.projectDetails}</span>}
                 </label>
 
                 <button className="inline-flex w-full items-center justify-center rounded-full bg-accent px-4 py-3 text-sm font-semibold text-white transition hover:bg-accentDark disabled:cursor-not-allowed disabled:opacity-70" type="submit" disabled={isSubmitting}>
-                    {isSubmitting ? 'Sending request...' : 'Send estimate request'}
+                    {isSubmitting ? formContent.submittingLabel : formContent.submitLabel}
                 </button>
             </form>
 
@@ -164,7 +181,10 @@ export default function LeadForm() {
             </div>
 
             <div id="contact" className="mt-6 rounded-2xl border border-border bg-surface/75 p-4 text-sm text-muted">
-                <div className="font-semibold text-text">Need a direct response?</div>
+                <div className="font-semibold text-text">{formContent.directResponseTitle}</div>
+                <p className="mt-2 leading-6">
+                    {formContent.coverageText}
+                </p>
                 <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
                     <a
                         className="inline-flex w-full items-center justify-center rounded-full bg-accent px-4 py-3 font-semibold text-white shadow-[0_16px_40px_rgba(61,110,196,0.18)] transition hover:bg-accentDark sm:w-auto sm:min-w-[11rem]"

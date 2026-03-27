@@ -20,12 +20,12 @@ export default function TopNav() {
                         <div className="min-w-0">
                             <div className="nav-brand-wrap">
                                 <div className="nav-brand-wordmark">
-                                    <span className="nav-brand-amazon">Amazon</span>{' '}
-                                    <span className="nav-brand-granite">Granite</span>
+                                    <span className="nav-brand-amazon">amazon</span>{' '}
+                                    <span className="nav-brand-granite">granite</span>
                                 </div>
                                 <span className="nav-brand-badge">LLC</span>
                             </div>
-                            <div className="hidden font-display text-xl font-semibold leading-[1.05] sm:text-2xl">Countertops with fast turnaround</div>
+                            <div className="hidden font-display text-xl font-semibold leading-[1.05] sm:text-2xl">Quartz, granite, and quartzite countertops</div>
                         </div>
                     </a>
 
