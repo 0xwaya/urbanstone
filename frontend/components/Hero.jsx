@@ -39,6 +39,12 @@ export default function Hero() {
             <div className="text-sm uppercase tracking-[0.2em] text-muted">Launch posture</div>
             <div className="mt-2 text-xl font-semibold">Luxury visuals, contractor-grade responsiveness</div>
             <div className="mt-2 text-sm text-muted">Use this build as the deployable baseline while the broader rebrand and CRM plumbing are completed.</div>
+            <div className="mt-3 flex items-center gap-2 text-xs text-muted">
+              <span className="h-3 w-6 rounded-sm border border-border" style={{ background: "#0A0A0A" }} />
+              <span className="h-3 w-6 rounded-sm border border-border" style={{ background: "#C9A96E" }} />
+              <span className="h-3 w-6 rounded-sm border border-border" style={{ background: "#E2C896" }} />
+              <span className="uppercase tracking-[0.2em] text-[10px]">UrbanStone Sample</span>
+            </div>
           </div>
         </div>
       </div>
