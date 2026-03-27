@@ -52,8 +52,8 @@ export const homepageLeadFormContent = {
 };
 
 export const homepageAnnouncement = {
-    eyebrow: 'Current update',
-    title: 'Amazon Granite LLC is currently rebranding to Urban Stone Collective.',
-    detail: 'The core service, supplier relationships, and fabrication workflow remain the same while the new brand system rolls out.',
-    tags: ['3-5 day turnaround', 'Curated suppliers'],
+    eyebrow: 'Featured',
+    title: 'Fast turnaround, curated slabs, and a cleaner client experience.',
+    detail: 'Premium countertop sourcing and fabrication across greater Cincinnati, with the Urban Stone Collective rebrand rolling out quietly in the background.',
+    tags: ['3-5 day install', 'Curated suppliers'],
 };

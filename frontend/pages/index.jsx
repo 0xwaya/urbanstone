@@ -117,7 +117,7 @@ export default function Home() {
                 <LeadForm content={homepageLeadFormContent} routeId="homepage" />
               </div>
             </div>
-            <FAQSection {...homepageFaqContent} />
+            <FAQSection {...homepageFaqContent} collapsible defaultExpanded={false} />
             <Footer />
           </main>
         </div>
