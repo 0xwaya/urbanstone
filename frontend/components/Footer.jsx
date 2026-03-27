@@ -29,65 +29,54 @@ export default function Footer() {
     const wayaLabsUrl = (process.env.NEXT_PUBLIC_WAYALABS_URL || WAYALABS_FALLBACK).trim();
 
     return (
-        <footer className="mt-14 border-t border-border/80 pb-8 pt-8 sm:mt-16 sm:pt-10">
-            <div className="footer-panel rounded-[2rem] border border-border bg-surface/70 px-5 py-6 shadow-soft backdrop-blur sm:px-6 sm:py-7">
-                <div className="flex flex-col gap-8">
-                    <div className="rounded-[1.6rem] border border-border bg-panel/60 p-5">
-                        <div>
-                            <div className="eyebrow">Explore</div>
-                            <div className="mt-2 text-xl font-semibold text-text">Service areas and project questions</div>
-                            <p className="mt-3 max-w-[26rem] text-sm leading-7 text-muted">
-                                If you want the deeper local pages or a quick FAQ pass, use the links below instead of loading that content into the main landing page.
-                            </p>
-                            <div className="mt-4 flex flex-wrap gap-3">
-                                <Link href="/coverage" className="inline-flex items-center justify-center rounded-full border border-border bg-surface/80 px-4 py-2 text-sm font-semibold text-text transition hover:border-accent hover:text-accent">
-                                    Browse service areas
-                                </Link>
-                                <Link href="/#quote" className="inline-flex items-center justify-center rounded-full bg-accent px-4 py-2 text-sm font-semibold text-white transition hover:bg-accentDark">
-                                    Request an estimate
-                                </Link>
+        <footer className="mt-12 border-t border-border/70 pb-7 pt-7 sm:mt-14 sm:pb-8 sm:pt-8">
+            <div className="footer-panel rounded-[1.75rem] border border-border bg-surface/70 px-4 py-5 shadow-soft backdrop-blur sm:px-5 sm:py-6">
+                <div className="flex flex-col gap-5">
+                    <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                        <div className="max-w-[36rem]">
+                            <div className="eyebrow">Urban Stone Collective</div>
+                            <div className="font-display text-[1.42rem] font-semibold leading-[0.98] sm:text-[1.78rem]">
+                                Cleaner installs, faster decisions, and curated slab sourcing across greater Cincinnati.
                             </div>
+                            <p className="mt-2 max-w-[31rem] text-sm leading-6 text-muted">
+                                Public-facing brand at urbanstone.co. Amazon Granite LLC remains the legal entity behind the same fabrication and installation service.
+                            </p>
+                        </div>
+
+                        <div className="flex flex-wrap gap-2.5 lg:justify-end">
+                            <Link href="/coverage" className="inline-flex items-center justify-center rounded-full border border-border bg-surface/80 px-4 py-2 text-sm font-semibold text-text transition hover:border-accent hover:text-accent">
+                                Service areas
+                            </Link>
+                            <Link href="/#quote" className="inline-flex items-center justify-center rounded-full bg-accent px-4 py-2 text-sm font-semibold text-white transition hover:bg-accentDark">
+                                Request estimate
+                            </Link>
                         </div>
                     </div>
 
-                    <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-                        <div className="max-w-[34rem]">
-                            <div className="eyebrow">Urban Stone Collective</div>
-                            <div className="font-display text-[1.72rem] font-semibold leading-[0.95] sm:text-[2.15rem]">
-                                Built for fast countertop decisions and cleaner installs across greater Cincinnati.
-                            </div>
-                            <p className="mt-3 max-w-[32rem] text-sm leading-7 text-muted sm:text-base">
-                                Urban Stone Collective is the new DBA for Amazon Granite LLC, continuing the same countertop sourcing, fabrication, and installation service across greater Cincinnati and Northern Kentucky.
-                            </p>
+                    <div className="flex flex-col gap-4 border-t border-border/70 pt-4 sm:flex-row sm:items-center sm:justify-between">
+                        <div className="flex items-center gap-2.5">
+                            <SocialIcon href={instagramUrl} label="Instagram">
+                                <rect x="3.5" y="3.5" width="17" height="17" rx="5" />
+                                <circle cx="12" cy="12" r="4" />
+                                <circle cx="17.5" cy="6.5" r="0.8" fill="currentColor" stroke="none" />
+                            </SocialIcon>
+
+                            <SocialIcon href={facebookUrl} label="Facebook">
+                                <path d="M14.5 7.5h2V4.2c-.35-.05-1.55-.2-2.98-.2-2.95 0-4.97 1.8-4.97 5.1v2.9H5.5v3.7h3.05V20h3.75v-4.3h3.02l.48-3.7h-3.5V9.45c0-1.07.3-1.95 2.2-1.95Z" fill="currentColor" stroke="none" />
+                            </SocialIcon>
+
+                            <SocialIcon href={tiktokUrl} label="TikTok">
+                                <path d="M14.8 4.5c.4 1.35 1.23 2.4 2.7 3.1 1 .48 1.95.65 2.55.7v3.1a8.2 8.2 0 0 1-5.3-1.83v4.72c0 3.45-2.65 5.96-6.18 5.96-3.4 0-6.07-2.67-6.07-6 0-3.55 2.86-6.17 6.43-5.97v3.2a2.7 2.7 0 0 0-1-.18c-1.5 0-2.72 1.2-2.72 2.85 0 1.52 1.1 2.83 2.8 2.83 1.58 0 2.8-1.08 2.8-3.38V4.5h2.99Z" fill="currentColor" stroke="none" />
+                            </SocialIcon>
                         </div>
 
-                        <div className="flex flex-col gap-4 md:items-end">
-                            <div className="flex items-center gap-3">
-                                <SocialIcon href={instagramUrl} label="Instagram">
-                                    <rect x="3.5" y="3.5" width="17" height="17" rx="5" />
-                                    <circle cx="12" cy="12" r="4" />
-                                    <circle cx="17.5" cy="6.5" r="0.8" fill="currentColor" stroke="none" />
-                                </SocialIcon>
-
-                                <SocialIcon href={facebookUrl} label="Facebook">
-                                    <path d="M14.5 7.5h2V4.2c-.35-.05-1.55-.2-2.98-.2-2.95 0-4.97 1.8-4.97 5.1v2.9H5.5v3.7h3.05V20h3.75v-4.3h3.02l.48-3.7h-3.5V9.45c0-1.07.3-1.95 2.2-1.95Z" fill="currentColor" stroke="none" />
-                                </SocialIcon>
-
-                                <SocialIcon href={tiktokUrl} label="TikTok">
-                                    <path d="M14.8 4.5c.4 1.35 1.23 2.4 2.7 3.1 1 .48 1.95.65 2.55.7v3.1a8.2 8.2 0 0 1-5.3-1.83v4.72c0 3.45-2.65 5.96-6.18 5.96-3.4 0-6.07-2.67-6.07-6 0-3.55 2.86-6.17 6.43-5.97v3.2a2.7 2.7 0 0 0-1-.18c-1.5 0-2.72 1.2-2.72 2.85 0 1.52 1.1 2.83 2.8 2.83 1.58 0 2.8-1.08 2.8-3.38V4.5h2.99Z" fill="currentColor" stroke="none" />
-                                </SocialIcon>
-                            </div>
-
-                            <div className="text-sm leading-7 text-muted md:text-right">
-                                <div>
-                                    &copy; {currentYear} Amazon Granite LLC, doing business as Urban Stone Collective. All rights reserved.
-                                </div>
-                                <div className="mt-1">
-                                    Built by{' '}
-                                    <a className="font-semibold text-text transition hover:text-accent" href={wayaLabsUrl} target="_blank" rel="noreferrer">
-                                        WayaLabs
-                                    </a>
-                                </div>
+                        <div className="text-sm leading-6 text-muted sm:text-right">
+                            <div>&copy; {currentYear} Amazon Granite LLC DBA Urban Stone Collective.</div>
+                            <div className="mt-1">
+                                Built by{' '}
+                                <a className="font-semibold text-text transition hover:text-accent" href={wayaLabsUrl} target="_blank" rel="noreferrer">
+                                    WayaLabs
+                                </a>
                             </div>
                         </div>
                     </div>
