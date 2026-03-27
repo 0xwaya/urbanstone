@@ -3,6 +3,8 @@ import { useState } from 'react';
 import SupplierHero from './SupplierHero';
 import supplierSummaries from '../data/supplier-summaries.json';
 
+const sortedSupplierSummaries = [...supplierSummaries].sort((left, right) => left.name.localeCompare(right.name));
+
 export default function SuppliersSection() {
   const [expandedSupplierName, setExpandedSupplierName] = useState(null);
   const [detailedSuppliers, setDetailedSuppliers] = useState({});
@@ -77,7 +79,7 @@ export default function SuppliersSection() {
         </div>
         <div className="text-sm text-muted">Hidden by default, loaded on demand</div>
       </div>
-      {supplierSummaries.map((summary) => (
+      {sortedSupplierSummaries.map((summary) => (
         <SupplierHero
           key={summary.name}
           supplier={detailedSuppliers[summary.name] || summary}

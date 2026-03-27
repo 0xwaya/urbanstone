@@ -11,6 +11,8 @@ vi.mock('next/image', () => ({
 }));
 
 describe('Home page', () => {
+    const supplierNames = ['Avani', 'Citi Quartz', 'Daltile Stone Center', 'MSI Surfaces', 'Quartz America'];
+
     beforeAll(() => {
         Object.defineProperty(window, 'matchMedia', {
             writable: true,
@@ -36,6 +38,12 @@ describe('Home page', () => {
         expect(screen.getByRole('button', { name: /send estimate request/i })).toBeInTheDocument();
         expect(screen.getByRole('button', { name: /switch to light mode/i })).toBeInTheDocument();
         expect(screen.getAllByRole('button', { name: /curated slabs/i })).toHaveLength(5);
+        expect(
+            screen
+                .getAllByRole('heading', { level: 3 })
+                .map((heading) => heading.textContent)
+                .filter((heading) => supplierNames.includes(heading))
+        ).toEqual(supplierNames);
         expect(screen.queryByText(/calacatta laza/i)).not.toBeInTheDocument();
     });
 });
