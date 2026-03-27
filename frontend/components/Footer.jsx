@@ -1,6 +1,6 @@
-const INSTAGRAM_FALLBACK = 'https://www.instagram.com/';
-const FACEBOOK_FALLBACK = 'https://www.facebook.com/';
-const TIKTOK_FALLBACK = 'https://www.tiktok.com/';
+const INSTAGRAM_FALLBACK = 'https://www.instagram.com/amazongranite';
+const FACEBOOK_FALLBACK = 'https://www.facebook.com/amazongranitellc/';
+const TIKTOK_FALLBACK = 'https://www.tiktok.com/@urbanstoneco';
 const WAYALABS_FALLBACK = 'https://wayalabs.com';
 
 function SocialIcon({ children, href, label }) {
@@ -21,10 +21,10 @@ function SocialIcon({ children, href, label }) {
 
 export default function Footer() {
     const currentYear = new Date().getFullYear();
-    const instagramUrl = process.env.NEXT_PUBLIC_INSTAGRAM_URL || INSTAGRAM_FALLBACK;
-    const facebookUrl = process.env.NEXT_PUBLIC_FACEBOOK_URL || FACEBOOK_FALLBACK;
-    const tiktokUrl = process.env.NEXT_PUBLIC_TIKTOK_URL || TIKTOK_FALLBACK;
-    const wayaLabsUrl = process.env.NEXT_PUBLIC_WAYALABS_URL || WAYALABS_FALLBACK;
+    const instagramUrl = (process.env.NEXT_PUBLIC_INSTAGRAM_URL || INSTAGRAM_FALLBACK).trim();
+    const facebookUrl = (process.env.NEXT_PUBLIC_FACEBOOK_URL || FACEBOOK_FALLBACK).trim();
+    const tiktokUrl = (process.env.NEXT_PUBLIC_TIKTOK_URL || TIKTOK_FALLBACK).trim();
+    const wayaLabsUrl = (process.env.NEXT_PUBLIC_WAYALABS_URL || WAYALABS_FALLBACK).trim();
 
     return (
         <footer className="mt-14 border-t border-border/80 pb-8 pt-8 sm:mt-16 sm:pt-10">

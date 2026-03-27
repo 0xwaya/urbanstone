@@ -66,7 +66,7 @@ export default function SupplierHero({
             <a className="text-accent" href={supplier.portal} target="_blank" rel="noreferrer">
               Visit Supplier Portal
             </a>
-            {supplier.gallery && (
+            {supplier.gallery && supplier.name !== 'Avani' && (
               <a className="text-accent" href={supplier.gallery} target="_blank" rel="noreferrer">
                 View Gallery
               </a>
@@ -74,11 +74,11 @@ export default function SupplierHero({
             {onToggleGallery && (
               <button
                 type="button"
-                className="font-semibold text-accent"
+                className="inline-flex items-center justify-center rounded-full bg-accent px-4 py-2 text-sm font-semibold text-white shadow-[0_14px_32px_rgba(54,105,187,0.28)] transition hover:-translate-y-0.5 hover:bg-accentDark hover:shadow-[0_18px_36px_rgba(54,105,187,0.34)] disabled:cursor-not-allowed disabled:opacity-70"
                 onClick={onToggleGallery}
                 disabled={isLoadingGallery}
               >
-                {showGallery ? 'Hide slab gallery' : isLoadingGallery ? 'Loading slabs...' : `Load ${supplier.featuredCount || 'featured'} slabs`}
+                {showGallery ? 'Hide Curated Slabs' : isLoadingGallery ? 'Loading curated slabs...' : 'Curated Slabs'}
               </button>
             )}
           </div>
@@ -129,7 +129,7 @@ export default function SupplierHero({
       ) : null}
       {!showGallery ? (
         <div className="mt-8 rounded-xl border border-border bg-panel px-4 py-3 text-sm text-muted">
-          Curated slab picks stay hidden until you load them to keep the homepage fast.
+          Curated slab selections stay hidden until you load them to keep the homepage fast.
         </div>
       ) : null}
       {showGallery && isLoadingGallery ? (

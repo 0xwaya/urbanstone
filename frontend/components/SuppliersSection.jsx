@@ -47,6 +47,7 @@ export default function SuppliersSection() {
         ...supplier,
         tiers: supplier.tiers.map((tier) => ({
           ...tier,
+          name: 'Curated Slab Selection',
           range: 'Top 3',
           slabs: tier.slabs.slice(0, 3),
         })),

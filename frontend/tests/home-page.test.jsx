@@ -35,7 +35,7 @@ describe('Home page', () => {
         expect(screen.getByRole('heading', { name: /start with a fast estimate/i })).toBeInTheDocument();
         expect(screen.getByRole('button', { name: /send estimate request/i })).toBeInTheDocument();
         expect(screen.getByRole('button', { name: /switch to light mode/i })).toBeInTheDocument();
-        expect(screen.getAllByRole('button', { name: /load 3 slabs/i })).toHaveLength(5);
+        expect(screen.getAllByRole('button', { name: /curated slabs/i })).toHaveLength(5);
         expect(screen.queryByText(/calacatta laza/i)).not.toBeInTheDocument();
     });
 });

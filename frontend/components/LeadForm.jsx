@@ -166,11 +166,19 @@ export default function LeadForm() {
             <div id="contact" className="mt-6 rounded-2xl border border-border bg-surface/75 p-4 text-sm text-muted">
                 <div className="font-semibold text-text">Need a direct response?</div>
                 <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-                    <a className="inline-flex w-full items-center justify-center rounded-full border border-border px-3 py-2 font-semibold text-text transition hover:border-accent sm:w-auto" href={`tel:${toTelHref(companyPhone)}`}>
-                        Call {companyPhone}
+                    <a
+                        className="inline-flex w-full items-center justify-center rounded-full bg-accent px-4 py-3 font-semibold text-white shadow-[0_16px_40px_rgba(61,110,196,0.18)] transition hover:bg-accentDark sm:w-auto sm:min-w-[11rem]"
+                        href={`tel:${toTelHref(companyPhone)}`}
+                        aria-label={`Call Amazon Granite at ${companyPhone}`}
+                    >
+                        Call
                     </a>
-                    <a className="inline-flex w-full items-center justify-center rounded-full border border-border px-3 py-2 font-semibold text-text transition hover:border-accent sm:w-auto" href={`mailto:${companyEmail}`}>
-                        Email {companyEmail}
+                    <a
+                        className="inline-flex w-full items-center justify-center rounded-full border border-border bg-panel/80 px-4 py-3 font-semibold text-text transition hover:border-accent hover:text-accent sm:w-auto sm:min-w-[11rem]"
+                        href={`mailto:${companyEmail}`}
+                        aria-label={`Email Amazon Granite at ${companyEmail}`}
+                    >
+                        Email
                     </a>
                 </div>
             </div>

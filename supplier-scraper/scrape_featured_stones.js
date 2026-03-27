@@ -80,9 +80,11 @@ async function run() {
       portal: supplier.portal,
       logo: supplier.logo,
       note: supplier.note,
+      heroImage: supplier.heroImage,
+      heroBackground: supplier.heroBackground,
       tiers: [
         {
-          name: 'Featured Best Sellers',
+          name: 'Curated Slab Selection',
           range: 'Top 4–5',
           slabs
         }

@@ -4,11 +4,11 @@
     "portal": "https://www.msisurfaces.com/",
     "logo": "/materials/msi/msi_logo.png",
     "note": "Top-selling quartz and natural stone collections with consistent availability.",
-    "heroImage": "/materials/msi/Ivori Taj_3cm_quartz.png",
+    "heroImage": "/materials/msi/msi_hero.png",
     "heroBackground": "#efe6d7",
     "tiers": [
       {
-        "name": "Featured Best Sellers",
+        "name": "Curated Slab Selection",
         "range": "Top 3",
         "slabs": [
           {
@@ -38,11 +38,11 @@
     "portal": "https://www.daltile.com/",
     "logo": "/materials/daltile/daltile-logo-png.png",
     "note": "Natural stone and slab center with popular neutral palettes.",
-    "heroImage": "/materials/daltile/daltile-hero.jpg",
+    "heroImage": "/materials/daltile/daltile_hero.jpg",
     "heroBackground": "#0f1726",
     "tiers": [
       {
-        "name": "Featured Best Sellers",
+        "name": "Curated Slab Selection",
         "range": "Top 3",
         "slabs": [
           {
@@ -72,11 +72,11 @@
     "portal": "https://myquartzamerica.com/",
     "logo": "/materials/quartamerica/qa_logo.png",
     "note": "Premium quartz slabs with modern and classic palettes.",
-    "heroImage": "/materials/quartamerica/Calacatta Rio_3m_quartz.png",
+    "heroImage": "/materials/quartamerica/quartzamerica_hero.png",
     "heroBackground": "#f3f1f5",
     "tiers": [
       {
-        "name": "Featured Best Sellers",
+        "name": "Curated Slab Selection",
         "range": "Top 3",
         "slabs": [
           {
@@ -106,12 +106,11 @@
     "portal": "https://www.avanimarble.com/",
     "logo": "/materials/avani/avani.png",
     "note": "Granite, marble, quartzite sourced from global quarries.",
-    "gallery": "https://avanigranites.com/gallery/",
-    "heroImage": "/materials/avani/Avani-hero image.webp",
+    "heroImage": "/materials/avani/Avani_hero.webp",
     "heroBackground": "#F2F2F0",
     "tiers": [
       {
-        "name": "Featured Best Sellers",
+        "name": "Curated Slab Selection",
         "range": "Top 5",
         "slabs": [
           {
@@ -153,11 +152,11 @@
     "portal": "https://www.citiquartz.com/",
     "logo": "/materials/citiquartz/citiquartz-logo-small.jpg",
     "note": "Engineered quartz with bold and classic options.",
-    "heroImage": "/materials/citiquartz/PT34_TajMahal_3cm_Quartz.jpg",
+    "heroImage": "/materials/citiquartz/citiquartz_hero.png",
     "heroBackground": "#f4efe7",
     "tiers": [
       {
-        "name": "Featured Best Sellers",
+        "name": "Curated Slab Selection",
         "range": "Top 3",
         "slabs": [
           {

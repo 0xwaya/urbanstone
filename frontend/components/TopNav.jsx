@@ -8,6 +8,7 @@ function toTelHref(value) {
 
 export default function TopNav() {
     const companyPhone = process.env.NEXT_PUBLIC_COMPANY_PHONE || '(513) 307-5840';
+    const companyEmail = process.env.NEXT_PUBLIC_LEAD_EMAIL || 'sales@urbanstone.co';
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     return (
@@ -72,9 +73,26 @@ export default function TopNav() {
                             <a className="rounded-xl px-3 py-2 transition hover:bg-surface/80 hover:text-accent" href="#contact" onClick={() => setIsMenuOpen(false)}>
                                 Contact
                             </a>
-                            <a className="rounded-xl px-3 py-2 transition hover:bg-surface/80 hover:text-accent" href={`tel:${toTelHref(companyPhone)}`}>
-                                {companyPhone}
-                            </a>
+                        </div>
+
+                        <div className="mt-4 rounded-[1.75rem] border border-border bg-surface/80 p-4 shadow-soft">
+                            <div className="text-sm font-medium text-text">Contact</div>
+                            <div className="mt-3 grid grid-cols-1 gap-3">
+                                <a
+                                    className="inline-flex items-center justify-center rounded-full bg-accent px-4 py-3 text-base font-semibold text-white shadow-[0_16px_40px_rgba(61,110,196,0.24)] transition hover:bg-accentDark"
+                                    href={`tel:${toTelHref(companyPhone)}`}
+                                    aria-label={`Call Amazon Granite at ${companyPhone}`}
+                                >
+                                    Call
+                                </a>
+                                <a
+                                    className="inline-flex items-center justify-center rounded-full border border-border bg-panel/80 px-4 py-3 text-base font-semibold text-text transition hover:border-accent hover:text-accent"
+                                    href={`mailto:${companyEmail}`}
+                                    aria-label={`Email Amazon Granite at ${companyEmail}`}
+                                >
+                                    Email
+                                </a>
+                            </div>
                         </div>
                         <div className="mt-3 flex justify-start">
                             <ThemeToggle />

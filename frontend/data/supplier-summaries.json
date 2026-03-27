@@ -5,7 +5,7 @@
     "logo": "/materials/msi/msi_logo.png",
     "note": "Top-selling quartz and natural stone collections with consistent availability.",
     "featuredCount": 3,
-    "heroImage": "/materials/msi/Ivori Taj_3cm_quartz.png",
+    "heroImage": "/materials/msi/msi_hero.png",
     "heroBackground": "#efe6d7",
     "address": "8556 Trade Center Drive, Suite 300, West Chester, OH 45069",
     "phone": "(513) 712-5300",
@@ -27,7 +27,7 @@
       "Sat 9:00 AM - 1:00 PM",
       "Sun Closed"
     ],
-    "heroImage": "/materials/daltile/daltile-hero.jpg",
+    "heroImage": "/materials/daltile/daltile_hero.jpg",
     "heroBackground": "#0f1726"
   },
   {
@@ -36,7 +36,7 @@
     "logo": "/materials/quartamerica/qa_logo.png",
     "note": "Premium quartz slabs with modern and classic palettes.",
     "featuredCount": 3,
-    "heroImage": "/materials/quartamerica/Calacatta Rio_3m_quartz.png",
+    "heroImage": "/materials/quartamerica/quartzamerica_hero.png",
     "heroBackground": "#f3f1f5",
     "address": "9230 Seward Road, Fairfield, OH 45014",
     "phone": "+1 513 330 5152",
@@ -56,8 +56,7 @@
       "sat": "9:00 AM – 1:00 PM"
     },
     "address": "4051 Fondorf Dr Unit 3, Columbus, OH 43228",
-    "gallery": "https://avanigranites.com/gallery/",
-    "heroImage": "/materials/avani/Avani-hero image.webp",
+    "heroImage": "/materials/avani/Avani_hero.webp",
     "heroBackground": "#F2F2F0"
   },
   {
@@ -66,7 +65,7 @@
     "logo": "/materials/citiquartz/citiquartz-logo-small.jpg",
     "note": "Engineered quartz with bold and classic options.",
     "featuredCount": 3,
-    "heroImage": "/materials/citiquartz/PT34_TajMahal_3cm_Quartz.jpg",
+    "heroImage": "/materials/citiquartz/citiquartz_hero.png",
     "heroBackground": "#f4efe7",
     "address": "3217 Profit Dr, Fairfield, OH 45014",
     "phone": "(513) 330-6200",

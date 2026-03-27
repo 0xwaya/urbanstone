@@ -28,35 +28,38 @@ export default function TierGrid({ tiers }) {
   return (
     <div className="space-y-6">
       {tiers.map((tier) => (
-        <div key={tier.name} className="bg-panel border border-border rounded-xl p-5">
-          <div className="flex items-center justify-between mb-4">
-            <div className="text-lg font-semibold">{tier.name}</div>
+        <div key={tier.name} className="rounded-2xl border border-border bg-panel p-5 sm:p-6">
+          <div className="mb-5 flex items-center justify-between gap-4">
+            <div className="text-lg font-semibold sm:text-[1.1rem]">{tier.name}</div>
             <div className="text-sm text-muted">{tier.range}</div>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
             {tier.slabs.map((slab) => (
               <button
                 key={slab.name}
                 type="button"
                 onClick={() => setActiveSlab(slab)}
-                className="text-left bg-surface border border-border rounded-lg p-4 hover:border-accent hover:-translate-y-1 hover:shadow-xl transition"
+                className="group flex h-full flex-col rounded-xl border border-border bg-surface p-4 text-left transition hover:-translate-y-1 hover:border-accent hover:shadow-xl"
                 aria-label={`View ${slab.name} material image`}
               >
                 {slab.image ? (
                   <Image
                     src={slab.image}
                     alt={slab.name}
-                    width={320}
-                    height={96}
-                    sizes="(min-width: 1024px) 16vw, (min-width: 640px) 40vw, 100vw"
-                    className="mb-3 h-24 w-full rounded-md object-cover"
+                    width={480}
+                    height={320}
+                    sizes="(min-width: 1280px) 22vw, (min-width: 768px) 40vw, 100vw"
+                    className="mb-4 aspect-[4/3] w-full rounded-xl object-cover"
                     loading="lazy"
                   />
                 ) : (
-                  <div className="h-24 rounded-md bg-gradient-to-br from-panel to-bg border border-border mb-3" />
+                  <div className="mb-4 aspect-[4/3] rounded-xl border border-border bg-gradient-to-br from-panel to-bg" />
                 )}
-                <div className="font-semibold">{slab.name}</div>
-                <div className="text-sm text-muted">{slab.notes}</div>
+                <div className="text-[0.78rem] font-semibold uppercase tracking-[0.22em] text-muted transition group-hover:text-accent">
+                  Curated slab
+                </div>
+                <div className="mt-2 text-[1.1rem] font-semibold leading-tight text-text sm:text-[1.2rem]">{slab.name}</div>
+                <div className="mt-2 flex-1 text-sm leading-7 text-muted">{slab.notes}</div>
               </button>
             ))}
           </div>
@@ -65,7 +68,7 @@ export default function TierGrid({ tiers }) {
 
       {activeSlab && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-6" role="dialog" aria-modal="true" onClick={() => setActiveSlab(null)}>
-          <div className="relative w-full max-w-4xl rounded-2xl border border-border bg-surface p-6" onClick={(event) => event.stopPropagation()}>
+          <div className="relative w-full max-w-5xl rounded-2xl border border-border bg-surface p-5 sm:p-6" onClick={(event) => event.stopPropagation()}>
             <button
               type="button"
               onClick={() => setActiveSlab(null)}
@@ -83,7 +86,7 @@ export default function TierGrid({ tiers }) {
                 width={1440}
                 height={960}
                 sizes="100vw"
-                className="w-full max-h-[70vh] object-contain rounded-xl border border-border"
+                className="w-full max-h-[72vh] rounded-xl border border-border object-contain"
                 loading="eager"
               />
             ) : (
