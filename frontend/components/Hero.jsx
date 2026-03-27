@@ -52,6 +52,7 @@ export default function Hero() {
               <span className="h-3 w-6 rounded-sm border border-border" style={{ background: "#0A0A0A" }} />
               <span className="h-3 w-6 rounded-sm border border-border" style={{ background: "#111113" }} />
               <span className="h-3 w-6 rounded-sm border border-border" style={{ background: "#161618" }} />
+              <span className="h-3 w-6 rounded-sm border border-border" style={{ background: "#4A90E2" }} />
               <span className="h-3 w-6 rounded-sm border border-border" style={{ background: "#C9A96E" }} />
               <span className="h-3 w-6 rounded-sm border border-border" style={{ background: "#E2C896" }} />
               <span className="uppercase tracking-[0.2em] text-[10px]">Palette Sample</span>
