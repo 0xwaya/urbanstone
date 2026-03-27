@@ -1,8 +1,5 @@
 import Link from 'next/link';
 
-import { materialPages } from '../data/material-pages';
-import { serviceAreas } from '../data/service-areas';
-
 const INSTAGRAM_FALLBACK = 'https://www.instagram.com/amazongranite';
 const FACEBOOK_FALLBACK = 'https://www.facebook.com/amazongranitellc/';
 const TIKTOK_FALLBACK = 'https://www.tiktok.com/@urbanstoneco';
@@ -30,43 +27,28 @@ export default function Footer() {
     const facebookUrl = (process.env.NEXT_PUBLIC_FACEBOOK_URL || FACEBOOK_FALLBACK).trim();
     const tiktokUrl = (process.env.NEXT_PUBLIC_TIKTOK_URL || TIKTOK_FALLBACK).trim();
     const wayaLabsUrl = (process.env.NEXT_PUBLIC_WAYALABS_URL || WAYALABS_FALLBACK).trim();
-    const footerServiceAreas = serviceAreas.slice(0, 6);
 
     return (
         <footer className="mt-14 border-t border-border/80 pb-8 pt-8 sm:mt-16 sm:pt-10">
             <div className="footer-panel rounded-[2rem] border border-border bg-surface/70 px-5 py-6 shadow-soft backdrop-blur sm:px-6 sm:py-7">
                 <div className="flex flex-col gap-8">
-                    <div className="grid gap-6 rounded-[1.6rem] border border-border bg-panel/60 p-5 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)_minmax(0,1fr)]">
+                    <div className="rounded-[1.6rem] border border-border bg-panel/60 p-5">
                         <div>
-                            <div className="eyebrow">Coverage hub</div>
-                            <div className="mt-2 text-xl font-semibold text-text">Explore city and material pages</div>
+                            <div className="eyebrow">Explore</div>
+                            <div className="mt-2 text-xl font-semibold text-text">Service areas and project questions</div>
                             <p className="mt-3 max-w-[26rem] text-sm leading-7 text-muted">
-                                Use the coverage hub to browse service areas and material pages without crowding the main landing page.
+                                If you want the deeper local pages or a quick FAQ pass, use the links below instead of loading that content into the main landing page.
                             </p>
-                            <Link href="/coverage" className="mt-4 inline-flex font-semibold text-text transition hover:text-accent">
-                                Open coverage hub
-                            </Link>
-                        </div>
-
-                        <div>
-                            <div className="text-xs uppercase tracking-[0.24em] text-muted">Top city pages</div>
-                            <div className="mt-4 grid gap-2 text-sm">
-                                {footerServiceAreas.map((area) => (
-                                    <Link key={area.slug} href={`/service-areas/${area.slug}`} className="font-semibold text-text transition hover:text-accent">
-                                        {area.city}, {area.state}
-                                    </Link>
-                                ))}
-                            </div>
-                        </div>
-
-                        <div>
-                            <div className="text-xs uppercase tracking-[0.24em] text-muted">Material pages</div>
-                            <div className="mt-4 grid gap-2 text-sm">
-                                {materialPages.map((page) => (
-                                    <Link key={page.slug} href={`/materials/${page.slug}`} className="font-semibold text-text transition hover:text-accent">
-                                        {page.headline}
-                                    </Link>
-                                ))}
+                            <div className="mt-4 flex flex-wrap gap-3">
+                                <Link href="/coverage" className="inline-flex items-center justify-center rounded-full border border-border bg-surface/80 px-4 py-2 text-sm font-semibold text-text transition hover:border-accent hover:text-accent">
+                                    Browse service areas
+                                </Link>
+                                <Link href="/#faq" className="inline-flex items-center justify-center rounded-full border border-border bg-surface/80 px-4 py-2 text-sm font-semibold text-text transition hover:border-accent hover:text-accent">
+                                    Read Q&A
+                                </Link>
+                                <Link href="/#quote" className="inline-flex items-center justify-center rounded-full bg-accent px-4 py-2 text-sm font-semibold text-white transition hover:bg-accentDark">
+                                    Request an estimate
+                                </Link>
                             </div>
                         </div>
                     </div>
