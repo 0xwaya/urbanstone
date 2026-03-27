@@ -43,8 +43,12 @@ export default function TopNav() {
 
                     <div className="hidden shrink-0 items-center gap-3 lg:flex">
                         <ThemeToggle />
-                        <a className="rounded-full border border-border px-4 py-2 text-sm font-semibold text-text transition hover:border-accent" href={`tel:${toTelHref(companyPhone)}`}>
-                            {companyPhone}
+                        <a
+                            className="inline-flex items-center justify-center rounded-full bg-accent px-4 py-2 text-sm font-semibold text-white shadow-[0_16px_40px_rgba(61,110,196,0.22)] transition hover:bg-accentDark"
+                            href={`tel:${toTelHref(companyPhone)}`}
+                            aria-label={`Call Amazon Granite at ${companyPhone}`}
+                        >
+                            Call
                         </a>
                     </div>
 
