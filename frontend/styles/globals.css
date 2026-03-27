@@ -228,6 +228,10 @@ a {
   filter: brightness(0.94) contrast(1.05) saturate(0.92);
 }
 
+.supplier-logo-image {
+  padding: 0.2rem;
+}
+
 @media (min-width: 640px) {
   .nav-brand-wrap {
     gap: 0.42rem;
