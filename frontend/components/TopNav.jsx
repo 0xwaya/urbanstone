@@ -11,13 +11,19 @@ export default function TopNav() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     return (
-        <header className="sticky top-0 z-40 -mx-2 border-b border-transparent bg-bg/80 px-2 py-3 backdrop-blur">
+        <header className="sticky top-0 z-40 -mx-2 overflow-x-clip border-b border-transparent bg-bg/80 px-2 py-3 backdrop-blur">
             <nav className="rounded-2xl border border-border bg-surface/85 px-3 py-3 shadow-soft sm:px-4">
                 <div className="flex items-center gap-2 sm:gap-3">
                     <a className="flex min-w-0 flex-1 items-center gap-2.5 sm:gap-3" href="#top" aria-label="Amazon Granite home">
-                        <LogoMark className="h-10 w-10 shrink-0 sm:h-12 sm:w-12" />
+                        <LogoMark className="h-9 w-9 shrink-0 sm:h-12 sm:w-12" />
                         <div className="min-w-0">
-                            <div className="text-[10px] uppercase tracking-[0.22em] text-muted sm:text-xs">Amazon Granite LLC</div>
+                            <div className="nav-brand-wrap">
+                                <div className="nav-brand-wordmark">
+                                    <span className="nav-brand-amazon">Amazon</span>{' '}
+                                    <span className="nav-brand-granite">Granite</span>
+                                </div>
+                                <span className="nav-brand-badge">LLC</span>
+                            </div>
                             <div className="hidden font-display text-xl font-semibold leading-[1.05] sm:text-2xl">Countertops with fast turnaround</div>
                         </div>
                     </a>
@@ -41,10 +47,6 @@ export default function TopNav() {
                         </a>
                     </div>
 
-                    <a className="inline-flex shrink-0 rounded-full bg-accent px-3 py-2 text-xs font-semibold text-white transition hover:bg-accentDark sm:px-4 sm:text-sm" href="#quote">
-                        Get an Estimate
-                    </a>
-
                     <button
                         type="button"
                         className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-border bg-panel/70 text-text transition hover:border-accent hover:text-accent lg:hidden"
@@ -64,8 +66,8 @@ export default function TopNav() {
                             <a className="rounded-xl px-3 py-2 transition hover:bg-surface/80 hover:text-accent" href="#suppliers" onClick={() => setIsMenuOpen(false)}>
                                 Materials
                             </a>
-                            <a className="rounded-xl px-3 py-2 transition hover:bg-surface/80 hover:text-accent" href="#quote" onClick={() => setIsMenuOpen(false)}>
-                                Request Quote
+                            <a className="rounded-xl bg-accent px-3 py-2 font-semibold text-white transition hover:bg-accentDark" href="#quote" onClick={() => setIsMenuOpen(false)}>
+                                Get an Estimate
                             </a>
                             <a className="rounded-xl px-3 py-2 transition hover:bg-surface/80 hover:text-accent" href="#contact" onClick={() => setIsMenuOpen(false)}>
                                 Contact

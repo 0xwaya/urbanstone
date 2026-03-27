@@ -36,12 +36,14 @@ export default function SuppliersSection() {
       const featuredStonesModule = await import('../data/featured-stones.json');
       const suppliers = featuredStonesModule.default || featuredStonesModule;
       const supplier = suppliers.find((entry) => entry.name === supplierName);
+      const summary = supplierSummaries.find((entry) => entry.name === supplierName);
 
       if (!supplier) {
         throw new Error('Supplier catalog not found.');
       }
 
       const slicedSupplier = {
+        ...summary,
         ...supplier,
         tiers: supplier.tiers.map((tier) => ({
           ...tier,
@@ -66,10 +68,10 @@ export default function SuppliersSection() {
 
   return (
     <section id="suppliers" className="py-10">
-      <div className="flex items-end justify-between mb-6">
+      <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <div className="eyebrow">Materials library</div>
-          <h2 className="font-display text-4xl font-semibold">Curated Countertop Materials</h2>
+          <h2 className="font-display text-3xl font-semibold sm:text-4xl">Curated Countertop Materials</h2>
           <p className="text-muted">Load curated supplier slabs on demand to inspect countertop-ready options.</p>
         </div>
         <div className="text-sm text-muted">Hidden by default, loaded on demand</div>

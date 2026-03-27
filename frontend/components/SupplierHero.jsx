@@ -22,6 +22,8 @@ export default function SupplierHero({
     .map((word) => word[0])
     .join('')
     .toUpperCase();
+  const logoShellClassName = 'flex h-12 min-w-[3.5rem] items-center justify-center rounded-xl border border-border/80 bg-panel/75 p-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.55)]';
+  const compactLogoShellClassName = 'flex h-10 min-w-[3rem] items-center justify-center rounded-xl border border-border/80 bg-panel/75 p-2';
 
   return (
     <section className="bg-surface border border-border rounded-2xl p-8 mb-10">
@@ -29,18 +31,20 @@ export default function SupplierHero({
         <div className="lg:col-span-2">
           <div className="flex items-center gap-4">
             {logoVisible ? (
-              <Image
-                src={supplier.logo}
-                alt={`${supplier.name} logo`}
-                width={40}
-                height={40}
-                sizes="40px"
-                className="h-10 w-10 object-contain"
-                loading="lazy"
-                onError={() => setLogoVisible(false)}
-              />
+              <div className={logoShellClassName}>
+                <Image
+                  src={supplier.logo}
+                  alt={`${supplier.name} logo`}
+                  width={56}
+                  height={40}
+                  sizes="56px"
+                  className="h-full w-full object-contain"
+                  loading="lazy"
+                  onError={() => setLogoVisible(false)}
+                />
+              </div>
             ) : (
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-panel text-xs font-semibold text-muted">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-panel text-xs font-semibold text-muted">
                 {initials}
               </div>
             )}
@@ -90,24 +94,26 @@ export default function SupplierHero({
               width={512}
               height={256}
               sizes="(min-width: 1024px) 33vw, 100vw"
-              className="h-full w-full object-contain object-center"
+              className="h-full w-full object-cover object-center"
               loading="lazy"
             />
           ) : (
             <div className="flex items-center gap-3 rounded-full border border-border bg-panel/80 px-4 py-3">
               {logoVisible ? (
-                <Image
-                  src={supplier.logo}
-                  alt={`${supplier.name} logo`}
-                  width={32}
-                  height={32}
-                  sizes="32px"
-                  className="h-8 w-8 object-contain"
-                  loading="lazy"
-                  onError={() => setLogoVisible(false)}
-                />
+                <div className={compactLogoShellClassName}>
+                  <Image
+                    src={supplier.logo}
+                    alt={`${supplier.name} logo`}
+                    width={48}
+                    height={32}
+                    sizes="48px"
+                    className="h-full w-full object-contain"
+                    loading="lazy"
+                    onError={() => setLogoVisible(false)}
+                  />
+                </div>
               ) : (
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-surface text-[10px] font-semibold text-muted">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-surface text-[10px] font-semibold text-muted">
                   {initials}
                 </div>
               )}

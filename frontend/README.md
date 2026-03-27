@@ -2,6 +2,8 @@
 
 Standalone Next.js pages application for the Amazon Granite marketing site.
 
+This frontend includes the current live mobile layout pass for navigation, hero spacing, supplier browsing, and quote capture.
+
 ## Requirements
 
 - Node.js 20.11 or newer
@@ -28,6 +30,10 @@ If `LEAD_WEBHOOK_URL` is not set, the form stays visible but the API intentional
 - `npm run test`
 - `npm run build`
 
+For a production-like local verification pass, run:
+
+- `HOSTNAME=127.0.0.1 PORT=3000 npm run start`
+
 ## Deployment
 
 ### Container
@@ -45,8 +51,19 @@ The app builds with Next.js standalone output enabled.
 
 ```bash
 npm run build
-npm run start
+HOSTNAME=127.0.0.1 PORT=3000 npm run start
 ```
+
+The `start` script runs `node .next/standalone/server.js`.
+
+The production server requires `sharp` to be installed because the site uses Next image optimization in standalone mode.
+
+Recommended release sequence:
+
+1. install dependencies in `frontend`
+2. set `LEAD_WEBHOOK_URL` and any public contact environment values
+3. run lint, test, and build
+4. start the production server from `frontend` or deploy the `frontend` directory through your host
 
 ## Runtime Hardening
 

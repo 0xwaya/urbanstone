@@ -9,7 +9,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
+    "start": "node .next/standalone/server.js",
     "lint": "next lint",
     "test": "vitest run",
     "test:watch": "vitest"
@@ -17,7 +17,8 @@
   "dependencies": {
     "next": "14.2.33",
     "react": "18.3.1",
-    "react-dom": "18.3.1"
+    "react-dom": "18.3.1",
+    "sharp": "^0.34.5"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "6.6.3",

@@ -19,7 +19,7 @@ export default function LeadForm() {
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const companyPhone = process.env.NEXT_PUBLIC_COMPANY_PHONE || '(513) 307-5840';
-    const companyEmail = process.env.NEXT_PUBLIC_LEAD_EMAIL || 'sales@amazongranite.com';
+    const companyEmail = process.env.NEXT_PUBLIC_LEAD_EMAIL || 'sales@urbanstone.co';
 
     const handleChange = (event) => {
         const { name, value } = event.target;
@@ -77,10 +77,10 @@ export default function LeadForm() {
     };
 
     return (
-        <section id="quote" className="sticky top-24 rounded-3xl border border-border bg-panel p-6 shadow-soft">
+        <section id="quote" className="rounded-3xl border border-border bg-panel p-5 shadow-soft sm:p-6 lg:sticky lg:top-24">
             <div className="eyebrow">Request a quote</div>
-            <h2 className="font-display text-4xl font-semibold">Start with a fast estimate</h2>
-            <p className="mt-2 text-sm text-muted">
+            <h2 className="font-display text-3xl font-semibold sm:text-4xl">Start with a fast estimate</h2>
+            <p className="mt-2 text-sm leading-6 text-muted">
                 Send project details and we will use the configured lead destination for follow-up. Direct contact options stay visible as a fallback.
             </p>
 
@@ -165,11 +165,11 @@ export default function LeadForm() {
 
             <div id="contact" className="mt-6 rounded-2xl border border-border bg-surface/75 p-4 text-sm text-muted">
                 <div className="font-semibold text-text">Need a direct response?</div>
-                <div className="mt-2 flex flex-wrap gap-3">
-                    <a className="inline-flex rounded-full border border-border px-3 py-2 font-semibold text-text transition hover:border-accent" href={`tel:${toTelHref(companyPhone)}`}>
+                <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                    <a className="inline-flex w-full items-center justify-center rounded-full border border-border px-3 py-2 font-semibold text-text transition hover:border-accent sm:w-auto" href={`tel:${toTelHref(companyPhone)}`}>
                         Call {companyPhone}
                     </a>
-                    <a className="inline-flex rounded-full border border-border px-3 py-2 font-semibold text-text transition hover:border-accent" href={`mailto:${companyEmail}`}>
+                    <a className="inline-flex w-full items-center justify-center rounded-full border border-border px-3 py-2 font-semibold text-text transition hover:border-accent sm:w-auto" href={`mailto:${companyEmail}`}>
                         Email {companyEmail}
                     </a>
                 </div>

@@ -2,42 +2,32 @@
   {
     "name": "MSI Surfaces",
     "portal": "https://www.msisurfaces.com/",
-    "logo": "/logos/msi_logo.png",
+    "logo": "/materials/msi/msi_logo.png",
     "note": "Top-selling quartz and natural stone collections with consistent availability.",
+    "heroImage": "/materials/msi/Ivori Taj_3cm_quartz.png",
+    "heroBackground": "#efe6d7",
     "tiers": [
       {
         "name": "Featured Best Sellers",
-        "range": "Top 4\u20135",
+        "range": "Top 3",
         "slabs": [
           {
             "name": "Calacatta Laza",
-            "notes": "High-demand marble look quartz",
-            "image": "https://cdn.msisurfaces.com/images/quartz-countertops/q.jpg",
-            "imageLarge": "https://cdn.msisurfaces.com/images/quartz-countertops/q.jpg"
+            "notes": "3cm quartz with bright calacatta veining",
+            "image": "/materials/msi/Calacatta Laza_3cm_quartz.png",
+            "imageLarge": "/materials/msi/Calacatta Laza_3cm_quartz.png"
           },
           {
-            "name": "Calacatta Miraggio Gold",
-            "notes": "Premium veining, luxury kitchens",
-            "image": "https://cdn.msisurfaces.com/images/quartz-countertops/q.jpg",
-            "imageLarge": "https://cdn.msisurfaces.com/images/quartz-countertops/q.jpg"
+            "name": "Calacatta Miraggio",
+            "notes": "3cm quartz with soft warm movement",
+            "image": "/materials/msi/Calacatta Miraggio_3cm_quartz.png",
+            "imageLarge": "/materials/msi/Calacatta Miraggio_3cm_quartz.png"
           },
           {
-            "name": "Carrara Morro",
-            "notes": "Classic bright white quartz",
-            "image": "https://cdn.msisurfaces.com/images/backsplash-tile/backsplash.jpg",
-            "imageLarge": "https://cdn.msisurfaces.com/images/backsplash-tile/backsplash.jpg"
-          },
-          {
-            "name": "Fossil Gray",
-            "notes": "Warm gray with light movement",
-            "image": "https://cdn.msisurfaces.com/images/stile-slab/stile.jpg",
-            "imageLarge": "https://cdn.msisurfaces.com/images/stile-slab/stile.jpg"
-          },
-          {
-            "name": "Carrara Lumos",
-            "notes": "Soft veining, high turnover",
-            "image": "https://cdn.msisurfaces.com/images/stacked-stone/rockmount.jpg",
-            "imageLarge": "https://cdn.msisurfaces.com/images/stacked-stone/rockmount.jpg"
+            "name": "Ivori Taj",
+            "notes": "3cm quartz with warm ivory movement",
+            "image": "/materials/msi/Ivori Taj_3cm_quartz.png",
+            "imageLarge": "/materials/msi/Ivori Taj_3cm_quartz.png"
           }
         ]
       }
@@ -46,42 +36,32 @@
   {
     "name": "Daltile Stone Center",
     "portal": "https://www.daltile.com/",
-    "logo": "/logos/daltile-logo-png.png",
+    "logo": "/materials/daltile/daltile-logo-png.png",
     "note": "Natural stone and slab center with popular neutral palettes.",
+    "heroImage": "/materials/daltile/daltile-hero.jpg",
+    "heroBackground": "#0f1726",
     "tiers": [
       {
         "name": "Featured Best Sellers",
-        "range": "Top 4\u20135",
+        "range": "Top 3",
         "slabs": [
           {
-            "name": "Carrara Mist",
-            "notes": "Bright marble look, high demand",
-            "image": "https://www.daltile.com/-/media/project/daltilecom/shared/surfaces/stone/slab/carrara.jpg",
-            "imageLarge": "https://www.daltile.com/-/media/project/daltilecom/shared/surfaces/stone/slab/carrara.jpg"
+            "name": "Absolute Black",
+            "notes": "3cm granite with a clean dark finish",
+            "image": "/materials/daltile/AbsoluteBlack_3cm_Granite.jpeg",
+            "imageLarge": "/materials/daltile/AbsoluteBlack_3cm_Granite.jpeg"
           },
           {
-            "name": "Cloud Grey",
-            "notes": "Light veining, clean finish",
-            "image": "https://www.daltile.com/-/media/project/daltilecom/shared/surfaces/stone/slab/gray.jpg",
-            "imageLarge": "https://www.daltile.com/-/media/project/daltilecom/shared/surfaces/stone/slab/gray.jpg"
+            "name": "Fantasy Brown",
+            "notes": "3cm marble with flowing brown movement",
+            "image": "/materials/daltile/FantasyBrown_3cm_Marble.jpeg",
+            "imageLarge": "/materials/daltile/FantasyBrown_3cm_Marble.jpeg"
           },
           {
-            "name": "Ivory Drift",
-            "notes": "Warm neutral, steady seller",
-            "image": "https://www.daltile.com/-/media/project/daltilecom/shared/surfaces/stone/slab/ivory.jpg",
-            "imageLarge": "https://www.daltile.com/-/media/project/daltilecom/shared/surfaces/stone/slab/ivory.jpg"
-          },
-          {
-            "name": "Pearl White",
-            "notes": "Bright, minimal pattern",
-            "image": "https://www.daltile.com/-/media/project/daltilecom/shared/surfaces/stone/slab/white.jpg",
-            "imageLarge": "https://www.daltile.com/-/media/project/daltilecom/shared/surfaces/stone/slab/white.jpg"
-          },
-          {
-            "name": "Arctic Frost",
-            "notes": "Clean white, fast turnover",
-            "image": "https://www.daltile.com/-/media/project/daltilecom/shared/surfaces/stone/slab/white.jpg",
-            "imageLarge": "https://www.daltile.com/-/media/project/daltilecom/shared/surfaces/stone/slab/white.jpg"
+            "name": "Kodiak",
+            "notes": "3cm quartz with bold contrast",
+            "image": "/materials/daltile/Kodiak_3cm_Quartz.jpeg",
+            "imageLarge": "/materials/daltile/Kodiak_3cm_Quartz.jpeg"
           }
         ]
       }
@@ -90,42 +70,32 @@
   {
     "name": "Quartz America",
     "portal": "https://myquartzamerica.com/",
-    "logo": "/logos/quartz america.png",
+    "logo": "/materials/quartamerica/qa_logo.png",
     "note": "Premium quartz slabs with modern and classic palettes.",
+    "heroImage": "/materials/quartamerica/Calacatta Rio_3m_quartz.png",
+    "heroBackground": "#f3f1f5",
     "tiers": [
       {
         "name": "Featured Best Sellers",
-        "range": "Top 4\u20135",
+        "range": "Top 3",
         "slabs": [
           {
-            "name": "Pure White",
-            "notes": "Clean, bright base",
-            "image": "https://myquartzamerica.com/wp-content/uploads/2024/12/ORCA-4.jpg",
-            "imageLarge": "https://myquartzamerica.com/wp-content/uploads/2024/12/ORCA-4.jpg"
+            "name": "Calacatta Rio",
+            "notes": "3cm quartz with strong calacatta movement",
+            "image": "/materials/quartamerica/Calacatta Rio_3m_quartz.png",
+            "imageLarge": "/materials/quartamerica/Calacatta Rio_3m_quartz.png"
           },
           {
-            "name": "Frost Grey",
-            "notes": "Soft grey movement",
-            "image": "https://myquartzamerica.com/wp-content/uploads/2024/12/ORCA-3.jpg",
-            "imageLarge": "https://myquartzamerica.com/wp-content/uploads/2024/12/ORCA-3.jpg"
+            "name": "Calacatta Nile",
+            "notes": "3cm quartz with warm calacatta veining",
+            "image": "/materials/quartamerica/Calacatta_nile_3cm_quartz.png",
+            "imageLarge": "/materials/quartamerica/Calacatta_nile_3cm_quartz.png"
           },
           {
-            "name": "Nimbus",
-            "notes": "Cloudy veining",
-            "image": "https://myquartzamerica.com/wp-content/uploads/2024/12/ORCA-2.jpg",
-            "imageLarge": "https://myquartzamerica.com/wp-content/uploads/2024/12/ORCA-2.jpg"
-          },
-          {
-            "name": "Snowfall",
-            "notes": "Minimal pattern",
-            "image": "https://myquartzamerica.com/wp-content/uploads/2024/11/NERO-MYSTIC-05.jpg",
-            "imageLarge": "https://myquartzamerica.com/wp-content/uploads/2024/11/NERO-MYSTIC-05.jpg"
-          },
-          {
-            "name": "Glacier",
-            "notes": "Top seller, crisp white",
-            "image": "https://myquartzamerica.com/wp-content/uploads/2024/12/ORCA-4.jpg",
-            "imageLarge": "https://myquartzamerica.com/wp-content/uploads/2024/12/ORCA-4.jpg"
+            "name": "Carrara Classique",
+            "notes": "3cm quartz with classic carrara styling",
+            "image": "/materials/quartamerica/Carrara Classique_3cm_quartz.png",
+            "imageLarge": "/materials/quartamerica/Carrara Classique_3cm_quartz.png"
           }
         ]
       }
@@ -134,12 +104,15 @@
   {
     "name": "Avani",
     "portal": "https://www.avanimarble.com/",
-    "logo": "/logos/avani.png",
+    "logo": "/materials/avani/avani.png",
     "note": "Granite, marble, quartzite sourced from global quarries.",
+    "gallery": "https://avanigranites.com/gallery/",
+    "heroImage": "/materials/avani/Avani-hero image.webp",
+    "heroBackground": "#F2F2F0",
     "tiers": [
       {
         "name": "Featured Best Sellers",
-        "range": "Top 4\u20135",
+        "range": "Top 5",
         "slabs": [
           {
             "name": "Crystal Cream (1007)",
@@ -173,56 +146,37 @@
           }
         ]
       }
-    ],
-    "phone": "(614) 372-5508",
-    "hours": {
-      "mon_fri": "8:00 AM \u2013 5:00 PM",
-      "sat": "9:00 AM \u2013 1:00 PM"
-    },
-    "address": "4051 Fondorf Dr Unit 3, Columbus, OH 43228",
-    "gallery": "https://avanigranites.com/gallery/",
-    "heroImage": "/materials/avani/Avani-hero image.webp",
-    "heroBackground": "#F2F2F0"
+    ]
   },
   {
     "name": "Citi Quartz",
     "portal": "https://www.citiquartz.com/",
-    "logo": "/logos/citi-quartz logo.png",
+    "logo": "/materials/citiquartz/citiquartz-logo-small.jpg",
     "note": "Engineered quartz with bold and classic options.",
+    "heroImage": "/materials/citiquartz/PT34_TajMahal_3cm_Quartz.jpg",
+    "heroBackground": "#f4efe7",
     "tiers": [
       {
         "name": "Featured Best Sellers",
-        "range": "Top 4\u20135",
+        "range": "Top 3",
         "slabs": [
           {
-            "name": "Calacatta Rio",
-            "notes": "Bold marble veining",
-            "image": "https://www.citiquartz.com/wp-content/uploads/2026/01/7066-scaled.jpg",
-            "imageLarge": "https://www.citiquartz.com/wp-content/uploads/2026/01/7066-scaled.jpg"
+            "name": "8023 Calacatta Royale",
+            "notes": "3cm quartz with dramatic calacatta veining",
+            "image": "/materials/citiquartz/8023_Calacatta royale_3cm_quartz.jpg",
+            "imageLarge": "/materials/citiquartz/8023_Calacatta royale_3cm_quartz.jpg"
           },
           {
-            "name": "Glacier White",
-            "notes": "Pure white base",
-            "image": "https://www.citiquartz.com/wp-content/uploads/2026/01/CT9707-1-scaled.jpg",
-            "imageLarge": "https://www.citiquartz.com/wp-content/uploads/2026/01/CT9707-1-scaled.jpg"
+            "name": "9023 Calacatta Nova",
+            "notes": "3cm quartz with soft grey veining",
+            "image": "/materials/citiquartz/9023_Calacatta nova_3cm_quartz.jpg",
+            "imageLarge": "/materials/citiquartz/9023_Calacatta nova_3cm_quartz.jpg"
           },
           {
-            "name": "Stella Grey",
-            "notes": "Subtle modern grey",
-            "image": "https://www.citiquartz.com/wp-content/uploads/2026/01/PT12-scaled.jpg",
-            "imageLarge": "https://www.citiquartz.com/wp-content/uploads/2026/01/PT12-scaled.jpg"
-          },
-          {
-            "name": "Latte Beige",
-            "notes": "Warm neutral stone",
-            "image": "https://www.citiquartz.com/wp-content/uploads/2026/01/PT33-scaled.jpg",
-            "imageLarge": "https://www.citiquartz.com/wp-content/uploads/2026/01/PT33-scaled.jpg"
-          },
-          {
-            "name": "Calacatta Verona",
-            "notes": "High-turnover calacatta",
-            "image": "https://www.citiquartz.com/wp-content/uploads/2026/01/7066-scaled.jpg",
-            "imageLarge": "https://www.citiquartz.com/wp-content/uploads/2026/01/7066-scaled.jpg"
+            "name": "PT34 Taj Mahal",
+            "notes": "3cm quartz with warm natural-stone character",
+            "image": "/materials/citiquartz/PT34_TajMahal_3cm_Quartz.jpg",
+            "imageLarge": "/materials/citiquartz/PT34_TajMahal_3cm_Quartz.jpg"
           }
         ]
       }

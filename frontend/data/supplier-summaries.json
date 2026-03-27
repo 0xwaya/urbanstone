@@ -2,9 +2,11 @@
   {
     "name": "MSI Surfaces",
     "portal": "https://www.msisurfaces.com/",
-    "logo": "/logos/msi_logo.png",
+    "logo": "/materials/msi/msi_logo.png",
     "note": "Top-selling quartz and natural stone collections with consistent availability.",
     "featuredCount": 3,
+    "heroImage": "/materials/msi/Ivori Taj_3cm_quartz.png",
+    "heroBackground": "#efe6d7",
     "address": "8556 Trade Center Drive, Suite 300, West Chester, OH 45069",
     "phone": "(513) 712-5300",
     "hoursLines": [
@@ -15,7 +17,7 @@
   {
     "name": "Daltile Stone Center",
     "portal": "https://www.daltile.com/",
-    "logo": "/logos/daltile-logo-png.png",
+    "logo": "/materials/daltile/daltile-logo-png.png",
     "note": "Natural stone and slab center with popular neutral palettes.",
     "featuredCount": 3,
     "address": "4650 Lake Forest Dr, Ste 540, Cincinnati, OH 45242",
@@ -25,15 +27,17 @@
       "Sat 9:00 AM - 1:00 PM",
       "Sun Closed"
     ],
-    "heroImage": "https://www.daltile.com/-/media/project/daltilecom/shared/surfaces/stone/slab/carrara.jpg",
+    "heroImage": "/materials/daltile/daltile-hero.jpg",
     "heroBackground": "#0f1726"
   },
   {
     "name": "Quartz America",
     "portal": "https://myquartzamerica.com/",
-    "logo": "/logos/quartz america.png",
+    "logo": "/materials/quartamerica/qa_logo.png",
     "note": "Premium quartz slabs with modern and classic palettes.",
     "featuredCount": 3,
+    "heroImage": "/materials/quartamerica/Calacatta Rio_3m_quartz.png",
+    "heroBackground": "#f3f1f5",
     "address": "9230 Seward Road, Fairfield, OH 45014",
     "phone": "+1 513 330 5152",
     "hoursLines": [
@@ -43,7 +47,7 @@
   {
     "name": "Avani",
     "portal": "https://www.avanimarble.com/",
-    "logo": "/logos/avani.png",
+    "logo": "/materials/avani/avani.png",
     "note": "Granite, marble, quartzite sourced from global quarries.",
     "featuredCount": 3,
     "phone": "(614) 372-5508",
@@ -59,9 +63,11 @@
   {
     "name": "Citi Quartz",
     "portal": "https://www.citiquartz.com/",
-    "logo": "/logos/citi-quartz logo.png",
+    "logo": "/materials/citiquartz/citiquartz-logo-small.jpg",
     "note": "Engineered quartz with bold and classic options.",
     "featuredCount": 3,
+    "heroImage": "/materials/citiquartz/PT34_TajMahal_3cm_Quartz.jpg",
+    "heroBackground": "#f4efe7",
     "address": "3217 Profit Dr, Fairfield, OH 45014",
     "phone": "(513) 330-6200",
     "hoursLines": [

@@ -91,6 +91,8 @@ Local workflow:
 4. set `LEAD_WEBHOOK_URL` to the system that should receive quote requests
 5. `npm run dev`
 
+The frontend now includes a mobile-spacing pass for the live landing page, including the quote card, hero layout, and supplier browsing flow.
+
 Quality gates:
 
 1. `npm run lint`
@@ -102,6 +104,12 @@ Deployment options currently included:
 1. GitHub Actions CI via `.github/workflows/frontend-ci.yml`
 2. container deployment via `frontend/Dockerfile`
 3. standalone Next.js output for process-based hosting
+
+Production note:
+
+- the standalone Next.js server requires `sharp` to be installed because the site uses Next image optimization in production
+- if you deploy on Vercel, keep the project Root Directory set to `frontend`
+- if you deploy via a process manager, run the install in `frontend`, build there, and start with `node .next/standalone/server.js` from that same directory so the standalone server can resolve its runtime dependencies
 
 For Vercel, the cleanest setup is to set the project Root Directory to `frontend` in the dashboard because that is where the Next.js app and lockfile live.
 

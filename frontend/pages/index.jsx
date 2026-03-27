@@ -5,6 +5,7 @@ import FeaturesBar from '../components/FeaturesBar';
 import SuppliersSection from '../components/SuppliersSection';
 import LeadForm from '../components/LeadForm';
 import ChatWidget from '../components/ChatWidget';
+import Footer from '../components/Footer';
 
 export default function Home() {
   return (
@@ -22,13 +23,13 @@ export default function Home() {
         <link rel="apple-touch-icon" href="/favicon.png" />
       </Head>
       <div id="top" className="min-h-screen bg-bg text-text selection:bg-accent selection:text-white">
-        <div className="page-shell mx-auto max-w-7xl px-6 sm:px-8">
+        <div className="page-shell mx-auto max-w-7xl px-4 sm:px-8">
           <TopNav />
           <main>
             <Hero />
             <FeaturesBar />
-            <div className="h-px my-10 bg-gradient-to-r from-transparent via-accent/40 to-transparent" />
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="my-8 h-px bg-gradient-to-r from-transparent via-accent/40 to-transparent sm:my-10" />
+            <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
               <div className="lg:col-span-2">
                 <SuppliersSection />
               </div>
@@ -36,9 +37,7 @@ export default function Home() {
                 <LeadForm />
               </div>
             </div>
-            <div className="mt-12 text-sm text-muted">
-              Installation guarantee: 1 year (seams, sink installation). Materials warranty: supplier-only.
-            </div>
+            <Footer />
           </main>
         </div>
         <ChatWidget />

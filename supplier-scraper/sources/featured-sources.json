@@ -3,8 +3,10 @@
     {
       "name": "MSI Surfaces",
       "portal": "https://www.msisurfaces.com/",
-      "logo": "/logos/msi_logo.png",
+      "logo": "/materials/msi/msi_logo.png",
       "note": "Top-selling quartz and natural stone collections with consistent availability.",
+      "heroImage": "/materials/msi/Ivori Taj_3cm_quartz.png",
+      "heroBackground": "#efe6d7",
       "stones": [
         {
           "name": "Calacatta Laza",
@@ -41,7 +43,7 @@
     {
       "name": "Daltile Stone Center",
       "portal": "https://www.daltile.com/",
-      "logo": "/logos/daltile-logo-png.png",
+      "logo": "/materials/daltile/daltile-logo-png.png",
       "note": "Natural stone and slab center with popular neutral palettes.",
       "stones": [
         {
@@ -79,8 +81,10 @@
     {
       "name": "Quartz America",
       "portal": "https://myquartzamerica.com/",
-      "logo": "/logos/quartz america.png",
+      "logo": "/materials/quartamerica/qa_logo.png",
       "note": "Premium quartz slabs with modern and classic palettes.",
+      "heroImage": "/materials/quartamerica/Calacatta Rio_3m_quartz.png",
+      "heroBackground": "#f3f1f5",
       "stones": [
         {
           "name": "Pure White",
@@ -117,7 +121,7 @@
     {
       "name": "Avani",
       "portal": "https://www.avanimarble.com/",
-      "logo": "/logos/avani.png",
+      "logo": "/materials/avani/avani.png",
       "note": "Granite, marble, quartzite sourced from global quarries.",
       "stones": [
         {
@@ -155,8 +159,10 @@
     {
       "name": "Citi Quartz",
       "portal": "https://www.citiquartz.com/",
-      "logo": "/logos/citi-quartz logo.png",
+      "logo": "/materials/citiquartz/citiquartz-logo-small.jpg",
       "note": "Engineered quartz with bold and classic options.",
+      "heroImage": "/materials/citiquartz/PT34_TajMahal_3cm_Quartz.jpg",
+      "heroBackground": "#f4efe7",
       "stones": [
         {
           "name": "Calacatta Rio",
