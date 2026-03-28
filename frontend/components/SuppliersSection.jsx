@@ -70,8 +70,8 @@ export default function SuppliersSection() {
   };
 
   return (
-    <section id="suppliers" className="scroll-mt-28 py-8 sm:scroll-mt-36 sm:py-10">
-      <div className="mb-5 flex flex-col gap-2.5 sm:mb-6 sm:flex-row sm:items-end sm:justify-between sm:gap-3">
+    <section id="suppliers" className="scroll-mt-28 py-6 sm:scroll-mt-36 sm:py-8">
+      <div className="mb-4 flex flex-col gap-2 sm:mb-5 sm:flex-row sm:items-end sm:justify-between sm:gap-3">
         <div>
           <div className="eyebrow">Materials library</div>
           <h2 className="font-display text-3xl font-semibold sm:text-4xl">Curated Countertop Materials</h2>
