@@ -13,8 +13,8 @@ export default function TopNav() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     return (
-        <header className="sticky top-0 z-40 -mx-2 overflow-x-clip border-b border-transparent bg-bg/80 px-2 py-3 backdrop-blur">
-            <nav className="rounded-2xl border border-border bg-surface/85 px-3 py-3 shadow-soft sm:px-4">
+        <header className="sticky top-0 z-40 -mx-2 overflow-x-clip border-b border-transparent bg-bg/80 px-2 py-2 backdrop-blur sm:py-3">
+            <nav className="rounded-2xl border border-border bg-surface/85 px-3 py-2.5 shadow-soft sm:px-4 sm:py-3">
                 <div className="flex items-center gap-2 sm:gap-3">
                     <a className="flex min-w-0 flex-1 items-center gap-2.5 sm:gap-3" href="#top" aria-label="Amazon Granite home">
                         <LogoMark className="h-9 w-9 shrink-0 sm:h-12 sm:w-12" />

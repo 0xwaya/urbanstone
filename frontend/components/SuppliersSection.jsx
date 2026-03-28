@@ -70,14 +70,14 @@ export default function SuppliersSection() {
   };
 
   return (
-    <section id="suppliers" className="py-10">
-      <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+    <section id="suppliers" className="scroll-mt-28 py-8 sm:scroll-mt-36 sm:py-10">
+      <div className="mb-5 flex flex-col gap-2.5 sm:mb-6 sm:flex-row sm:items-end sm:justify-between sm:gap-3">
         <div>
           <div className="eyebrow">Materials library</div>
           <h2 className="font-display text-3xl font-semibold sm:text-4xl">Curated Countertop Materials</h2>
-          <p className="text-muted">Load curated supplier slabs on demand to review countertop-ready options without crowding the page.</p>
+          <p className="max-w-3xl text-muted">Open the official supplier portal from each hero card, then load curated slab previews only when you want a faster shortlist.</p>
         </div>
-        <div className="text-sm text-muted">Loaded on demand</div>
+        <div className="text-sm text-muted sm:text-right">Portal first, slabs on demand</div>
       </div>
       {sortedSupplierSummaries.map((summary) => (
         <SupplierHero

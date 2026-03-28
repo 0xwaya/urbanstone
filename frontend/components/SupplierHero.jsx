@@ -1,35 +1,37 @@
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
-import { useState } from 'react';
+import { useId, useState } from 'react';
 
 const TierGrid = dynamic(() => import('./TierGrid'));
 
 const supplierHeroImageTreatments = {
   'MSI Surfaces': {
     imageClassName: 'scale-[1.14]',
-    logoShellClassName: 'supplier-logo-shell supplier-logo-shell--white p-1.5',
-    compactLogoShellClassName: 'supplier-logo-shell supplier-logo-shell--white p-1.5',
+    assetClassName: 'max-h-[86%] max-w-full',
+    mediaClassName: 'px-3 py-3 sm:px-4 sm:py-4',
   },
   'Daltile Stone Center': {
     imageClassName: 'scale-[1.12]',
+    assetClassName: 'max-h-[86%] max-w-full',
     frameClassName: 'supplier-hero-frame--bright p-1.5 sm:p-2',
-    logoShellClassName: 'supplier-logo-shell supplier-logo-shell--white min-w-[3.9rem] p-1.5',
-    compactLogoShellClassName: 'supplier-logo-shell supplier-logo-shell--white min-w-[3.25rem] p-1.5',
+    mediaClassName: 'px-3 py-3 sm:px-4 sm:py-4',
   },
   'Quartz America': {
     imageClassName: 'scale-[1.12]',
-    logoShellClassName: 'supplier-logo-shell supplier-logo-shell--white p-1.5',
-    compactLogoShellClassName: 'supplier-logo-shell supplier-logo-shell--white p-1.5',
+    assetClassName: 'max-h-[86%] max-w-full',
+    mediaClassName: 'px-3 py-3 sm:px-4 sm:py-4',
   },
   'Avani': {
-    hideHeroImage: true,
-    logoShellClassName: 'supplier-logo-shell supplier-logo-shell--white p-1',
-    compactLogoShellClassName: 'supplier-logo-shell supplier-logo-shell--white p-1',
+    assetClassName: 'max-h-[58%] max-w-[78%] sm:max-h-[62%] sm:max-w-[74%]',
+    imageClassName: 'scale-[0.84]',
+    frameClassName: 'supplier-hero-frame--bright supplier-hero-frame--whitewash p-2.5 sm:p-3',
+    mediaClassName: 'px-5 py-5 sm:px-7 sm:py-6',
   },
   'Citi Quartz': {
-    imageClassName: 'scale-[1.26]',
-    logoShellClassName: 'supplier-logo-shell supplier-logo-shell--white p-1',
-    compactLogoShellClassName: 'supplier-logo-shell supplier-logo-shell--white p-1',
+    assetClassName: 'max-h-[56%] max-w-[72%] sm:max-h-[62%] sm:max-w-[70%]',
+    imageClassName: 'scale-[0.92]',
+    frameClassName: 'supplier-hero-frame--bright supplier-hero-frame--whitewash supplier-hero-frame--citi p-2.5 sm:p-3',
+    mediaClassName: 'px-5 py-5 sm:px-6 sm:py-6',
   },
 };
 
@@ -40,119 +42,150 @@ export default function SupplierHero({
   galleryError,
   onToggleGallery,
 }) {
-  const [logoVisible, setLogoVisible] = useState(Boolean(supplier.logo));
+  const [isHoursOpen, setIsHoursOpen] = useState(false);
+  const hoursRegionId = useId();
   const hoursLines = supplier.hoursLines || (supplier.hours
     ? [`Mon-Fri ${supplier.hours.mon_fri}${supplier.hours.sat ? ` · Sat ${supplier.hours.sat}` : ''}`]
     : []);
-  const initials = supplier.name
-    .split(' ')
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((word) => word[0])
-    .join('')
-    .toUpperCase();
   const heroImageTreatment = supplierHeroImageTreatments[supplier.name] || {};
-  const shouldShowHeroImage = supplier.heroImage && !heroImageTreatment.hideHeroImage;
+  const shouldShowHeroImage = Boolean(supplier.heroImage);
   const heroFrameClassName = shouldShowHeroImage
     ? `supplier-hero-frame p-3 sm:p-4 ${heroImageTreatment.frameClassName || ''}`.trim()
     : 'bg-gradient-to-br from-panel to-bg p-3';
-  const logoShellClassName = `supplier-logo-shell ${heroImageTreatment.logoShellClassName || 'bg-panel/75 p-2.5'}`.trim();
-  const compactLogoShellClassName = `supplier-logo-shell supplier-logo-shell--compact ${heroImageTreatment.compactLogoShellClassName || 'bg-panel/75 p-2.5'}`.trim();
+  const heroMediaClassName = `flex h-full w-full items-center justify-center overflow-hidden rounded-[1.15rem] ${heroImageTreatment.mediaClassName || 'px-3 py-3 sm:px-4 sm:py-4'}`.trim();
+  const heroAssetClassName = `flex h-full w-full items-center justify-center ${heroImageTreatment.assetClassName || 'max-h-[86%] max-w-full'}`.trim();
+  const heroFrameStyle = supplier.heroBackground ? { backgroundColor: supplier.heroBackground } : undefined;
+  const hasContactDetails = Boolean(supplier.address || supplier.phone || hoursLines.length);
+  const galleryButtonLabel = showGallery
+    ? 'Hide Curated Slabs'
+    : isLoadingGallery
+      ? 'Loading curated slabs...'
+      : 'Browse Curated Slabs';
 
   return (
-    <section className="mb-8 rounded-2xl border border-border bg-surface p-6 sm:mb-10 sm:p-8">
-      <div className="grid grid-cols-1 items-center gap-5 sm:gap-6 lg:grid-cols-3">
-        <div className="lg:col-span-2">
-          <div className="flex items-center gap-3 sm:gap-4">
-            {logoVisible ? (
-              <div className={logoShellClassName}>
-                <Image
-                  src={supplier.logo}
-                  alt={`${supplier.name} logo`}
-                  width={56}
-                  height={40}
-                  sizes="56px"
-                  className="supplier-logo-image h-full w-full object-contain"
-                  loading="lazy"
-                  onError={() => setLogoVisible(false)}
-                />
+    <section className="mb-6 rounded-[1.55rem] border border-border bg-surface p-4 shadow-soft sm:mb-10 sm:rounded-[1.7rem] sm:p-6">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:items-stretch lg:gap-5">
+        <a
+          className="supplier-hero-card group"
+          href={supplier.portal}
+          target="_blank"
+          rel="noreferrer"
+          aria-label={`Open ${supplier.name} supplier portal`}
+        >
+          <span className="sr-only">{supplier.name}</span>
+          <div
+            className={`supplier-hero-card__media ${heroFrameClassName}`}
+            style={heroFrameStyle}
+          >
+            {shouldShowHeroImage ? (
+              <div className={heroMediaClassName}>
+                <div className={heroAssetClassName}>
+                  <Image
+                    src={supplier.heroImage}
+                    alt={`${supplier.name} supplier hero`}
+                    width={512}
+                    height={256}
+                    sizes="(min-width: 1024px) 44vw, 100vw"
+                    className={`supplier-hero-image h-auto max-h-full w-auto max-w-full object-contain object-center ${heroImageTreatment.imageClassName || ''}`.trim()}
+                    loading="lazy"
+                  />
+                </div>
               </div>
             ) : (
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-panel text-xs font-semibold text-muted">
-                {initials}
+              <div className="supplier-hero-fallback flex h-full w-full items-center justify-center rounded-[1.15rem] border border-border/70 bg-panel/75 px-6 text-center text-sm font-semibold text-text">
+                Supplier portal
               </div>
             )}
-            <h3 className="text-[1.35rem] font-semibold leading-tight sm:text-2xl">{supplier.name}</h3>
           </div>
-          <p className="mt-3 text-sm leading-6 text-muted sm:text-base">{supplier.note}</p>
-          {supplier.address && (
-            <div className="mt-4 space-y-1.5 text-sm text-muted">
-              <div><span className="font-semibold text-text">Address:</span> {supplier.address}</div>
-              {supplier.phone && <div><span className="font-semibold text-text">Phone:</span> {supplier.phone}</div>}
-              {hoursLines.length > 0 ? hoursLines.map((line) => (
-                <div key={line}>
-                  <span className="font-semibold text-text">Hours:</span> {line}
-                </div>
-              )) : null}
+          <div className="supplier-hero-card__overlay">
+            <div className="supplier-hero-card__eyebrow">Official supplier portal</div>
+            <div className="supplier-hero-card__cta">
+              <span>Visit Supplier Portal</span>
+              <svg viewBox="0 0 20 20" fill="none" aria-hidden="true" className="h-4 w-4">
+                <path d="M6 14L14 6M8 6h6v6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
             </div>
-          )}
-          <div className="mt-4 flex flex-wrap gap-2.5 text-sm sm:gap-3">
-            <a className="text-accent" href={supplier.portal} target="_blank" rel="noreferrer">
-              Visit Supplier Portal
-            </a>
-            {supplier.gallery && supplier.name !== 'Avani' && (
-              <a className="text-accent" href={supplier.gallery} target="_blank" rel="noreferrer">
-                View Gallery
-              </a>
-            )}
-            {onToggleGallery && (
+          </div>
+        </a>
+        <div className="flex min-h-full flex-col justify-between rounded-[1.3rem] border border-border/70 bg-panel/35 p-3.5 sm:rounded-[1.45rem] sm:p-5">
+          <div>
+            <h3 className="sr-only">{supplier.name}</h3>
+            <p className="text-[0.98rem] leading-7 text-text sm:text-[1.05rem]">{supplier.note}</p>
+            {hasContactDetails ? (
+              <div className="mt-4 grid gap-2.5 sm:mt-5 sm:gap-3 sm:grid-cols-2">
+                {supplier.address ? (
+                  <div className="supplier-meta-card sm:col-span-2">
+                    <div className="supplier-meta-card__label">Address</div>
+                    <div className="supplier-meta-card__value">{supplier.address}</div>
+                  </div>
+                ) : null}
+                {supplier.phone ? (
+                  <div className="supplier-meta-card sm:col-span-1">
+                    <div className="supplier-meta-card__label">Phone</div>
+                    <div className="supplier-meta-card__value">{supplier.phone}</div>
+                  </div>
+                ) : null}
+                {hoursLines.length > 0 ? (
+                  <div className="supplier-meta-card sm:col-span-1">
+                    <button
+                      type="button"
+                      className="supplier-hours-button"
+                      aria-expanded={isHoursOpen}
+                      aria-controls={hoursRegionId}
+                      onClick={() => setIsHoursOpen((current) => !current)}
+                    >
+                      <span>
+                        <span className="supplier-meta-card__label">Hours of operation</span>
+                        <span className="mt-1 block text-sm font-semibold text-text">
+                          {isHoursOpen ? 'Hide hours' : 'Show hours'}
+                        </span>
+                      </span>
+                      <svg
+                        viewBox="0 0 20 20"
+                        fill="none"
+                        aria-hidden="true"
+                        className={`supplier-chevron h-5 w-5 ${isHoursOpen ? 'rotate-180' : ''}`.trim()}
+                      >
+                        <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    </button>
+                    <div id={hoursRegionId} className={`${isHoursOpen ? 'mt-3 block' : 'hidden'}`}>
+                      <div className="space-y-1.5 text-sm leading-6 text-muted">
+                        {hoursLines.map((line) => (
+                          <div key={line}>{line}</div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                ) : null}
+              </div>
+            ) : null}
+          </div>
+          <div className="mt-4 flex flex-col gap-2.5 sm:mt-5 sm:flex-row sm:flex-wrap sm:gap-3">
+            {onToggleGallery ? (
               <button
                 type="button"
-                className="inline-flex items-center justify-center rounded-full bg-accent px-4 py-2 text-sm font-semibold text-white shadow-[0_14px_32px_rgba(54,105,187,0.28)] transition hover:-translate-y-0.5 hover:bg-accentDark hover:shadow-[0_18px_36px_rgba(54,105,187,0.34)] disabled:cursor-not-allowed disabled:opacity-70"
+                className="supplier-secondary-button w-full sm:w-auto"
                 onClick={onToggleGallery}
                 disabled={isLoadingGallery}
               >
-                {showGallery ? 'Hide Curated Slabs' : isLoadingGallery ? 'Loading curated slabs...' : 'Curated Slabs'}
+                <span>{galleryButtonLabel}</span>
+                <svg
+                  viewBox="0 0 20 20"
+                  fill="none"
+                  aria-hidden="true"
+                  className={`supplier-chevron h-4 w-4 ${showGallery ? 'rotate-180' : ''}`.trim()}
+                >
+                  <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
               </button>
-            )}
+            ) : null}
+            {supplier.gallery && supplier.name !== 'Avani' ? (
+              <a className="supplier-tertiary-link w-full sm:w-auto" href={supplier.gallery} target="_blank" rel="noreferrer">
+                Open Full Gallery
+              </a>
+            ) : null}
           </div>
-        </div>
-        <div
-          className={`h-32 rounded-xl border border-border flex items-center justify-center text-muted overflow-hidden ${heroFrameClassName}`}
-        >
-          {shouldShowHeroImage ? (
-            <Image
-              src={supplier.heroImage}
-              alt={`${supplier.name} hero`}
-              width={512}
-              height={256}
-              sizes="(min-width: 1024px) 33vw, 100vw"
-              className={`supplier-hero-image h-full w-full object-contain object-center ${heroImageTreatment.imageClassName || ''}`.trim()}
-              loading="lazy"
-            />
-          ) : (
-            <div className="flex items-center gap-3 rounded-full border border-border bg-panel/80 px-4 py-3">
-              {logoVisible ? (
-                <div className={compactLogoShellClassName}>
-                  <Image
-                    src={supplier.logo}
-                    alt={`${supplier.name} logo`}
-                    width={48}
-                    height={32}
-                    sizes="48px"
-                    className="supplier-logo-image h-full w-full object-contain"
-                    loading="lazy"
-                    onError={() => setLogoVisible(false)}
-                  />
-                </div>
-              ) : (
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-surface text-[10px] font-semibold text-muted">
-                  {initials}
-                </div>
-              )}
-              <span className="text-sm font-semibold text-text">Curated slabs available on demand</span>
-            </div>
-          )}
         </div>
       </div>
       {showGallery && supplier.tiers ? (
@@ -161,17 +194,17 @@ export default function SupplierHero({
         </div>
       ) : null}
       {!showGallery ? (
-        <div className="mt-6 rounded-xl border border-border bg-panel/85 px-4 py-3 text-sm leading-6 text-muted sm:mt-8">
-          Curated slab selections stay hidden until you load them to keep the homepage fast.
+        <div className="mt-4 rounded-2xl border border-border/70 bg-panel/65 px-4 py-3 text-sm leading-6 text-muted sm:mt-5">
+          Use Browse Curated Slabs when you want a quick preview without loading every supplier catalog upfront.
         </div>
       ) : null}
       {showGallery && isLoadingGallery ? (
-        <div className="mt-6 rounded-xl border border-border bg-panel/85 px-4 py-3 text-sm text-muted sm:mt-8">
+        <div className="mt-4 rounded-2xl border border-border/70 bg-panel/65 px-4 py-3 text-sm text-muted sm:mt-5">
           Loading slabs...
         </div>
       ) : null}
       {showGallery && galleryError ? (
-        <div className="mt-6 rounded-xl border border-border bg-panel/85 px-4 py-3 text-sm text-[#9f3a2b] sm:mt-8">
+        <div className="mt-4 rounded-2xl border border-border/70 bg-panel/65 px-4 py-3 text-sm text-[#9f3a2b] sm:mt-5">
           {galleryError}
         </div>
       ) : null}

@@ -93,6 +93,14 @@ Local workflow:
 
 The frontend now includes a mobile-spacing pass for the live landing page, including the quote card, hero layout, and supplier browsing flow.
 
+Recent supplier-browser updates in the frontend include:
+
+- portal-first supplier hero cards replacing the older visible logo-and-name header treatment
+- collapsible hours-of-operation controls for supplier metadata
+- lazy-loaded curated slab previews behind clearer secondary CTA copy
+- contained bright-frame hero treatments for Avani and Citi Quartz assets
+- extra anchor scroll offset and lighter sticky-header padding for cleaner mobile jumps into the materials section
+
 Quality gates:
 
 1. `npm run lint`

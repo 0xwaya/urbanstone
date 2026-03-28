@@ -4,6 +4,15 @@ Standalone Next.js pages application for the Amazon Granite marketing site.
 
 This frontend includes the current live mobile layout pass for navigation, hero spacing, supplier browsing, and quote capture.
 
+The supplier section now uses a portal-first card design:
+
+- each supplier hero acts as the primary external portal entry point
+- the old visible logo-and-name card header has been trimmed away in favor of the hero media card
+- curated slab previews remain lazy-loaded behind a clearer secondary action
+- hours of operation are collapsible per supplier
+- Avani and Citi Quartz use contained bright-frame hero treatments tuned for their logo-style transparent assets
+- the supplier anchor target includes extra mobile scroll offset so the sticky header does not cover the section heading
+
 SEO/CRO architecture notes and diagrams live in `SEO_CRO_STRUCTURE.md`.
 
 ## Requirements
@@ -36,6 +45,10 @@ If `LEAD_WEBHOOK_URL` is not set, the form stays visible but the API intentional
 For a production-like local verification pass, run:
 
 - `HOSTNAME=127.0.0.1 PORT=3000 npm run start`
+
+For live browser tuning during UI work, run:
+
+- `npm run dev -- --hostname 127.0.0.1`
 
 ## Deployment
 
@@ -77,5 +90,11 @@ The current baseline includes:
 - payload normalization and validation
 - a honeypot field to catch simple bots
 - basic in-memory rate limiting for repeated submissions
+
+Recent UI behavior worth preserving:
+
+- supplier cards are optimized to scan cleanly on mobile before expanding into desktop two-column layouts
+- the sticky mobile header has reduced vertical padding to lower overlap pressure on anchor navigation
+- supplier CTA and metadata spacing are intentionally tighter on narrow screens to keep the quote form below the fold
 
 Before a real production launch, add external monitoring, persistent rate limiting, and a verified lead-delivery integration.
