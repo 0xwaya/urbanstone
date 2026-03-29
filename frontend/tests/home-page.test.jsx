@@ -44,6 +44,8 @@ describe('Home page', () => {
                 .map((heading) => heading.textContent)
                 .filter((heading) => supplierNames.includes(heading))
         ).toEqual(supplierNames);
+        expect(screen.queryByText(/3 curated slabs ready to preview/i)).not.toBeInTheDocument();
+        expect(screen.queryByText(/\(513\) 712-5300/i)).not.toBeInTheDocument();
         expect(screen.queryByText(/calacatta laza/i)).not.toBeInTheDocument();
     });
 });

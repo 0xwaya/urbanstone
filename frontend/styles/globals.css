@@ -461,6 +461,39 @@ html[data-theme="light"] .feature-highlight-tag {
   padding: 0.78rem 0.85rem;
 }
 
+.supplier-brand-row {
+  margin-bottom: 0.9rem;
+}
+
+.supplier-brand-lockup {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.supplier-brand-mark {
+  display: flex;
+  height: 3.2rem;
+  width: 3.2rem;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 1rem;
+  border: 1px solid rgba(var(--border), 0.72);
+  background: rgba(255, 255, 255, 0.88);
+  padding: 0.45rem;
+}
+
+.supplier-brand-subtitle {
+  margin-top: 0.2rem;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgb(var(--muted));
+}
+
 .supplier-meta-card__label {
   font-size: 0.66rem;
   font-weight: 800;
@@ -641,6 +674,21 @@ html[data-theme="light"] .supplier-meta-card {
     padding: 0.68rem 0.78rem;
   }
 
+  .supplier-brand-lockup {
+    gap: 0.75rem;
+  }
+
+  .supplier-brand-mark {
+    height: 2.9rem;
+    width: 2.9rem;
+    border-radius: 0.9rem;
+  }
+
+  .supplier-brand-subtitle {
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+  }
+
   .supplier-meta-card__value {
     font-size: 0.84rem;
     line-height: 1.45;
@@ -671,6 +719,10 @@ html[data-theme="light"] .supplier-meta-card {
 
   .supplier-hours-button {
     align-items: center;
+  }
+
+  .supplier-brand-lockup {
+    align-items: flex-start;
   }
 
   .supplier-hours-button__summary {
