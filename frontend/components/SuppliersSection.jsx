@@ -84,7 +84,6 @@ export default function SuppliersSection() {
                     <p className="max-w-3xl text-muted">Shortlist slab directions faster, then let Urban Stone handle final stone selection, measurements, deposit, fabrication, and installation.</p>
                 </div>
                 <div className="flex flex-col gap-2 sm:max-w-[18rem] sm:items-end">
-                    <div className="text-sm text-muted sm:text-right">Shortlist slabs here. Urban Stone stays your first point of contact.</div>
                     <a className="materials-next-step-button w-full sm:w-auto" href="#quote">Request estimate</a>
                 </div>
             </div>
