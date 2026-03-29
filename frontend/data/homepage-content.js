@@ -43,12 +43,12 @@ export const homepageFaqContent = {
 export const homepageLeadFormContent = {
     eyebrow: 'Request a quote',
     title: 'Start with a Fast Estimate',
-    description: 'Send your layout, measurements, and material preference. We will review the right slab direction and next steps for your project.',
-    placeholder: 'Kitchen or bath location, preferred material, timeline, and any measurements you already have.',
+    description: 'Send your layout, measurements, and material preference. We will help confirm slab direction, final selection, measurements, deposit, fabrication, and install timing.',
+    placeholder: 'Kitchen or bath location, preferred material or slab direction, timeline, and any measurements you already have.',
     submitLabel: 'Send estimate request',
     submittingLabel: 'Sending request...',
-    directResponseTitle: 'Need a direct response?',
-    coverageText: 'We respond to countertop estimate requests across Cincinnati and nearby communities throughout greater Cincinnati and Northern Kentucky.',
+    directResponseTitle: 'Need help with next steps?',
+    coverageText: 'We respond to countertop estimate requests across Cincinnati and nearby communities throughout greater Cincinnati and Northern Kentucky, and we handle the path from slab shortlisting through measurements, deposit, fabrication, and install.',
 };
 
 export const homepageAnnouncement = {

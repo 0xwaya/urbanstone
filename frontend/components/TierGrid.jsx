@@ -66,6 +66,18 @@ export default function TierGrid({ tiers }) {
         </div>
       ))}
 
+      <div className="rounded-2xl border border-border bg-surface/80 p-4 sm:p-5">
+        <div className="text-[0.72rem] font-semibold uppercase tracking-[0.2em] text-muted">Next step</div>
+        <p className="mt-2 max-w-3xl text-sm leading-6 text-text sm:text-[0.95rem]">
+          After you shortlist a few slab directions, contact Urban Stone for final stone selection, measurements, deposit, fabrication planning, and installation scheduling.
+        </p>
+        <div className="mt-4">
+          <a className="materials-next-step-button" href="#quote">
+            Talk Through Next Steps
+          </a>
+        </div>
+      </div>
+
       {activeSlab && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-6" role="dialog" aria-modal="true" onClick={() => setActiveSlab(null)}>
           <div className="relative w-full max-w-5xl rounded-2xl border border-border bg-surface p-5 sm:p-6" onClick={(event) => event.stopPropagation()}>

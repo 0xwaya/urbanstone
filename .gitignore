@@ -16,7 +16,8 @@ pnpm-debug.log*
 # Node / Next.js
 node_modules/
 .next/
-.next.prebuild.*/
+.next.pre-rebuild-*/
+.next.validation-backup-*/
 out/
 dist/
 build/

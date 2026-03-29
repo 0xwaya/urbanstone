@@ -20,7 +20,7 @@ export default function Hero() {
             Request Estimate
           </a>
           <a className="inline-flex items-center justify-center rounded-md border border-border px-5 py-3 font-semibold transition hover:-translate-y-0.5 hover:border-accent" href="#suppliers">
-            View Materials
+            Browse Curated Slabs
           </a>
         </div>
       </div>

@@ -1,1 +1,4 @@
 .vercel
+.next/
+.next.pre-rebuild-*/
+.next.validation-backup-*/

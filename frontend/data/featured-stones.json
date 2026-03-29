@@ -114,22 +114,22 @@
         "range": "Top 3",
         "slabs": [
           {
-            "name": "Crystal Cream (1007)",
-            "notes": "Creamy 3cm quartz with a softer field for warm kitchens and quieter perimeter runs",
-            "image": "/materials/avani/KY-1007- Crystal cream 3cm quartz .jpg",
-            "imageLarge": "/materials/avani/KY-1007- Crystal cream 3cm quartz .jpg"
-          },
-          {
             "name": "Calacatta Aurus (5035)",
             "notes": "3cm quartz with warm calacatta veining that reads polished without feeling cold",
             "image": "/materials/avani/KY-5035-Calacatta Aurus 3cm quartz.jpg",
             "imageLarge": "/materials/avani/KY-5035-Calacatta Aurus 3cm quartz.jpg"
           },
           {
-            "name": "Black Mamba (5140)",
-            "notes": "Deep black 3cm quartz for sharp contrast, darker vanities, and modern accent installs",
-            "image": "/materials/avani/KY-5140-Black mamba 3cm quartz.jpg",
-            "imageLarge": "/materials/avani/KY-5140-Black mamba 3cm quartz.jpg"
+            "name": "Calacatta Andromeda (5040)",
+            "notes": "3cm quartz with softer calacatta movement for lighter kitchens that still want visible pattern",
+            "image": "/materials/avani/KY-5040 - Calacatta andromeda 3cm quartz.jpg",
+            "imageLarge": "/materials/avani/KY-5040 - Calacatta andromeda 3cm quartz.jpg"
+          },
+          {
+            "name": "Calacatta Gelato (5520)",
+            "notes": "3cm quartz with brighter calacatta veining for cleaner, higher-contrast marble-look installs",
+            "image": "/materials/avani/KY-5520-Calacatta Gelato 3cm quartz.jpg",
+            "imageLarge": "/materials/avani/KY-5520-Calacatta Gelato 3cm quartz.jpg"
           }
         ]
       }
