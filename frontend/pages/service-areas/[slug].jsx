@@ -8,6 +8,7 @@ import ChatWidget from '../../components/ChatWidget';
 import RelatedPages from '../../components/RelatedPages';
 import { materialPages } from '../../data/material-pages';
 import { getCanonicalUrl, getSiteUrl } from '../../lib/site';
+import { buildBreadcrumbSchema, getGeoRegion } from '../../lib/seo';
 import { getServiceAreaBySlug, serviceAreas } from '../../data/service-areas';
 
 export default function ServiceAreaPage({ area }) {
@@ -35,12 +36,18 @@ export default function ServiceAreaPage({ area }) {
         '@type': 'HomeAndConstructionBusiness',
         name: 'Urban Stone Collective',
         legalName: 'Amazon Granite LLC',
+        '@id': `${siteUrl}#business`,
         url: canonicalUrl,
         image: ogImageUrl,
         areaServed: [area.city, ...area.nearbyAreas, ...area.relatedAreas],
         serviceType: ['Quartz countertops', 'Granite countertops', 'Quartzite countertops', 'Countertop fabrication', 'Countertop installation'],
         description: area.metaDescription,
     };
+    const breadcrumbSchema = buildBreadcrumbSchema([
+        { name: 'Home', url: getCanonicalUrl('/') },
+        { name: 'Coverage Hub', url: getCanonicalUrl('/coverage') },
+        { name: area.city, url: canonicalUrl },
+    ]);
     const faqSchema = {
         '@context': 'https://schema.org',
         '@type': 'FAQPage',
@@ -61,16 +68,23 @@ export default function ServiceAreaPage({ area }) {
                 <meta name="description" content={area.metaDescription} />
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
+                <meta name="geo.region" content={getGeoRegion(area.state)} />
+                <meta name="geo.placename" content={area.city} />
                 <link rel="canonical" href={canonicalUrl} />
                 <meta property="og:title" content={`${area.headline} | Urban Stone Collective`} />
                 <meta property="og:description" content={area.metaDescription} />
                 <meta property="og:type" content="website" />
                 <meta property="og:url" content={canonicalUrl} />
+                <meta property="og:site_name" content="Urban Stone Collective" />
+                <meta property="og:locale" content="en_US" />
                 <meta property="og:image" content={ogImageUrl} />
+                <meta property="og:image:alt" content="Urban Stone Collective countertop brand mark" />
                 <meta name="twitter:card" content="summary_large_image" />
                 <meta name="twitter:title" content={`${area.headline} | Urban Stone Collective`} />
                 <meta name="twitter:description" content={area.metaDescription} />
                 <meta name="twitter:image" content={ogImageUrl} />
+                <meta name="twitter:image:alt" content="Urban Stone Collective countertop brand mark" />
+                <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
                 <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessSchema) }} />
                 <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
             </Head>

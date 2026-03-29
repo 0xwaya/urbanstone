@@ -9,6 +9,7 @@ import ChatWidget from '../components/ChatWidget';
 import Footer from '../components/Footer';
 import { homepageAnnouncement, homepageFaqContent, homepageFaqItems, homepageLeadFormContent } from '../data/homepage-content';
 import { getCanonicalUrl, getSiteUrl } from '../lib/site';
+import { getGeoRegion } from '../lib/seo';
 
 export default function Home() {
   const siteUrl = getSiteUrl();
@@ -54,6 +55,26 @@ export default function Home() {
     sameAs: [instagramUrl, facebookUrl, tiktokUrl],
     description: 'Urban Stone Collective, formerly Amazon Granite LLC, fabricates and installs quartz countertops, granite countertops, and quartzite countertops across the Cincinnati metro with curated slab sourcing and fast turnaround.',
   };
+  const organizationSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    '@id': `${siteUrl}#organization`,
+    name: 'Urban Stone Collective',
+    legalName: 'Amazon Granite LLC',
+    url: siteUrl,
+    logo: ogImageUrl,
+    sameAs: [instagramUrl, facebookUrl, tiktokUrl],
+    contactPoint: [
+      {
+        '@type': 'ContactPoint',
+        telephone: companyPhone,
+        email: companyEmail,
+        contactType: 'sales',
+        areaServed: ['Greater Cincinnati', 'Northern Kentucky'],
+        availableLanguage: ['en'],
+      },
+    ],
+  };
   const faqStructuredData = {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
@@ -75,7 +96,7 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="theme-color" content="#f4efe7" />
         <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
-        <meta name="geo.region" content="US-OH" />
+        <meta name="geo.region" content={getGeoRegion('OH')} />
         <meta name="geo.placename" content="Cincinnati" />
         <link rel="canonical" href={canonicalUrl} />
         <meta property="og:title" content="Quartz, Granite & Quartzite Countertops in Cincinnati | Urban Stone Collective" />
@@ -90,9 +111,14 @@ export default function Home() {
         <meta name="twitter:title" content="Quartz, Granite & Quartzite Countertops in Cincinnati | Urban Stone Collective" />
         <meta name="twitter:description" content="Quartz countertops, granite countertops, and quartzite countertops with fast turnaround for Cincinnati-area homes and renovations." />
         <meta name="twitter:image" content={ogImageUrl} />
+        <meta name="twitter:image:alt" content="Urban Stone Collective countertop brand mark" />
         <link rel="icon" href="/favicon.ico" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png" />
         <link rel="apple-touch-icon" href="/favicon.png" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}

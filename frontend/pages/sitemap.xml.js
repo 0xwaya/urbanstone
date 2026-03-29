@@ -3,7 +3,6 @@ import { materialPages } from '../data/material-pages';
 import { serviceAreas } from '../data/service-areas';
 
 export async function getServerSideProps({ res }) {
-    const lastModified = new Date().toISOString();
     const urls = [
         {
             loc: getCanonicalUrl('/'),
@@ -31,7 +30,6 @@ export async function getServerSideProps({ res }) {
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${urls.map((entry) => `  <url>
     <loc>${entry.loc}</loc>
-    <lastmod>${lastModified}</lastmod>
     <changefreq>${entry.changefreq}</changefreq>
     <priority>${entry.priority}</priority>
   </url>`).join('\n')}
