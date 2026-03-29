@@ -13,7 +13,7 @@ import { getServiceAreaBySlug, serviceAreas } from '../../data/service-areas';
 export default function ServiceAreaPage({ area }) {
     const canonicalUrl = getCanonicalUrl(`/service-areas/${area.slug}`);
     const siteUrl = getSiteUrl();
-    const ogImageUrl = `${siteUrl}/brand/amazonlogo.png`;
+    const ogImageUrl = `${siteUrl}/brand/amzlogo.png`;
     const faqItems = area.faqItems;
     const relatedServiceAreas = area.relatedAreas
         .map((relatedArea) => serviceAreas.find((candidate) => candidate.city === relatedArea))

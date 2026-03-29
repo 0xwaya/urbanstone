@@ -13,7 +13,7 @@ import { getCanonicalUrl, getSiteUrl } from '../lib/site';
 export default function Home() {
   const siteUrl = getSiteUrl();
   const canonicalUrl = getCanonicalUrl('/');
-  const ogImageUrl = `${siteUrl}/brand/amazonlogo.png`;
+  const ogImageUrl = `${siteUrl}/brand/amzlogo.png`;
   const companyPhone = process.env.NEXT_PUBLIC_COMPANY_PHONE || '(513) 307-5840';
   const companyEmail = process.env.NEXT_PUBLIC_LEAD_EMAIL || 'sales@urbanstone.co';
   const instagramUrl = (process.env.NEXT_PUBLIC_INSTAGRAM_URL || 'https://www.instagram.com/amazongranite').trim();

@@ -13,7 +13,7 @@ import { getCanonicalUrl, getSiteUrl } from '../../lib/site';
 export default function MaterialPage({ page, area }) {
     const canonicalUrl = getCanonicalUrl(`/materials/${page.slug}`);
     const siteUrl = getSiteUrl();
-    const ogImageUrl = `${siteUrl}/brand/amazonlogo.png`;
+    const ogImageUrl = `${siteUrl}/brand/amzlogo.png`;
     const faqItems = page.faqItems;
     const relatedMaterialPages = (page.relatedPageSlugs || [])
         .map((slug) => getMaterialPageBySlug(slug))
