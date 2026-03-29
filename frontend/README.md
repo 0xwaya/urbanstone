@@ -2,18 +2,23 @@
 
 Standalone Next.js pages application for the Amazon Granite marketing site.
 
-This frontend includes the current live mobile layout pass for navigation, hero spacing, supplier browsing, and quote capture.
+This frontend includes the current live mobile layout pass for navigation, hero spacing, curated material browsing, and quote capture.
 
-The supplier section now uses a portal-first card design:
+The supplier section now follows the current slab-first funnel:
 
-- each supplier hero acts as the primary external portal entry point
-- the old visible logo-and-name card header has been trimmed away in favor of the hero media card
-- curated slab previews remain lazy-loaded behind a clearer secondary action
-- hours of operation are collapsible per supplier
-- Avani and Citi Quartz use contained bright-frame hero treatments tuned for their logo-style transparent assets
+- each supplier card stays compact and shows logo, company name, location, and hours only
+- curated slab previews are the primary action and lazy-load on demand
+- supplier phone and portal-first behavior are intentionally removed from the homepage flow
+- the materials section now includes an explicit Urban Stone next-step handoff after browsing
+- hours of operation remain collapsible per supplier
+- supplier logos are visually toned down to fit the current brand system
 - the supplier anchor target includes extra mobile scroll offset so the sticky header does not cover the section heading
 
-SEO/CRO architecture notes and diagrams live in `SEO_CRO_STRUCTURE.md`.
+The active homepage funnel is:
+
+- scan the materials section quickly
+- open curated slab previews only when needed
+- return to Urban Stone for estimate, measurements, deposit, fabrication, and installation
 
 ## Requirements
 
@@ -41,6 +46,8 @@ If `LEAD_WEBHOOK_URL` is not set, the form stays visible but the API intentional
 - `npm run lint`
 - `npm run test`
 - `npm run build`
+
+Generated build output and local validation backup directories are not part of the source review surface and should stay ignored during routine lint and git review.
 
 For a production-like local verification pass, run:
 
@@ -94,6 +101,7 @@ The current baseline includes:
 Recent UI behavior worth preserving:
 
 - supplier cards are optimized to scan cleanly on mobile before expanding into desktop two-column layouts
+- supplier browsing hands visitors back to Urban Stone with section-level estimate and call CTAs
 - the sticky mobile header has reduced vertical padding to lower overlap pressure on anchor navigation
 - supplier CTA and metadata spacing are intentionally tighter on narrow screens to keep the quote form below the fold
 

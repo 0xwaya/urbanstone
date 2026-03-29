@@ -95,10 +95,11 @@ The frontend now includes a mobile-spacing pass for the live landing page, inclu
 
 Recent supplier-browser updates in the frontend include:
 
-- portal-first supplier hero cards replacing the older visible logo-and-name header treatment
+- compact supplier cards that keep the homepage focused on Urban Stone as the primary contact
+- curated slab previews lazy-loaded behind supplier-specific shortlist actions
 - collapsible hours-of-operation controls for supplier metadata
-- lazy-loaded curated slab previews behind clearer secondary CTA copy
-- contained bright-frame hero treatments for Avani and Citi Quartz assets
+- section-level handoff copy and CTA blocks that route visitors back to estimate and contact actions
+- softened supplier logo treatments and tighter card styling so the materials library stays inside the main brand system
 - extra anchor scroll offset and lighter sticky-header padding for cleaner mobile jumps into the materials section
 
 Quality gates:
