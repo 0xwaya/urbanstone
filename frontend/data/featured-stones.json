@@ -80,10 +80,10 @@
         "range": "Top 3",
         "slabs": [
           {
-            "name": "Calacatta Rio",
-            "notes": "3cm quartz with stronger calacatta movement for a bolder marble-look kitchen",
-            "image": "/materials/quartamerica/Calacatta Rio_3cm_quartz.png",
-            "imageLarge": "/materials/quartamerica/Calacatta Rio_3cm_quartz.png"
+            "name": "Calacatta Dolce",
+            "notes": "3cm quartz with soft, elegant calacatta veining for a refined marble-look kitchen",
+            "image": "/materials/quartamerica/Calacatta_dolce_3cm_Quartz.png",
+            "imageLarge": "/materials/quartamerica/Calacatta_dolce_3cm_Quartz.png"
           },
           {
             "name": "Calacatta Nile",
