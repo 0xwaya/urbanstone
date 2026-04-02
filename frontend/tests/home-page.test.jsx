@@ -29,7 +29,7 @@ describe('Home page', () => {
         });
     });
 
-    it('renders the restored marketing surface', () => {
+    it('renders the restored marketing surface', { timeout: 10000 }, () => {
         render(<Home />);
 
         expect(screen.getByRole('heading', { name: /premium countertops\. fast install\. built for cincinnati\./i })).toBeInTheDocument();

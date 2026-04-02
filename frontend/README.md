@@ -64,6 +64,9 @@ Browser automation notes:
 
 - `npm run test:smoke` verifies the mobile quick-contact launcher open-dismiss-reopen flow and `#quote` anchor navigation.
 - `npm run snapshots:mobile` captures full-page mobile screenshots for `/`, one service-area route, and one material route into `test-artifacts/snapshots`.
+- Use an explicit base URL when local dev runs on a non-default port:
+  `PLAYWRIGHT_BASE_URL=http://127.0.0.1:3001 npm run test:smoke`
+  `PLAYWRIGHT_BASE_URL=http://127.0.0.1:3001 npm run snapshots:mobile`
 
 ## Estimate Form Schema
 
@@ -118,8 +121,7 @@ Current optimization priorities from the live review:
 
 Drift control decision:
 
-- `frontend` is now the single active implementation surface.
-- `frontend-testing` has been retired to prevent parallel drift.
+- `frontend` is the single active implementation surface.
 
 For a production-like local verification pass, run:
 

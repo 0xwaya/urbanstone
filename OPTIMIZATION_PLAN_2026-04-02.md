@@ -10,7 +10,7 @@
 ## Confirmed Findings
 
 - the homepage quick-contact widget covers too much of the hero on mobile first paint
-- local repo had two parallel app roots (`frontend` and `frontend-testing`), creating drift risk
+- local repo has been consolidated to a single app root (`frontend`)
 - Next.js dev/build warns about multiple lockfiles and infers the wrong tracing root unless explicitly configured
 - supplier gallery components are wired in the active app and should not be removed as dead code in this pass
 
@@ -22,7 +22,7 @@
 - keep the widget dismissible per session instead of reappearing immediately after a manual close
 - add a browser smoke test for mobile launcher open-dismiss-reopen and `#quote` anchor navigation
 - add a mobile snapshot pass script that captures homepage, one service-area page, and one material page
-- promote upgraded app into `frontend` as canonical and remove `frontend-testing` to stop drift
+- `frontend` is the canonical root; retired duplicate surface removed
 
 ## Next Optimization Steps
 
