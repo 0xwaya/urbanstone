@@ -109,6 +109,7 @@ export default function LeadForm({ content, routeId = 'homepage', collapsible = 
     const [status, setStatus] = useState({ type: 'idle', message: '' });
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isExpanded, setIsExpanded] = useState(defaultExpanded);
+    const [isDesktopViewport, setIsDesktopViewport] = useState(false);
 
     const companyPhone = process.env.NEXT_PUBLIC_COMPANY_PHONE || '(513) 307-5840';
     const companyEmail = process.env.NEXT_PUBLIC_LEAD_EMAIL || 'sales@urbanstone.co';
@@ -116,6 +117,9 @@ export default function LeadForm({ content, routeId = 'homepage', collapsible = 
     const isReusingSink = form.sinkBasinPreference === 'reuse-existing'
         && form.sinkMountPreference === 'reuse-existing'
         && form.sinkMaterialPreference === 'reuse-existing';
+    const useDesktopModal = collapsible && isDesktopViewport;
+    const showInlineForm = isExpanded && !useDesktopModal;
+    const showDesktopModal = isExpanded && useDesktopModal;
 
     const handleChange = (event) => {
         const { name, value } = event.target;
@@ -315,32 +319,35 @@ export default function LeadForm({ content, routeId = 'homepage', collapsible = 
         };
     }, [collapsible]);
 
-    return (
-        <section id="quote" className="rounded-3xl border border-border bg-panel p-5 shadow-soft sm:p-6 lg:sticky lg:top-24">
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-                <div>
-                    <div className="eyebrow">{formContent.eyebrow}</div>
-                    <h2 className="font-display text-3xl font-semibold sm:text-4xl">{formContent.title}</h2>
-                    <p className="mt-2 text-sm leading-6 text-muted">
-                        {formContent.description}
-                    </p>
-                </div>
+    useEffect(() => {
+        if (typeof window === 'undefined') {
+            return undefined;
+        }
 
-                {collapsible ? (
-                    <button
-                        type="button"
-                        className="inline-flex min-w-[6.5rem] items-center justify-center self-start whitespace-nowrap rounded-full border border-border bg-panel/80 px-4 py-2 text-sm font-semibold text-text transition hover:border-accent hover:text-accent sm:self-auto"
-                        aria-expanded={isExpanded}
-                        aria-controls="quote-form-panel"
-                        onClick={() => setIsExpanded((current) => !current)}
-                    >
-                        {isExpanded ? expandedLabel : collapsedLabel}
-                    </button>
-                ) : null}
-            </div>
+        const mediaQuery = window.matchMedia('(min-width: 1024px)');
+        const syncViewport = () => setIsDesktopViewport(mediaQuery.matches);
 
-            {isExpanded ? (
-            <>
+        syncViewport();
+        mediaQuery.addEventListener('change', syncViewport);
+
+        return () => mediaQuery.removeEventListener('change', syncViewport);
+    }, []);
+
+    useEffect(() => {
+        if (typeof document === 'undefined' || !showDesktopModal) {
+            return undefined;
+        }
+
+        const { overflow } = document.body.style;
+        document.body.style.overflow = 'hidden';
+
+        return () => {
+            document.body.style.overflow = overflow;
+        };
+    }, [showDesktopModal]);
+
+    const formPanel = (
+        <>
             <form id="quote-form-panel" className="mt-6 space-y-5" onSubmit={handleSubmit} noValidate>
                 <input
                     type="text"
@@ -484,7 +491,7 @@ export default function LeadForm({ content, routeId = 'homepage', collapsible = 
 
                 <div>
                     <span className="mb-2 block text-sm font-medium text-text">Current tops material</span>
-                    <div className="flex flex-wrap gap-1.5 md:flex-nowrap md:overflow-x-auto md:pb-1">
+                    <div className="flex flex-wrap gap-1.5">
                         {currentTopMaterialOptions.map((option) => (
                             <button
                                 key={option.value}
@@ -512,10 +519,10 @@ export default function LeadForm({ content, routeId = 'homepage', collapsible = 
                         </button>
 
                         {!isReusingSink ? (
-                            <div className="grid gap-2.5 sm:grid-cols-3">
+                            <div className="grid gap-2.5 xl:grid-cols-3">
                                 <div>
                                     <span className="mb-1.5 block text-xs font-semibold uppercase tracking-[0.16em] text-muted">Basin</span>
-                                    <div className="flex flex-wrap gap-1.5 md:flex-nowrap md:overflow-x-auto md:pb-1">
+                                    <div className="flex flex-wrap gap-1.5">
                                         {sinkBasinOptions.map((option) => (
                                             <button
                                                 key={option.value}
@@ -532,7 +539,7 @@ export default function LeadForm({ content, routeId = 'homepage', collapsible = 
 
                                 <div>
                                     <span className="mb-1.5 block text-xs font-semibold uppercase tracking-[0.16em] text-muted">Mount</span>
-                                    <div className="flex flex-wrap gap-1.5 md:flex-nowrap md:overflow-x-auto md:pb-1">
+                                    <div className="flex flex-wrap gap-1.5">
                                         {sinkMountOptions.map((option) => (
                                             <button
                                                 key={option.value}
@@ -549,7 +556,7 @@ export default function LeadForm({ content, routeId = 'homepage', collapsible = 
 
                                 <div>
                                     <span className="mb-1.5 block text-xs font-semibold uppercase tracking-[0.16em] text-muted">Material</span>
-                                    <div className="flex flex-wrap gap-1.5 md:flex-nowrap md:overflow-x-auto md:pb-1">
+                                    <div className="flex flex-wrap gap-1.5">
                                         {sinkMaterialOptions.map((option) => (
                                             <button
                                                 key={option.value}
@@ -604,7 +611,7 @@ export default function LeadForm({ content, routeId = 'homepage', collapsible = 
 
                 <div>
                     <span className="mb-2 block text-sm font-medium text-text">Material preference</span>
-                    <div className="flex flex-wrap gap-1.5 md:flex-nowrap md:overflow-x-auto md:pb-1">
+                    <div className="flex flex-wrap gap-1.5">
                         {materialOptions.map((option) => (
                             <button
                                 key={option.value}
@@ -652,8 +659,56 @@ export default function LeadForm({ content, routeId = 'homepage', collapsible = 
                     </a>
                 </div>
             </div>
-            </>
-            ) : null}
+        </>
+    );
+
+    return (
+        <>
+        <section id="quote" className="rounded-3xl border border-border bg-panel p-5 shadow-soft sm:p-6 lg:sticky lg:top-24">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                <div>
+                    <div className="eyebrow">{formContent.eyebrow}</div>
+                    <h2 className="font-display text-3xl font-semibold sm:text-4xl">{formContent.title}</h2>
+                    <p className="mt-2 text-sm leading-6 text-muted">
+                        {formContent.description}
+                    </p>
+                </div>
+
+                {collapsible ? (
+                    <button
+                        type="button"
+                        className="inline-flex min-w-[6.5rem] items-center justify-center self-start whitespace-nowrap rounded-full border border-border bg-panel/80 px-4 py-2 text-sm font-semibold text-text transition hover:border-accent hover:text-accent sm:self-auto"
+                        aria-expanded={isExpanded}
+                        aria-controls="quote-form-panel"
+                        onClick={() => setIsExpanded((current) => !current)}
+                    >
+                        {isExpanded ? expandedLabel : collapsedLabel}
+                    </button>
+                ) : null}
+            </div>
+
+            {showInlineForm ? formPanel : null}
         </section>
+        {showDesktopModal ? (
+            <div className="lead-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="quote-modal-title" onClick={() => setIsExpanded(false)}>
+                <div className="lead-modal-shell" onClick={(event) => event.stopPropagation()}>
+                    <div className="flex items-start justify-between gap-3">
+                        <div>
+                            <p className="eyebrow">Request a quote</p>
+                            <h2 id="quote-modal-title" className="font-display text-3xl font-semibold text-text sm:text-4xl">Start your estimate</h2>
+                        </div>
+                        <button
+                            type="button"
+                            className="inline-flex min-w-[6.5rem] items-center justify-center self-start whitespace-nowrap rounded-full border border-border bg-panel/80 px-4 py-2 text-sm font-semibold text-text transition hover:border-accent hover:text-accent"
+                            onClick={() => setIsExpanded(false)}
+                        >
+                            {expandedLabel}
+                        </button>
+                    </div>
+                    {formPanel}
+                </div>
+            </div>
+        ) : null}
+        </>
     );
 }

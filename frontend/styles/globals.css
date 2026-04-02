@@ -459,6 +459,9 @@ html[data-theme="light"] .form-input::placeholder {
 }
 
 .form-chip--advisory {
+  width: 100%;
+  justify-content: space-between;
+  gap: 0.4rem;
   border-color: rgba(var(--border), 0.95);
   background: linear-gradient(
     180deg,
@@ -475,6 +478,7 @@ html[data-theme="light"] .form-input::placeholder {
 }
 
 .form-chip-note {
+  flex-shrink: 0;
   margin-left: 0.45rem;
   border-radius: 9999px;
   background: rgba(var(--accent), 0.12);
@@ -531,6 +535,67 @@ html[data-theme="light"] .form-chip--advisory {
 html[data-theme="light"] .form-chip-note {
   background: rgba(54, 105, 187, 0.1);
   color: rgb(54 105 187);
+}
+
+.lead-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: flex;
+  justify-content: center;
+  overflow-y: auto;
+  background:
+    radial-gradient(
+      circle at 20% 15%,
+      rgba(var(--accent), 0.2),
+      transparent 32%
+    ),
+    rgba(6, 10, 18, 0.72);
+  padding: 1.5rem 1rem;
+  backdrop-filter: blur(4px);
+}
+
+.lead-modal-shell {
+  width: min(1100px, 100%);
+  max-height: calc(100vh - 3rem);
+  overflow-y: auto;
+  border-radius: 1.5rem;
+  border: 1px solid rgba(var(--border), 0.92);
+  background:
+    linear-gradient(
+      180deg,
+      rgba(var(--panel), 0.98),
+      rgba(var(--surface), 0.94)
+    ),
+    radial-gradient(
+      circle at 85% 0%,
+      rgba(var(--accent), 0.12),
+      transparent 28%
+    );
+  padding: 1.25rem 1.1rem 1.5rem;
+  box-shadow:
+    0 32px 80px rgba(4, 10, 22, 0.44),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+@media (min-width: 640px) {
+  .lead-modal-backdrop {
+    padding: 2rem;
+  }
+
+  .lead-modal-shell {
+    padding: 1.75rem 1.75rem 2rem;
+  }
+}
+
+html[data-theme="light"] .lead-modal-backdrop {
+  background:
+    radial-gradient(
+      circle at 20% 15%,
+      rgba(54, 105, 187, 0.16),
+      transparent 32%
+    ),
+    rgba(232, 238, 249, 0.76);
 }
 
 .supplier-card {
