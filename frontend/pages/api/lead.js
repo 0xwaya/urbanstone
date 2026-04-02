@@ -13,24 +13,43 @@ const RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000;
 export const config = {
     api: {
         bodyParser: {
-            sizeLimit: '1mb',
+            sizeLimit: '12mb',
         },
     },
 };
 
 async function relayLead(payload) {
-    const response = await fetch(process.env.LEAD_WEBHOOK_URL, {
+    const response = await fetch(payload.webhookUrl, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify(payload),
+        body: JSON.stringify(payload.body),
         signal: AbortSignal.timeout(5000),
     });
 
     if (!response.ok) {
         throw new Error(`Lead relay failed with status ${response.status}`);
     }
+}
+
+function resolveWebhookUrl(request) {
+    if (process.env.LEAD_WEBHOOK_URL) {
+        return process.env.LEAD_WEBHOOK_URL;
+    }
+
+    if (process.env.NODE_ENV === 'production') {
+        return '';
+    }
+
+    const host = request.headers['x-forwarded-host'] || request.headers.host;
+    const proto = request.headers['x-forwarded-proto'] || 'http';
+
+    if (host) {
+        return `${proto}://${host}/api/lead-dev-webhook`;
+    }
+
+    return 'http://127.0.0.1:3001/api/lead-dev-webhook';
 }
 
 export default async function handler(request, response) {
@@ -65,14 +84,19 @@ export default async function handler(request, response) {
         });
     }
 
-    if (!process.env.LEAD_WEBHOOK_URL) {
+    const webhookUrl = resolveWebhookUrl(request);
+
+    if (!webhookUrl) {
         return response.status(503).json({
             message: 'Lead delivery is not configured. Set LEAD_WEBHOOK_URL before production deployment.',
         });
     }
 
     try {
-        await relayLead(buildLeadForwardPayload(result.data, request));
+        await relayLead({
+            webhookUrl,
+            body: buildLeadForwardPayload(result.data, request),
+        });
         return response.status(202).json({ message: 'Thanks. Your request is in the queue and we will follow up shortly.' });
     } catch {
         return response.status(502).json({

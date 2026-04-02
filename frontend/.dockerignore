@@ -1,7 +1,0 @@
-node_modules
-.next
-coverage
-npm-debug.log*
-.env
-.env.local
-.env.production.local

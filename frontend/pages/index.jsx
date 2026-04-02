@@ -14,19 +14,18 @@ import { getGeoRegion } from '../lib/seo';
 export default function Home() {
   const siteUrl = getSiteUrl();
   const canonicalUrl = getCanonicalUrl('/');
-  const ogImageUrl = `${siteUrl}/brand/amzlogo.png`;
+  const ogImageUrl = `${siteUrl}/brand/urban-stone-og.png`;
   const companyPhone = process.env.NEXT_PUBLIC_COMPANY_PHONE || '(513) 307-5840';
   const companyEmail = process.env.NEXT_PUBLIC_LEAD_EMAIL || 'sales@urbanstone.co';
-  const instagramUrl = (process.env.NEXT_PUBLIC_INSTAGRAM_URL || 'https://www.instagram.com/amazongranite').trim();
-  const facebookUrl = (process.env.NEXT_PUBLIC_FACEBOOK_URL || 'https://www.facebook.com/amazongranitellc/').trim();
-  const tiktokUrl = (process.env.NEXT_PUBLIC_TIKTOK_URL || 'https://www.tiktok.com/@urbanstoneco').trim();
+  const instagramUrl = (process.env.NEXT_PUBLIC_INSTAGRAM_URL || '').trim();
+  const facebookUrl = (process.env.NEXT_PUBLIC_FACEBOOK_URL || '').trim();
+  const tiktokUrl = (process.env.NEXT_PUBLIC_TIKTOK_URL || '').trim();
+  const socialProfiles = [instagramUrl, facebookUrl, tiktokUrl].filter(Boolean);
   const structuredData = {
     '@context': 'https://schema.org',
     '@type': 'HomeAndConstructionBusiness',
     '@id': `${canonicalUrl}#business`,
     name: 'Urban Stone Collective',
-    legalName: 'Amazon Granite LLC',
-    alternateName: ['Amazon Granite', 'Amazon Granite LLC'],
     url: canonicalUrl,
     image: ogImageUrl,
     telephone: companyPhone,
@@ -52,18 +51,17 @@ export default function Home() {
       'Countertop fabrication',
       'Countertop installation',
     ],
-    sameAs: [instagramUrl, facebookUrl, tiktokUrl],
-    description: 'Urban Stone Collective, formerly Amazon Granite LLC, fabricates and installs quartz countertops, granite countertops, and quartzite countertops across the Cincinnati metro with curated slab sourcing and fast turnaround.',
+    sameAs: socialProfiles,
+    description: 'Urban Stone Collective fabricates and installs quartz countertops, granite countertops, and quartzite countertops across the Cincinnati metro with curated slab sourcing and fast turnaround.',
   };
   const organizationSchema = {
     '@context': 'https://schema.org',
     '@type': 'Organization',
     '@id': `${siteUrl}#organization`,
     name: 'Urban Stone Collective',
-    legalName: 'Amazon Granite LLC',
     url: siteUrl,
     logo: ogImageUrl,
-    sameAs: [instagramUrl, facebookUrl, tiktokUrl],
+    sameAs: socialProfiles,
     contactPoint: [
       {
         '@type': 'ContactPoint',
@@ -91,30 +89,30 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>Quartz, Granite & Quartzite Countertops in Cincinnati | Urban Stone Collective</title>
-        <meta name="description" content="Urban Stone Collective installs quartz countertops, granite countertops, and quartzite countertops in Cincinnati, Mason, West Chester, Fairfield, Northern Kentucky, and nearby areas within 50 miles of downtown Cincinnati." />
+        <title>Urban Stone Collective | countertops specialists</title>
+        <meta name="description" content="Urban Stone Collective | countertops specialists. Quartz, granite, and quartzite countertops with expert fabrication and installation in Cincinnati and Northern Kentucky." />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="theme-color" content="#f4efe7" />
         <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
         <meta name="geo.region" content={getGeoRegion('OH')} />
         <meta name="geo.placename" content="Cincinnati" />
         <link rel="canonical" href={canonicalUrl} />
-        <meta property="og:title" content="Quartz, Granite & Quartzite Countertops in Cincinnati | Urban Stone Collective" />
-        <meta property="og:description" content="Quartz countertops, granite countertops, and quartzite countertops with curated slab selections, custom fabrication, and fast Cincinnati-area installation." />
+        <meta property="og:title" content="Urban Stone Collective | countertops specialists" />
+        <meta property="og:description" content="Urban Stone Collective | countertops specialists. Quartz, granite, and quartzite countertops with expert fabrication and installation in Cincinnati and Northern Kentucky." />
         <meta property="og:type" content="website" />
         <meta property="og:url" content={canonicalUrl} />
         <meta property="og:site_name" content="Urban Stone Collective" />
         <meta property="og:locale" content="en_US" />
         <meta property="og:image" content={ogImageUrl} />
-        <meta property="og:image:alt" content="Urban Stone Collective countertop brand mark" />
+        <meta property="og:image:alt" content="Urban Stone Collective social preview with brand wordmark on a dark stone-inspired background" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Quartz, Granite & Quartzite Countertops in Cincinnati | Urban Stone Collective" />
-        <meta name="twitter:description" content="Quartz countertops, granite countertops, and quartzite countertops with fast turnaround for Cincinnati-area homes and renovations." />
+        <meta name="twitter:title" content="Urban Stone Collective | countertops specialists" />
+        <meta name="twitter:description" content="Urban Stone Collective | countertops specialists. Quartz, granite, and quartzite countertops with expert fabrication and installation in Cincinnati and Northern Kentucky." />
         <meta name="twitter:image" content={ogImageUrl} />
-        <meta name="twitter:image:alt" content="Urban Stone Collective countertop brand mark" />
-        <link rel="icon" href="/favicon.ico" />
-        <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png" />
-        <link rel="apple-touch-icon" href="/favicon.png" />
+        <meta name="twitter:image:alt" content="Urban Stone Collective social preview with brand wordmark on a dark stone-inspired background" />
+        <link rel="icon" type="image/svg+xml" href="/brand/urban-stone-favicon.svg?v=20260401e" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png?v=20260401e" />
+        <link rel="apple-touch-icon" href="/favicon.png?v=20260401e" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
@@ -140,7 +138,7 @@ export default function Home() {
                 <SuppliersSection />
               </div>
               <div className="lg:col-span-1">
-                <LeadForm content={homepageLeadFormContent} routeId="homepage" />
+                <LeadForm content={homepageLeadFormContent} routeId="homepage" collapsible defaultExpanded={false} />
               </div>
             </div>
             <FAQSection {...homepageFaqContent} collapsible defaultExpanded={false} />

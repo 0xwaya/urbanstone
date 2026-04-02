@@ -1,16 +1,63 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+
+const DISMISS_STORAGE_KEY = 'urban-stone-chat-widget-dismissed';
+
+function shouldOpenByDefault() {
+    if (typeof window === 'undefined') {
+        return false;
+    }
+
+    if (window.sessionStorage.getItem(DISMISS_STORAGE_KEY) === 'true') {
+        return false;
+    }
+
+    return typeof window.matchMedia === 'function'
+        ? window.matchMedia('(min-width: 640px)').matches
+        : true;
+}
 
 function toTelHref(value) {
     return value.replace(/[^\d+]/g, '');
 }
 
 export default function ChatWidget() {
-    const [isOpen, setIsOpen] = useState(true);
+    const [isOpen, setIsOpen] = useState(false);
+    const [hasHydrated, setHasHydrated] = useState(false);
     const companyPhone = process.env.NEXT_PUBLIC_COMPANY_PHONE || '(513) 307-5840';
     const companyEmail = process.env.NEXT_PUBLIC_LEAD_EMAIL || 'sales@urbanstone.co';
 
-    if (!isOpen) {
+    useEffect(() => {
+        setIsOpen(shouldOpenByDefault());
+        setHasHydrated(true);
+    }, []);
+
+    const handleClose = () => {
+        setIsOpen(false);
+        window.sessionStorage.setItem(DISMISS_STORAGE_KEY, 'true');
+    };
+
+    const handleOpen = () => {
+        setIsOpen(true);
+        window.sessionStorage.removeItem(DISMISS_STORAGE_KEY);
+    };
+
+    if (!hasHydrated) {
         return null;
+    }
+
+    if (!isOpen) {
+        return (
+            <div className="pointer-events-none fixed bottom-4 right-4 z-50">
+                <button
+                    type="button"
+                    className="pointer-events-auto inline-flex items-center justify-center rounded-full bg-accent px-4 py-3 text-sm font-semibold text-white shadow-[0_16px_40px_rgba(61,110,196,0.24)] transition hover:bg-accentDark"
+                    onClick={handleOpen}
+                    aria-label="Open quick contact panel"
+                >
+                    Fast estimate
+                </button>
+            </div>
+        );
     }
 
     return (
@@ -25,7 +72,7 @@ export default function ChatWidget() {
                         type="button"
                         className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border text-lg font-medium text-muted transition hover:border-accent hover:text-text"
                         aria-label="Close quick contact panel"
-                        onClick={() => setIsOpen(false)}
+                        onClick={handleClose}
                     >
                         ×
                     </button>
@@ -41,6 +88,13 @@ export default function ChatWidget() {
                     <a className="inline-flex rounded-full border border-border px-3 py-2 text-sm font-semibold text-text transition hover:border-accent" href={`mailto:${companyEmail}`}>
                         Email
                     </a>
+                    <button
+                        type="button"
+                        className="inline-flex rounded-full border border-border px-3 py-2 text-sm font-semibold text-text transition hover:border-accent"
+                        onClick={handleClose}
+                    >
+                        Dismiss
+                    </button>
                 </div>
             </div>
         </aside>

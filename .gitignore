@@ -22,6 +22,9 @@ out/
 dist/
 build/
 coverage/
+frontend/test-artifacts/
+frontend/test-results/
+frontend/playwright-report/
 .cache/
 .vercel/
 

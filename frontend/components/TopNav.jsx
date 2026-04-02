@@ -14,15 +14,15 @@ export default function TopNav() {
 
     return (
         <header className="sticky top-0 z-40 -mx-2 overflow-x-clip border-b border-transparent bg-bg/80 px-2 py-2 backdrop-blur sm:py-3">
-            <nav className="rounded-2xl border border-border bg-surface/85 px-3 py-2.5 shadow-soft sm:px-4 sm:py-3">
+            <nav className="top-nav-shell rounded-2xl border border-border px-3 py-2.5 shadow-soft sm:px-4 sm:py-3">
                 <div className="flex items-center gap-2 sm:gap-3">
-                    <a className="flex min-w-0 flex-1 items-center gap-2.5 sm:gap-3" href="#top" aria-label="Amazon Granite home">
-                        <LogoMark className="h-9 w-9 shrink-0 sm:h-12 sm:w-12" />
+                    <a className="flex min-w-0 flex-1 items-center gap-3 sm:gap-3.5" href="#top" aria-label="Urban Stone Collective home">
+                        <LogoMark className="h-12 w-12 shrink-0 sm:h-14 sm:w-14" />
                         <div className="min-w-0">
                             <div className="nav-brand-wrap">
                                 <div className="nav-brand-wordmark">
-                                    <span className="nav-brand-amazon">amazon</span>{' '}
-                                    <span className="nav-brand-granite">granite</span>
+                                    <span className="nav-brand-primary">Urban Stone</span>
+                                    <span className="nav-brand-secondary">Collective</span>
                                 </div>
                                 <span className="nav-brand-badge">LLC</span>
                             </div>
@@ -47,7 +47,7 @@ export default function TopNav() {
                         <a
                             className="inline-flex items-center justify-center rounded-full bg-accent px-4 py-2 text-sm font-semibold text-white shadow-[0_16px_40px_rgba(61,110,196,0.22)] transition hover:bg-accentDark"
                             href={`tel:${toTelHref(companyPhone)}`}
-                            aria-label={`Call Amazon Granite at ${companyPhone}`}
+                            aria-label={`Call Urban Stone Collective at ${companyPhone}`}
                         >
                             Call
                         </a>
@@ -92,14 +92,14 @@ export default function TopNav() {
                                 <a
                                     className="inline-flex items-center justify-center rounded-full bg-accent px-4 py-3 text-base font-semibold text-white shadow-[0_16px_40px_rgba(61,110,196,0.24)] transition hover:bg-accentDark"
                                     href={`tel:${toTelHref(companyPhone)}`}
-                                    aria-label={`Call Amazon Granite at ${companyPhone}`}
+                                    aria-label={`Call Urban Stone Collective at ${companyPhone}`}
                                 >
                                     Call
                                 </a>
                                 <a
                                     className="inline-flex items-center justify-center rounded-full border border-border bg-panel/80 px-4 py-3 text-base font-semibold text-text transition hover:border-accent hover:text-accent"
                                     href={`mailto:${companyEmail}`}
-                                    aria-label={`Email Amazon Granite at ${companyEmail}`}
+                                    aria-label={`Email Urban Stone Collective at ${companyEmail}`}
                                 >
                                     Email
                                 </a>
@@ -113,4 +113,4 @@ export default function TopNav() {
             </nav>
         </header>
     );
-}
+}   

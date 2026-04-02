@@ -14,7 +14,7 @@ import { getServiceAreaBySlug, serviceAreas } from '../../data/service-areas';
 export default function ServiceAreaPage({ area }) {
     const canonicalUrl = getCanonicalUrl(`/service-areas/${area.slug}`);
     const siteUrl = getSiteUrl();
-    const ogImageUrl = `${siteUrl}/brand/amzlogo.png`;
+    const ogImageUrl = `${siteUrl}/brand/urban-stone-og.png`;
     const faqItems = area.faqItems;
     const relatedServiceAreas = area.relatedAreas
         .map((relatedArea) => serviceAreas.find((candidate) => candidate.city === relatedArea))
@@ -35,7 +35,6 @@ export default function ServiceAreaPage({ area }) {
         '@context': 'https://schema.org',
         '@type': 'HomeAndConstructionBusiness',
         name: 'Urban Stone Collective',
-        legalName: 'Amazon Granite LLC',
         '@id': `${siteUrl}#business`,
         url: canonicalUrl,
         image: ogImageUrl,
@@ -78,12 +77,12 @@ export default function ServiceAreaPage({ area }) {
                 <meta property="og:site_name" content="Urban Stone Collective" />
                 <meta property="og:locale" content="en_US" />
                 <meta property="og:image" content={ogImageUrl} />
-                <meta property="og:image:alt" content="Urban Stone Collective countertop brand mark" />
+                <meta property="og:image:alt" content="Urban Stone Collective social preview with brand wordmark on a dark stone-inspired background" />
                 <meta name="twitter:card" content="summary_large_image" />
                 <meta name="twitter:title" content={`${area.headline} | Urban Stone Collective`} />
                 <meta name="twitter:description" content={area.metaDescription} />
                 <meta name="twitter:image" content={ogImageUrl} />
-                <meta name="twitter:image:alt" content="Urban Stone Collective countertop brand mark" />
+                <meta name="twitter:image:alt" content="Urban Stone Collective social preview with brand wordmark on a dark stone-inspired background" />
                 <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
                 <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessSchema) }} />
                 <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />

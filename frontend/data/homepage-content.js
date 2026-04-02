@@ -44,7 +44,7 @@ export const homepageLeadFormContent = {
     eyebrow: 'Request a quote',
     title: 'Start with a Fast Estimate',
     description: 'Send your layout, measurements, and material preference. We will help confirm slab direction, final selection, measurements, deposit, fabrication, and install timing.',
-    placeholder: 'Kitchen or bath location, preferred material or slab direction, timeline, and any measurements you already have.',
+    placeholder: 'Anything unusual to note: appliance changes, access constraints, edge requests, demo concerns, or scheduling notes.',
     submitLabel: 'Send estimate request',
     submittingLabel: 'Sending request...',
     directResponseTitle: 'Need help with next steps?',
@@ -54,6 +54,6 @@ export const homepageLeadFormContent = {
 export const homepageAnnouncement = {
     eyebrow: 'Rebrand update',
     title: 'Urban Stone Collective is now live at urbanstone.co.',
-    detail: 'Amazon Granite LLC remains the legal entity, while the public-facing brand has moved to Urban Stone Collective. Same team, curated suppliers, and fast turnaround.',
+    detail: 'New name, refined presentation, and the same fast-turn countertop process for greater Cincinnati and Northern Kentucky.',
     tags: ['urbanstone.co live', '3-5 day install'],
 };

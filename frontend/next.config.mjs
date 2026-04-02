@@ -1,3 +1,9 @@
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const isDevelopment = process.env.NODE_ENV !== 'production';
+
 const securityHeaders = [
     {
         key: 'Content-Security-Policy',
@@ -10,7 +16,7 @@ const securityHeaders = [
             "frame-ancestors 'none'",
             "img-src 'self' data: https:",
             "object-src 'none'",
-            "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
+            `script-src 'self' 'unsafe-inline'${isDevelopment ? " 'unsafe-eval'" : ''}`,
             "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
             'upgrade-insecure-requests',
         ].join('; '),
@@ -60,6 +66,7 @@ const nextConfig = {
         ],
     },
     output: 'standalone',
+    outputFileTracingRoot: __dirname,
     poweredByHeader: false,
     reactStrictMode: true,
     compress: true,

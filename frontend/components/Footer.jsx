@@ -1,8 +1,8 @@
 import Link from 'next/link';
 
-const INSTAGRAM_FALLBACK = 'https://www.instagram.com/amazongranite';
-const FACEBOOK_FALLBACK = 'https://www.facebook.com/amazongranitellc/';
-const TIKTOK_FALLBACK = 'https://www.tiktok.com/@urbanstoneco';
+const INSTAGRAM_FALLBACK = 'https://www.instagram.com/';
+const FACEBOOK_FALLBACK = 'https://www.facebook.com/';
+const TIKTOK_FALLBACK = 'https://www.tiktok.com/';
 const WAYALABS_FALLBACK = 'https://wayalabs.com';
 
 function SocialIcon({ children, href, label }) {
@@ -39,7 +39,7 @@ export default function Footer() {
                                 Cleaner installs, faster decisions, and curated slab sourcing across greater Cincinnati.
                             </div>
                             <p className="mt-2 max-w-[31rem] text-sm leading-6 text-muted">
-                                Public-facing brand at urbanstone.co. Amazon Granite LLC remains the legal entity behind the same fabrication and installation service.
+                                Urban Stone Collective serves homeowners, remodelers, and builders with curated slabs, fabrication, and installation across greater Cincinnati.
                             </p>
                         </div>
 
@@ -71,7 +71,7 @@ export default function Footer() {
                         </div>
 
                         <div className="text-sm leading-6 text-muted sm:text-right">
-                            <div>&copy; {currentYear} Amazon Granite LLC DBA Urban Stone Collective.</div>
+                            <div>&copy; {currentYear} Urban Stone Collective.</div>
                             <div className="mt-1">
                                 Built by{' '}
                                 <a className="font-semibold text-text transition hover:text-accent" href={wayaLabsUrl} target="_blank" rel="noreferrer">

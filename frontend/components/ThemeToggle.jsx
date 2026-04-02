@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-const STORAGE_KEY = 'amazon-granite-theme';
+const STORAGE_KEY = 'urban-stone-theme';
 
 function getPreferredTheme() {
     const savedTheme = window.localStorage.getItem(STORAGE_KEY);

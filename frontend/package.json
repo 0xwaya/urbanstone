@@ -1,8 +1,8 @@
 {
-  "name": "amazon-granite-frontend",
+  "name": "urban-stone-frontend",
   "version": "0.1.0",
   "private": true,
-  "description": "Production baseline for the Amazon Granite marketing site.",
+  "description": "Production baseline for the Urban Stone Collective marketing site.",
   "engines": {
     "node": ">=20.11.0"
   },
@@ -12,25 +12,31 @@
     "start": "node .next/standalone/server.js",
     "lint": "next lint",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "test:smoke": "playwright test tests/browser-smoke.spec.mjs",
+    "snapshots:mobile": "node scripts/snapshot-pass.mjs"
   },
   "dependencies": {
-    "next": "14.2.33",
+    "next": "^15.5.14",
     "react": "18.3.1",
     "react-dom": "18.3.1",
     "sharp": "^0.34.5"
   },
   "devDependencies": {
+    "@playwright/test": "1.59.1",
     "@testing-library/jest-dom": "6.6.3",
     "@testing-library/react": "16.3.0",
     "@testing-library/user-event": "14.6.1",
     "@vitejs/plugin-react": "4.7.0",
     "autoprefixer": "10.4.21",
-    "eslint": "8.57.1",
-    "eslint-config-next": "14.2.33",
+    "eslint": "^9.0.0",
+    "eslint-config-next": "^15.5.14",
     "jsdom": "26.1.0",
     "postcss": "8.5.6",
     "tailwindcss": "3.4.17",
     "vitest": "3.2.4"
+  },
+  "overrides": {
+    "lodash": "^4.17.24"
   }
 }

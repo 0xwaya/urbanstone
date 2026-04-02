@@ -1,6 +1,6 @@
 # Frontend
 
-Standalone Next.js pages application for the Amazon Granite marketing site.
+Standalone Next.js pages application for the Urban Stone Collective marketing site.
 
 This frontend includes the current live mobile layout pass for navigation, hero spacing, curated material browsing, and quote capture.
 
@@ -28,9 +28,14 @@ The active homepage funnel is:
 ## Local Development
 
 1. `npm install`
-2. `cp .env.example .env.local`
-3. Set `LEAD_WEBHOOK_URL` to the HTTPS endpoint that should receive quote requests.
-4. `npm run dev`
+2. `npx playwright install chromium`
+3. `cp .env.example .env.local`
+4. Set `LEAD_WEBHOOK_URL` to the HTTPS endpoint that should receive quote requests.
+5. `npm run dev`
+
+Recommended local run command (avoids port conflicts):
+
+- `npm run dev -- --hostname 127.0.0.1 --port 3001`
 
 ## Environment Variables
 
@@ -39,15 +44,82 @@ The active homepage funnel is:
 - `NEXT_PUBLIC_SITE_URL`: canonical production origin used for metadata, robots, and sitemap output.
 - `LEAD_WEBHOOK_URL`: required for successful lead delivery from `/api/lead`.
 
-If `LEAD_WEBHOOK_URL` is not set, the form stays visible but the API intentionally returns a configuration error instead of silently dropping leads.
+If `LEAD_WEBHOOK_URL` is not set during local development, `/api/lead` falls back to the local route `/api/lead-dev-webhook` so form submissions still complete while you are building.
+
+In production, `LEAD_WEBHOOK_URL` is still required and missing configuration returns the expected 503 warning.
 
 ## Quality Gates
 
 - `npm run lint`
 - `npm run test`
 - `npm run build`
+- `npm run test:smoke`
+- `npm run snapshots:mobile`
+
+Security check:
+
+- `npm audit --json`
+
+Browser automation notes:
+
+- `npm run test:smoke` verifies the mobile quick-contact launcher open-dismiss-reopen flow and `#quote` anchor navigation.
+- `npm run snapshots:mobile` captures full-page mobile screenshots for `/`, one service-area route, and one material route into `test-artifacts/snapshots`.
+
+## Estimate Form Schema
+
+The estimate form now captures both freeform project context and structured scoping fields.
+
+Required base fields:
+
+- full name
+- email
+- phone
+- project details
+
+Measurement input requirement:
+
+- upload a rough drawing image (`png`, `jpg`, `jpeg`, phone image), or
+- provide total square footage (not final; confirmed during on-site measurement)
+
+Additional required scope fields:
+
+- current tops removal (`yes`, `no`, `unsure`)
+- current tops material (text input)
+- new sink basin preference (`single`, `double`, `reuse-existing`)
+- new sink mount preference (`undermount`, `topmount`, `reuse-existing`)
+- new sink material preference (`stainless-steel`, `composite`, `reuse-existing`)
+- backsplash (`4-inch`, `full-height`, `none`)
+- customer timeframe (`1-week`, `2-weeks`, `1-month`)
+- material preference (multi-select: `granite`, `marble`, `quartzite`, `quartz`)
+
+Server-side validation and normalization for these fields is implemented in `lib/lead.js` and used by `pages/api/lead.js`.
+
+## Troubleshooting
+
+`npm audit --fix`:
+
+- if audit reports Playwright or lodash issues, run `npm install` first to apply the repo-pinned dependency updates.
+- avoid `npm audit fix --force` unless you intentionally want to rewrite version ranges.
+
+`npm run test:smoke` executable-not-found error:
+
+- run `npx playwright install chromium` after dependency updates.
+- rerun smoke tests with an explicit base URL, for example:
+  `PLAYWRIGHT_BASE_URL=http://127.0.0.1:3001 npm run test:smoke`
 
 Generated build output and local validation backup directories are not part of the source review surface and should stay ignored during routine lint and git review.
+
+Current optimization priorities from the live review:
+
+- keep the quick-contact widget from obscuring the mobile hero on first load
+- preserve a direct reopen path after dismissal instead of forcing the panel open on every refresh
+- keep `.env.example` in sync with the documented setup flow
+- pin the Next.js tracing root so local dev and builds do not infer the wrong workspace root when multiple lockfiles are present
+
+Drift control decision:
+
+- `frontend` is now the single active implementation surface.
+- `frontend-testing` has been retired to prevent parallel drift.
 
 For a production-like local verification pass, run:
 
@@ -64,8 +136,8 @@ For live browser tuning during UI work, run:
 Build and run the included Docker image:
 
 ```bash
-docker build -t amazon-granite-frontend .
-docker run --rm -p 3000:3000 --env-file .env.local amazon-granite-frontend
+docker build -t urban-stone-frontend .
+docker run --rm -p 3000:3000 --env-file .env.local urban-stone-frontend
 ```
 
 ### Process Hosting

@@ -6,7 +6,15 @@ describe('sanitizeLeadPayload', () => {
             name: '  Jamie Stone  ',
             email: 'JAMIE@example.com ',
             phone: '(513) 555-0101',
-            projectDetails: 'Kitchen remodel with waterfall island and 2 bathroom vanity tops.',
+            totalSquareFootage: '54.5',
+            currentTopRemoval: 'yes',
+            currentTopMaterial: 'Laminate',
+            sinkBasinPreference: 'single',
+            sinkMountPreference: 'undermount',
+            sinkMaterialPreference: 'stainless-steel',
+            backsplashPreference: '4-inch',
+            timeframeGoal: '2-weeks',
+            materialPreferences: ['quartz', 'granite'],
             website: '',
         });
 
@@ -16,7 +24,15 @@ describe('sanitizeLeadPayload', () => {
             name: 'Jamie Stone',
             email: 'jamie@example.com',
             phone: '(513) 555-0101',
+            totalSquareFootage: 54.5,
+            currentTopRemoval: 'yes',
+            sinkBasinPreference: 'single',
+            sinkMountPreference: 'undermount',
+            sinkMaterialPreference: 'stainless-steel',
+            backsplashPreference: '4-inch',
+            timeframeGoal: '2-weeks',
         });
+        expect(result.data.materialPreferences).toEqual(['quartz', 'granite']);
     });
 
     it('rejects invalid or suspicious submissions', () => {
@@ -24,7 +40,15 @@ describe('sanitizeLeadPayload', () => {
             name: 'A',
             email: 'not-an-email',
             phone: 'abc',
-            projectDetails: 'short note',
+            totalSquareFootage: '-9',
+            currentTopRemoval: '',
+            currentTopMaterial: '',
+            sinkBasinPreference: '',
+            sinkMountPreference: '',
+            sinkMaterialPreference: '',
+            backsplashPreference: '',
+            timeframeGoal: '',
+            materialPreferences: [],
             website: 'https://spam.example',
         });
 
@@ -33,9 +57,44 @@ describe('sanitizeLeadPayload', () => {
             name: expect.any(String),
             email: expect.any(String),
             phone: expect.any(String),
-            projectDetails: expect.any(String),
+            totalSquareFootage: expect.any(String),
+            currentTopRemoval: expect.any(String),
+            currentTopMaterial: expect.any(String),
+            sinkBasinPreference: expect.any(String),
+            sinkMountPreference: expect.any(String),
+            sinkMaterialPreference: expect.any(String),
+            backsplashPreference: expect.any(String),
+            timeframeGoal: expect.any(String),
+            materialPreferences: expect.any(String),
             website: expect.any(String),
         });
+    });
+
+    it('accepts image upload without square footage', () => {
+        const result = sanitizeLeadPayload({
+            name: 'Jamie Stone',
+            email: 'jamie@example.com',
+            phone: '(513) 555-0101',
+            currentTopRemoval: 'no',
+            currentTopMaterial: 'Quartz',
+            sinkBasinPreference: 'double',
+            sinkMountPreference: 'topmount',
+            sinkMaterialPreference: 'composite',
+            backsplashPreference: 'full-height',
+            timeframeGoal: '1-month',
+            materialPreferences: ['quartzite'],
+            drawingImage: {
+                name: 'rough-layout.jpg',
+                type: 'image/jpeg',
+                size: 1024,
+                dataUrl: 'data:image/jpeg;base64,Zm9vYmFy',
+            },
+            website: '',
+        });
+
+        expect(result.ok).toBe(true);
+        expect(result.data.totalSquareFootage).toBeNull();
+        expect(result.data.drawingImage?.name).toBe('rough-layout.jpg');
     });
 });
 
@@ -57,6 +116,16 @@ describe('buildLeadForwardPayload', () => {
                 email: 'jamie@example.com',
                 phone: '(513) 555-0101',
                 projectDetails: 'Kitchen remodel with waterfall island and 2 bathroom vanity tops.',
+                totalSquareFootage: 54,
+                currentTopRemoval: 'yes',
+                currentTopMaterial: 'Laminate',
+                sinkBasinPreference: 'single',
+                sinkMountPreference: 'undermount',
+                sinkMaterialPreference: 'stainless-steel',
+                backsplashPreference: '4-inch',
+                timeframeGoal: '2-weeks',
+                materialPreferences: ['quartz'],
+                drawingImage: null,
             },
             {
                 headers: {
@@ -71,6 +140,7 @@ describe('buildLeadForwardPayload', () => {
 
         expect(payload.lead.name).toBe('Jamie Stone');
         expect(payload.metadata.ip).toBe('203.0.113.55');
-        expect(payload.source).toBe('amazon-granite-site');
+        expect(payload.source).toBe('urban-stone-site');
+        expect(payload.lead.materialPreferences).toEqual(['quartz']);
     });
 });

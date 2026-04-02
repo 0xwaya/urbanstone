@@ -2,7 +2,7 @@ import { Head, Html, Main, NextScript } from 'next/document';
 
 const themeInitScript = `(function () {
     try {
-        var savedTheme = window.localStorage.getItem('amazon-granite-theme');
+        var savedTheme = window.localStorage.getItem('urban-stone-theme');
         var supportsMatchMedia = typeof window.matchMedia === 'function';
         var preferredTheme = supportsMatchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
         var theme = savedTheme || preferredTheme;
@@ -18,6 +18,11 @@ export default function Document() {
     return (
         <Html lang="en">
             <Head>
+                <link rel="icon" type="image/svg+xml" href="/brand/urban-stone-favicon.svg?v=20260401e" />
+                <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png?v=20260401e" />
+                <link rel="apple-touch-icon" href="/favicon.png?v=20260401e" />
+                <meta name="application-name" content="Urban Stone Collective | countertops specialists" />
+                <meta name="apple-mobile-web-app-title" content="Urban Stone Collective | countertops specialists" />
                 <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
             </Head>
             <body>
