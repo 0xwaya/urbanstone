@@ -5,12 +5,12 @@ describe('matchesKeywords', () => {
         expect(matchesKeywords('Need countertop installation quote')).toBe(true);
     });
 
-    test('returns true when body contains a keyword (combined string)', () => {
-        expect(matchesKeywords('Home project — Looking for granite countertops for my kitchen')).toBe(true);
+    test('returns true when body contains material plus service intent', () => {
+        expect(matchesKeywords('Home project — granite countertops, looking to hire an installer')).toBe(true);
     });
 
     test('is case-insensitive', () => {
-        expect(matchesKeywords('QUARTZ COUNTERTOP install')).toBe(true);
+        expect(matchesKeywords('QUARTZ COUNTERTOP install by a contractor')).toBe(true);
     });
 
     test('returns false when no keyword matches', () => {
@@ -21,8 +21,28 @@ describe('matchesKeywords', () => {
         expect(matchesKeywords('')).toBe(false);
     });
 
-    test('returns true for multi-word keyword phrase', () => {
-        expect(matchesKeywords('kitchen remodel budget advice')).toBe(true);
+    test('returns true for remodel context with buying intent', () => {
+        expect(matchesKeywords('kitchen remodel and looking for countertop pricing')).toBe(true);
+    });
+
+    test('matches normalized punctuation and spacing', () => {
+        expect(matchesKeywords('Need counter-top replacement ASAP')).toBe(true);
+    });
+
+    test('matches expanded bathroom coverage', () => {
+        expect(matchesKeywords('Planning a bath remodel and need countertop pricing')).toBe(true);
+    });
+
+    test('matches project context only when paired with intent', () => {
+        expect(matchesKeywords('Bathroom remodel and looking for quartz installer recommendations')).toBe(true);
+    });
+
+    test('does not match generic remodel chatter without buying intent', () => {
+        expect(matchesKeywords('Bathroom remodel inspiration board for our new house')).toBe(false);
+    });
+
+    test('does not match excluded noise terms even when material appears', () => {
+        expect(matchesKeywords('Caulking around sink and granite line cracking')).toBe(false);
     });
 });
 
@@ -76,6 +96,7 @@ describe('buildLeadPayload', () => {
         const { metadata } = buildLeadPayload(sample);
         expect(metadata).toHaveProperty('automated', true);
         expect(metadata).toHaveProperty('routeId', 'lead-sourcer/reddit');
+        expect(metadata).toHaveProperty('dedupeKey', 'abc123');
     });
 
     test('projectDetails concatenates title and body', () => {

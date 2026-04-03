@@ -19,7 +19,9 @@ async function fetchRssFeed(section, keyword) {
     });
 
     if (!response.ok) {
-        throw new Error(`Craigslist fetch failed (${section.label}/${keyword}): ${response.status}`);
+        const error = new Error(`Craigslist fetch failed (${section.label}/${keyword}): ${response.status}`);
+        error.status = response.status;
+        throw error;
     }
 
     const xml = await response.text();
@@ -54,13 +56,21 @@ const PROBE_KEYWORDS = ['countertop', 'granite', 'quartz', 'kitchen remodel', 'b
 export async function pollCraigslist() {
     const matches = [];
     const seen = new Set(); // dedup within this run across section+keyword permutations
+    let craigslistBlocked = false;
 
     for (const section of CRAIGSLIST_SECTIONS) {
+        if (craigslistBlocked) break;
+
         for (const keyword of PROBE_KEYWORDS) {
             let items;
             try {
                 items = await fetchRssFeed(section, keyword);
             } catch (err) {
+                if (err.status === 403) {
+                    console.warn('[craigslist] Craigslist RSS blocked this run (403). Skipping remaining Craigslist checks.');
+                    craigslistBlocked = true;
+                    break;
+                }
                 console.warn(`[craigslist] Skipping ${section.label}/${keyword}: ${err.message}`);
                 continue;
             }

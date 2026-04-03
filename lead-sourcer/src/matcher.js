@@ -1,13 +1,38 @@
-import { MATCH_KEYWORDS } from './config.js';
+import {
+    EXCLUDE_KEYWORDS,
+    INTENT_KEYWORDS,
+    MATCH_KEYWORDS,
+    MATERIAL_SIGNAL_KEYWORDS,
+    PROJECT_CONTEXT_KEYWORDS,
+} from './config.js';
+
+function normalizeText(text) {
+    return String(text || '')
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+}
 
 /**
  * Returns true if the text contains at least one lead keyword.
- * Case-insensitive, whole-word boundary matching.
+ * Case-insensitive normalized substring matching.
  */
 export function matchesKeywords(text) {
     if (!text) return false;
-    const lower = text.toLowerCase();
-    return MATCH_KEYWORDS.some((kw) => lower.includes(kw.toLowerCase()));
+    const normalized = normalizeText(text);
+
+    const isExplicitlyExcluded = EXCLUDE_KEYWORDS.some((kw) => normalized.includes(normalizeText(kw)));
+    if (isExplicitlyExcluded) return false;
+
+    const hasDirectMatch = MATCH_KEYWORDS.some((kw) => normalized.includes(normalizeText(kw)));
+    const hasMaterialSignal = MATERIAL_SIGNAL_KEYWORDS.some((kw) => normalized.includes(normalizeText(kw)));
+    const hasProjectContext = PROJECT_CONTEXT_KEYWORDS.some((kw) => normalized.includes(normalizeText(kw)));
+    const hasIntent = INTENT_KEYWORDS.some((kw) => normalized.includes(normalizeText(kw)));
+
+    if (hasDirectMatch && hasIntent) return true;
+    if (hasMaterialSignal && hasProjectContext && hasIntent) return true;
+    return false;
 }
 
 /**
@@ -38,6 +63,7 @@ export function buildLeadPayload({ id, source, title, body, url, author, created
         },
         metadata: {
             routeId: `lead-sourcer/${source}`,
+            dedupeKey: id,
             automated: true,
         },
     };
