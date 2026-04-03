@@ -164,8 +164,16 @@ export const GEO_TARGET_CITIES = compactLocations([...priorityCities, ...metadat
 
 export const BASE_LEAD_QUERIES = [
     'countertop',
+    'countertops',
     'granite',
     'quartz',
+    'quartzite',
+    'granite countertop',
+    'quartz countertop',
+    'quartzite countertop',
+    'granite countertops',
+    'quartz countertops',
+    'quartzite countertops',
     'kitchen remodel',
     'bathroom remodel',
     'countertop installer',
@@ -177,6 +185,10 @@ export const BASE_LEAD_QUERIES = [
 
 const GEO_QUERY_SUFFIXES = [
     'countertop',
+    'countertops',
+    'granite countertops',
+    'quartz countertops',
+    'quartzite countertops',
     'countertop installer',
     'kitchen remodel',
     'bathroom remodel',
@@ -186,10 +198,12 @@ export const GEO_AWARE_QUERIES = compactLocations(
     GEO_TARGET_CITIES.flatMap((city) => GEO_QUERY_SUFFIXES.map((suffix) => `${city} ${suffix}`)),
 );
 
+const CRAIGSLIST_QUERY_LIMIT = Number(process.env.LEAD_SOURCER_CRAIGSLIST_QUERY_LIMIT || 120);
+
 export const CRAIGSLIST_QUERY_KEYWORDS = compactLocations([
     ...BASE_LEAD_QUERIES,
     ...GEO_AWARE_QUERIES,
-]);
+]).slice(0, CRAIGSLIST_QUERY_LIMIT);
 
 export const REDDIT_SEARCH_SUBREDDITS = ['cincinnati'];
 
@@ -201,6 +215,11 @@ export const REDDIT_SEARCH_QUERIES = compactLocations([
 ]).slice(0, REDDIT_SEARCH_QUERY_LIMIT);
 
 export const REDDIT_SEARCH_DELAY_MS = Number(process.env.LEAD_SOURCER_REDDIT_SEARCH_DELAY_MS || 900);
+
+export const APIFY_NEXTDOOR_TASK_ID = String(process.env.APIFY_NEXTDOOR_TASK_ID || '').trim();
+export const APIFY_FACEBOOK_TASK_ID = String(process.env.APIFY_FACEBOOK_TASK_ID || '').trim();
+export const APIFY_AD_LIBRARY_TASK_ID = String(process.env.APIFY_AD_LIBRARY_TASK_ID || '').trim();
+export const APIFY_DATASET_LIMIT = Number(process.env.APIFY_DATASET_LIMIT || 200);
 
 // Craigslist Cincinnati area base URL
 export const CRAIGSLIST_BASE = 'https://cincinnati.craigslist.org';

@@ -5,11 +5,27 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ENV_FILE="$SCRIPT_DIR/.env"
+ROOT_ENV_FILE="$SCRIPT_DIR/../.env"
+ROOT_ENV_LOCAL_FILE="$SCRIPT_DIR/../.env.local"
 
 if [[ -f "$ENV_FILE" ]]; then
     # shellcheck source=/dev/null
     set -a
     source "$ENV_FILE"
+    set +a
+fi
+
+if [[ -f "$ROOT_ENV_FILE" ]]; then
+    # shellcheck source=/dev/null
+    set -a
+    source "$ROOT_ENV_FILE"
+    set +a
+fi
+
+if [[ -f "$ROOT_ENV_LOCAL_FILE" ]]; then
+    # shellcheck source=/dev/null
+    set -a
+    source "$ROOT_ENV_LOCAL_FILE"
     set +a
 fi
 

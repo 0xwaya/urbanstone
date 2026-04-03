@@ -9,12 +9,14 @@
     "start": "node src/index.js",
     "poll:reddit": "node src/reddit.js",
     "poll:craigslist": "node src/craigslist.js",
+    "poll:apify": "node src/apify.js",
     "test": "node --experimental-vm-modules node_modules/.bin/jest --testEnvironment node"
   },
   "engines": {
     "node": ">=20.11.0"
   },
   "dependencies": {
+    "apify-client": "^2.12.0",
     "fast-xml-parser": "^4.4.1"
   },
   "devDependencies": {

@@ -12,6 +12,22 @@ const VERDICT_RANK = {
     match: 2,
 };
 
+const COUNTERTOP_ANCHOR_TERMS = new Set([
+    'countertop',
+    'counter top',
+    'countertops',
+    'counter tops',
+    'granite',
+    'quartz',
+    'quartzite',
+    'vanity top',
+    'slab',
+    'stone countertop',
+    'granite countertop',
+    'quartz countertop',
+    'quartzite countertop',
+]);
+
 export function normalizeText(text) {
     return String(text || '')
         .toLowerCase()
@@ -22,6 +38,10 @@ export function normalizeText(text) {
 
 function findMatchedKeywords(normalized, keywords) {
     return keywords.filter((keyword) => normalized.includes(normalizeText(keyword)));
+}
+
+function hasCountertopAnchor(keywords) {
+    return keywords.some((keyword) => COUNTERTOP_ANCHOR_TERMS.has(keyword));
 }
 
 export function classifyLeadText(text) {
@@ -45,18 +65,18 @@ export function classifyLeadText(text) {
     const materialSignals = findMatchedKeywords(normalized, MATERIAL_SIGNAL_KEYWORDS);
     const projectContext = findMatchedKeywords(normalized, PROJECT_CONTEXT_KEYWORDS);
     const intentSignals = findMatchedKeywords(normalized, INTENT_KEYWORDS);
+    const anchored = hasCountertopAnchor([...directMatches, ...materialSignals]);
 
     let verdict = 'reject';
     if (excluded.length > 0) {
         verdict = 'reject';
-    } else if (directMatches.length > 0 && intentSignals.length > 0) {
+    } else if (anchored && intentSignals.length > 0) {
         verdict = 'match';
-    } else if (materialSignals.length > 0 && projectContext.length > 0 && intentSignals.length > 0) {
+    } else if (anchored && projectContext.length > 0 && intentSignals.length > 0) {
         verdict = 'match';
     } else if (
-        directMatches.length > 0
-        || (materialSignals.length > 0 && intentSignals.length > 0)
-        || (materialSignals.length > 0 && projectContext.length > 0)
+        anchored
+        || (projectContext.length > 0 && intentSignals.length > 0)
     ) {
         verdict = 'borderline';
     }

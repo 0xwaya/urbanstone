@@ -132,21 +132,41 @@ Lead webhook payload note:
 
 ### Zapier Pipeline
 
-The Zapier zap that receives leads from the webhook and forwards them to Outlook uses the following step order:
+Urban Stone production lead intake zap is published and live with the following configuration:
+
+- Zap ID: `357570886`
+- Architecture: 7-step dedup suppression + email routing
+
+The Zapier zap that receives leads from the webhook and forwards them to Outlook uses this step order:
 
 | Step | App | Purpose |
 |------|-----|---------|
 | 1 | Webhooks by Zapier — Catch Hook | Receives the inbound lead payload |
-| 2 | Filter by Zapier | Gate: only continue if `metadata.dedupeKey` is present |
-| 3 | Storage by Zapier — Get Value | Read key `dedup::{{metadata__dedupeKey}}` from Storage |
+| 2 | Filter by Zapier | Intake gate: continue only if (`email` + `phone`) OR (`metadata.automated = true`) |
+| 3 | Storage by Zapier — Get Value | Initial dedup read on the `urban-stone-dedupe` key |
 | 4 | Storage by Zapier — Get Value | Resolve the stored value for the dedup key |
-| 5 | Filter by Zapier | Gate: only continue if the retrieved value is empty (unseen lead) |
+| 5 | Filter by Zapier | Duplicate check: continue only if no dedup value is found |
 | 6 | Storage by Zapier — Set Value | **Write** key `dedup::{{metadata__dedupeKey}}` = `1` to mark lead as processed |
 | 7 | Microsoft Outlook — Send Email | Forward formatted lead to the sales inbox |
 
 **Critical:** Step 6 (Storage Set Value) must come before Outlook. Without it, the filter at Step 5 passes every submission because the key is never written — making Zapier-side dedup non-functional.
 
 Storage key pattern: `dedup::{{357570886__metadata__dedupeKey}}`
+
+Dedup behavior: suppresses duplicate email sends for repeated submissions using the same dedupe key (24h window in Zapier configuration).
+
+Payload contract:
+
+- `submittedAt`, `source`
+- `lead.{name, email, phone, projectDetails, ...}`
+- `metadata.{dedupeKey, automated, routeId, requestId}`
+
+Outlook email subject template: `New Lead — {{source}} — {{name}} ({{routeId}})`
+
+Validation check:
+
+- Send 1 with a new `dedupeKey`: all 7 steps execute and Outlook sends.
+- Send 2 with the same `dedupeKey`: flow stops at Step 5 and Outlook is skipped.
 
 The code-side dedup guard in `frontend/pages/api/lead.js` provides within-session protection (1-hour TTL, in-memory). The Zapier Storage layer provides persistent cross-session protection.
 
@@ -164,15 +184,24 @@ Do not commit generated scraper output unless it is intentionally reviewed and t
 
 ### Lead Sourcer
 
-The lead sourcer is a standalone Node.js utility under `lead-sourcer` that polls Reddit and Craigslist, classifies posts against countertop and remodel keywords, deduplicates matches, and relays qualified leads to the configured webhook.
+The lead sourcer is a standalone Node.js utility under `lead-sourcer` that polls Reddit, Craigslist, and Apify tasks, classifies posts against countertop/remodel intent, deduplicates matches, and relays qualified leads to the configured webhook.
 
 Manual workflow:
 
 1. `cd lead-sourcer`
 2. create `lead-sourcer/.env` with `LEAD_WEBHOOK_URL=...`
-3. `npm install`
-4. `npm run run`
+3. create `lead-sourcer/.env` entries for source integrations:
+  - required: `LEAD_WEBHOOK_URL=...`
+  - optional Apify: `APIFY_TOKEN=...`
+  - optional Apify task IDs: `APIFY_NEXTDOOR_TASK_ID=...`, `APIFY_FACEBOOK_TASK_ID=...`, `APIFY_AD_LIBRARY_TASK_ID=...`
+4. `npm install`
+5. `npm run run`
 
+Direct source runs:
+
+- `npm run poll:reddit`
+- `npm run poll:craigslist`
+- `npm run poll:apify`
 You can also invoke the wrapper directly with `bash lead-sourcer/run.sh` from the repository root.
 
 Run modes (set via `--mode=` CLI flag or `LEAD_SOURCER_MODE` env var):
@@ -195,6 +224,9 @@ Operational notes:
 - Craigslist RSS returns 403; the poller uses HTML search parsing (`cl-static-search-result`) instead
 - Reddit polling combines subreddit `/new` with targeted search queries against r/cincinnati
 - geo-aware queries are auto-generated from `frontend/data/service-areas.js` city data at runtime
+- filter strength targets material + region combinations including `granite countertops`, `quartz countertops`, and `quartzite countertops`
+- Craigslist query volume is capped via `LEAD_SOURCER_CRAIGSLIST_QUERY_LIMIT` (default: 120) to keep runs bounded
+- Apify source is enabled when `APIFY_TOKEN` and at least one task ID are present; otherwise it is skipped without failing the run
 - automated relays include `lead.externalPostId`, `lead.externalPostUrl`, `metadata.automated=true`, `metadata.dedupeKey`, and `metadata.requestId` so the Zapier flow can distinguish sourced leads from website submissions and suppress duplicates consistently
 
 ## Roadmap

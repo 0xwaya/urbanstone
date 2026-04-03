@@ -7,11 +7,18 @@ import { buildLeadPayload, classifyLeadCandidate, isRecent } from './matcher.js'
 import { isSeen, markSeen } from './dedup.js';
 import { relay } from './relay.js';
 import { REDDIT_SEARCH_DELAY_MS, REDDIT_SEARCH_QUERIES, REDDIT_SEARCH_SUBREDDITS } from './config.js';
+import { GEO_TARGET_CITIES } from './config.js';
 import { runModeFlags } from './mode.js';
 import { logReviewCandidate } from './review-log.js';
 
 const REDDIT_API_BASE = 'https://www.reddit.com';
 const USER_AGENT = 'UrbanStoneLeadSourcer/1.0 (lead monitoring; contact sales@urbanstone.co)';
+const TARGET_REGIONS = ['cincinnati', ...GEO_TARGET_CITIES.map((city) => city.toLowerCase())];
+
+function hasRegionalSignal(post) {
+    const haystack = `${post.title}\n${post.body}`.toLowerCase();
+    return TARGET_REGIONS.some((region) => haystack.includes(region));
+}
 
 async function fetchSubredditNew(subreddit) {
     const url = `${REDDIT_API_BASE}/r/${subreddit}/new.json?limit=25`;
@@ -123,6 +130,17 @@ export async function pollReddit({ mode = 'live' } = {}) {
             }
 
             if (classification.verdict !== 'match') { continue; }
+
+            if (subreddit.toLowerCase() !== 'cincinnati' && !hasRegionalSignal(post)) {
+                logReviewCandidate({
+                    mode,
+                    source: 'reddit',
+                    post,
+                    classification,
+                    reason: 'non-regional-match',
+                });
+                continue;
+            }
 
             console.log(`[reddit] Match in r/${subreddit}: "${post.title}" — ${post.url}`);
 
