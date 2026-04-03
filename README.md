@@ -227,7 +227,21 @@ Operational notes:
 - filter strength targets material + region combinations including `granite countertops`, `quartz countertops`, and `quartzite countertops`
 - Craigslist query volume is capped via `LEAD_SOURCER_CRAIGSLIST_QUERY_LIMIT` (default: 120) to keep runs bounded
 - Apify source is enabled when `APIFY_TOKEN` and at least one task ID are present; otherwise it is skipped without failing the run
+- Apify stability controls:
+  - `APIFY_ENABLE_NEXTDOOR=true|false`
+  - `APIFY_ENABLE_FACEBOOK=true|false`
+  - `APIFY_ENABLE_AD_LIBRARY=true|false`
+  - `APIFY_TASK_TIMEOUT_MS` (default: `120000`)
+  - `APIFY_TASK_DELAY_MS` (default: `1200`)
 - automated relays include `lead.externalPostId`, `lead.externalPostUrl`, `metadata.automated=true`, `metadata.dedupeKey`, and `metadata.requestId` so the Zapier flow can distinguish sourced leads from website submissions and suppress duplicates consistently
+
+Current runtime state (April 3, 2026):
+
+- lead-sourcer unit tests are passing (`29/29`)
+- Zapier webhook transport responds `HTTP 200` on controlled wire-test payloads
+- Nextdoor and Facebook Groups Apify tasks are configured and fetching items
+- Ad Library can be disabled with `APIFY_ENABLE_AD_LIBRARY=false` when Apify account limits cause instability
+- current no-email behavior is due to zero `match` verdicts in recent runs, not a broken webhook transport
 
 ## Roadmap
 

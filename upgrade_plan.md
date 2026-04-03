@@ -47,11 +47,15 @@ Build a stone selection scraper for AmazonGranite-Rebranding with accurate image
 Start building the stone selection scraper prototype and define the initial Supabase database schema for stone selections and pricing.
 
 ## Phase 1 - Apify Lead Sniffer (April 3-5, 2026)
-- [ ] Create 2 Apify Tasks (Nextdoor + Facebook Groups) for Cincinnati-region remodel/countertop sourcing.
-- [ ] Configure lead-sourcer env: `APIFY_TOKEN`, `APIFY_NEXTDOOR_TASK_ID`, `APIFY_FACEBOOK_TASK_ID`.
-- [ ] Run Apify tasks in parallel inside `lead-sourcer` and merge into existing classify + dedupe + webhook relay pipeline.
-- [ ] Validate end-to-end path: Apify post -> classifier verdict -> relay -> Zapier dedupe -> Outlook.
+- [x] Create 2 Apify Tasks (Nextdoor + Facebook Groups) for Cincinnati-region remodel/countertop sourcing.
+- [x] Configure lead-sourcer env: `APIFY_TOKEN`, `APIFY_NEXTDOOR_TASK_ID`, `APIFY_FACEBOOK_TASK_ID`.
+- [x] Run Apify tasks in parallel inside `lead-sourcer` and merge into existing classify + dedupe + webhook relay pipeline.
+- [x] Validate transport path: Apify post -> classifier verdict -> relay -> Zapier webhook (`HTTP 200` on wire test).
 - [ ] Tune task inputs/keywords for `granite countertops`, `quartz countertops`, `quartzite countertops` by service area.
+
+Current blocker:
+- Recent runs are producing `0 match` verdicts (mostly borderline/reject), so no outbound emails are triggered.
+- Ad Library source may require `APIFY_ENABLE_AD_LIBRARY=false` under account memory pressure.
 
 Expected outcome: materially higher homeowner/GC lead discovery density in target Cincinnati + NKY regions.
 

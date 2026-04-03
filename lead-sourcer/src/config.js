@@ -216,10 +216,44 @@ export const REDDIT_SEARCH_QUERIES = compactLocations([
 
 export const REDDIT_SEARCH_DELAY_MS = Number(process.env.LEAD_SOURCER_REDDIT_SEARCH_DELAY_MS || 900);
 
-export const APIFY_NEXTDOOR_TASK_ID = String(process.env.APIFY_NEXTDOOR_TASK_ID || '').trim();
-export const APIFY_FACEBOOK_TASK_ID = String(process.env.APIFY_FACEBOOK_TASK_ID || '').trim();
-export const APIFY_AD_LIBRARY_TASK_ID = String(process.env.APIFY_AD_LIBRARY_TASK_ID || '').trim();
+function firstNonEmptyEnv(...keys) {
+    for (const key of keys) {
+        const value = String(process.env[key] || '').trim();
+        if (value) return value;
+    }
+    return '';
+}
+
+function envFlag(name, defaultValue = true) {
+    const raw = String(process.env[name] || '').trim().toLowerCase();
+    if (!raw) return defaultValue;
+    return !['0', 'false', 'no', 'off'].includes(raw);
+}
+
+export const APIFY_NEXTDOOR_TASK_ID = firstNonEmptyEnv(
+    'APIFY_NEXTDOOR_TASK_ID',
+    'APIFY_TASK_ID_NEXTDOOR',
+    'APIFY_NEXTDOOR_ID',
+    'NEXTDOOR_TASK_ID',
+);
+export const APIFY_FACEBOOK_TASK_ID = firstNonEmptyEnv(
+    'APIFY_FACEBOOK_TASK_ID',
+    'APIFY_FACEBOOK_GROUPS_TASK_ID',
+    'APIFY_TASK_ID_FACEBOOK',
+    'FACEBOOK_TASK_ID',
+);
+export const APIFY_AD_LIBRARY_TASK_ID = firstNonEmptyEnv(
+    'APIFY_AD_LIBRARY_TASK_ID',
+    'APIFY_FACEBOOK_AD_LIBRARY_TASK_ID',
+    'APIFY_TASK_ID_AD_LIBRARY',
+    'AD_LIBRARY_TASK_ID',
+);
 export const APIFY_DATASET_LIMIT = Number(process.env.APIFY_DATASET_LIMIT || 200);
+export const APIFY_ENABLE_NEXTDOOR = envFlag('APIFY_ENABLE_NEXTDOOR', true);
+export const APIFY_ENABLE_FACEBOOK = envFlag('APIFY_ENABLE_FACEBOOK', true);
+export const APIFY_ENABLE_AD_LIBRARY = envFlag('APIFY_ENABLE_AD_LIBRARY', true);
+export const APIFY_TASK_TIMEOUT_MS = Number(process.env.APIFY_TASK_TIMEOUT_MS || 120000);
+export const APIFY_TASK_DELAY_MS = Number(process.env.APIFY_TASK_DELAY_MS || 1200);
 
 // Craigslist Cincinnati area base URL
 export const CRAIGSLIST_BASE = 'https://cincinnati.craigslist.org';

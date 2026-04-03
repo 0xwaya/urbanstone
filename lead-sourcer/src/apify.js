@@ -2,8 +2,13 @@ import { ApifyClient } from 'apify-client';
 import {
     APIFY_AD_LIBRARY_TASK_ID,
     APIFY_DATASET_LIMIT,
+    APIFY_ENABLE_AD_LIBRARY,
+    APIFY_ENABLE_FACEBOOK,
+    APIFY_ENABLE_NEXTDOOR,
     APIFY_FACEBOOK_TASK_ID,
     APIFY_NEXTDOOR_TASK_ID,
+    APIFY_TASK_DELAY_MS,
+    APIFY_TASK_TIMEOUT_MS,
     BASE_LEAD_QUERIES,
     GEO_TARGET_CITIES,
 } from './config.js';
@@ -118,6 +123,31 @@ function defaultAdLibraryInput() {
     };
 }
 
+function delay(ms) {
+    if (!Number.isFinite(ms) || ms <= 0) return Promise.resolve();
+    return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function withTimeout(promise, timeoutMs, label) {
+    if (!Number.isFinite(timeoutMs) || timeoutMs <= 0) return promise;
+    return Promise.race([
+        promise,
+        new Promise((_, reject) => {
+            setTimeout(() => reject(new Error(`${label} timed out after ${timeoutMs}ms`)), timeoutMs);
+        }),
+    ]);
+}
+
+function logTaskFailure(taskLabel, reason) {
+    const message = reason?.message || String(reason || 'unknown error');
+    const normalized = message.toLowerCase();
+    if (normalized.includes('memory limit') || normalized.includes('exceed the memory limit')) {
+        console.warn(`[apify] ${taskLabel}: skipped due to account memory limit. Disable this source via APIFY_ENABLE_${taskLabel.toUpperCase().replace(/-/g, '_')}=false or increase Apify capacity.`);
+        return;
+    }
+    console.warn(`[apify] ${taskLabel}: task run failed: ${message}`);
+}
+
 async function runTask(client, { taskId, taskLabel, input }) {
     if (!taskId) return [];
 
@@ -147,9 +177,12 @@ export async function pollApify({ mode = 'live' } = {}) {
     }
 
     if (!APIFY_NEXTDOOR_TASK_ID && !APIFY_FACEBOOK_TASK_ID && !APIFY_AD_LIBRARY_TASK_ID) {
-        console.log('[apify] No Apify task IDs configured; skipping Apify poll.');
+        console.log('[apify] No Apify task IDs configured; skipping Apify poll. Expected one of: APIFY_NEXTDOOR_TASK_ID, APIFY_FACEBOOK_TASK_ID, APIFY_AD_LIBRARY_TASK_ID (or alias keys).');
         return [];
     }
+
+    console.log(`[apify] Task IDs loaded — nextdoor=${Boolean(APIFY_NEXTDOOR_TASK_ID)} facebook=${Boolean(APIFY_FACEBOOK_TASK_ID)} adLibrary=${Boolean(APIFY_AD_LIBRARY_TASK_ID)}`);
+    console.log(`[apify] Source toggles — nextdoor=${APIFY_ENABLE_NEXTDOOR} facebook=${APIFY_ENABLE_FACEBOOK} adLibrary=${APIFY_ENABLE_AD_LIBRARY}`);
 
     const modeFlags = runModeFlags(mode);
     const client = new ApifyClient({ token });
@@ -159,30 +192,48 @@ export async function pollApify({ mode = 'live' } = {}) {
     const facebookInput = parseJsonEnv('APIFY_FACEBOOK_TASK_INPUT', defaultFacebookInput());
     const adLibraryInput = parseJsonEnv('APIFY_AD_LIBRARY_TASK_INPUT', defaultAdLibraryInput());
 
-    const results = await Promise.allSettled([
-        runTask(client, {
+    const taskConfigs = [
+        {
+            enabled: APIFY_ENABLE_NEXTDOOR,
             taskId: APIFY_NEXTDOOR_TASK_ID,
             taskLabel: 'nextdoor',
             input: nextdoorInput,
-        }),
-        runTask(client, {
+        },
+        {
+            enabled: APIFY_ENABLE_FACEBOOK,
             taskId: APIFY_FACEBOOK_TASK_ID,
             taskLabel: 'facebook-groups',
             input: facebookInput,
-        }),
-        runTask(client, {
+        },
+        {
+            enabled: APIFY_ENABLE_AD_LIBRARY,
             taskId: APIFY_AD_LIBRARY_TASK_ID,
             taskLabel: 'facebook-ad-library',
             input: adLibraryInput,
-        }),
-    ]);
+        },
+    ].filter((task) => task.enabled && task.taskId);
+
+    if (taskConfigs.length === 0) {
+        console.log('[apify] No enabled Apify tasks with IDs found; skipping Apify poll.');
+        return [];
+    }
 
     const items = [];
-    for (const result of results) {
-        if (result.status === 'fulfilled') {
-            items.push(...result.value);
-        } else {
-            console.warn('[apify] Task run failed:', result.reason?.message || result.reason);
+    for (let i = 0; i < taskConfigs.length; i += 1) {
+        const task = taskConfigs[i];
+        try {
+            const taskItems = await withTimeout(
+                runTask(client, task),
+                APIFY_TASK_TIMEOUT_MS,
+                task.taskLabel,
+            );
+            items.push(...taskItems);
+        } catch (reason) {
+            logTaskFailure(task.taskLabel, reason);
+        }
+
+        if (i < taskConfigs.length - 1) {
+            await delay(APIFY_TASK_DELAY_MS);
         }
     }
 
