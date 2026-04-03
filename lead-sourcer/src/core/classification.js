@@ -97,15 +97,17 @@ export function classifyLeadText(text) {
 export function classifyLeadCandidate({ title = '', body = '' }) {
     const titleResult = classifyLeadText(title);
     const bodyResult = classifyLeadText(body);
+    const combinedResult = classifyLeadText(`${title}\n${body}`);
 
-    const primary = VERDICT_RANK[titleResult.verdict] >= VERDICT_RANK[bodyResult.verdict]
-        ? titleResult
-        : bodyResult;
+    const primary = [titleResult, bodyResult, combinedResult].reduce((best, current) => (
+        VERDICT_RANK[current.verdict] > VERDICT_RANK[best.verdict] ? current : best
+    ), titleResult);
 
     return {
         verdict: primary.verdict,
         title: titleResult,
         body: bodyResult,
+        combined: combinedResult,
     };
 }
 

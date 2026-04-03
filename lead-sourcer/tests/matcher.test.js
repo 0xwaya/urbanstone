@@ -79,6 +79,23 @@ describe('classifyLeadCandidate', () => {
         });
         expect(result.verdict).toBe('borderline');
     });
+
+    test('promotes to match when anchor is in title and intent is in body', () => {
+        const result = classifyLeadCandidate({
+            title: 'Countertop question',
+            body: 'Need pricing and contractor recommendations this week',
+        });
+        expect(result.verdict).toBe('match');
+        expect(result.combined.verdict).toBe('match');
+    });
+
+    test('includes combined analysis object', () => {
+        const result = classifyLeadCandidate({
+            title: 'Kitchen remodel',
+            body: 'Exploring quartz options',
+        });
+        expect(result).toHaveProperty('combined');
+    });
 });
 
 describe('isRecent', () => {

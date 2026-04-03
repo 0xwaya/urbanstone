@@ -221,12 +221,18 @@ Scheduler and run-observability controls (implemented in `lead-sourcer/src/index
 - `LEAD_SOURCER_MAX_CYCLES` (default: `0`) — optional max cycles in interval mode (`0` = unbounded)
 - `LEAD_SOURCER_RUN_LOG_FILE` (default: `lead-sourcer/runs/poll-runs.jsonl`) — JSONL summaries per cycle
 - `LEAD_SOURCER_ZERO_MATCH_ALERT_THRESHOLD` (default: `0`) — warn after N consecutive zero-match cycles
+- `LEAD_SOURCER_SUMMARY_WINDOW_HOURS` (default: `24`) — reporting window for daily summary script
 
 Examples:
 
 - one-shot (default): `npm run run`
 - every 15 minutes: `LEAD_SOURCER_INTERVAL_MINUTES=15 npm run run`
 - every 15 minutes, stop after 8 cycles: `LEAD_SOURCER_INTERVAL_MINUTES=15 LEAD_SOURCER_MAX_CYCLES=8 npm run run`
+
+Monitoring script:
+
+- `npm run summary:daily` — prints last-window run totals and zero-match streak from `runs/poll-runs.jsonl`
+- exits with code `2` when zero-match streak meets `LEAD_SOURCER_ZERO_MATCH_ALERT_THRESHOLD`
 
 Run modes (set via `--mode=` CLI flag or `LEAD_SOURCER_MODE` env var):
 

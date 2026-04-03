@@ -10,6 +10,7 @@
     "poll:reddit": "node src/reddit.js",
     "poll:craigslist": "node src/craigslist.js",
     "poll:apify": "node src/apify.js",
+    "summary:daily": "node scripts/daily-summary.mjs",
     "test": "node --experimental-vm-modules node_modules/.bin/jest --testEnvironment node"
   },
   "engines": {

@@ -55,6 +55,7 @@ Start building the stone selection scraper prototype and define the initial Supa
 - [x] Add runtime hardening controls (task toggles, timeout, delay, and env alias support for task IDs).
 - [x] Ensure direct source commands honor `LEAD_SOURCER_MODE` / `--mode=` to prevent accidental live relays.
 - [x] Add interval scheduler + run summary logging in `lead-sourcer/src/index.js`.
+- [x] Add daily monitoring summary script (`npm run summary:daily`) with zero-match streak alert threshold support.
 
 Current blocker:
 - Recent runs are producing `0 match` verdicts (mostly borderline/reject), so no outbound emails are triggered.
