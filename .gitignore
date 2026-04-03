@@ -31,6 +31,7 @@ frontend/playwright-report/
 # lead-sourcer runtime files
 lead-sourcer/.env
 lead-sourcer/seen-ids.json
+lead-sourcer/runs/*.jsonl
 
 # Environment and secrets
 .env
