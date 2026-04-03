@@ -1,0 +1,22 @@
+{
+  "name": "lead-sourcer",
+  "version": "1.0.0",
+  "description": "Proactive lead sourcing from Reddit and Craigslist for Urban Stone Collective.",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "poll:reddit": "node src/reddit.js",
+    "poll:craigslist": "node src/craigslist.js",
+    "test": "node --experimental-vm-modules node_modules/.bin/jest --testEnvironment node"
+  },
+  "engines": {
+    "node": ">=20.11.0"
+  },
+  "dependencies": {
+    "fast-xml-parser": "^4.4.1"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
+}
