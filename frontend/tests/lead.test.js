@@ -1,4 +1,4 @@
-import { buildLeadForwardPayload, isRateLimited, sanitizeLeadPayload } from '../lib/lead';
+import { buildLeadDedupeKey, buildLeadForwardPayload, isRateLimited, sanitizeLeadPayload } from '../lib/lead';
 
 describe('sanitizeLeadPayload', () => {
     it('returns sanitized lead data for valid submissions', () => {
@@ -140,7 +140,62 @@ describe('buildLeadForwardPayload', () => {
 
         expect(payload.lead.name).toBe('Jamie Stone');
         expect(payload.metadata.ip).toBe('203.0.113.55');
+        expect(payload.metadata.requestId).toBeTruthy();
+        expect(payload.metadata.dedupeKey).toHaveLength(24);
         expect(payload.source).toBe('urban-stone-site');
         expect(payload.lead.materialPreferences).toEqual(['quartz']);
+    });
+
+    it('uses provided x-request-id when available', () => {
+        const payload = buildLeadForwardPayload(
+            {
+                name: 'Jamie Stone',
+                email: 'jamie@example.com',
+                phone: '(513) 555-0101',
+                projectDetails: 'Kitchen remodel with waterfall island and 2 bathroom vanity tops.',
+                totalSquareFootage: 54,
+                currentTopRemoval: 'yes',
+                currentTopMaterial: 'Laminate',
+                sinkBasinPreference: 'single',
+                sinkMountPreference: 'undermount',
+                sinkMaterialPreference: 'stainless-steel',
+                backsplashPreference: '4-inch',
+                timeframeGoal: '2-weeks',
+                materialPreferences: ['quartz'],
+                drawingImage: null,
+            },
+            {
+                headers: {
+                    'x-request-id': 'req_12345',
+                },
+                socket: {},
+            }
+        );
+
+        expect(payload.metadata.requestId).toBe('req_12345');
+    });
+});
+
+describe('buildLeadDedupeKey', () => {
+    it('is deterministic for equivalent lead content', () => {
+        const keyA = buildLeadDedupeKey({
+            email: 'JAMIE@EXAMPLE.COM',
+            phone: '(513) 555-0101',
+            routeId: 'homepage',
+            projectDetails: 'Kitchen remodel with waterfall island and 2 bathroom vanity tops.',
+            currentTopMaterial: 'Laminate',
+            totalSquareFootage: '54',
+        });
+
+        const keyB = buildLeadDedupeKey({
+            email: 'jamie@example.com',
+            phone: '5135550101',
+            routeId: 'homepage',
+            projectDetails: 'Kitchen remodel with waterfall island and 2 bathroom vanity tops.',
+            currentTopMaterial: 'laminate',
+            totalSquareFootage: 54,
+        });
+
+        expect(keyA).toBe(keyB);
     });
 });

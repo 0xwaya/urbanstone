@@ -15,6 +15,9 @@ export default function Home() {
   const siteUrl = getSiteUrl();
   const canonicalUrl = getCanonicalUrl('/');
   const ogImageUrl = `${siteUrl}/brand/urban-stone-og.png`;
+  const ogImageWidth = '1200';
+  const ogImageHeight = '630';
+  const ogImageType = 'image/png';
   const companyPhone = process.env.NEXT_PUBLIC_COMPANY_PHONE || '(513) 307-5840';
   const companyEmail = process.env.NEXT_PUBLIC_LEAD_EMAIL || 'sales@urbanstone.co';
   const instagramUrl = (process.env.NEXT_PUBLIC_INSTAGRAM_URL || '').trim();
@@ -104,11 +107,17 @@ export default function Home() {
         <meta property="og:site_name" content="Urban Stone Collective" />
         <meta property="og:locale" content="en_US" />
         <meta property="og:image" content={ogImageUrl} />
+        <meta property="og:image:url" content={ogImageUrl} />
+        <meta property="og:image:secure_url" content={ogImageUrl} />
+        <meta property="og:image:type" content={ogImageType} />
+        <meta property="og:image:width" content={ogImageWidth} />
+        <meta property="og:image:height" content={ogImageHeight} />
         <meta property="og:image:alt" content="Urban Stone Collective social preview with brand wordmark on a dark stone-inspired background" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="Urban Stone Collective | countertops specialists" />
         <meta name="twitter:description" content="Urban Stone Collective | countertops specialists. Quartz, granite, and quartzite countertops with expert fabrication and installation in Cincinnati and Northern Kentucky." />
         <meta name="twitter:image" content={ogImageUrl} />
+        <meta name="twitter:image:src" content={ogImageUrl} />
         <meta name="twitter:image:alt" content="Urban Stone Collective social preview with brand wordmark on a dark stone-inspired background" />
         <link rel="icon" type="image/svg+xml" href="/brand/urban-stone-favicon.svg?v=20260401e" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png?v=20260401e" />

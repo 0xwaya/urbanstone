@@ -33,6 +33,14 @@ async function relayLead(payload) {
     }
 }
 
+function getErrorMessage(error) {
+    if (error && typeof error.message === 'string') {
+        return error.message;
+    }
+
+    return 'Unknown relay error';
+}
+
 function resolveWebhookUrl(request) {
     if (process.env.LEAD_WEBHOOK_URL) {
         return process.env.LEAD_WEBHOOK_URL;
@@ -92,13 +100,23 @@ export default async function handler(request, response) {
         });
     }
 
+    const payload = buildLeadForwardPayload(result.data, request);
+
     try {
         await relayLead({
             webhookUrl,
-            body: buildLeadForwardPayload(result.data, request),
+            body: payload,
         });
         return response.status(202).json({ message: 'Thanks. Your request is in the queue and we will follow up shortly.' });
-    } catch {
+    } catch (error) {
+        console.error('lead_relay_failed', {
+            requestId: payload.metadata.requestId,
+            dedupeKey: payload.metadata.dedupeKey,
+            routeId: payload.metadata.routeId,
+            source: payload.source,
+            error: getErrorMessage(error),
+        });
+
         return response.status(502).json({
             message: 'Lead delivery is temporarily unavailable. Please call or email us directly while we restore it.',
         });

@@ -10,13 +10,15 @@
  */
 import { pollReddit } from './reddit.js';
 import { pollCraigslist } from './craigslist.js';
+import { resolveRunMode } from './mode.js';
 
 async function run() {
-    console.log(`[lead-sourcer] Starting poll at ${new Date().toISOString()}`);
+    const mode = resolveRunMode();
+    console.log(`[lead-sourcer] Starting poll at ${new Date().toISOString()} (mode=${mode})`);
 
     const [redditMatches, craigslistMatches] = await Promise.allSettled([
-        pollReddit(),
-        pollCraigslist(),
+        pollReddit({ mode }),
+        pollCraigslist({ mode }),
     ]);
 
     const redditCount = redditMatches.status === 'fulfilled' ? redditMatches.value.length : 0;
@@ -29,7 +31,7 @@ async function run() {
         console.error('[lead-sourcer] Craigslist poller error:', craigslistMatches.reason);
     }
 
-    console.log(`[lead-sourcer] Poll complete — Reddit: ${redditCount} match(es), Craigslist: ${clCount} match(es)`);
+    console.log(`[lead-sourcer] Poll complete — Reddit: ${redditCount} match(es), Craigslist: ${clCount} match(es), mode=${mode}`);
 }
 
 run().catch((err) => {

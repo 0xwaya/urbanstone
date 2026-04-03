@@ -124,6 +124,12 @@ Production note:
 
 For Vercel, the cleanest setup is to set the project Root Directory to `frontend` in the dashboard because that is where the Next.js app and lockfile live.
 
+Lead webhook payload note:
+
+- `frontend/pages/api/lead.js` now forwards correlation metadata for downstream automation and debugging.
+- `metadata.requestId` is propagated from inbound `x-request-id` when available, otherwise generated server-side.
+- `metadata.dedupeKey` is generated as a deterministic hash from normalized lead fields so Zapier/Storage duplicate suppression can use a stable key.
+
 ### Supplier Scraper
 
 The supplier scraper is a small Node.js prototype using Cheerio.

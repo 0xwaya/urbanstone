@@ -1,22 +1,27 @@
 /**
- * Craigslist RSS poller — no auth required.
- * Searches Cincinnati sections for posts matching lead keywords.
+ * Craigslist HTML search poller.
+ * Craigslist's RSS endpoint returns 403; the static HTML search page is accessible.
+ * Parses cl-static-search-result items directly from the no-JS HTML.
  */
-import { XMLParser } from 'fast-xml-parser';
-import { CRAIGSLIST_BASE, CRAIGSLIST_SECTIONS, MAX_POST_AGE_HOURS } from './config.js';
-import { matchesKeywords, isRecent, buildLeadPayload } from './matcher.js';
+import { CRAIGSLIST_BASE, CRAIGSLIST_SECTIONS } from './config.js';
+import { buildLeadPayload, classifyLeadCandidate } from './matcher.js';
 import { isSeen, markSeen } from './dedup.js';
 import { relay } from './relay.js';
+import { CRAIGSLIST_QUERY_KEYWORDS } from './config.js';
+import { runModeFlags } from './mode.js';
+import { logReviewCandidate } from './review-log.js';
 
-const parser = new XMLParser({ ignoreAttributes: false });
+const BROWSER_HEADERS = {
+    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+    'Accept-Language': 'en-US,en;q=0.5',
+};
 
-async function fetchRssFeed(section, keyword) {
+async function fetchSearchPage(section, keyword) {
     const encoded = encodeURIComponent(keyword);
-    const url = `${CRAIGSLIST_BASE}${section.path}?format=rss&query=${encoded}&sort=date`;
+    const url = `${CRAIGSLIST_BASE}${section.path}?query=${encoded}&sort=date`;
 
-    const response = await fetch(url, {
-        headers: { 'User-Agent': 'UrbanStoneLeadSourcer/1.0 (contact sales@urbanstone.co)' },
-    });
+    const response = await fetch(url, { headers: BROWSER_HEADERS });
 
     if (!response.ok) {
         const error = new Error(`Craigslist fetch failed (${section.label}/${keyword}): ${response.status}`);
@@ -24,68 +29,102 @@ async function fetchRssFeed(section, keyword) {
         throw error;
     }
 
-    const xml = await response.text();
-    const parsed = parser.parse(xml);
-    const items = parsed?.rss?.channel?.item;
-    if (!items) return [];
-    return Array.isArray(items) ? items : [items];
+    return response.text();
 }
 
-function extractPost(item) {
-    const dateStr = item.pubDate || item['dc:date'] || null;
-    const createdAt = dateStr ? new Date(dateStr).toISOString() : new Date().toISOString();
-    const createdUtc = dateStr ? Math.floor(new Date(dateStr).getTime() / 1000) : Math.floor(Date.now() / 1000);
-    const link = item.link || item.guid || '';
-    const id = `craigslist:${Buffer.from(link).toString('base64').slice(0, 32)}`;
+function parseResultsFromHtml(html) {
+    const results = [];
+    // Match actual result items (have title attribute, distinct from hub-links)
+    const itemRe = /<li\s+class="cl-static-search-result"\s+title="([^"]+)"[^>]*>[\s\S]*?<a\s+href="(https:\/\/[^"]+\.html)"[\s\S]*?<\/li>/g;
+    let match;
+    while ((match = itemRe.exec(html)) !== null) {
+        const rawTitle = match[1].replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').trim();
+        const url = match[2];
+        // Extract Craigslist post ID from URL path (numeric segment before .html)
+        const idMatch = url.match(/\/(\d+)\.html$/);
+        const postId = idMatch ? idMatch[1] : Buffer.from(url).toString('base64').slice(0, 20);
+        results.push({ title: rawTitle, url, postId });
+    }
+    return results;
+}
 
+function extractPost({ title, url, postId }) {
     return {
-        id,
+        id: `craigslist:${postId}`,
         source: 'craigslist',
-        title: item.title || '',
-        body: item.description || '',
-        url: link,
+        title,
+        body: '',
+        url,
         author: null,
-        createdAt,
-        createdUtc,
+        createdAt: new Date().toISOString(),
+        createdUtc: Math.floor(Date.now() / 1000),
     };
 }
 
-// Representative keyword probes — just enough to find relevant posts without spamming CL
-const PROBE_KEYWORDS = ['countertop', 'granite', 'quartz', 'kitchen remodel', 'bathroom remodel'];
-
-export async function pollCraigslist() {
+export async function pollCraigslist({ mode = 'live' } = {}) {
+    const modeFlags = runModeFlags(mode);
     const matches = [];
-    const seen = new Set(); // dedup within this run across section+keyword permutations
-    let craigslistBlocked = false;
+    const seenThisRun = new Set(); // dedup within this run across section+keyword permutations
 
     for (const section of CRAIGSLIST_SECTIONS) {
-        if (craigslistBlocked) break;
-
-        for (const keyword of PROBE_KEYWORDS) {
-            let items;
+        for (const keyword of CRAIGSLIST_QUERY_KEYWORDS) {
+            let html;
             try {
-                items = await fetchRssFeed(section, keyword);
+                html = await fetchSearchPage(section, keyword);
             } catch (err) {
                 if (err.status === 403) {
-                    console.warn('[craigslist] Craigslist RSS blocked this run (403). Skipping remaining Craigslist checks.');
-                    craigslistBlocked = true;
+                    console.warn(`[craigslist] 403 on ${section.label}/${keyword} — skipping section.`);
                     break;
                 }
                 console.warn(`[craigslist] Skipping ${section.label}/${keyword}: ${err.message}`);
                 continue;
             }
 
-            for (const item of items) {
-                const post = extractPost(item);
+            const results = parseResultsFromHtml(html);
+            console.log(`[craigslist] ${section.label}/${keyword}: found ${results.length} listing(s)`);
 
-                if (seen.has(post.id)) continue;
-                seen.add(post.id);
+            for (const result of results) {
+                const post = extractPost(result);
 
-                if (!isRecent(post.createdUtc, MAX_POST_AGE_HOURS)) continue;
+                if (seenThisRun.has(post.id)) continue;
+                seenThisRun.add(post.id);
+
                 if (isSeen(post.id)) continue;
-                if (!matchesKeywords(post.title) && !matchesKeywords(post.body)) continue;
+                const classification = classifyLeadCandidate({ title: post.title, body: post.body });
+
+                if (classification.verdict === 'borderline') {
+                    logReviewCandidate({
+                        mode,
+                        source: 'craigslist',
+                        post,
+                        classification,
+                        reason: 'borderline',
+                    });
+                    if (modeFlags.shouldPersistSeen) {
+                        markSeen(post.id);
+                    }
+                    continue;
+                }
+
+                if (classification.verdict !== 'match') continue;
 
                 console.log(`[craigslist] Match in ${section.label}: "${post.title}" — ${post.url}`);
+
+                if (!modeFlags.shouldRelay) {
+                    logReviewCandidate({
+                        mode,
+                        source: 'craigslist',
+                        post,
+                        classification,
+                        reason: mode === 'dry-run' ? 'dry-run-match' : 'review-only-match',
+                    });
+                    if (modeFlags.shouldPersistSeen) {
+                        markSeen(post.id);
+                    }
+                    matches.push(post);
+                    continue;
+                }
+
                 markSeen(post.id);
 
                 const payload = buildLeadPayload(post);

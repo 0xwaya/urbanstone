@@ -48,6 +48,11 @@ If `LEAD_WEBHOOK_URL` is not set during local development, `/api/lead` falls bac
 
 In production, `LEAD_WEBHOOK_URL` is still required and missing configuration returns the expected 503 warning.
 
+Lead webhook payload notes:
+
+- `metadata.requestId`: per-request correlation ID. Uses inbound `x-request-id` when provided, otherwise generated server-side.
+- `metadata.dedupeKey`: deterministic short hash derived from normalized lead content for downstream duplicate suppression.
+
 ## Quality Gates
 
 - `npm run lint`

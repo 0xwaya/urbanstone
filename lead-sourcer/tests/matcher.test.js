@@ -1,4 +1,4 @@
-import { matchesKeywords, isRecent, buildLeadPayload } from '../src/matcher.js';
+import { buildLeadPayload, classifyLeadCandidate, classifyLeadText, isRecent, matchesKeywords } from '../src/matcher.js';
 
 describe('matchesKeywords', () => {
     test('returns true when text contains a keyword', () => {
@@ -43,6 +43,41 @@ describe('matchesKeywords', () => {
 
     test('does not match excluded noise terms even when material appears', () => {
         expect(matchesKeywords('Caulking around sink and granite line cracking')).toBe(false);
+    });
+});
+
+describe('classifyLeadText', () => {
+    test('returns match verdict for direct service intent', () => {
+        expect(classifyLeadText('Need quartz countertop installer quote').verdict).toBe('match');
+    });
+
+    test('returns borderline when material is present without enough intent', () => {
+        expect(classifyLeadText('Thinking about quartz countertops for our kitchen').verdict).toBe('borderline');
+    });
+
+    test('returns reject when excluded noise dominates', () => {
+        const result = classifyLeadText('Granite line cracking near sink caulking issue');
+        expect(result.verdict).toBe('reject');
+        expect(result.signals.excluded.length).toBeGreaterThan(0);
+    });
+});
+
+describe('classifyLeadCandidate', () => {
+    test('promotes candidate to match when body has service intent', () => {
+        const result = classifyLeadCandidate({
+            title: 'Kitchen project',
+            body: 'Looking for granite countertop pricing and installer recommendations',
+        });
+        expect(result.verdict).toBe('match');
+        expect(result.body.verdict).toBe('match');
+    });
+
+    test('returns borderline when only weak signals are present', () => {
+        const result = classifyLeadCandidate({
+            title: 'Quartz options',
+            body: 'Comparing slab colors for our remodel',
+        });
+        expect(result.verdict).toBe('borderline');
     });
 });
 

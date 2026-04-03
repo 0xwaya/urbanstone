@@ -1,3 +1,5 @@
+import { createHash, randomUUID } from 'node:crypto';
+
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PHONE_PATTERN = /^[0-9()+.\-\s]{7,24}$/;
 
@@ -10,6 +12,31 @@ const BACKSPLASH_OPTIONS = new Set(['4-inch', 'full-height', 'none']);
 const TIMEFRAME_OPTIONS = new Set(['1-week', '2-weeks', '1-month']);
 const MAX_DRAWING_BYTES = 5 * 1024 * 1024;
 const IMAGE_DATA_URL_PATTERN = /^data:image\/[a-zA-Z0-9.+-]+;base64,/;
+
+function normalizeForDedupe(value, maxLength) {
+    return String(value || '')
+        .toLowerCase()
+        .replace(/\s+/g, ' ')
+        .trim()
+        .slice(0, maxLength);
+}
+
+function normalizePhoneForDedupe(phone) {
+    return String(phone || '').replace(/\D+/g, '').slice(0, 24);
+}
+
+export function buildLeadDedupeKey(lead) {
+    const signature = [
+        normalizeForDedupe(lead.email, 120),
+        normalizePhoneForDedupe(lead.phone),
+        normalizeForDedupe(lead.routeId || 'homepage', 80),
+        normalizeForDedupe(lead.projectDetails, 1200),
+        normalizeForDedupe(lead.currentTopMaterial, 80),
+        normalizeForDedupe(lead.totalSquareFootage ?? '', 40),
+    ].join('|');
+
+    return createHash('sha256').update(signature).digest('hex').slice(0, 24);
+}
 
 function normalizeField(value, maxLength) {
     return String(value || '')
@@ -226,6 +253,8 @@ export function isSameOriginRequest(request) {
 }
 
 export function buildLeadForwardPayload(lead, request) {
+    const requestId = normalizeField(request.headers['x-request-id'] || randomUUID(), 64);
+
     return {
         submittedAt: new Date().toISOString(),
         source: 'urban-stone-site',
@@ -246,6 +275,8 @@ export function buildLeadForwardPayload(lead, request) {
             drawingImage: lead.drawingImage,
         },
         metadata: {
+            requestId,
+            dedupeKey: buildLeadDedupeKey(lead),
             ip: getClientIp(request),
             userAgent: request.headers['user-agent'] || 'unknown',
             referer: request.headers.referer || null,

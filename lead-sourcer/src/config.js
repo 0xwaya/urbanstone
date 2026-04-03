@@ -1,3 +1,7 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
 // Keywords that suggest someone needs countertop work
 export const MATCH_KEYWORDS = [
     'countertop',
@@ -94,6 +98,109 @@ export const REDDIT_SUBREDDITS = [
     'Remodel',
     'DIY',
 ];
+
+function compactLocations(locations) {
+    return [...new Set(
+        locations
+            .map((value) => String(value || '').trim())
+            .filter(Boolean),
+    )];
+}
+
+function extractQuotedStrings(text) {
+    return [...text.matchAll(/'([^']+)'/g)].map((match) => match[1]);
+}
+
+function loadCitiesFromServiceAreaMetadata() {
+    const __dirname = path.dirname(fileURLToPath(import.meta.url));
+    const metadataPath = path.resolve(__dirname, '..', '..', 'frontend', 'data', 'service-areas.js');
+
+    try {
+        const fileText = fs.readFileSync(metadataPath, 'utf8');
+        const cities = [];
+
+        for (const line of fileText.split('\n')) {
+            const trimmed = line.trim();
+            if (trimmed.startsWith('city:')) {
+                cities.push(...extractQuotedStrings(trimmed));
+            }
+            if (trimmed.startsWith('nearbyAreas:')) {
+                cities.push(...extractQuotedStrings(trimmed));
+            }
+            if (trimmed.startsWith('relatedAreas:')) {
+                cities.push(...extractQuotedStrings(trimmed));
+            }
+        }
+
+        return compactLocations(cities);
+    } catch {
+        return [];
+    }
+}
+
+const metadataCities = loadCitiesFromServiceAreaMetadata();
+
+// Keep the core market explicit while still inheriting broader metadata-driven areas.
+const priorityCities = [
+    'Cincinnati',
+    'Mason',
+    'West Chester',
+    'Liberty Township',
+    'Fairfield',
+    'Hamilton',
+    'Blue Ash',
+    'Loveland',
+    'Milford',
+    'Anderson Township',
+    'Covington',
+    'Newport',
+    'Florence',
+    'Erlanger',
+    'Ludlow',
+    'Dayton',
+];
+
+export const GEO_TARGET_CITIES = compactLocations([...priorityCities, ...metadataCities]);
+
+export const BASE_LEAD_QUERIES = [
+    'countertop',
+    'granite',
+    'quartz',
+    'kitchen remodel',
+    'bathroom remodel',
+    'countertop installer',
+    'countertop quote',
+    'countertop replacement',
+    'granite repair',
+    'vanity top',
+];
+
+const GEO_QUERY_SUFFIXES = [
+    'countertop',
+    'countertop installer',
+    'kitchen remodel',
+    'bathroom remodel',
+];
+
+export const GEO_AWARE_QUERIES = compactLocations(
+    GEO_TARGET_CITIES.flatMap((city) => GEO_QUERY_SUFFIXES.map((suffix) => `${city} ${suffix}`)),
+);
+
+export const CRAIGSLIST_QUERY_KEYWORDS = compactLocations([
+    ...BASE_LEAD_QUERIES,
+    ...GEO_AWARE_QUERIES,
+]);
+
+export const REDDIT_SEARCH_SUBREDDITS = ['cincinnati'];
+
+const REDDIT_SEARCH_QUERY_LIMIT = Number(process.env.LEAD_SOURCER_REDDIT_SEARCH_QUERY_LIMIT || 12);
+
+export const REDDIT_SEARCH_QUERIES = compactLocations([
+    ...BASE_LEAD_QUERIES,
+    ...GEO_AWARE_QUERIES,
+]).slice(0, REDDIT_SEARCH_QUERY_LIMIT);
+
+export const REDDIT_SEARCH_DELAY_MS = Number(process.env.LEAD_SOURCER_REDDIT_SEARCH_DELAY_MS || 900);
 
 // Craigslist Cincinnati area base URL
 export const CRAIGSLIST_BASE = 'https://cincinnati.craigslist.org';
