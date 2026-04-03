@@ -16,6 +16,7 @@ The recovered project includes:
 
 - a marketing site prototype for Amazon Granite LLC
 - a supplier scraper prototype for featured stone data
+- a lead-sourcer utility for polling public sources and relaying matched leads through the existing webhook flow
 - brand assets and countertop material imagery that were already committed in the source tree
 - architecture and upgrade notes for future backend and automation work
 
@@ -61,6 +62,7 @@ frontend/
   data/
   pages/
   public/
+lead-sourcer/
 supplier-scraper/
 DB-API-Outline.md
 upgrade_plan.md
@@ -133,6 +135,26 @@ Typical workflow:
 3. review results manually before publishing any supplier-derived content
 
 Do not commit generated scraper output unless it is intentionally reviewed and treated as a versioned artifact.
+
+### Lead Sourcer
+
+The lead sourcer is a standalone Node.js utility under `lead-sourcer` that polls Reddit and Craigslist, filters posts against countertop and remodel keywords, deduplicates matches, and relays qualified leads to the configured webhook.
+
+Manual workflow:
+
+1. `cd lead-sourcer`
+2. create `lead-sourcer/.env` with `LEAD_WEBHOOK_URL=...`
+3. `npm install`
+4. `npm run run`
+
+You can also invoke the wrapper directly with `bash lead-sourcer/run.sh` from the repository root.
+
+Operational notes:
+
+- `lead-sourcer/run.sh` is the saved entrypoint for manual runs and any future scheduler wiring
+- `lead-sourcer/.env` and `lead-sourcer/seen-ids.json` are intentionally gitignored runtime files
+- the current poller is intended for manual execution until the OpenClaw gateway issue is resolved
+- Craigslist may return `403` for some feed requests, so Reddit is currently the more reliable source
 
 ## Roadmap
 

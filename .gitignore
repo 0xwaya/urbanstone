@@ -28,6 +28,10 @@ frontend/playwright-report/
 .cache/
 .vercel/
 
+# lead-sourcer runtime files
+lead-sourcer/.env
+lead-sourcer/seen-ids.json
+
 # Environment and secrets
 .env
 .env.*
