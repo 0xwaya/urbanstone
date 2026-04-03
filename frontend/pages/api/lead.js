@@ -1,7 +1,10 @@
 import {
+    buildLeadDedupeKey,
     buildLeadForwardPayload,
     getClientIp,
+    getLeadDedupeStore,
     getRateLimitStore,
+    isLeadDuplicate,
     isRateLimited,
     isSameOriginRequest,
     sanitizeLeadPayload,
@@ -9,6 +12,11 @@ import {
 
 const RATE_LIMIT_MAX = 5;
 const RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000;
+// Code-side replacement for Zapier Post-Storage filter (Step 5).
+// Prevents the same lead from being relayed to the webhook more than once
+// within the deduplication window. Note: this store is in-memory and resets
+// on serverless cold starts; it covers the within-session duplicate case.
+const LEAD_DEDUPE_WINDOW_MS = 60 * 60 * 1000;
 
 export const config = {
     api: {
@@ -90,6 +98,14 @@ export default async function handler(request, response) {
             message: 'Please correct the highlighted fields and try again.',
             errors: result.errors,
         });
+    }
+
+    const dedupeKey = buildLeadDedupeKey(result.data);
+    const dedupeStore = getLeadDedupeStore();
+
+    if (isLeadDuplicate(dedupeStore, dedupeKey, LEAD_DEDUPE_WINDOW_MS)) {
+        console.info('lead_duplicate_suppressed', { dedupeKey });
+        return response.status(202).json({ message: 'Thanks. Your request is in the queue and we will follow up shortly.' });
     }
 
     const webhookUrl = resolveWebhookUrl(request);

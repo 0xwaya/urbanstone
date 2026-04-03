@@ -231,6 +231,28 @@ export function isRateLimited(store, key, limit, windowMs) {
     return false;
 }
 
+export function getLeadDedupeStore() {
+    if (!globalThis.__urbanStoneLeadDedupeStore) {
+        globalThis.__urbanStoneLeadDedupeStore = new Map();
+    }
+
+    return globalThis.__urbanStoneLeadDedupeStore;
+}
+
+// Returns true (and records the key) when the dedupeKey has not been seen
+// within windowMs. Returns true (duplicate, skip relay) on repeat submissions.
+export function isLeadDuplicate(store, dedupeKey, windowMs) {
+    const now = Date.now();
+    const expiresAt = store.get(dedupeKey);
+
+    if (expiresAt !== undefined && expiresAt > now) {
+        return true;
+    }
+
+    store.set(dedupeKey, now + windowMs);
+    return false;
+}
+
 export function isSameOriginRequest(request) {
     const originHeader = request.headers.origin;
 

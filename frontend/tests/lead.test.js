@@ -1,4 +1,4 @@
-import { buildLeadDedupeKey, buildLeadForwardPayload, isRateLimited, sanitizeLeadPayload } from '../lib/lead';
+import { buildLeadDedupeKey, buildLeadForwardPayload, isLeadDuplicate, isRateLimited, sanitizeLeadPayload } from '../lib/lead';
 
 describe('sanitizeLeadPayload', () => {
     it('returns sanitized lead data for valid submissions', () => {
@@ -197,5 +197,30 @@ describe('buildLeadDedupeKey', () => {
         });
 
         expect(keyA).toBe(keyB);
+    });
+});
+
+describe('isLeadDuplicate', () => {
+    it('returns false on first submission and true on repeat within window', () => {
+        const store = new Map();
+
+        expect(isLeadDuplicate(store, 'abc123', 60000)).toBe(false);
+        expect(isLeadDuplicate(store, 'abc123', 60000)).toBe(true);
+    });
+
+    it('returns false after the deduplication window has expired', () => {
+        const store = new Map();
+        store.set('abc123', Date.now() - 1);
+
+        expect(isLeadDuplicate(store, 'abc123', 60000)).toBe(false);
+    });
+
+    it('treats different deduplication keys independently', () => {
+        const store = new Map();
+
+        expect(isLeadDuplicate(store, 'key-a', 60000)).toBe(false);
+        expect(isLeadDuplicate(store, 'key-b', 60000)).toBe(false);
+        expect(isLeadDuplicate(store, 'key-a', 60000)).toBe(true);
+        expect(isLeadDuplicate(store, 'key-b', 60000)).toBe(true);
     });
 });
