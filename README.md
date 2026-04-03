@@ -139,15 +139,15 @@ Urban Stone production lead intake zap is published and live with the following 
 
 The Zapier zap that receives leads from the webhook and forwards them to Outlook uses this step order:
 
-| Step | App | Purpose |
-|------|-----|---------|
-| 1 | Webhooks by Zapier — Catch Hook | Receives the inbound lead payload |
-| 2 | Filter by Zapier | Intake gate: continue only if (`email` + `phone`) OR (`metadata.automated = true`) |
-| 3 | Storage by Zapier — Get Value | Initial dedup read on the `urban-stone-dedupe` key |
-| 4 | Storage by Zapier — Get Value | Resolve the stored value for the dedup key |
-| 5 | Filter by Zapier | Duplicate check: continue only if no dedup value is found |
-| 6 | Storage by Zapier — Set Value | **Write** key `dedup::{{metadata__dedupeKey}}` = `1` to mark lead as processed |
-| 7 | Microsoft Outlook — Send Email | Forward formatted lead to the sales inbox |
+|Step|App|Purpose|
+|---|---|---|
+|1|Webhooks by Zapier — Catch Hook|Receives the inbound lead payload|
+|2|Filter by Zapier|Intake gate: continue only if (`email` + `phone`) OR (`metadata.automated = true`)|
+|3|Storage by Zapier — Get Value|Initial dedup read on the `urban-stone-dedupe` key|
+|4|Storage by Zapier — Get Value|Resolve the stored value for the dedup key|
+|5|Filter by Zapier|Duplicate check: continue only if no dedup value is found|
+|6|Storage by Zapier — Set Value|**Write** key `dedup::{{metadata__dedupeKey}}` = `1` to mark lead as processed|
+|7|Microsoft Outlook — Send Email|Forward formatted lead to the sales inbox|
 
 **Critical:** Step 6 (Storage Set Value) must come before Outlook. Without it, the filter at Step 5 passes every submission because the key is never written — making Zapier-side dedup non-functional.
 
@@ -190,12 +190,14 @@ Manual workflow:
 
 1. `cd lead-sourcer`
 2. create `lead-sourcer/.env` with `LEAD_WEBHOOK_URL=...`
-3. create `lead-sourcer/.env` entries for source integrations:
-  - required: `LEAD_WEBHOOK_URL=...`
-  - optional Apify: `APIFY_TOKEN=...`
-  - optional Apify task IDs: `APIFY_NEXTDOOR_TASK_ID=...`, `APIFY_FACEBOOK_TASK_ID=...`, `APIFY_AD_LIBRARY_TASK_ID=...`
-4. `npm install`
-5. `npm run run`
+3. add source integration env entries:
+
+- required: `LEAD_WEBHOOK_URL=...`
+- optional Apify: `APIFY_TOKEN=...`
+- optional Apify task IDs: `APIFY_NEXTDOOR_TASK_ID=...`, `APIFY_FACEBOOK_TASK_ID=...`, `APIFY_AD_LIBRARY_TASK_ID=...`
+
+1. `npm install`
+2. `npm run run`
 
 Direct source runs:
 
@@ -203,6 +205,8 @@ Direct source runs:
 - `npm run poll:craigslist`
 - `npm run poll:apify`
 You can also invoke the wrapper directly with `bash lead-sourcer/run.sh` from the repository root.
+
+Each direct poll command now honors `LEAD_SOURCER_MODE` and `--mode=` (for example: `LEAD_SOURCER_MODE=dry-run npm run poll:reddit`).
 
 Run modes (set via `--mode=` CLI flag or `LEAD_SOURCER_MODE` env var):
 
@@ -233,6 +237,9 @@ Operational notes:
   - `APIFY_ENABLE_AD_LIBRARY=true|false`
   - `APIFY_TASK_TIMEOUT_MS` (default: `120000`)
   - `APIFY_TASK_DELAY_MS` (default: `1200`)
+- Reddit regional gate control:
+  - `LEAD_SOURCER_REQUIRE_REGIONAL_SIGNAL=true|false` (default: `true`)
+  - set to `false` to allow non-r/cincinnati high-intent matches during growth/tuning windows
 - automated relays include `lead.externalPostId`, `lead.externalPostUrl`, `metadata.automated=true`, `metadata.dedupeKey`, and `metadata.requestId` so the Zapier flow can distinguish sourced leads from website submissions and suppress duplicates consistently
 
 Current runtime state (April 3, 2026):

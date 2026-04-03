@@ -8,6 +8,8 @@ import { isSeen, markSeen } from './dedup.js';
 import { relay } from './relay.js';
 import { REDDIT_SEARCH_DELAY_MS, REDDIT_SEARCH_QUERIES, REDDIT_SEARCH_SUBREDDITS } from './config.js';
 import { GEO_TARGET_CITIES } from './config.js';
+import { LEAD_SOURCER_REQUIRE_REGIONAL_SIGNAL } from './config.js';
+import { resolveRunMode } from './mode.js';
 import { runModeFlags } from './mode.js';
 import { logReviewCandidate } from './review-log.js';
 
@@ -131,7 +133,7 @@ export async function pollReddit({ mode = 'live' } = {}) {
 
             if (classification.verdict !== 'match') { continue; }
 
-            if (subreddit.toLowerCase() !== 'cincinnati' && !hasRegionalSignal(post)) {
+            if (LEAD_SOURCER_REQUIRE_REGIONAL_SIGNAL && subreddit.toLowerCase() !== 'cincinnati' && !hasRegionalSignal(post)) {
                 logReviewCandidate({
                     mode,
                     source: 'reddit',
@@ -175,7 +177,8 @@ export async function pollReddit({ mode = 'live' } = {}) {
 
 // Allow running directly: node src/reddit.js
 if (process.argv[1] && process.argv[1].endsWith('reddit.js')) {
-    pollReddit()
+    const mode = resolveRunMode();
+    pollReddit({ mode })
         .then((matches) => console.log(`[reddit] Done. ${matches.length} new match(es).`))
         .catch((err) => {
             console.error('[reddit] Fatal:', err);

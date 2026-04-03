@@ -15,6 +15,7 @@ import {
 import { buildLeadPayload, classifyLeadCandidate } from './matcher.js';
 import { isSeen, markSeen } from './dedup.js';
 import { relay } from './relay.js';
+import { resolveRunMode } from './mode.js';
 import { runModeFlags } from './mode.js';
 import { logReviewCandidate } from './review-log.js';
 
@@ -288,7 +289,8 @@ export async function pollApify({ mode = 'live' } = {}) {
 }
 
 if (process.argv[1] && process.argv[1].endsWith('apify.js')) {
-    pollApify()
+    const mode = resolveRunMode();
+    pollApify({ mode })
         .then((matches) => console.log(`[apify] Done. ${matches.length} new match(es).`))
         .catch((err) => {
             console.error('[apify] Fatal:', err);

@@ -8,6 +8,7 @@ import { buildLeadPayload, classifyLeadCandidate } from './matcher.js';
 import { isSeen, markSeen } from './dedup.js';
 import { relay } from './relay.js';
 import { CRAIGSLIST_QUERY_KEYWORDS } from './config.js';
+import { resolveRunMode } from './mode.js';
 import { runModeFlags } from './mode.js';
 import { logReviewCandidate } from './review-log.js';
 
@@ -142,7 +143,8 @@ export async function pollCraigslist({ mode = 'live' } = {}) {
 
 // Allow running directly: node src/craigslist.js
 if (process.argv[1] && process.argv[1].endsWith('craigslist.js')) {
-    pollCraigslist()
+    const mode = resolveRunMode();
+    pollCraigslist({ mode })
         .then((matches) => console.log(`[craigslist] Done. ${matches.length} new match(es).`))
         .catch((err) => {
             console.error('[craigslist] Fatal:', err);

@@ -48,12 +48,24 @@ export const PROJECT_CONTEXT_KEYWORDS = [
 export const INTENT_KEYWORDS = [
     'hire',
     'quote',
+    'quotes',
     'estimate',
+    'estimates',
+    'cost',
+    'costs',
+    'budget',
     'pricing',
     'price',
     'contractor',
     'installer',
     'fabricator',
+    'recommend',
+    'recommendation',
+    'recommendations',
+    'referral',
+    'referrals',
+    'bid',
+    'bids',
     'install',
     'installation',
     'replace',
@@ -254,6 +266,7 @@ export const APIFY_ENABLE_FACEBOOK = envFlag('APIFY_ENABLE_FACEBOOK', true);
 export const APIFY_ENABLE_AD_LIBRARY = envFlag('APIFY_ENABLE_AD_LIBRARY', true);
 export const APIFY_TASK_TIMEOUT_MS = Number(process.env.APIFY_TASK_TIMEOUT_MS || 120000);
 export const APIFY_TASK_DELAY_MS = Number(process.env.APIFY_TASK_DELAY_MS || 1200);
+export const LEAD_SOURCER_REQUIRE_REGIONAL_SIGNAL = envFlag('LEAD_SOURCER_REQUIRE_REGIONAL_SIGNAL', true);
 
 // Craigslist Cincinnati area base URL
 export const CRAIGSLIST_BASE = 'https://cincinnati.craigslist.org';
