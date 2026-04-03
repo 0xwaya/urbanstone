@@ -132,6 +132,7 @@ describe('buildLeadPayload', () => {
         expect(metadata).toHaveProperty('automated', true);
         expect(metadata).toHaveProperty('routeId', 'lead-sourcer/reddit');
         expect(metadata).toHaveProperty('dedupeKey', 'abc123');
+        expect(metadata).toHaveProperty('requestId', 'lead-sourcer/reddit/abc123');
     });
 
     test('projectDetails concatenates title and body', () => {

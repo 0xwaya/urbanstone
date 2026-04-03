@@ -161,6 +161,7 @@ Operational notes:
 - `lead-sourcer/.env` and `lead-sourcer/seen-ids.json` are intentionally gitignored runtime files
 - the current poller is intended for manual execution until the OpenClaw gateway issue is resolved
 - Craigslist may return `403` for some feed requests, so Reddit is currently the more reliable source
+- automated relays include `lead.externalPostId`, `lead.externalPostUrl`, `metadata.automated=true`, `metadata.dedupeKey`, and `metadata.requestId` so the Zapier flow can distinguish sourced leads from website submissions and suppress duplicates consistently
 
 ## Roadmap
 
