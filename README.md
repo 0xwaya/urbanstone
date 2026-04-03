@@ -130,6 +130,26 @@ Lead webhook payload note:
 - `metadata.requestId` is propagated from inbound `x-request-id` when available, otherwise generated server-side.
 - `metadata.dedupeKey` is generated as a deterministic hash from normalized lead fields so Zapier/Storage duplicate suppression can use a stable key.
 
+### Zapier Pipeline
+
+The Zapier zap that receives leads from the webhook and forwards them to Outlook uses the following step order:
+
+| Step | App | Purpose |
+|------|-----|---------|
+| 1 | Webhooks by Zapier — Catch Hook | Receives the inbound lead payload |
+| 2 | Filter by Zapier | Gate: only continue if `metadata.dedupeKey` is present |
+| 3 | Storage by Zapier — Get Value | Read key `dedup::{{metadata__dedupeKey}}` from Storage |
+| 4 | Storage by Zapier — Get Value | Resolve the stored value for the dedup key |
+| 5 | Filter by Zapier | Gate: only continue if the retrieved value is empty (unseen lead) |
+| 6 | Storage by Zapier — Set Value | **Write** key `dedup::{{metadata__dedupeKey}}` = `1` to mark lead as processed |
+| 7 | Microsoft Outlook — Send Email | Forward formatted lead to the sales inbox |
+
+**Critical:** Step 6 (Storage Set Value) must come before Outlook. Without it, the filter at Step 5 passes every submission because the key is never written — making Zapier-side dedup non-functional.
+
+Storage key pattern: `dedup::{{357570886__metadata__dedupeKey}}`
+
+The code-side dedup guard in `frontend/pages/api/lead.js` provides within-session protection (1-hour TTL, in-memory). The Zapier Storage layer provides persistent cross-session protection.
+
 ### Supplier Scraper
 
 The supplier scraper is a small Node.js prototype using Cheerio.
@@ -144,7 +164,7 @@ Do not commit generated scraper output unless it is intentionally reviewed and t
 
 ### Lead Sourcer
 
-The lead sourcer is a standalone Node.js utility under `lead-sourcer` that polls Reddit and Craigslist, filters posts against countertop and remodel keywords, deduplicates matches, and relays qualified leads to the configured webhook.
+The lead sourcer is a standalone Node.js utility under `lead-sourcer` that polls Reddit and Craigslist, classifies posts against countertop and remodel keywords, deduplicates matches, and relays qualified leads to the configured webhook.
 
 Manual workflow:
 
@@ -155,12 +175,26 @@ Manual workflow:
 
 You can also invoke the wrapper directly with `bash lead-sourcer/run.sh` from the repository root.
 
+Run modes (set via `--mode=` CLI flag or `LEAD_SOURCER_MODE` env var):
+
+- `live` (default): relay matches + persist seen IDs
+- `dry-run`: classify and log without relaying or persisting
+- `review-only`: persist seen IDs and log borderline candidates to `runs/review-candidates.jsonl`, no relay
+
+Classification verdicts:
+
+- `match`: direct keyword + intent signal — relayed in live mode
+- `borderline`: material or context signal without clear intent — logged to `runs/review-candidates.jsonl` for manual review
+- `reject`: excluded noise terms or no relevant signal
+
 Operational notes:
 
 - `lead-sourcer/run.sh` is the saved entrypoint for manual runs and any future scheduler wiring
 - `lead-sourcer/.env` and `lead-sourcer/seen-ids.json` are intentionally gitignored runtime files
 - the current poller is intended for manual execution until the OpenClaw gateway issue is resolved
-- Craigslist may return `403` for some feed requests, so Reddit is currently the more reliable source
+- Craigslist RSS returns 403; the poller uses HTML search parsing (`cl-static-search-result`) instead
+- Reddit polling combines subreddit `/new` with targeted search queries against r/cincinnati
+- geo-aware queries are auto-generated from `frontend/data/service-areas.js` city data at runtime
 - automated relays include `lead.externalPostId`, `lead.externalPostUrl`, `metadata.automated=true`, `metadata.dedupeKey`, and `metadata.requestId` so the Zapier flow can distinguish sourced leads from website submissions and suppress duplicates consistently
 
 ## Roadmap
