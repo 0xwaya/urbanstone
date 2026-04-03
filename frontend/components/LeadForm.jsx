@@ -630,7 +630,7 @@ export default function LeadForm({ content, routeId = 'homepage', collapsible = 
                     {errors.materialPreferences && <span className="form-error">{errors.materialPreferences}</span>}
                 </div>
 
-                <button className="inline-flex w-full items-center justify-center rounded-full bg-accent px-4 py-3 text-sm font-semibold text-white transition hover:bg-accentDark disabled:cursor-not-allowed disabled:opacity-70" type="submit" disabled={isSubmitting}>
+                <button className="brand-button-primary w-full px-4 py-3 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-70" type="submit" disabled={isSubmitting}>
                     {isSubmitting ? formContent.submittingLabel : formContent.submitLabel}
                 </button>
             </form>
@@ -648,14 +648,14 @@ export default function LeadForm({ content, routeId = 'homepage', collapsible = 
                 </p>
                 <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
                     <a
-                        className="inline-flex w-full items-center justify-center rounded-full bg-accent px-4 py-3 font-semibold text-white shadow-[0_16px_40px_rgba(61,110,196,0.18)] transition hover:bg-accentDark sm:w-auto sm:min-w-[11rem]"
+                        className="brand-button-primary w-full px-4 py-3 font-semibold sm:w-auto sm:min-w-[11rem]"
                         href={`tel:${toTelHref(companyPhone)}`}
                         aria-label={`Call Urban Stone Collective at ${companyPhone}`}
                     >
                         Call
                     </a>
                     <a
-                        className="inline-flex w-full items-center justify-center rounded-full border border-border bg-panel/80 px-4 py-3 font-semibold text-text transition hover:border-accent hover:text-accent sm:w-auto sm:min-w-[11rem]"
+                        className="brand-button-secondary inline-flex w-full items-center justify-center rounded-full px-4 py-3 font-semibold sm:w-auto sm:min-w-[11rem]"
                         href={`mailto:${companyEmail}`}
                         aria-label={`Email Urban Stone Collective at ${companyEmail}`}
                     >

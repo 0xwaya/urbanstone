@@ -47,7 +47,7 @@ export default function Footer() {
                             <Link href="/coverage" className="inline-flex items-center justify-center rounded-full border border-border bg-surface/80 px-4 py-2 text-sm font-semibold text-text transition hover:border-accent hover:text-accent">
                                 Service areas
                             </Link>
-                            <Link href="/#quote" className="inline-flex items-center justify-center rounded-full bg-accent px-4 py-2 text-sm font-semibold text-white transition hover:bg-accentDark">
+                            <Link href="/#quote" className="brand-button-primary px-4 py-2 text-sm font-semibold">
                                 Request estimate
                             </Link>
                         </div>

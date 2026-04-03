@@ -44,7 +44,7 @@ export default function TopNav() {
                     <div className="hidden shrink-0 items-center gap-3 lg:flex">
                         <ThemeToggle />
                         <a
-                            className="inline-flex items-center justify-center rounded-full bg-accent px-4 py-2 text-sm font-semibold text-white shadow-[0_16px_40px_rgba(61,110,196,0.22)] transition hover:bg-accentDark"
+                            className="brand-button-primary px-4 py-2 text-sm font-semibold"
                             href={`tel:${toTelHref(companyPhone)}`}
                             aria-label={`Call Urban Stone Collective at ${companyPhone}`}
                         >
@@ -69,17 +69,17 @@ export default function TopNav() {
                     <div className="mt-3 rounded-2xl border border-border bg-panel/70 p-3 lg:hidden">
                         <div className="rounded-[1.5rem] border border-border/80 bg-surface/75 p-3 shadow-soft">
                             <div className="text-[11px] font-semibold uppercase tracking-[0.22em] text-muted">Menu</div>
-                            <a className="mt-3 inline-flex w-full items-center justify-center rounded-full bg-accent px-4 py-3 text-base font-semibold text-white shadow-[0_16px_40px_rgba(61,110,196,0.24)] transition hover:bg-accentDark" href="#quote" onClick={() => setIsMenuOpen(false)}>
+                            <a className="brand-button-primary mt-3 w-full px-4 py-3 text-base font-semibold" href="#quote" onClick={() => setIsMenuOpen(false)}>
                                 Get an Estimate
                             </a>
                             <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-3">
-                                <a className="rounded-xl border border-border bg-panel/70 px-3 py-2.5 text-center transition hover:border-accent hover:text-accent" href="#suppliers" onClick={() => setIsMenuOpen(false)}>
+                                <a className="brand-menu-tile rounded-xl px-3 py-2.5 text-center" href="#suppliers" onClick={() => setIsMenuOpen(false)}>
                                     Materials
                                 </a>
-                                <Link className="rounded-xl border border-border bg-panel/70 px-3 py-2.5 text-center transition hover:border-accent hover:text-accent" href="/coverage" onClick={() => setIsMenuOpen(false)}>
+                                <Link className="brand-menu-tile rounded-xl px-3 py-2.5 text-center" href="/coverage" onClick={() => setIsMenuOpen(false)}>
                                     Service Areas
                                 </Link>
-                                <a className="rounded-xl border border-border bg-panel/70 px-3 py-2.5 text-center transition hover:border-accent hover:text-accent" href="#faq" onClick={() => setIsMenuOpen(false)}>
+                                <a className="brand-menu-tile rounded-xl px-3 py-2.5 text-center" href="#faq" onClick={() => setIsMenuOpen(false)}>
                                     Q&amp;A
                                 </a>
                             </div>
@@ -89,14 +89,14 @@ export default function TopNav() {
                             <div className="text-[11px] font-semibold uppercase tracking-[0.22em] text-muted">Direct contact</div>
                             <div className="mt-3 grid grid-cols-2 gap-3">
                                 <a
-                                    className="inline-flex items-center justify-center rounded-full bg-accent px-4 py-3 text-base font-semibold text-white shadow-[0_16px_40px_rgba(61,110,196,0.24)] transition hover:bg-accentDark"
+                                    className="brand-button-primary px-4 py-3 text-base font-semibold"
                                     href={`tel:${toTelHref(companyPhone)}`}
                                     aria-label={`Call Urban Stone Collective at ${companyPhone}`}
                                 >
                                     Call
                                 </a>
                                 <a
-                                    className="inline-flex items-center justify-center rounded-full border border-border bg-panel/80 px-4 py-3 text-base font-semibold text-text transition hover:border-accent hover:text-accent"
+                                    className="brand-button-secondary inline-flex items-center justify-center rounded-full px-4 py-3 text-base font-semibold"
                                     href={`mailto:${companyEmail}`}
                                     aria-label={`Email Urban Stone Collective at ${companyEmail}`}
                                 >

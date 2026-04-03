@@ -16,7 +16,7 @@ export default function Hero() {
           <span className="hero-chip">1-Year Install Guarantee</span>
         </div>
         <div className="mt-7 flex flex-col gap-3 sm:mt-6 sm:flex-row sm:flex-wrap sm:gap-4">
-          <a className="inline-flex items-center justify-center rounded-md bg-accent px-5 py-3 font-semibold text-white transition hover:-translate-y-0.5 hover:bg-accentDark hover:shadow-xl" href="#quote">
+          <a className="brand-button-primary rounded-md px-5 py-3 font-semibold" href="#quote">
             Request Estimate
           </a>
           <a className="inline-flex items-center justify-center rounded-md border border-border px-5 py-3 font-semibold transition hover:-translate-y-0.5 hover:border-accent" href="#suppliers">

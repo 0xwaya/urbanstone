@@ -50,7 +50,7 @@ export default function ChatWidget() {
             <div className="pointer-events-none fixed bottom-4 right-4 z-50">
                 <button
                     type="button"
-                    className="pointer-events-auto inline-flex items-center justify-center rounded-full bg-accent px-4 py-3 text-sm font-semibold text-white shadow-[0_16px_40px_rgba(61,110,196,0.24)] transition hover:bg-accentDark"
+                    className="brand-button-primary pointer-events-auto px-4 py-3 text-sm font-semibold"
                     onClick={handleOpen}
                     aria-label="Open quick contact panel"
                 >
@@ -79,18 +79,18 @@ export default function ChatWidget() {
                 </div>
                 <p className="mt-2 text-sm text-muted">Use the estimate form, call for scheduling, or send photos, measurements, and layout details by email.</p>
                 <div className="mt-4 flex flex-wrap gap-2">
-                    <a className="inline-flex rounded-full bg-accent px-3 py-2 text-sm font-semibold text-white transition hover:bg-accentDark" href="#quote">
+                    <a className="brand-button-primary px-3 py-2 text-sm font-semibold" href="#quote">
                         Open form
                     </a>
-                    <a className="inline-flex rounded-full border border-border px-3 py-2 text-sm font-semibold text-text transition hover:border-accent" href={`tel:${toTelHref(companyPhone)}`}>
+                    <a className="brand-button-secondary inline-flex rounded-full px-3 py-2 text-sm font-semibold" href={`tel:${toTelHref(companyPhone)}`}>
                         Call
                     </a>
-                    <a className="inline-flex rounded-full border border-border px-3 py-2 text-sm font-semibold text-text transition hover:border-accent" href={`mailto:${companyEmail}`}>
+                    <a className="brand-button-secondary inline-flex rounded-full px-3 py-2 text-sm font-semibold" href={`mailto:${companyEmail}`}>
                         Email
                     </a>
                     <button
                         type="button"
-                        className="inline-flex rounded-full border border-border px-3 py-2 text-sm font-semibold text-text transition hover:border-accent"
+                        className="brand-button-secondary inline-flex rounded-full px-3 py-2 text-sm font-semibold"
                         onClick={handleClose}
                     >
                         Dismiss
