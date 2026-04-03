@@ -168,6 +168,13 @@ Validation check:
 - Send 1 with a new `dedupeKey`: all 7 steps execute and Outlook sends.
 - Send 2 with the same `dedupeKey`: flow stops at Step 5 and Outlook is skipped.
 
+Deferred Zapier hardening backlog (optional, for later implementation):
+
+- add a source guard filter before Outlook to suppress internal `wire-test` events
+- include `source`, `routeId`, and classifier score (when present) in the Outlook subject/body for triage
+- add a low-volume alert path (for example Slack or digest email) when no accepted leads arrive in a configured window
+- make dedupe retention/TTL policy explicit in Zapier Storage operations for predictable replay behavior
+
 The code-side dedup guard in `frontend/pages/api/lead.js` provides within-session protection (1-hour TTL, in-memory). The Zapier Storage layer provides persistent cross-session protection.
 
 ### Supplier Scraper
@@ -207,6 +214,19 @@ Direct source runs:
 You can also invoke the wrapper directly with `bash lead-sourcer/run.sh` from the repository root.
 
 Each direct poll command now honors `LEAD_SOURCER_MODE` and `--mode=` (for example: `LEAD_SOURCER_MODE=dry-run npm run poll:reddit`).
+
+Scheduler and run-observability controls (implemented in `lead-sourcer/src/index.js`):
+
+- `LEAD_SOURCER_INTERVAL_MINUTES` (default: `0`) — set `>0` to run poll cycles continuously on interval
+- `LEAD_SOURCER_MAX_CYCLES` (default: `0`) — optional max cycles in interval mode (`0` = unbounded)
+- `LEAD_SOURCER_RUN_LOG_FILE` (default: `lead-sourcer/runs/poll-runs.jsonl`) — JSONL summaries per cycle
+- `LEAD_SOURCER_ZERO_MATCH_ALERT_THRESHOLD` (default: `0`) — warn after N consecutive zero-match cycles
+
+Examples:
+
+- one-shot (default): `npm run run`
+- every 15 minutes: `LEAD_SOURCER_INTERVAL_MINUTES=15 npm run run`
+- every 15 minutes, stop after 8 cycles: `LEAD_SOURCER_INTERVAL_MINUTES=15 LEAD_SOURCER_MAX_CYCLES=8 npm run run`
 
 Run modes (set via `--mode=` CLI flag or `LEAD_SOURCER_MODE` env var):
 

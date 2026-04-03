@@ -52,12 +52,21 @@ Start building the stone selection scraper prototype and define the initial Supa
 - [x] Run Apify tasks in parallel inside `lead-sourcer` and merge into existing classify + dedupe + webhook relay pipeline.
 - [x] Validate transport path: Apify post -> classifier verdict -> relay -> Zapier webhook (`HTTP 200` on wire test).
 - [ ] Tune task inputs/keywords for `granite countertops`, `quartz countertops`, `quartzite countertops` by service area.
+- [x] Add runtime hardening controls (task toggles, timeout, delay, and env alias support for task IDs).
+- [x] Ensure direct source commands honor `LEAD_SOURCER_MODE` / `--mode=` to prevent accidental live relays.
+- [x] Add interval scheduler + run summary logging in `lead-sourcer/src/index.js`.
 
 Current blocker:
 - Recent runs are producing `0 match` verdicts (mostly borderline/reject), so no outbound emails are triggered.
 - Ad Library source may require `APIFY_ENABLE_AD_LIBRARY=false` under account memory pressure.
 
 Expected outcome: materially higher homeowner/GC lead discovery density in target Cincinnati + NKY regions.
+
+## Phase 1.5 - Zapier Hardening (Deferred / Optional)
+- [ ] Add source guard filter before Outlook to suppress internal/test traffic (for example `wire-test`).
+- [ ] Add richer triage fields to email output (`source`, `routeId`, classifier score when available).
+- [ ] Add low-volume alerting path when accepted lead volume is zero for a configured window.
+- [ ] Document/verify dedupe retention policy in Zapier Storage for predictable replay behavior.
 
 ## Phase 2 - AI Agent + Self-Learning (April 6-10, 2026)
 - [ ] Connect qualified leads to conversational state machine (greet, qualify, scope questions, estimate handoff).
