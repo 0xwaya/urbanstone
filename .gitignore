@@ -46,3 +46,5 @@ supplier-scraper/featured-stones.output.json
 # Misc
 .tmp/
 tmp/
+/test-results/
+.env*.local
