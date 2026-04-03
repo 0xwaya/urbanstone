@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { curatedSlabOptions } from '../data/curated-slab-options';
 
 const initialForm = {
     name: '',
@@ -19,13 +20,6 @@ const initialForm = {
 };
 
 const MAX_DRAWING_BYTES = 5 * 1024 * 1024;
-
-const materialOptions = [
-    { value: 'granite', label: 'Granite' },
-    { value: 'marble', label: 'Marble' },
-    { value: 'quartzite', label: 'Quartzite' },
-    { value: 'quartz', label: 'Quartz' },
-];
 
 const removalOptions = [
     { value: 'yes', label: 'Yes, remove current tops' },
@@ -610,17 +604,27 @@ export default function LeadForm({ content, routeId = 'homepage', collapsible = 
                 </div>
 
                 <div>
-                    <span className="mb-2 block text-sm font-medium text-text">Material preference</span>
-                    <div className="flex flex-wrap gap-1.5">
-                        {materialOptions.map((option) => (
-                            <button
-                                key={option.value}
-                                type="button"
-                                className={`form-chip${form.materialPreferences.includes(option.value) ? ' form-chip--active' : ''}`}
-                                onClick={() => handleMaterialToggle(option.value)}
-                            >
-                                {option.label}
-                            </button>
+                    <span className="mb-2 block text-sm font-medium text-text">Curated slab preference</span>
+                    <p className="mb-3 text-xs leading-5 text-muted">Selections are limited to curated slabs so pricing and quoting can be automated.</p>
+                    <div className="space-y-3">
+                        {curatedSlabOptions.map((group) => (
+                            <div key={group.group}>
+                                <div className="mb-1.5 text-xs font-semibold uppercase tracking-[0.16em] text-muted">{group.group}</div>
+                                <div className="flex flex-wrap gap-1.5">
+                                    {group.options.map((option) => (
+                                        <button
+                                            key={option.value}
+                                            type="button"
+                                            className={`form-chip${form.materialPreferences.includes(option.value) ? ' form-chip--active' : ''}`}
+                                            onClick={() => handleMaterialToggle(option.value)}
+                                            aria-label={`${option.label} from ${option.supplier}`}
+                                            title={option.supplier}
+                                        >
+                                            {option.label}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
                         ))}
                     </div>
                     {errors.materialPreferences && <span className="form-error">{errors.materialPreferences}</span>}
@@ -664,51 +668,51 @@ export default function LeadForm({ content, routeId = 'homepage', collapsible = 
 
     return (
         <>
-        <section id="quote" className="rounded-3xl border border-border bg-panel p-5 shadow-soft sm:p-6 lg:sticky lg:top-24">
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-                <div>
-                    <div className="eyebrow">{formContent.eyebrow}</div>
-                    <h2 className="font-display text-3xl font-semibold sm:text-4xl">{formContent.title}</h2>
-                    <p className="mt-2 text-sm leading-6 text-muted">
-                        {formContent.description}
-                    </p>
-                </div>
+            <section id="quote" className="rounded-3xl border border-border bg-panel p-5 shadow-soft sm:p-6 lg:sticky lg:top-24">
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                    <div>
+                        <div className="eyebrow">{formContent.eyebrow}</div>
+                        <h2 className="font-display text-3xl font-semibold sm:text-4xl">{formContent.title}</h2>
+                        <p className="mt-2 text-sm leading-6 text-muted">
+                            {formContent.description}
+                        </p>
+                    </div>
 
-                {collapsible ? (
-                    <button
-                        type="button"
-                        className="inline-flex min-w-[6.5rem] items-center justify-center self-start whitespace-nowrap rounded-full border border-border bg-panel/80 px-4 py-2 text-sm font-semibold text-text transition hover:border-accent hover:text-accent sm:self-auto"
-                        aria-expanded={isExpanded}
-                        aria-controls="quote-form-panel"
-                        onClick={() => setIsExpanded((current) => !current)}
-                    >
-                        {isExpanded ? expandedLabel : collapsedLabel}
-                    </button>
-                ) : null}
-            </div>
-
-            {showInlineForm ? formPanel : null}
-        </section>
-        {showDesktopModal ? (
-            <div className="lead-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="quote-modal-title" onClick={() => setIsExpanded(false)}>
-                <div className="lead-modal-shell" onClick={(event) => event.stopPropagation()}>
-                    <div className="flex items-start justify-between gap-3">
-                        <div>
-                            <p className="eyebrow">Request a quote</p>
-                            <h2 id="quote-modal-title" className="font-display text-3xl font-semibold text-text sm:text-4xl">Start your estimate</h2>
-                        </div>
+                    {collapsible ? (
                         <button
                             type="button"
-                            className="inline-flex min-w-[6.5rem] items-center justify-center self-start whitespace-nowrap rounded-full border border-border bg-panel/80 px-4 py-2 text-sm font-semibold text-text transition hover:border-accent hover:text-accent"
-                            onClick={() => setIsExpanded(false)}
+                            className="inline-flex min-w-[6.5rem] items-center justify-center self-start whitespace-nowrap rounded-full border border-border bg-panel/80 px-4 py-2 text-sm font-semibold text-text transition hover:border-accent hover:text-accent sm:self-auto"
+                            aria-expanded={isExpanded}
+                            aria-controls="quote-form-panel"
+                            onClick={() => setIsExpanded((current) => !current)}
                         >
-                            {expandedLabel}
+                            {isExpanded ? expandedLabel : collapsedLabel}
                         </button>
-                    </div>
-                    {formPanel}
+                    ) : null}
                 </div>
-            </div>
-        ) : null}
+
+                {showInlineForm ? formPanel : null}
+            </section>
+            {showDesktopModal ? (
+                <div className="lead-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="quote-modal-title" onClick={() => setIsExpanded(false)}>
+                    <div className="lead-modal-shell" onClick={(event) => event.stopPropagation()}>
+                        <div className="flex items-start justify-between gap-3">
+                            <div>
+                                <p className="eyebrow">Request a quote</p>
+                                <h2 id="quote-modal-title" className="font-display text-3xl font-semibold text-text sm:text-4xl">Start your estimate</h2>
+                            </div>
+                            <button
+                                type="button"
+                                className="inline-flex min-w-[6.5rem] items-center justify-center self-start whitespace-nowrap rounded-full border border-border bg-panel/80 px-4 py-2 text-sm font-semibold text-text transition hover:border-accent hover:text-accent"
+                                onClick={() => setIsExpanded(false)}
+                            >
+                                {expandedLabel}
+                            </button>
+                        </div>
+                        {formPanel}
+                    </div>
+                </div>
+            ) : null}
         </>
     );
 }

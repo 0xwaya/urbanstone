@@ -655,6 +655,23 @@ html[data-theme="light"] .lead-modal-backdrop {
     0 8px 20px rgba(8, 15, 33, 0.1);
 }
 
+.supplier-brand-mark--placeholder {
+  background: linear-gradient(
+    180deg,
+    rgba(198, 176, 134, 0.88),
+    rgba(160, 136, 92, 0.78)
+  );
+  border-color: rgba(196, 173, 128, 0.66);
+}
+
+.supplier-brand-mark__placeholder-text {
+  font-family: "Cormorant Garamond", serif;
+  font-size: 1.08rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: rgb(22 29 43);
+}
+
 .supplier-logo-image {
   max-height: 100%;
   max-width: 100%;
@@ -717,22 +734,20 @@ html[data-theme="light"] .lead-modal-backdrop {
   justify-content: center;
   gap: 0.45rem;
   border-radius: 9999px;
-  background:
-    linear-gradient(180deg, rgba(97, 158, 233, 1), rgba(41, 98, 177, 1)),
-    rgb(var(--accent));
+  background: linear-gradient(180deg, rgb(212 193 152), rgb(171 147 103));
   padding: 0.82rem 1.08rem;
   font-size: 0.86rem;
   font-weight: 800;
   letter-spacing: 0.01em;
-  color: #fff;
+  color: rgb(14 21 33);
   transition:
     transform 0.18s ease,
     background-color 0.18s ease,
     box-shadow 0.18s ease,
     opacity 0.18s ease;
   box-shadow:
-    0 18px 38px rgba(54, 105, 187, 0.34),
-    inset 0 1px 0 rgba(255, 255, 255, 0.28);
+    0 18px 36px rgba(46, 53, 74, 0.26),
+    inset 0 1px 0 rgba(255, 255, 255, 0.36);
 }
 
 .materials-next-step-button {
@@ -740,17 +755,15 @@ html[data-theme="light"] .lead-modal-backdrop {
   align-items: center;
   justify-content: center;
   border-radius: 9999px;
-  background:
-    linear-gradient(180deg, rgba(97, 158, 233, 1), rgba(41, 98, 177, 1)),
-    rgb(var(--accent));
+  background: linear-gradient(180deg, rgb(212 193 152), rgb(171 147 103));
   padding: 0.78rem 1.05rem;
   font-size: 0.84rem;
   font-weight: 800;
   letter-spacing: 0.01em;
-  color: #fff;
+  color: rgb(14 21 33);
   box-shadow:
-    0 16px 34px rgba(54, 105, 187, 0.3),
-    inset 0 1px 0 rgba(255, 255, 255, 0.24);
+    0 16px 32px rgba(46, 53, 74, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.32);
   transition:
     transform 0.18s ease,
     background-color 0.18s ease,
@@ -759,32 +772,32 @@ html[data-theme="light"] .lead-modal-backdrop {
 
 .materials-next-step-button:hover {
   transform: translateY(-2px);
-  background: rgb(var(--accent-dark));
+  background: linear-gradient(180deg, rgb(194 173 132), rgb(152 129 89));
   box-shadow:
-    0 20px 40px rgba(54, 105, 187, 0.38),
-    inset 0 1px 0 rgba(255, 255, 255, 0.18);
+    0 20px 40px rgba(46, 53, 74, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.24);
 }
 
 .materials-next-step-button:focus-visible {
   outline: none;
   box-shadow:
-    0 0 0 4px rgba(var(--accent), 0.18),
-    0 20px 40px rgba(54, 105, 187, 0.38);
+    0 0 0 4px rgba(198, 176, 134, 0.26),
+    0 20px 40px rgba(46, 53, 74, 0.3);
 }
 
 .supplier-primary-button:hover {
   transform: translateY(-2px);
-  background: rgb(var(--accent-dark));
+  background: linear-gradient(180deg, rgb(194 173 132), rgb(152 129 89));
   box-shadow:
-    0 22px 44px rgba(54, 105, 187, 0.42),
-    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    0 22px 44px rgba(46, 53, 74, 0.34),
+    inset 0 1px 0 rgba(255, 255, 255, 0.24);
 }
 
 .supplier-primary-button:focus-visible {
   outline: none;
   box-shadow:
-    0 0 0 4px rgba(var(--accent), 0.18),
-    0 22px 44px rgba(54, 105, 187, 0.42);
+    0 0 0 4px rgba(198, 176, 134, 0.26),
+    0 22px 44px rgba(46, 53, 74, 0.34);
 }
 
 .supplier-primary-button:disabled {
@@ -883,7 +896,12 @@ html[data-theme="light"] .supplier-brand-mark {
   }
 
   .supplier-brand-lockup {
-    align-items: flex-start;
+    align-items: center;
+    min-height: 2.7rem;
+  }
+
+  .supplier-brand-mark__placeholder-text {
+    font-size: 0.92rem;
   }
 
   .supplier-hours-button__summary {

@@ -1,9 +1,10 @@
 import { createHash, randomUUID } from 'node:crypto';
+import { curatedSlabOptionValues } from '../data/curated-slab-options';
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PHONE_PATTERN = /^[0-9()+.\-\s]{7,24}$/;
 
-const MATERIAL_OPTIONS = new Set(['granite', 'marble', 'quartzite', 'quartz']);
+const MATERIAL_OPTIONS = curatedSlabOptionValues;
 const REMOVAL_OPTIONS = new Set(['yes', 'no', 'unsure']);
 const BASIN_OPTIONS = new Set(['single', 'double', 'reuse-existing']);
 const MOUNT_OPTIONS = new Set(['undermount', 'topmount', 'reuse-existing']);
@@ -66,10 +67,10 @@ function normalizeMaterialPreferences(value) {
     }
 
     return value
-        .map((entry) => normalizeField(entry, 24).toLowerCase())
+        .map((entry) => normalizeField(entry, 80).toLowerCase())
         .filter((entry) => MATERIAL_OPTIONS.has(entry))
         .filter((entry, index, entries) => entries.indexOf(entry) === index)
-        .slice(0, MATERIAL_OPTIONS.size);
+        .slice(0, 6);
 }
 
 function normalizeSquareFootage(value) {

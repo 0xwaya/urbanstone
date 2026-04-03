@@ -24,7 +24,6 @@ export default function TopNav() {
                                     <span className="nav-brand-primary">Urban Stone</span>
                                     <span className="nav-brand-secondary">Collective</span>
                                 </div>
-                                <span className="nav-brand-badge">LLC</span>
                             </div>
                             <div className="hidden font-display text-xl font-semibold leading-[1.05] sm:text-2xl">Countertops with fast turnaround</div>
                         </div>

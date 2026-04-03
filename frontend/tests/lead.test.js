@@ -14,7 +14,7 @@ describe('sanitizeLeadPayload', () => {
             sinkMaterialPreference: 'stainless-steel',
             backsplashPreference: '4-inch',
             timeframeGoal: '2-weeks',
-            materialPreferences: ['quartz', 'granite'],
+            materialPreferences: ['msi-calacatta-laza', 'daltile-absolute-black'],
             website: '',
         });
 
@@ -32,7 +32,7 @@ describe('sanitizeLeadPayload', () => {
             backsplashPreference: '4-inch',
             timeframeGoal: '2-weeks',
         });
-        expect(result.data.materialPreferences).toEqual(['quartz', 'granite']);
+        expect(result.data.materialPreferences).toEqual(['msi-calacatta-laza', 'daltile-absolute-black']);
     });
 
     it('rejects invalid or suspicious submissions', () => {
@@ -82,7 +82,7 @@ describe('sanitizeLeadPayload', () => {
             sinkMaterialPreference: 'composite',
             backsplashPreference: 'full-height',
             timeframeGoal: '1-month',
-            materialPreferences: ['quartzite'],
+            materialPreferences: ['citi-quartz-pt34-taj-mahal'],
             drawingImage: {
                 name: 'rough-layout.jpg',
                 type: 'image/jpeg',
@@ -124,7 +124,7 @@ describe('buildLeadForwardPayload', () => {
                 sinkMaterialPreference: 'stainless-steel',
                 backsplashPreference: '4-inch',
                 timeframeGoal: '2-weeks',
-                materialPreferences: ['quartz'],
+                materialPreferences: ['msi-calacatta-laza'],
                 drawingImage: null,
             },
             {
@@ -143,7 +143,7 @@ describe('buildLeadForwardPayload', () => {
         expect(payload.metadata.requestId).toBeTruthy();
         expect(payload.metadata.dedupeKey).toHaveLength(24);
         expect(payload.source).toBe('urban-stone-site');
-        expect(payload.lead.materialPreferences).toEqual(['quartz']);
+        expect(payload.lead.materialPreferences).toEqual(['msi-calacatta-laza']);
     });
 
     it('uses provided x-request-id when available', () => {
@@ -161,7 +161,7 @@ describe('buildLeadForwardPayload', () => {
                 sinkMaterialPreference: 'stainless-steel',
                 backsplashPreference: '4-inch',
                 timeframeGoal: '2-weeks',
-                materialPreferences: ['quartz'],
+                materialPreferences: ['msi-calacatta-laza'],
                 drawingImage: null,
             },
             {

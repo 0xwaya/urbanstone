@@ -12,12 +12,15 @@ export default function SupplierHero({
     onToggleGallery,
 }) {
     const [isHoursOpen, setIsHoursOpen] = useState(false);
+    const [isLocationOpen, setIsLocationOpen] = useState(false);
     const hoursRegionId = useId();
+    const locationRegionId = useId();
     const hoursLines = supplier.hoursLines || (supplier.hours
         ? [`Mon-Fri ${supplier.hours.mon_fri}${supplier.hours.sat ? ` · Sat ${supplier.hours.sat}` : ''}`]
         : []);
+    const hasLocation = Boolean(supplier.address);
     const hasHours = hoursLines.length > 0;
-    const hasContactDetails = Boolean(supplier.address || hoursLines.length);
+    const hasContactDetails = Boolean(hasLocation || hoursLines.length);
     const galleryButtonLabel = showGallery
         ? 'Hide Curated Slabs'
         : isLoadingGallery
@@ -28,14 +31,20 @@ export default function SupplierHero({
         : isLoadingGallery
             ? 'Loading...'
             : 'View Slabs';
+    const supplierInitials = supplier.name
+        .split(' ')
+        .filter(Boolean)
+        .slice(0, 2)
+        .map((part) => part[0]?.toUpperCase() || '')
+        .join('');
 
     return (
         <section className="mb-3 rounded-[1.2rem] border border-border bg-surface p-2.5 shadow-soft sm:mb-7 sm:rounded-[1.55rem] sm:p-4.5">
             <div className="supplier-card">
                 <div className="supplier-card__header">
                     <div className="supplier-brand-lockup">
-                        {supplier.logo ? (
-                            <div className="supplier-brand-mark">
+                        <div className={`supplier-brand-mark${supplier.logo ? '' : ' supplier-brand-mark--placeholder'}`}>
+                            {supplier.logo ? (
                                 <Image
                                     src={supplier.logo}
                                     alt={`${supplier.name} logo`}
@@ -44,8 +53,10 @@ export default function SupplierHero({
                                     className="supplier-logo-image h-auto w-auto object-contain"
                                     loading="lazy"
                                 />
-                            </div>
-                        ) : null}
+                            ) : (
+                                <span className="supplier-brand-mark__placeholder-text" aria-hidden="true">{supplierInitials}</span>
+                            )}
+                        </div>
                         <div>
                             <h3 className="text-[1.02rem] font-semibold tracking-[-0.02em] text-text sm:text-2xl">{supplier.name}</h3>
                         </div>
@@ -73,10 +84,33 @@ export default function SupplierHero({
                 </div>
                 {hasContactDetails ? (
                     <div className="supplier-contact-grid mt-3 grid grid-cols-1 gap-2.5 sm:mt-4 sm:grid-cols-[minmax(0,1.35fr)_minmax(15rem,0.9fr)] sm:gap-3">
-                        {supplier.address ? (
+                        {hasLocation ? (
                             <div className="supplier-meta-card">
-                                <div className="supplier-meta-card__label">Location</div>
-                                <div className="supplier-meta-card__value">{supplier.address}</div>
+                                <button
+                                    type="button"
+                                    className="supplier-hours-button"
+                                    aria-expanded={isLocationOpen}
+                                    aria-controls={locationRegionId}
+                                    onClick={() => setIsLocationOpen((current) => !current)}
+                                >
+                                    <span className="supplier-hours-button__summary">
+                                        <span className="supplier-meta-card__label">Location</span>
+                                        <span className="supplier-hours-button__state">
+                                            {isLocationOpen ? 'Hide' : 'Show'}
+                                        </span>
+                                    </span>
+                                    <svg
+                                        viewBox="0 0 20 20"
+                                        fill="none"
+                                        aria-hidden="true"
+                                        className={`supplier-chevron h-5 w-5 ${isLocationOpen ? 'rotate-180' : ''}`.trim()}
+                                    >
+                                        <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                                    </svg>
+                                </button>
+                                <div id={locationRegionId} className={`${isLocationOpen ? 'mt-3 block' : 'hidden'}`}>
+                                    <div className="supplier-hours-list">{supplier.address}</div>
+                                </div>
                             </div>
                         ) : null}
                         {hasHours ? (
