@@ -1,4 +1,4 @@
-const DEFAULT_SITE_URL = 'https://urbanstone.co';
+const DEFAULT_SITE_URL = 'https://www.urbanstone.co';
 
 function normalizeSiteUrl(value) {
     if (!value) {
