@@ -5,6 +5,7 @@
 import { REDDIT_SUBREDDITS, MAX_POST_AGE_HOURS } from './config.js';
 import { buildLeadPayload, classifyLeadCandidate, isRecent } from './matcher.js';
 import { isSeen, markSeen } from './dedup.js';
+import 'dotenv/config';
 import { relay } from './relay.js';
 import { REDDIT_SEARCH_DELAY_MS, REDDIT_SEARCH_QUERIES, REDDIT_SEARCH_SUBREDDITS } from './config.js';
 import { GEO_TARGET_CITIES } from './config.js';

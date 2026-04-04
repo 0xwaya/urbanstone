@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import { ApifyClient } from 'apify-client';
 import {
     APIFY_AD_LIBRARY_TASK_ID,

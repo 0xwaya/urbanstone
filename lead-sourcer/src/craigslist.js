@@ -6,6 +6,7 @@
 import { CRAIGSLIST_BASE, CRAIGSLIST_SECTIONS } from './config.js';
 import { buildLeadPayload, classifyLeadCandidate } from './matcher.js';
 import { isSeen, markSeen } from './dedup.js';
+import 'dotenv/config';
 import { relay } from './relay.js';
 import { CRAIGSLIST_QUERY_KEYWORDS } from './config.js';
 import { resolveRunMode } from './mode.js';

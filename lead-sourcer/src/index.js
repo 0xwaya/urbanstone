@@ -8,6 +8,7 @@
  * Or add to a cron job:
  *   0 * * * * cd /path/to/lead-sourcer && LEAD_WEBHOOK_URL=... node src/index.js >> logs/poller.log 2>&1
  */
+import 'dotenv/config';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -33,6 +34,22 @@ async function appendRunSummary(summary) {
     await fs.appendFile(RUN_LOG_FILE, record, 'utf8');
 }
 
+function normalizePollResult(result) {
+    // Some pollers may return [] on skip paths; normalize to a stable shape.
+    if (Array.isArray(result)) {
+        return { matches: result, stats: {} };
+    }
+
+    if (result && Array.isArray(result.matches)) {
+        return {
+            matches: result.matches,
+            stats: result.stats || {},
+        };
+    }
+
+    return { matches: [], stats: {} };
+}
+
 async function runOnce(mode) {
     const startedAt = new Date();
     console.log(`[lead-sourcer] Starting poll at ${startedAt.toISOString()} (mode=${mode})`);
@@ -43,9 +60,15 @@ async function runOnce(mode) {
         pollApify({ mode }),
     ]);
 
-    const redditResult = redditMatches.status === 'fulfilled' ? redditMatches.value : { matches: [], stats: {} };
-    const craigslistResult = craigslistMatches.status === 'fulfilled' ? craigslistMatches.value : { matches: [], stats: {} };
-    const apifyResult = apifyMatches.status === 'fulfilled' ? apifyMatches.value : { matches: [], stats: {} };
+    const redditResult = redditMatches.status === 'fulfilled'
+        ? normalizePollResult(redditMatches.value)
+        : { matches: [], stats: {} };
+    const craigslistResult = craigslistMatches.status === 'fulfilled'
+        ? normalizePollResult(craigslistMatches.value)
+        : { matches: [], stats: {} };
+    const apifyResult = apifyMatches.status === 'fulfilled'
+        ? normalizePollResult(apifyMatches.value)
+        : { matches: [], stats: {} };
 
     const redditCount = redditResult.matches.length;
     const clCount = craigslistResult.matches.length;
