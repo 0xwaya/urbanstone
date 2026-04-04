@@ -721,6 +721,16 @@ html[data-theme="light"] .form-chip-note {
   }
 }
 
+@media (min-width: 1024px) {
+  .lead-modal-shell .bg-surface\/50 {
+    background-color: rgba(var(--surface), 0.9) !important;
+  }
+
+  .lead-modal-shell .bg-surface\/75 {
+    background-color: rgba(var(--surface), 0.95) !important;
+  }
+}
+
 html[data-theme="light"] .lead-modal-backdrop {
   background:
     radial-gradient(
