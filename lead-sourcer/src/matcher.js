@@ -1,4 +1,10 @@
-import { classifyLeadCandidate, classifyLeadText, matchesKeywords, normalizeText } from './core/classification.js';
+import {
+    classifyLeadCandidate,
+    classifyLeadText,
+    matchesKeywords,
+    normalizeText,
+    scoreLeadCandidate,
+} from './core/classification.js';
 import { buildAutomatedLeadPayload } from './core/payload.js';
 
 /**
@@ -19,4 +25,4 @@ export function buildLeadPayload({ id, source, title, body, url, author, created
     return buildAutomatedLeadPayload({ id, source, title, body, url, author, createdAt });
 }
 
-export { classifyLeadCandidate, classifyLeadText, matchesKeywords, normalizeText };
+export { classifyLeadCandidate, classifyLeadText, matchesKeywords, normalizeText, scoreLeadCandidate };

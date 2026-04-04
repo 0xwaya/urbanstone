@@ -82,6 +82,15 @@ Run report behavior:
 - No `Match in` logs: inspect `runs/review-candidates.jsonl` and classifier signals.
 - No Zap deliveries: verify `LEAD_WEBHOOK_URL` and Zap history.
 
+Near-miss review queue (new):
+
+- A second queue now logs non-match but promising posts to `lead-sourcer/runs/near-miss-candidates.jsonl`.
+- Soft score threshold env: `LEAD_SOURCER_NEAR_MISS_SCORE_THRESHOLD` (default `45`).
+- Weekly tuning loop:
+	- Review near-miss rows and mark converted/not-converted.
+	- Tighten or loosen score threshold and source keyword filters accordingly.
+	- Keep hard match relay logic unchanged for safety.
+
 One-time first-run recency expansion (Reddit):
 
 - First run can evaluate up to 14 days of posts one time, then auto-falls back to 48h.

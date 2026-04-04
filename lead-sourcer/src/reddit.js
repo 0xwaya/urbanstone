@@ -3,7 +3,7 @@
  * Monitors configured subreddits for posts matching lead keywords.
  */
 import { REDDIT_SUBREDDITS, MAX_POST_AGE_HOURS } from './config.js';
-import { buildLeadPayload, classifyLeadCandidate, isRecent } from './matcher.js';
+import { buildLeadPayload, classifyLeadCandidate, isRecent, scoreLeadCandidate } from './matcher.js';
 import { isSeen, markSeen } from './dedup.js';
 import 'dotenv/config';
 import fs from 'node:fs';
@@ -13,9 +13,10 @@ import { relay } from './relay.js';
 import { REDDIT_SEARCH_DELAY_MS, REDDIT_SEARCH_QUERIES, REDDIT_SEARCH_SUBREDDITS } from './config.js';
 import { GEO_TARGET_CITIES } from './config.js';
 import { LEAD_SOURCER_REQUIRE_REGIONAL_SIGNAL } from './config.js';
+import { LEAD_SOURCER_NEAR_MISS_SCORE_THRESHOLD, REDDIT_NON_BUYING_KEYWORDS } from './config.js';
 import { resolveRunMode } from './mode.js';
 import { runModeFlags } from './mode.js';
-import { logReviewCandidate } from './review-log.js';
+import { logNearMissCandidate, logReviewCandidate } from './review-log.js';
 
 const REDDIT_API_BASE = 'https://www.reddit.com';
 const USER_AGENT = 'UrbanStoneLeadSourcer/1.0 (lead monitoring; contact sales@urbanstone.co)';
@@ -88,6 +89,16 @@ function claimFirstRunAgeWindowHours(mode) {
 function hasRegionalSignal(post) {
     const haystack = `${post.title}\n${post.body}`.toLowerCase();
     return TARGET_REGIONS.some((region) => haystack.includes(region));
+}
+
+function hasAnyKeyword(text, keywords) {
+    const haystack = String(text || '').toLowerCase();
+    return keywords.some((keyword) => haystack.includes(String(keyword).toLowerCase()));
+}
+
+function isRedditNonBuyingNoise(post) {
+    const content = `${post.title}\n${post.body}`;
+    return hasAnyKeyword(content, REDDIT_NON_BUYING_KEYWORDS);
 }
 
 async function fetchSubredditNew(subreddit) {
@@ -206,8 +217,18 @@ export async function pollReddit({ mode = 'live' } = {}) {
                 stats.skippedSeen += 1;
                 continue;
             }
+
+            if (isRedditNonBuyingNoise(post)) {
+                stats.rejects += 1;
+                if (modeFlags.shouldPersistSeen) {
+                    markSeen(post.id);
+                }
+                continue;
+            }
+
             stats.evaluated += 1;
             const classification = classifyLeadCandidate({ title: post.title, body: post.body });
+            const softScore = scoreLeadCandidate(classification);
 
             if (classification.verdict === 'borderline') {
                 stats.borderline += 1;
@@ -218,6 +239,15 @@ export async function pollReddit({ mode = 'live' } = {}) {
                     classification,
                     reason: 'borderline',
                 });
+                if (softScore.score >= LEAD_SOURCER_NEAR_MISS_SCORE_THRESHOLD) {
+                    logNearMissCandidate({
+                        mode,
+                        source: 'reddit',
+                        post,
+                        classification,
+                        score: softScore,
+                    });
+                }
                 if (modeFlags.shouldPersistSeen) {
                     markSeen(post.id);
                 }
@@ -226,6 +256,15 @@ export async function pollReddit({ mode = 'live' } = {}) {
 
             if (classification.verdict !== 'match') {
                 stats.rejects += 1;
+                if (softScore.score >= LEAD_SOURCER_NEAR_MISS_SCORE_THRESHOLD) {
+                    logNearMissCandidate({
+                        mode,
+                        source: 'reddit',
+                        post,
+                        classification,
+                        score: softScore,
+                    });
+                }
                 continue;
             }
 

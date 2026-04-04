@@ -4,20 +4,30 @@
  * Parses cl-static-search-result items directly from the no-JS HTML.
  */
 import { CRAIGSLIST_BASE, CRAIGSLIST_SECTIONS } from './config.js';
-import { buildLeadPayload, classifyLeadCandidate } from './matcher.js';
+import { buildLeadPayload, classifyLeadCandidate, scoreLeadCandidate } from './matcher.js';
 import { isSeen, markSeen } from './dedup.js';
 import 'dotenv/config';
 import { relay } from './relay.js';
 import { CRAIGSLIST_QUERY_KEYWORDS } from './config.js';
+import { CRAIGSLIST_LISTING_NOISE_KEYWORDS, LEAD_SOURCER_NEAR_MISS_SCORE_THRESHOLD } from './config.js';
 import { resolveRunMode } from './mode.js';
 import { runModeFlags } from './mode.js';
-import { logReviewCandidate } from './review-log.js';
+import { logNearMissCandidate, logReviewCandidate } from './review-log.js';
 
 const BROWSER_HEADERS = {
     'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
     'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
     'Accept-Language': 'en-US,en;q=0.5',
 };
+
+function hasAnyKeyword(text, keywords) {
+    const haystack = String(text || '').toLowerCase();
+    return keywords.some((keyword) => haystack.includes(String(keyword).toLowerCase()));
+}
+
+function isCraigslistListingNoise(post) {
+    return hasAnyKeyword(`${post.title}\n${post.body}`, CRAIGSLIST_LISTING_NOISE_KEYWORDS);
+}
 
 async function fetchSearchPage(section, keyword) {
     const encoded = encodeURIComponent(keyword);
@@ -109,8 +119,18 @@ export async function pollCraigslist({ mode = 'live' } = {}) {
                     stats.skippedSeen += 1;
                     continue;
                 }
+
+                if (isCraigslistListingNoise(post)) {
+                    stats.rejects += 1;
+                    if (modeFlags.shouldPersistSeen) {
+                        markSeen(post.id);
+                    }
+                    continue;
+                }
+
                 stats.evaluated += 1;
                 const classification = classifyLeadCandidate({ title: post.title, body: post.body });
+                const softScore = scoreLeadCandidate(classification);
 
                 if (classification.verdict === 'borderline') {
                     stats.borderline += 1;
@@ -121,6 +141,15 @@ export async function pollCraigslist({ mode = 'live' } = {}) {
                         classification,
                         reason: 'borderline',
                     });
+                    if (softScore.score >= LEAD_SOURCER_NEAR_MISS_SCORE_THRESHOLD) {
+                        logNearMissCandidate({
+                            mode,
+                            source: 'craigslist',
+                            post,
+                            classification,
+                            score: softScore,
+                        });
+                    }
                     if (modeFlags.shouldPersistSeen) {
                         markSeen(post.id);
                     }
@@ -129,6 +158,15 @@ export async function pollCraigslist({ mode = 'live' } = {}) {
 
                 if (classification.verdict !== 'match') {
                     stats.rejects += 1;
+                    if (softScore.score >= LEAD_SOURCER_NEAR_MISS_SCORE_THRESHOLD) {
+                        logNearMissCandidate({
+                            mode,
+                            source: 'craigslist',
+                            post,
+                            classification,
+                            score: softScore,
+                        });
+                    }
                     continue;
                 }
 

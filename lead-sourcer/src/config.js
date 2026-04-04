@@ -120,6 +120,47 @@ export const EXCLUDE_KEYWORDS = [
     'inspiration board',
 ];
 
+// Source-specific suppression terms to reduce obvious non-buying noise.
+export const REDDIT_NON_BUYING_KEYWORDS = [
+    'lawsuit',
+    'sue',
+    'legal advice',
+    'attorney',
+    'small claims',
+    'insurance claim',
+    'diy only',
+    'self level compound',
+    'tool recommendation',
+    'permit question',
+    'code violation',
+    'landlord',
+    'tenant',
+    'apartment maintenance',
+    'oil tank',
+    'furnace repair',
+    'hvac',
+    'electrical panel',
+];
+
+export const CRAIGSLIST_LISTING_NOISE_KEYWORDS = [
+    'for rent',
+    'room for rent',
+    'apartment',
+    'condo for sale',
+    'open house',
+    'realtor',
+    'mls',
+    'lease',
+    'property management',
+    'investment property',
+    'tenant occupied',
+    'financing available',
+    'move in ready',
+    'newly remodeled unit',
+    'hotel',
+    'airbnb',
+];
+
 // Subreddits with Cincinnati-area focus or home improvement relevance
 export const REDDIT_SUBREDDITS = [
     'cincinnati',
@@ -215,6 +256,23 @@ export const BASE_LEAD_QUERIES = [
     'vanity top',
 ];
 
+const APIFY_FACEBOOK_QUERY_SUFFIXES = [
+    'granite countertops',
+    'quartz countertops',
+    'quartzite countertops',
+    'countertop installer',
+    'countertop quote',
+    'kitchen remodel',
+    'bathroom remodel',
+    'stone fabricator',
+];
+
+export const APIFY_FACEBOOK_NEIGHBORHOOD_QUERIES = compactLocations(
+    GEO_TARGET_CITIES.flatMap((city) => APIFY_FACEBOOK_QUERY_SUFFIXES.map((suffix) => `${city} ${suffix}`)),
+).slice(0, 80);
+
+export const APIFY_POST_LOCATION_HINTS = GEO_TARGET_CITIES.map((city) => city.toLowerCase());
+
 const GEO_QUERY_SUFFIXES = [
     'countertop',
     'countertops',
@@ -283,10 +341,11 @@ export const APIFY_AD_LIBRARY_TASK_ID = firstNonEmptyEnv(
 export const APIFY_DATASET_LIMIT = Number(process.env.APIFY_DATASET_LIMIT || 200);
 export const APIFY_ENABLE_NEXTDOOR = envFlag('APIFY_ENABLE_NEXTDOOR', true);
 export const APIFY_ENABLE_FACEBOOK = envFlag('APIFY_ENABLE_FACEBOOK', true);
-export const APIFY_ENABLE_AD_LIBRARY = envFlag('APIFY_ENABLE_AD_LIBRARY', true);
+export const APIFY_ENABLE_AD_LIBRARY = envFlag('APIFY_ENABLE_AD_LIBRARY', false);
 export const APIFY_TASK_TIMEOUT_MS = Number(process.env.APIFY_TASK_TIMEOUT_MS || 120000);
 export const APIFY_TASK_DELAY_MS = Number(process.env.APIFY_TASK_DELAY_MS || 1200);
 export const LEAD_SOURCER_REQUIRE_REGIONAL_SIGNAL = envFlag('LEAD_SOURCER_REQUIRE_REGIONAL_SIGNAL', true);
+export const LEAD_SOURCER_NEAR_MISS_SCORE_THRESHOLD = Number(process.env.LEAD_SOURCER_NEAR_MISS_SCORE_THRESHOLD || 45);
 
 // Craigslist Cincinnati area base URL
 export const CRAIGSLIST_BASE = 'https://cincinnati.craigslist.org';

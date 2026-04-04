@@ -28,6 +28,13 @@ const COUNTERTOP_ANCHOR_TERMS = new Set([
     'quartzite countertop',
 ]);
 
+const SCORE_BANDS = [
+    { min: 75, label: 'hot' },
+    { min: 55, label: 'warm' },
+    { min: 35, label: 'tepid' },
+    { min: 0, label: 'cold' },
+];
+
 export function normalizeText(text) {
     return String(text || '')
         .toLowerCase()
@@ -42,6 +49,42 @@ function findMatchedKeywords(normalized, keywords) {
 
 function hasCountertopAnchor(keywords) {
     return keywords.some((keyword) => COUNTERTOP_ANCHOR_TERMS.has(keyword));
+}
+
+function bandForScore(score) {
+    return SCORE_BANDS.find((band) => score >= band.min)?.label || 'cold';
+}
+
+export function scoreLeadSignals(signals) {
+    const directMatches = signals?.directMatches || [];
+    const materialSignals = signals?.materialSignals || [];
+    const projectContext = signals?.projectContext || [];
+    const intentSignals = signals?.intentSignals || [];
+    const excluded = signals?.excluded || [];
+    const anchored = hasCountertopAnchor([...directMatches, ...materialSignals]);
+
+    let score = 0;
+    if (anchored) score += 35;
+    if (directMatches.length > 0) score += 18;
+    if (materialSignals.length > 0) score += 14;
+    if (projectContext.length > 0) score += 16;
+    if (intentSignals.length > 0) score += 16;
+    if (excluded.length > 0) score -= 45;
+
+    score = Math.max(0, Math.min(100, score));
+
+    return {
+        score,
+        band: bandForScore(score),
+        anchored,
+        factors: {
+            directMatches: directMatches.length,
+            materialSignals: materialSignals.length,
+            projectContext: projectContext.length,
+            intentSignals: intentSignals.length,
+            excluded: excluded.length,
+        },
+    };
 }
 
 export function classifyLeadText(text) {
@@ -113,6 +156,11 @@ export function classifyLeadCandidate({ title = '', body = '' }) {
         body: bodyResult,
         combined: combinedResult,
     };
+}
+
+export function scoreLeadCandidate(classification) {
+    const combinedSignals = classification?.combined?.signals;
+    return scoreLeadSignals(combinedSignals || {});
 }
 
 export function matchesKeywords(text) {

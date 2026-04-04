@@ -12,13 +12,16 @@ import {
     APIFY_TASK_TIMEOUT_MS,
     BASE_LEAD_QUERIES,
     GEO_TARGET_CITIES,
+    APIFY_FACEBOOK_NEIGHBORHOOD_QUERIES,
+    APIFY_POST_LOCATION_HINTS,
+    LEAD_SOURCER_NEAR_MISS_SCORE_THRESHOLD,
 } from './config.js';
-import { buildLeadPayload, classifyLeadCandidate } from './matcher.js';
+import { buildLeadPayload, classifyLeadCandidate, scoreLeadCandidate } from './matcher.js';
 import { isSeen, markSeen } from './dedup.js';
 import { relay } from './relay.js';
 import { resolveRunMode } from './mode.js';
 import { runModeFlags } from './mode.js';
-import { logReviewCandidate } from './review-log.js';
+import { logNearMissCandidate, logReviewCandidate } from './review-log.js';
 
 function parseJsonEnv(name, fallback) {
     const raw = process.env[name];
@@ -111,7 +114,7 @@ function defaultFacebookInput() {
     return {
         maxPosts: 120,
         commentsLimit: 10,
-        keywords: BASE_LEAD_QUERIES,
+        keywords: APIFY_FACEBOOK_NEIGHBORHOOD_QUERIES.length > 0 ? APIFY_FACEBOOK_NEIGHBORHOOD_QUERIES : BASE_LEAD_QUERIES,
         proxyConfiguration: { useApifyProxy: true },
     };
 }
@@ -123,6 +126,32 @@ function defaultAdLibraryInput() {
         location: 'Cincinnati, OH',
         proxyConfiguration: { useApifyProxy: true },
     };
+}
+
+function hasAnyKeyword(text, keywords) {
+    const haystack = String(text || '').toLowerCase();
+    return keywords.some((keyword) => haystack.includes(String(keyword).toLowerCase()));
+}
+
+function isApifyHighIntentCandidate(post) {
+    const content = `${post.title}\n${post.body}`.toLowerCase();
+    const locationHintPresent = hasAnyKeyword(content, APIFY_POST_LOCATION_HINTS);
+    const countertopIntent = hasAnyKeyword(content, [
+        'countertop',
+        'counter tops',
+        'granite',
+        'quartz',
+        'quartzite',
+        'vanity top',
+        'backsplash',
+        'kitchen remodel',
+        'bathroom remodel',
+        'countertop installer',
+        'quote',
+        'estimate',
+    ]);
+
+    return locationHintPresent && countertopIntent;
 }
 
 function delay(ms) {
@@ -288,6 +317,16 @@ export async function pollApify({ mode = 'live' } = {}) {
             title: post.title,
             body: post.body,
         });
+        const softScore = scoreLeadCandidate(classification);
+
+        if (!isApifyHighIntentCandidate(post)) {
+            stats.rejects += 1;
+            taskStats.rejects += 1;
+            if (modeFlags.shouldPersistSeen) {
+                markSeen(post.id);
+            }
+            continue;
+        }
 
         if (classification.verdict === 'borderline') {
             stats.borderline += 1;
@@ -299,6 +338,15 @@ export async function pollApify({ mode = 'live' } = {}) {
                 classification,
                 reason: 'borderline',
             });
+            if (softScore.score >= LEAD_SOURCER_NEAR_MISS_SCORE_THRESHOLD) {
+                logNearMissCandidate({
+                    mode,
+                    source: post.source,
+                    post,
+                    classification,
+                    score: softScore,
+                });
+            }
             if (modeFlags.shouldPersistSeen) {
                 markSeen(post.id);
             }
@@ -308,6 +356,15 @@ export async function pollApify({ mode = 'live' } = {}) {
         if (classification.verdict !== 'match') {
             stats.rejects += 1;
             taskStats.rejects += 1;
+            if (softScore.score >= LEAD_SOURCER_NEAR_MISS_SCORE_THRESHOLD) {
+                logNearMissCandidate({
+                    mode,
+                    source: post.source,
+                    post,
+                    classification,
+                    score: softScore,
+                });
+            }
             continue;
         }
 
