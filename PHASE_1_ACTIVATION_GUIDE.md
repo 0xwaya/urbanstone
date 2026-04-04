@@ -44,11 +44,42 @@ APIFY_ENABLE_AD_LIBRARY=false  # Disable to reduce memory usage
 
 ### Step 2: Test First Run (10 min)
 
-**Command:**
-```bash
-cd lead-sourcer
 LEAD_SOURCER_MODE=dry-run npm start
 ```
+### Step 1: Phase 1 ALREADY RUNNING – Verify Reddit + Craigslist
+
+**Status:** ✅ Active now. No setup required.
+
+**To verify:**
+```bash
+cd lead-sourcer && npm start
+```
+
+**Expected:** See `[reddit]`, `[craigslist]`, and `[*] Match in` log lines. That means Reddit + Craigslist sources are working and leads flow to Zapier.
+
+---
+
+### Step 2 (Optional): Expand with Apify – Facebook Groups + Nextdoor ONLY
+
+**File:** `lead-sourcer/.env`
+
+Add only these lines (get from Apify account):
+```bash
+APIFY_TOKEN=apify_<your_secret_token>
+APIFY_NEXTDOOR_TASK_ID=<your_nextdoor_task_id>
+APIFY_FACEBOOK_TASK_ID=<your_facebook_groups_task_id>
+APIFY_ENABLE_NEXTDOOR=true
+APIFY_ENABLE_FACEBOOK=true
+APIFY_ENABLE_AD_LIBRARY=false
+```
+
+**Why:**
+- Apify handles ONLY Facebook Groups + Nextdoor (adds 10–40 leads/week)
+- Reddit and Craigslist are separate pollers (always active)
+- Without APIFY_TOKEN, these sources skip gracefully (Reddit + Craigslist continue)
+- Task IDs route to your configured Apify tasks
+
+### Step 3: Test First Run
 
 **Expected Output:**
 - `[lead-sourcer] Starting poll at 2026-04-04...`
@@ -64,6 +95,7 @@ LEAD_SOURCER_MODE=dry-run npm start
 - If 0 matches: check `runs/review-candidates.jsonl` for borderline posts (indicates classifier still too strict)
 
 ### Step 3: Enable Scheduled Polling (5 min)
+### Step 4: Enable Scheduled Polling (5 min)
 
 **Option A: Cron Job (Recommended for Linux/Mac)**
 
@@ -100,6 +132,7 @@ cd lead-sourcer && npm start
 ```
 
 ### Step 4: Monitor Zapier Integration (Ongoing)
+### Step 5: Monitor Zapier Integration (Ongoing)
 
 **Verify Leads Reach Outlook:**
 
@@ -127,10 +160,19 @@ cd lead-sourcer && npm start
 | **Phase 1 Target** | — | — | — | **40–120/month** | Conservative estimate |
 
 **Assumptions:**
-- Apify tasks configured to search Nextdoor + Facebook Groups in Cincinnati + NKY
-- Classifier remains `anchored → match` (no intent requirement)
+| Time | Reddit | Craigslist | Apify (Optional) | Total/Week |
+|------|--------|-----------|------------------|-----------|
+| Week 1 | 10–20 | 5–10 | 0 (disabled) | 15–30 |
+| Week 1+ | 10–20 | 5–10 | 20–30 (enabled) | 35–60 |
+| Week 2–4 | 8–15 | 3–8 | 0–25 | 11–48 |
+| **Phase 1 Target** | — | — | — | **40–120/month** |
+
+**Notes:**
+- Reddit + Craigslist = **core sources, always active** (15–30/week baseline)
+- Apify = **optional expansion** for Facebook + Nextdoor (adds 10–40 if enabled)
+- Classifier: `anchored → match` (no intent required)
 - Zapier relay works without errors
-- False positive rate ~5–10% (caught by Zapier source filtering + manual triage)
+- False positive rate: ~5–10% (caught by filtering + manual triage)
 
 ---
 
