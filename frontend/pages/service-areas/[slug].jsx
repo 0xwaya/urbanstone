@@ -14,7 +14,7 @@ import { getServiceAreaBySlug, serviceAreas } from '../../data/service-areas';
 export default function ServiceAreaPage({ area }) {
     const canonicalUrl = getCanonicalUrl(`/service-areas/${area.slug}`);
     const siteUrl = getSiteUrl();
-    const ogImageUrl = `${siteUrl}/brand/urban-stone-og.png`;
+    const ogImageUrl = `${siteUrl}/api/og-image`;
     const ogImageWidth = '1200';
     const ogImageHeight = '630';
     const ogImageType = 'image/png';

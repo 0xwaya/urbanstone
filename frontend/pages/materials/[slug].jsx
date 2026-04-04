@@ -14,7 +14,7 @@ import { buildBreadcrumbSchema, getGeoRegion } from '../../lib/seo';
 export default function MaterialPage({ page, area }) {
     const canonicalUrl = getCanonicalUrl(`/materials/${page.slug}`);
     const siteUrl = getSiteUrl();
-    const ogImageUrl = `${siteUrl}/brand/urban-stone-og.png`;
+    const ogImageUrl = `${siteUrl}/api/og-image`;
     const ogImageWidth = '1200';
     const ogImageHeight = '630';
     const ogImageType = 'image/png';

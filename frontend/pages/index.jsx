@@ -14,7 +14,7 @@ import { getGeoRegion } from '../lib/seo';
 export default function Home() {
   const siteUrl = getSiteUrl();
   const canonicalUrl = getCanonicalUrl('/');
-  const ogImageUrl = `${siteUrl}/brand/urban-stone-og.png`;
+  const ogImageUrl = `${siteUrl}/api/og-image`;
   const ogImageWidth = '1200';
   const ogImageHeight = '630';
   const ogImageType = 'image/png';

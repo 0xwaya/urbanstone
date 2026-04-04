@@ -11,7 +11,7 @@ import { buildBreadcrumbSchema, getGeoRegion } from '../../lib/seo';
 
 export default function CoverageHubPage() {
     const canonicalUrl = getCanonicalUrl('/coverage');
-    const ogImageUrl = `${getSiteUrl()}/brand/urban-stone-og.png`;
+    const ogImageUrl = `${getSiteUrl()}/api/og-image`;
     const ogImageWidth = '1200';
     const ogImageHeight = '630';
     const ogImageType = 'image/png';
