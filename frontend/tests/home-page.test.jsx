@@ -11,7 +11,7 @@ vi.mock('next/image', () => ({
 }));
 
 describe('Home page', () => {
-    const supplierNames = ['Avani', 'Citi Quartz', 'Daltile Stone Center', 'MSI Surfaces', 'Quartz America'];
+    const supplierNames = ['Avani Granite & Marble', 'Citi Quartz', 'Daltile Stone Center', 'MSI Surfaces', 'Quartz America'];
 
     beforeAll(() => {
         Object.defineProperty(window, 'matchMedia', {

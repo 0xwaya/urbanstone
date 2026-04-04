@@ -52,8 +52,11 @@ export const homepageLeadFormContent = {
 };
 
 export const homepageAnnouncement = {
-    eyebrow: 'Rebrand update',
-    title: 'Urban Stone Collective is now live at urbanstone.co.',
-    detail: 'New name, refined presentation, and the same fast-turn countertop process for greater Cincinnati and Northern Kentucky.',
-    tags: ['urbanstone.co live', '3-5 day install'],
+    eyebrow: 'Spring special',
+    title: 'Free stainless sink with qualifying kitchen projects.',
+    detail: 'For kitchen projects of 50 sq ft and above, receive a complimentary 16-gauge stainless steel sink. Choose undermount or top-mount, in single or double basin.',
+    ctaLabel: 'Free Sinks',
+    ctaHref: '#quote',
+    disclaimer: 'Offer good through May 30, 2026.',
+    tags: ['50+ sq ft kitchens', '16-gauge stainless', 'single or double basin'],
 };

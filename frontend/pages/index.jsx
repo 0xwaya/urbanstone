@@ -14,7 +14,7 @@ import { getGeoRegion } from '../lib/seo';
 export default function Home() {
   const siteUrl = getSiteUrl();
   const canonicalUrl = getCanonicalUrl('/');
-  const ogImageUrl = `${siteUrl}/brand/urban-stone-og.png`;
+  const ogImageUrl = `${siteUrl}/api/og-image`;
   const ogImageWidth = '1200';
   const ogImageHeight = '630';
   const ogImageType = 'image/png';
@@ -107,7 +107,6 @@ export default function Home() {
         <meta property="og:site_name" content="Urban Stone Collective" />
         <meta property="og:locale" content="en_US" />
         <meta property="og:image" content={ogImageUrl} />
-        <meta property="og:image:url" content={ogImageUrl} />
         <meta property="og:image:secure_url" content={ogImageUrl} />
         <meta property="og:image:type" content={ogImageType} />
         <meta property="og:image:width" content={ogImageWidth} />
@@ -117,7 +116,6 @@ export default function Home() {
         <meta name="twitter:title" content="Urban Stone Collective | countertops specialists" />
         <meta name="twitter:description" content="Urban Stone Collective | countertops specialists. Quartz, granite, and quartzite countertops with expert fabrication and installation in Cincinnati and Northern Kentucky." />
         <meta name="twitter:image" content={ogImageUrl} />
-        <meta name="twitter:image:src" content={ogImageUrl} />
         <meta name="twitter:image:alt" content="Urban Stone Collective social preview with brand wordmark on a dark stone-inspired background" />
         <link rel="icon" type="image/svg+xml" href="/brand/urban-stone-favicon.svg?v=20260401e" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png?v=20260401e" />
