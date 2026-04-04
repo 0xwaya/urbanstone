@@ -3,15 +3,19 @@
 ## Status: READY FOR PRODUCTION ✅
 
 **What's Shipped:**
-- ✅ Classifier fix: Material-anchored posts now classify as `match` (commits `9eb4377` + `dbb04e6`)
-- ✅ All 34 tests passing (matcher.test.js + dedup.test.js)
-- ✅ Apify poller structure in place (src/apify.js with Nextdoor + Facebook Groups support)
-- ✅ Reddit + Craigslist pollers active (expected 40–80 leads/week minimum)
-- ✅ Zapier webhook relay configured + tested (LEAD_WEBHOOK_URL set in .env)
-- ✅ Dry-run validation completed (saw matches flowing to review-candidates.jsonl)
-
-**What's NOT Shipped (For Later):**
-- ⏳ Apify credentials (APIFY_TOKEN, task IDs) – user must provide
+  **Phase 1 is LIVE and OPERATIONAL:**
+  - ✅ **Reddit + Craigslist sources active NOW** (expected 40–80 leads/week minimum) – **NO additional setup required**
+  - ✅ Classifier fix: Material-anchored posts now classify as `match` (commits `9eb4377` + `dbb04e6`)
+  - ✅ All 34 tests passing (matcher.test.js + dedup.test.js)
+  - ✅ Zapier webhook relay configured (LEAD_WEBHOOK_URL in .env)
+  - ✅ Dry-run validation completed (matches flowing to review-candidates.jsonl)
+    
+  **Optional Expansion (Facebook + Nextdoor via Apify):**
+  - ⏳ Apify poller structure in place (src/apify.js) – requires APIFY credentials for activation
+  - ⏳ Expected additional volume: 10–40 leads/week from Nextdoor + Facebook Groups
+  - ⏳ Requires: APIFY_TOKEN + task IDs from user's Apify account
+    
+  **What's NOT Shipped (For Later):**
 - ⏳ Phase 1.5 Zapier hardening (source guards, richer triage fields)
 - ⏳ Phase 2 AI Agent (conversational state machine, self-learning)
 
