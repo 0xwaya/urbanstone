@@ -54,9 +54,9 @@ export const homepageLeadFormContent = {
 export const homepageAnnouncement = {
     eyebrow: 'Spring special',
     title: 'Free stainless sink with qualifying kitchen projects.',
-    detail: 'For kitchen projects of 50 sq ft and above, receive a complimentary 16-gauge stainless steel sink. Choose undermount or top-mount, in single or double basin.',
+    detail: 'For kitchen projects of 50 sq ft and above, receive a complimentary 18-gauge stainless steel sink. Choose undermount or top-mount, in single or double basin.',
     ctaLabel: 'Free Sinks',
     ctaHref: '#quote',
     disclaimer: 'Offer good through May 30, 2026.',
-    tags: ['50+ sq ft kitchens', '16-gauge stainless', 'single or double basin'],
+    tags: ['50+ sq ft kitchens', '18-gauge stainless', 'single or double basin'],
 };
