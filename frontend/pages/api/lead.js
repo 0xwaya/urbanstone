@@ -1,22 +1,20 @@
 import {
     buildLeadDedupeKey,
     buildLeadForwardPayload,
+    consumeRateLimit,
     getClientIp,
+    getLeadApiRuntimeConfig,
     getLeadDedupeStore,
     getRateLimitStore,
     isLeadDuplicate,
-    isRateLimited,
     isSameOriginRequest,
     sanitizeLeadPayload,
 } from '../../lib/lead';
 
-const RATE_LIMIT_MAX = 5;
-const RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000;
 // Code-side replacement for Zapier Post-Storage filter (Step 5).
 // Prevents the same lead from being relayed to the webhook more than once
 // within the deduplication window. Note: this store is in-memory and resets
 // on serverless cold starts; it covers the within-session duplicate case.
-const LEAD_DEDUPE_WINDOW_MS = 60 * 60 * 1000;
 
 export const config = {
     api: {
@@ -87,8 +85,26 @@ export default async function handler(request, response) {
 
     const rateLimitStore = getRateLimitStore();
     const ipAddress = getClientIp(request);
+    const runtimeConfig = getLeadApiRuntimeConfig();
+    const rateLimit = consumeRateLimit(
+        rateLimitStore,
+        ipAddress,
+        runtimeConfig.rateLimitMax,
+        runtimeConfig.rateLimitWindowMs,
+    );
 
-    if (isRateLimited(rateLimitStore, ipAddress, RATE_LIMIT_MAX, RATE_LIMIT_WINDOW_MS)) {
+    response.setHeader('X-RateLimit-Limit', String(runtimeConfig.rateLimitMax));
+    response.setHeader('X-RateLimit-Remaining', String(rateLimit.remaining));
+
+    if (rateLimit.limited) {
+        response.setHeader('Retry-After', String(rateLimit.retryAfterSeconds));
+        console.warn('lead_rate_limit_exceeded', {
+            ipAddress,
+            count: rateLimit.count,
+            limit: runtimeConfig.rateLimitMax,
+            windowMs: runtimeConfig.rateLimitWindowMs,
+            retryAfterSeconds: rateLimit.retryAfterSeconds,
+        });
         return response.status(429).json({ message: 'Too many lead submissions from this address. Try again shortly.' });
     }
 
@@ -103,7 +119,7 @@ export default async function handler(request, response) {
     const dedupeKey = buildLeadDedupeKey(result.data);
     const dedupeStore = getLeadDedupeStore();
 
-    if (isLeadDuplicate(dedupeStore, dedupeKey, LEAD_DEDUPE_WINDOW_MS)) {
+    if (isLeadDuplicate(dedupeStore, dedupeKey, runtimeConfig.leadDedupeWindowMs)) {
         console.info('lead_duplicate_suppressed', { dedupeKey });
         return response.status(202).json({ message: 'Thanks. Your request is in the queue and we will follow up shortly.' });
     }

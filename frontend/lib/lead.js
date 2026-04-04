@@ -14,6 +14,20 @@ const TIMEFRAME_OPTIONS = new Set(['1-week', '2-weeks', '1-month']);
 const MAX_DRAWING_BYTES = 5 * 1024 * 1024;
 const IMAGE_DATA_URL_PATTERN = /^data:image\/[a-zA-Z0-9.+-]+;base64,/;
 
+function parsePositiveIntEnv(name, fallback) {
+    const raw = String(process.env[name] || '').trim();
+    if (!raw) {
+        return fallback;
+    }
+
+    const parsed = Number.parseInt(raw, 10);
+    if (!Number.isFinite(parsed) || parsed <= 0) {
+        return fallback;
+    }
+
+    return parsed;
+}
+
 function normalizeForDedupe(value, maxLength) {
     return String(value || '')
         .toLowerCase()
@@ -215,21 +229,52 @@ export function getRateLimitStore() {
     return globalThis.__urbanStoneLeadRateLimitStore;
 }
 
-export function isRateLimited(store, key, limit, windowMs) {
+export function getLeadApiRuntimeConfig() {
+    return {
+        rateLimitMax: parsePositiveIntEnv('RATE_LIMIT_MAX', 5),
+        rateLimitWindowMs: parsePositiveIntEnv('RATE_LIMIT_WINDOW_MS', 15 * 60 * 1000),
+        leadDedupeWindowMs: parsePositiveIntEnv('LEAD_DEDUPE_WINDOW_MS', 60 * 60 * 1000),
+    };
+}
+
+export function consumeRateLimit(store, key, limit, windowMs) {
     const now = Date.now();
     const entry = store.get(key);
 
     if (!entry || entry.resetAt <= now) {
-        store.set(key, { count: 1, resetAt: now + windowMs });
-        return false;
+        const nextEntry = { count: 1, resetAt: now + windowMs };
+        store.set(key, nextEntry);
+        return {
+            limited: false,
+            count: nextEntry.count,
+            remaining: Math.max(limit - nextEntry.count, 0),
+            resetAt: nextEntry.resetAt,
+            retryAfterSeconds: Math.max(Math.ceil(windowMs / 1000), 1),
+        };
     }
 
     if (entry.count >= limit) {
-        return true;
+        return {
+            limited: true,
+            count: entry.count,
+            remaining: 0,
+            resetAt: entry.resetAt,
+            retryAfterSeconds: Math.max(Math.ceil((entry.resetAt - now) / 1000), 1),
+        };
     }
 
     entry.count += 1;
-    return false;
+    return {
+        limited: false,
+        count: entry.count,
+        remaining: Math.max(limit - entry.count, 0),
+        resetAt: entry.resetAt,
+        retryAfterSeconds: Math.max(Math.ceil((entry.resetAt - now) / 1000), 1),
+    };
+}
+
+export function isRateLimited(store, key, limit, windowMs) {
+    return consumeRateLimit(store, key, limit, windowMs).limited;
 }
 
 export function getLeadDedupeStore() {

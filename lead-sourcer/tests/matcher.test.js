@@ -25,6 +25,14 @@ describe('matchesKeywords', () => {
         expect(matchesKeywords('kitchen remodel and looking for countertop pricing')).toBe(true);
     });
 
+    test('returns true for softer countertop shopping intent', () => {
+        expect(matchesKeywords('Thinking about quartz countertops for our kitchen')).toBe(true);
+    });
+
+    test('returns true for comparison-style slab shopping posts', () => {
+        expect(matchesKeywords('Comparing slab colors for our remodel and planning a countertop update')).toBe(true);
+    });
+
     test('matches normalized punctuation and spacing', () => {
         expect(matchesKeywords('Need counter-top replacement ASAP')).toBe(true);
     });
@@ -51,8 +59,12 @@ describe('classifyLeadText', () => {
         expect(classifyLeadText('Need quartz countertop installer quote').verdict).toBe('match');
     });
 
-    test('returns borderline when material is present without enough intent', () => {
-        expect(classifyLeadText('Thinking about quartz countertops for our kitchen').verdict).toBe('borderline');
+    test('returns match verdict for softer countertop shopping intent', () => {
+        expect(classifyLeadText('Thinking about quartz countertops for our kitchen').verdict).toBe('match');
+    });
+
+    test('returns match when anchored material and remodel context appear together', () => {
+        expect(classifyLeadText('Quartz slab options for our kitchen remodel').verdict).toBe('match');
     });
 
     test('returns reject when excluded noise dominates', () => {
@@ -77,7 +89,7 @@ describe('classifyLeadCandidate', () => {
             title: 'Quartz options',
             body: 'Comparing slab colors for our remodel',
         });
-        expect(result.verdict).toBe('borderline');
+        expect(result.verdict).toBe('match');
     });
 
     test('promotes to match when anchor is in title and intent is in body', () => {

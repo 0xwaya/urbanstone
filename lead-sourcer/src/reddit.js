@@ -78,9 +78,24 @@ function extractPost(post) {
     };
 }
 
+function createStats() {
+    return {
+        fetched: 0,
+        evaluated: 0,
+        skippedSeen: 0,
+        skippedStale: 0,
+        matches: 0,
+        borderline: 0,
+        rejects: 0,
+        regionFiltered: 0,
+        relayed: 0,
+    };
+}
+
 export async function pollReddit({ mode = 'live' } = {}) {
     const modeFlags = runModeFlags(mode);
     const matches = [];
+    const stats = createStats();
 
     for (const subreddit of REDDIT_SUBREDDITS) {
         let posts;
@@ -107,17 +122,26 @@ export async function pollReddit({ mode = 'live' } = {}) {
         }
 
         posts = [...postMap.values()];
+        stats.fetched += posts.length;
 
         console.log(`[reddit] r/${subreddit}: fetched ${posts.length} post(s)`);
 
         for (const raw of posts) {
             const post = extractPost(raw);
 
-            if (!isRecent(raw.created_utc, MAX_POST_AGE_HOURS)) { continue; }
-            if (isSeen(post.id)) { continue; }
+            if (!isRecent(raw.created_utc, MAX_POST_AGE_HOURS)) {
+                stats.skippedStale += 1;
+                continue;
+            }
+            if (isSeen(post.id)) {
+                stats.skippedSeen += 1;
+                continue;
+            }
+            stats.evaluated += 1;
             const classification = classifyLeadCandidate({ title: post.title, body: post.body });
 
             if (classification.verdict === 'borderline') {
+                stats.borderline += 1;
                 logReviewCandidate({
                     mode,
                     source: 'reddit',
@@ -131,9 +155,13 @@ export async function pollReddit({ mode = 'live' } = {}) {
                 continue;
             }
 
-            if (classification.verdict !== 'match') { continue; }
+            if (classification.verdict !== 'match') {
+                stats.rejects += 1;
+                continue;
+            }
 
             if (LEAD_SOURCER_REQUIRE_REGIONAL_SIGNAL && subreddit.toLowerCase() !== 'cincinnati' && !hasRegionalSignal(post)) {
+                stats.regionFiltered += 1;
                 logReviewCandidate({
                     mode,
                     source: 'reddit',
@@ -144,6 +172,7 @@ export async function pollReddit({ mode = 'live' } = {}) {
                 continue;
             }
 
+            stats.matches += 1;
             console.log(`[reddit] Match in r/${subreddit}: "${post.title}" — ${post.url}`);
 
             if (!modeFlags.shouldRelay) {
@@ -165,6 +194,7 @@ export async function pollReddit({ mode = 'live' } = {}) {
 
             const payload = buildLeadPayload(post);
             await relay(payload);
+            stats.relayed += 1;
             matches.push(post);
         }
 
@@ -172,14 +202,14 @@ export async function pollReddit({ mode = 'live' } = {}) {
         await new Promise((resolve) => setTimeout(resolve, 800));
     }
 
-    return matches;
+    return { matches, stats };
 }
 
 // Allow running directly: node src/reddit.js
 if (process.argv[1] && process.argv[1].endsWith('reddit.js')) {
     const mode = resolveRunMode();
     pollReddit({ mode })
-        .then((matches) => console.log(`[reddit] Done. ${matches.length} new match(es).`))
+        .then((result) => console.log(`[reddit] Done. ${result.matches.length} new match(es).`))
         .catch((err) => {
             console.error('[reddit] Fatal:', err);
             process.exitCode = 1;

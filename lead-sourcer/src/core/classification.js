@@ -66,18 +66,22 @@ export function classifyLeadText(text) {
     const projectContext = findMatchedKeywords(normalized, PROJECT_CONTEXT_KEYWORDS);
     const intentSignals = findMatchedKeywords(normalized, INTENT_KEYWORDS);
     const anchored = hasCountertopAnchor([...directMatches, ...materialSignals]);
+    const hasProjectContext = projectContext.length > 0;
+    const hasIntent = intentSignals.length > 0;
+    const hasDirectMatch = directMatches.length > 0;
 
     let verdict = 'reject';
     if (excluded.length > 0) {
         verdict = 'reject';
-    } else if (anchored && intentSignals.length > 0) {
+    } else if (anchored && (hasIntent || hasProjectContext)) {
         verdict = 'match';
-    } else if (anchored && projectContext.length > 0 && intentSignals.length > 0) {
+    } else if (hasProjectContext && hasIntent) {
         verdict = 'match';
-    } else if (
-        anchored
-        || (projectContext.length > 0 && intentSignals.length > 0)
-    ) {
+    } else if (hasDirectMatch && hasIntent) {
+        verdict = 'match';
+    } else if (anchored) {
+        verdict = 'match';  // Material anchor alone is strong enough signal for countertop work
+    } else if (hasProjectContext || hasDirectMatch) {
         verdict = 'borderline';
     }
 

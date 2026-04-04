@@ -149,6 +149,35 @@ function logTaskFailure(taskLabel, reason) {
     console.warn(`[apify] ${taskLabel}: task run failed: ${message}`);
 }
 
+function createStats() {
+    return {
+        fetched: 0,
+        evaluated: 0,
+        skippedSeen: 0,
+        matches: 0,
+        borderline: 0,
+        rejects: 0,
+        relayed: 0,
+        byTask: {},
+    };
+}
+
+function getTaskStats(stats, taskLabel) {
+    if (!stats.byTask[taskLabel]) {
+        stats.byTask[taskLabel] = {
+            fetched: 0,
+            evaluated: 0,
+            skippedSeen: 0,
+            matches: 0,
+            borderline: 0,
+            rejects: 0,
+            relayed: 0,
+        };
+    }
+
+    return stats.byTask[taskLabel];
+}
+
 async function runTask(client, { taskId, taskLabel, input }) {
     if (!taskId) return [];
 
@@ -188,6 +217,7 @@ export async function pollApify({ mode = 'live' } = {}) {
     const modeFlags = runModeFlags(mode);
     const client = new ApifyClient({ token });
     const matches = [];
+    const stats = createStats();
 
     const nextdoorInput = parseJsonEnv('APIFY_NEXTDOOR_TASK_INPUT', defaultNextdoorInput());
     const facebookInput = parseJsonEnv('APIFY_FACEBOOK_TASK_INPUT', defaultFacebookInput());
@@ -229,6 +259,8 @@ export async function pollApify({ mode = 'live' } = {}) {
                 task.taskLabel,
             );
             items.push(...taskItems);
+            stats.fetched += taskItems.length;
+            getTaskStats(stats, task.taskLabel).fetched += taskItems.length;
         } catch (reason) {
             logTaskFailure(task.taskLabel, reason);
         }
@@ -239,7 +271,17 @@ export async function pollApify({ mode = 'live' } = {}) {
     }
 
     for (const post of items) {
-        if (isSeen(post.id)) continue;
+        const taskLabel = post.source.replace('apify-', '');
+        const taskStats = getTaskStats(stats, taskLabel);
+
+        if (isSeen(post.id)) {
+            stats.skippedSeen += 1;
+            taskStats.skippedSeen += 1;
+            continue;
+        }
+
+        stats.evaluated += 1;
+        taskStats.evaluated += 1;
 
         const classification = classifyLeadCandidate({
             title: post.title,
@@ -247,6 +289,8 @@ export async function pollApify({ mode = 'live' } = {}) {
         });
 
         if (classification.verdict === 'borderline') {
+            stats.borderline += 1;
+            taskStats.borderline += 1;
             logReviewCandidate({
                 mode,
                 source: post.source,
@@ -260,8 +304,14 @@ export async function pollApify({ mode = 'live' } = {}) {
             continue;
         }
 
-        if (classification.verdict !== 'match') continue;
+        if (classification.verdict !== 'match') {
+            stats.rejects += 1;
+            taskStats.rejects += 1;
+            continue;
+        }
 
+        stats.matches += 1;
+        taskStats.matches += 1;
         console.log(`[apify] Match in ${post.source}: "${post.title}" — ${post.url}`);
 
         if (!modeFlags.shouldRelay) {
@@ -282,16 +332,18 @@ export async function pollApify({ mode = 'live' } = {}) {
         markSeen(post.id);
         const payload = buildLeadPayload(post);
         await relay(payload);
+        stats.relayed += 1;
+        taskStats.relayed += 1;
         matches.push(post);
     }
 
-    return matches;
+    return { matches, stats };
 }
 
 if (process.argv[1] && process.argv[1].endsWith('apify.js')) {
     const mode = resolveRunMode();
     pollApify({ mode })
-        .then((matches) => console.log(`[apify] Done. ${matches.length} new match(es).`))
+        .then((result) => console.log(`[apify] Done. ${result.matches.length} new match(es).`))
         .catch((err) => {
             console.error('[apify] Fatal:', err);
             process.exitCode = 1;

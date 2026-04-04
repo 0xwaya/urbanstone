@@ -43,9 +43,13 @@ async function runOnce(mode) {
         pollApify({ mode }),
     ]);
 
-    const redditCount = redditMatches.status === 'fulfilled' ? redditMatches.value.length : 0;
-    const clCount = craigslistMatches.status === 'fulfilled' ? craigslistMatches.value.length : 0;
-    const apifyCount = apifyMatches.status === 'fulfilled' ? apifyMatches.value.length : 0;
+    const redditResult = redditMatches.status === 'fulfilled' ? redditMatches.value : { matches: [], stats: {} };
+    const craigslistResult = craigslistMatches.status === 'fulfilled' ? craigslistMatches.value : { matches: [], stats: {} };
+    const apifyResult = apifyMatches.status === 'fulfilled' ? apifyMatches.value : { matches: [], stats: {} };
+
+    const redditCount = redditResult.matches.length;
+    const clCount = craigslistResult.matches.length;
+    const apifyCount = apifyResult.matches.length;
 
     const errors = [];
     if (redditMatches.status === 'rejected') {
@@ -63,6 +67,11 @@ async function runOnce(mode) {
 
     const totalMatches = redditCount + clCount + apifyCount;
     console.log(`[lead-sourcer] Poll complete — Reddit: ${redditCount} match(es), Craigslist: ${clCount} match(es), Apify: ${apifyCount} match(es), mode=${mode}`);
+    console.log('[lead-sourcer] Verdict stats', {
+        reddit: redditResult.stats,
+        craigslist: craigslistResult.stats,
+        apify: apifyResult.stats,
+    });
 
     const summary = {
         startedAt: startedAt.toISOString(),
@@ -73,6 +82,11 @@ async function runOnce(mode) {
             craigslist: clCount,
             apify: apifyCount,
             totalMatches,
+        },
+        verdicts: {
+            reddit: redditResult.stats,
+            craigslist: craigslistResult.stats,
+            apify: apifyResult.stats,
         },
         errors,
     };

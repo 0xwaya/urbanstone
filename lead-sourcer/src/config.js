@@ -37,12 +37,18 @@ export const MATCH_KEYWORDS = [
 export const PROJECT_CONTEXT_KEYWORDS = [
     'kitchen remodel',
     'kitchen renovation',
+    'kitchen project',
+    'kitchen upgrade',
     'bathroom remodel',
     'bathroom renovation',
     'bath remodel',
     'bath renovation',
     'kitchen redo',
     'kitchen update',
+    'home remodel',
+    'home renovation',
+    'remodel',
+    'renovation',
 ];
 
 export const INTENT_KEYWORDS = [
@@ -73,6 +79,20 @@ export const INTENT_KEYWORDS = [
     'repair',
     'professional',
     'service',
+    'looking',
+    'looking for',
+    'thinking about',
+    'considering',
+    'planning',
+    'exploring',
+    'comparing',
+    'shopping for',
+    'interested in',
+    'help with',
+    'help',
+    'advice',
+    'who installs',
+    'who does',
 ];
 
 export const MATERIAL_SIGNAL_KEYWORDS = [

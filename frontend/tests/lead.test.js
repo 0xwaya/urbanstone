@@ -1,4 +1,4 @@
-import { buildLeadDedupeKey, buildLeadForwardPayload, isLeadDuplicate, isRateLimited, sanitizeLeadPayload } from '../lib/lead';
+import { buildLeadDedupeKey, buildLeadForwardPayload, consumeRateLimit, getLeadApiRuntimeConfig, isLeadDuplicate, isRateLimited, sanitizeLeadPayload } from '../lib/lead';
 
 describe('sanitizeLeadPayload', () => {
     it('returns sanitized lead data for valid submissions', () => {
@@ -105,6 +105,56 @@ describe('isRateLimited', () => {
         expect(isRateLimited(store, '127.0.0.1', 2, 1000)).toBe(false);
         expect(isRateLimited(store, '127.0.0.1', 2, 1000)).toBe(false);
         expect(isRateLimited(store, '127.0.0.1', 2, 1000)).toBe(true);
+    });
+});
+
+describe('consumeRateLimit', () => {
+    it('returns retry metadata when the limit is exceeded', () => {
+        const store = new Map();
+
+        expect(consumeRateLimit(store, '127.0.0.1', 2, 1000).limited).toBe(false);
+        expect(consumeRateLimit(store, '127.0.0.1', 2, 1000).limited).toBe(false);
+
+        const blocked = consumeRateLimit(store, '127.0.0.1', 2, 1000);
+        expect(blocked.limited).toBe(true);
+        expect(blocked.remaining).toBe(0);
+        expect(blocked.retryAfterSeconds).toBeGreaterThan(0);
+    });
+});
+
+describe('getLeadApiRuntimeConfig', () => {
+    const originalEnv = process.env;
+
+    afterEach(() => {
+        process.env = originalEnv;
+    });
+
+    it('uses defaults when environment values are missing', () => {
+        process.env = { ...originalEnv };
+        delete process.env.RATE_LIMIT_MAX;
+        delete process.env.RATE_LIMIT_WINDOW_MS;
+        delete process.env.LEAD_DEDUPE_WINDOW_MS;
+
+        expect(getLeadApiRuntimeConfig()).toEqual({
+            rateLimitMax: 5,
+            rateLimitWindowMs: 15 * 60 * 1000,
+            leadDedupeWindowMs: 60 * 60 * 1000,
+        });
+    });
+
+    it('accepts positive integer environment overrides', () => {
+        process.env = {
+            ...originalEnv,
+            RATE_LIMIT_MAX: '7',
+            RATE_LIMIT_WINDOW_MS: '120000',
+            LEAD_DEDUPE_WINDOW_MS: '1800000',
+        };
+
+        expect(getLeadApiRuntimeConfig()).toEqual({
+            rateLimitMax: 7,
+            rateLimitWindowMs: 120000,
+            leadDedupeWindowMs: 1800000,
+        });
     });
 });
 
