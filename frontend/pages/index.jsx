@@ -8,14 +8,13 @@ import FAQSection from '../components/FAQSection';
 import ChatWidget from '../components/ChatWidget';
 import Footer from '../components/Footer';
 import { homepageAnnouncement, homepageFaqContent, homepageFaqItems, homepageLeadFormContent } from '../data/homepage-content';
-import { getSiteUrl } from '../lib/site';
+import { getCanonicalUrl, getSiteUrl } from '../lib/site';
 import { getGeoRegion } from '../lib/seo';
 
 export default function Home() {
   const siteUrl = getSiteUrl();
-  const preferredSiteUrl = siteUrl.replace(/^https?:\/\/urbanstone\.co$/i, 'https://www.urbanstone.co');
-  const canonicalUrl = preferredSiteUrl;
-  const ogImageUrl = `${preferredSiteUrl}/api/og-image?v=20260404b`;
+  const canonicalUrl = getCanonicalUrl('/');
+  const ogImageUrl = `${siteUrl}/api/og-image`;
   const ogImageWidth = '1200';
   const ogImageHeight = '630';
   const ogImageType = 'image/png';
