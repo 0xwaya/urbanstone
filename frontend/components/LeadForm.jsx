@@ -300,14 +300,13 @@ export default function LeadForm({ content, routeId = 'homepage', collapsible = 
             return undefined;
         }
 
-        const syncExpandedState = () => {
+        const handleHashChange = () => {
             if (window.location.hash === '#quote') {
                 openForm();
             }
         };
 
-        syncExpandedState();
-        window.addEventListener('hashchange', syncExpandedState);
+        window.addEventListener('hashchange', handleHashChange);
 
         const handleDocumentClick = (event) => {
             const trigger = event.target instanceof Element
@@ -322,7 +321,7 @@ export default function LeadForm({ content, routeId = 'homepage', collapsible = 
         document.addEventListener('click', handleDocumentClick);
 
         return () => {
-            window.removeEventListener('hashchange', syncExpandedState);
+            window.removeEventListener('hashchange', handleHashChange);
             document.removeEventListener('click', handleDocumentClick);
         };
     }, [collapsible]);
