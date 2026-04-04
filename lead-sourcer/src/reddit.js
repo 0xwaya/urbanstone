@@ -29,6 +29,17 @@ const FIRST_RUN_MAX_POST_AGE_HOURS = Number(process.env.LEAD_SOURCER_FIRST_RUN_M
 const FIRST_RUN_MARKER_FILE = process.env.LEAD_SOURCER_FIRST_RUN_MARKER_FILE
     || path.resolve(__dirname, '..', 'runs', 'reddit-first-run-window-used.flag');
 
+function readMarkerMode() {
+    try {
+        if (!fs.existsSync(FIRST_RUN_MARKER_FILE)) return '';
+        const text = fs.readFileSync(FIRST_RUN_MARKER_FILE, 'utf8');
+        const match = text.match(/\bmode=([^\s]+)/);
+        return match ? String(match[1]).trim() : '';
+    } catch {
+        return '';
+    }
+}
+
 function claimFirstRunAgeWindowHours(mode) {
     // One-time expansion is intended for an initial pass where operator wants
     // broader evaluation depth, then automatic fallback to normal recency.
@@ -40,7 +51,22 @@ function claimFirstRunAgeWindowHours(mode) {
         return MAX_POST_AGE_HOURS;
     }
 
-    if (fs.existsSync(FIRST_RUN_MARKER_FILE)) {
+    const markerMode = readMarkerMode();
+    if (markerMode) {
+        // Preserve one-time expansion for the first live run. If a prior dry-run
+        // consumed the marker during validation, allow one live pass to still use it.
+        if (mode === 'live' && markerMode === 'dry-run') {
+            console.log('[reddit] Existing first-run marker was consumed by dry-run; allowing one live extended-window pass.');
+        } else {
+            return MAX_POST_AGE_HOURS;
+        }
+    }
+
+    // Reserve the one-time marker for live operation by default so diagnostics
+    // do not consume the broad evaluation window.
+    const consumeMarkerInThisMode = mode === 'live';
+    if (!consumeMarkerInThisMode) {
+        console.log(`[reddit] Extended window available but deferred (mode=${mode}); reserved for first live run.`);
         return MAX_POST_AGE_HOURS;
     }
 
