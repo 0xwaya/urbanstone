@@ -1,5 +1,18 @@
 const DEFAULT_SITE_URL = 'https://www.urbanstone.co';
 
+function enforcePreferredHost(origin) {
+    try {
+        const parsed = new URL(origin);
+        if (parsed.hostname === 'urbanstone.co') {
+            parsed.hostname = 'www.urbanstone.co';
+            return parsed.origin;
+        }
+        return parsed.origin;
+    } catch {
+        return DEFAULT_SITE_URL;
+    }
+}
+
 function normalizeSiteUrl(value) {
     if (!value) {
         return DEFAULT_SITE_URL;
@@ -16,7 +29,7 @@ function normalizeSiteUrl(value) {
         : `https://${trimmed}`;
 
     try {
-        return new URL(withProtocol).origin;
+        return enforcePreferredHost(new URL(withProtocol).origin);
     } catch {
         return DEFAULT_SITE_URL;
     }
