@@ -22,6 +22,8 @@ out/
 dist/
 build/
 coverage/
+!frontend/pages/coverage/
+!frontend/pages/coverage/index.jsx
 frontend/test-artifacts/
 frontend/test-results/
 frontend/playwright-report/
