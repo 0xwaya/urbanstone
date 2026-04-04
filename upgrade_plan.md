@@ -76,6 +76,51 @@ Expected outcome: **40–120 qualified homeowner/GC leads/month** flowing to Zap
 4. **Tune thresholds and source filters weekly** using near-miss/review summaries while keeping hard-match relay criteria stable.
 5. **Keep scheduler cadence at every 12 minutes** once run reports and match flow look stable.
 
+## Nightly Closeout (Apr 4, 2026)
+
+- [x] Runtime wiring fixed for Apify: copied `APIFY_TOKEN`, `APIFY_NEXTDOOR_TASK_ID`, and `APIFY_FACEBOOK_TASK_ID` into `lead-sourcer/.env` (poller runtime file).
+- [x] Apify robustness fix shipped: `pollApify()` now returns a stable `{ matches, stats }` object on all skip paths.
+- [x] Craigslist source quality fix shipped: search sections now prioritize buyer-intent gigs/labor gigs over housing/real-estate listing noise.
+- [x] One final live sniffer cycle completed successfully with run report relay (`HTTP 200`) and no pipeline errors.
+- [ ] Nextdoor volume remains low (`0` items in latest cycle); continue monitoring while tuning task inputs and cadence.
+
+Latest live validation snapshot (Apr 4, 2026, ~04:24 local):
+- Reddit: fetched `176`, matches `0`
+- Craigslist: fetched `36`, evaluated `4`, matches `0`
+- Apify: fetched `20` (Nextdoor `0`, Facebook Groups `20`), matches `0`
+- Run-report webhook: relayed successfully
+
+## Relevant Files (Operational)
+
+- `lead-sourcer/src/index.js`
+   - Main orchestrator for Reddit/Craigslist/Apify polls.
+   - Writes run summaries and sends run-report relay payloads.
+
+- `lead-sourcer/src/apify.js`
+   - Apify task execution (Nextdoor/Facebook/Ad Library), classification, and relay path.
+   - Includes timeout/delay controls and skip-path handling.
+
+- `lead-sourcer/src/craigslist.js`
+   - Craigslist poller with buyer-intent sections (`ggg`, `lbg`, `hss`) and body-enrichment logic.
+   - Contains listing-noise filtering and per-run body fetch caps.
+
+- `lead-sourcer/src/config.js`
+   - Runtime env controls for query limits, source toggles, task IDs, thresholds, and delay settings.
+   - First place to check when behavior changes unexpectedly.
+
+- `lead-sourcer/.env`
+   - Runtime env file used by lead-sourcer commands when launched from `lead-sourcer` directory.
+   - Must contain Apify and webhook secrets for live operation.
+
+- `lead-sourcer/runs/poll-runs.jsonl`
+   - Source-of-truth historical run ledger used by daily/weekly summaries.
+
+- `lead-sourcer/scripts/daily-summary.mjs`
+   - Daily run health summary and zero-match streak alert logic.
+
+- `lead-sourcer/scripts/weekly-tuning-summary.mjs`
+   - Near-miss and review-queue analytics for threshold tuning decisions.
+
 ## Phase 1.5 - Zapier Hardening (Deferred / Optional)
 - [ ] Add source guard filter before Outlook to suppress internal/test traffic (for example `wire-test`).
 - [ ] Add richer triage fields to email output (`source`, `routeId`, classifier score when available).
