@@ -322,10 +322,16 @@ export function isSameOriginRequest(request) {
 
 export function buildLeadForwardPayload(lead, request) {
     const requestId = normalizeField(request.headers['x-request-id'] || randomUUID(), 64);
+    const dedupeKey = buildLeadDedupeKey(lead);
+    const routeId = lead.routeId || 'homepage';
 
     return {
         submittedAt: new Date().toISOString(),
         source: 'urban-stone-site',
+        requestId,
+        dedupeKey,
+        routeId,
+        automated: false,
         lead: {
             name: lead.name,
             email: lead.email,
@@ -344,11 +350,12 @@ export function buildLeadForwardPayload(lead, request) {
         },
         metadata: {
             requestId,
-            dedupeKey: buildLeadDedupeKey(lead),
+            dedupeKey,
+            automated: false,
             ip: getClientIp(request),
             userAgent: request.headers['user-agent'] || 'unknown',
             referer: request.headers.referer || null,
-            routeId: lead.routeId || 'homepage',
+            routeId,
         },
     };
 }

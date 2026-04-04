@@ -189,9 +189,15 @@ describe('buildLeadForwardPayload', () => {
         );
 
         expect(payload.lead.name).toBe('Jamie Stone');
+        expect(payload.requestId).toBe(payload.metadata.requestId);
+        expect(payload.dedupeKey).toBe(payload.metadata.dedupeKey);
+        expect(payload.routeId).toBe(payload.metadata.routeId);
+        expect(payload.automated).toBe(false);
+        expect(payload.metadata.automated).toBe(false);
         expect(payload.metadata.ip).toBe('203.0.113.55');
         expect(payload.metadata.requestId).toBeTruthy();
         expect(payload.metadata.dedupeKey).toHaveLength(24);
+        expect(payload.routeId).toBe('homepage');
         expect(payload.source).toBe('urban-stone-site');
         expect(payload.lead.materialPreferences).toEqual(['msi-calacatta-laza']);
     });
@@ -222,7 +228,13 @@ describe('buildLeadForwardPayload', () => {
             }
         );
 
+        expect(payload.requestId).toBe('req_12345');
         expect(payload.metadata.requestId).toBe('req_12345');
+        expect(payload.requestId).toBe(payload.metadata.requestId);
+        expect(payload.dedupeKey).toBe(payload.metadata.dedupeKey);
+        expect(payload.routeId).toBe(payload.metadata.routeId);
+        expect(payload.automated).toBe(false);
+        expect(payload.metadata.automated).toBe(false);
     });
 });
 

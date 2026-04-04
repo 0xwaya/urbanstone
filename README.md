@@ -135,38 +135,42 @@ Lead webhook payload note:
 Urban Stone production lead intake zap is published and live with the following configuration:
 
 - Zap ID: `357570886`
-- Architecture: 7-step dedup suppression + email routing
+- Architecture: 6-step dedup suppression + email routing
 
 The Zapier zap that receives leads from the webhook and forwards them to Outlook uses this step order:
 
 |Step|App|Purpose|
 |---|---|---|
 |1|Webhooks by Zapier — Catch Hook|Receives the inbound lead payload|
-|2|Filter by Zapier|Intake gate: continue only if (`email` + `phone`) OR (`metadata.automated = true`)|
+|2|Filter by Zapier|Current live intake gate: continue only if `lead.email` and `lead.phone` exist|
 |3|Storage by Zapier — Get Value|Initial dedup read on the `urban-stone-dedupe` key|
-|4|Storage by Zapier — Get Value|Resolve the stored value for the dedup key|
-|5|Filter by Zapier|Duplicate check: continue only if no dedup value is found|
-|6|Storage by Zapier — Set Value|**Write** key `dedup::{{metadata__dedupeKey}}` = `1` to mark lead as processed|
-|7|Microsoft Outlook — Send Email|Forward formatted lead to the sales inbox|
+|4|Filter by Zapier|Duplicate check: continue only if no dedup value is found|
+|5|Storage by Zapier — Set Value|**Write** key `dedup::{{source}}::{{lead__email}}` = `1` to mark lead as processed|
+|6|Microsoft Outlook — Send Email|Forward formatted lead to the sales inbox|
 
-**Critical:** Step 6 (Storage Set Value) must come before Outlook. Without it, the filter at Step 5 passes every submission because the key is never written — making Zapier-side dedup non-functional.
+**Critical:** Step 5 (Storage Set Value) must come before Outlook. Without it, the filter at Step 4 passes every submission because the key is never written — making Zapier-side dedup non-functional.
 
-Storage key pattern: `dedup::{{357570886__metadata__dedupeKey}}`
+Current live storage key pattern: `dedup::{{source}}::{{lead__email}}`
 
-Dedup behavior: suppresses duplicate email sends for repeated submissions using the same dedupe key (24h window in Zapier configuration).
+Current live dedup behavior: suppresses duplicate email sends for repeated submissions from the same source and email address (24h window in Zapier configuration).
 
-Payload contract:
+Current website payload contract:
 
-- `submittedAt`, `source`
+- `submittedAt`, `source`, `requestId`, `dedupeKey`, `routeId`, `automated`
 - `lead.{name, email, phone, projectDetails, ...}`
-- `metadata.{dedupeKey, automated, routeId, requestId}`
+- `metadata.{dedupeKey, automated, routeId, requestId, ip, userAgent, referer}`
 
 Outlook email subject template: `New Lead — {{source}} — {{name}} ({{routeId}})`
 
 Validation check:
 
-- Send 1 with a new `dedupeKey`: all 7 steps execute and Outlook sends.
-- Send 2 with the same `dedupeKey`: flow stops at Step 5 and Outlook is skipped.
+- Send 1 with a new source + email pair: all 6 steps execute and Outlook sends.
+- Send 2 with the same source + email pair: flow stops at Step 4 and Outlook is skipped.
+
+Post-deploy upgrade path:
+
+- After a fresh webhook sample exposes `dedupeKey` and `automated` in Zapier's trigger field picker, switch the Storage Get/Set key from `dedup::{{source}}::{{lead__email}}` to `dedup::{{dedupeKey}}` with `metadata__dedupeKey` fallback.
+- At the same time, widen the intake filter to continue when `(lead.email exists AND lead.phone exists) OR (automated = true OR metadata.automated = true)` so automated lead-sourcer payloads can share the same Zap safely.
 
 Deferred Zapier hardening backlog (optional, for later implementation):
 
