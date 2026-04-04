@@ -6,6 +6,9 @@ import { REDDIT_SUBREDDITS, MAX_POST_AGE_HOURS } from './config.js';
 import { buildLeadPayload, classifyLeadCandidate, isRecent } from './matcher.js';
 import { isSeen, markSeen } from './dedup.js';
 import 'dotenv/config';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { relay } from './relay.js';
 import { REDDIT_SEARCH_DELAY_MS, REDDIT_SEARCH_QUERIES, REDDIT_SEARCH_SUBREDDITS } from './config.js';
 import { GEO_TARGET_CITIES } from './config.js';
@@ -17,6 +20,44 @@ import { logReviewCandidate } from './review-log.js';
 const REDDIT_API_BASE = 'https://www.reddit.com';
 const USER_AGENT = 'UrbanStoneLeadSourcer/1.0 (lead monitoring; contact sales@urbanstone.co)';
 const TARGET_REGIONS = ['cincinnati', ...GEO_TARGET_CITIES.map((city) => city.toLowerCase())];
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+const FIRST_RUN_EXTENDED_WINDOW_ENABLED = !['0', 'false', 'no', 'off'].includes(
+    String(process.env.LEAD_SOURCER_FIRST_RUN_EXTENDED_WINDOW || 'true').trim().toLowerCase(),
+);
+const FIRST_RUN_MAX_POST_AGE_HOURS = Number(process.env.LEAD_SOURCER_FIRST_RUN_MAX_POST_AGE_HOURS || 24 * 14);
+const FIRST_RUN_MARKER_FILE = process.env.LEAD_SOURCER_FIRST_RUN_MARKER_FILE
+    || path.resolve(__dirname, '..', 'runs', 'reddit-first-run-window-used.flag');
+
+function claimFirstRunAgeWindowHours(mode) {
+    // One-time expansion is intended for an initial pass where operator wants
+    // broader evaluation depth, then automatic fallback to normal recency.
+    if (!FIRST_RUN_EXTENDED_WINDOW_ENABLED || !Number.isFinite(FIRST_RUN_MAX_POST_AGE_HOURS)) {
+        return MAX_POST_AGE_HOURS;
+    }
+
+    if (FIRST_RUN_MAX_POST_AGE_HOURS <= MAX_POST_AGE_HOURS) {
+        return MAX_POST_AGE_HOURS;
+    }
+
+    if (fs.existsSync(FIRST_RUN_MARKER_FILE)) {
+        return MAX_POST_AGE_HOURS;
+    }
+
+    try {
+        fs.mkdirSync(path.dirname(FIRST_RUN_MARKER_FILE), { recursive: true });
+        fs.writeFileSync(
+            FIRST_RUN_MARKER_FILE,
+            `${new Date().toISOString()}\tmode=${mode}\tmaxAgeHours=${FIRST_RUN_MAX_POST_AGE_HOURS}\n`,
+            'utf8',
+        );
+        console.log(`[reddit] First-run extended age window active: ${FIRST_RUN_MAX_POST_AGE_HOURS}h (one-time). Marker: ${FIRST_RUN_MARKER_FILE}`);
+        return FIRST_RUN_MAX_POST_AGE_HOURS;
+    } catch (error) {
+        console.warn(`[reddit] Could not write first-run marker; falling back to default ${MAX_POST_AGE_HOURS}h: ${error?.message || error}`);
+        return MAX_POST_AGE_HOURS;
+    }
+}
 
 function hasRegionalSignal(post) {
     const haystack = `${post.title}\n${post.body}`.toLowerCase();
@@ -97,6 +138,7 @@ export async function pollReddit({ mode = 'live' } = {}) {
     const modeFlags = runModeFlags(mode);
     const matches = [];
     const stats = createStats();
+    const maxPostAgeHours = claimFirstRunAgeWindowHours(mode);
 
     for (const subreddit of REDDIT_SUBREDDITS) {
         let posts;
@@ -130,7 +172,7 @@ export async function pollReddit({ mode = 'live' } = {}) {
         for (const raw of posts) {
             const post = extractPost(raw);
 
-            if (!isRecent(raw.created_utc, MAX_POST_AGE_HOURS)) {
+            if (!isRecent(raw.created_utc, maxPostAgeHours)) {
                 stats.skippedStale += 1;
                 continue;
             }

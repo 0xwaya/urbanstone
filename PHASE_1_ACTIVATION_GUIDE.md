@@ -82,6 +82,15 @@ Run report behavior:
 - No `Match in` logs: inspect `runs/review-candidates.jsonl` and classifier signals.
 - No Zap deliveries: verify `LEAD_WEBHOOK_URL` and Zap history.
 
+One-time first-run recency expansion (Reddit):
+
+- First run can evaluate up to 14 days of posts one time, then auto-falls back to 48h.
+- Marker file: `lead-sourcer/runs/reddit-first-run-window-used.flag`.
+- Controls:
+	- `LEAD_SOURCER_FIRST_RUN_EXTENDED_WINDOW=true|false` (default `true`)
+	- `LEAD_SOURCER_FIRST_RUN_MAX_POST_AGE_HOURS=336` (default 14 days)
+	- `LEAD_SOURCER_FIRST_RUN_MARKER_FILE=/custom/path.flag` (optional)
+
 ## Rollback
 
 - Stop scheduler.
