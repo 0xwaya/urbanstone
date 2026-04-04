@@ -699,11 +699,7 @@ html[data-theme="light"] .form-chip-note {
   border-radius: 1.5rem;
   border: 1px solid rgba(var(--border), 0.96);
   background:
-    linear-gradient(
-      180deg,
-      rgba(var(--panel), 1),
-      rgba(var(--surface), 0.985)
-    ),
+    linear-gradient(180deg, rgba(var(--panel), 1), rgba(var(--surface), 0.985)),
     radial-gradient(
       circle at 85% 0%,
       rgba(var(--accent), 0.08),
