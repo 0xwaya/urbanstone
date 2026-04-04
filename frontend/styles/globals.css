@@ -697,16 +697,16 @@ html[data-theme="light"] .form-chip-note {
   max-height: calc(100vh - 3rem);
   overflow-y: auto;
   border-radius: 1.5rem;
-  border: 1px solid rgba(var(--border), 0.92);
+  border: 1px solid rgba(var(--border), 0.96);
   background:
     linear-gradient(
       180deg,
-      rgba(var(--panel), 0.98),
-      rgba(var(--surface), 0.94)
+      rgba(var(--panel), 1),
+      rgba(var(--surface), 0.985)
     ),
     radial-gradient(
       circle at 85% 0%,
-      rgba(var(--accent), 0.12),
+      rgba(var(--accent), 0.08),
       transparent 28%
     );
   padding: 1.25rem 1.1rem 1.5rem;

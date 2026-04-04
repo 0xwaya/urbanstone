@@ -99,12 +99,12 @@ function readFileAsDataUrl(file) {
     });
 }
 
-export default function LeadForm({ content, routeId = 'homepage', collapsible = false, defaultExpanded = true, collapsedLabel = 'Start', expandedLabel = 'Cancel' }) {
+export default function LeadForm({ content, routeId = 'homepage', collapsible = false, defaultExpanded = false, collapsedLabel = 'Start', expandedLabel = 'Cancel' }) {
     const [form, setForm] = useState(initialForm);
     const [errors, setErrors] = useState({});
     const [status, setStatus] = useState({ type: 'idle', message: '' });
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [isExpanded, setIsExpanded] = useState(defaultExpanded);
+    const [isExpanded, setIsExpanded] = useState(collapsible ? defaultExpanded : true);
 
     const companyPhone = process.env.NEXT_PUBLIC_COMPANY_PHONE || '(513) 307-5840';
     const companyEmail = process.env.NEXT_PUBLIC_LEAD_EMAIL || 'sales@urbanstone.co';
