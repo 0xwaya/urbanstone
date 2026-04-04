@@ -168,7 +168,7 @@ export function sanitizeLeadPayload(payload = {}) {
     if (!lead.currentTopRemoval) {
         errors.currentTopRemoval = 'Select whether current tops should be removed.';
     }
-    if (lead.currentTopMaterial.length < 2) {
+    if (lead.currentTopRemoval === 'yes' && lead.currentTopMaterial.length < 2) {
         errors.currentTopMaterial = 'Enter the current top material.';
     }
     if (!lead.sinkBasinPreference) {

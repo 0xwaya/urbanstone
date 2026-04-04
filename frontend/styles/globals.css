@@ -722,12 +722,21 @@ html[data-theme="light"] .form-chip-note {
 }
 
 @media (min-width: 1024px) {
+  .lead-modal-backdrop {
+    background: rgba(6, 10, 18, 0.9);
+    backdrop-filter: blur(2px);
+  }
+
+  .lead-modal-shell {
+    background: rgb(var(--surface));
+  }
+
   .lead-modal-shell .bg-surface\/50 {
-    background-color: rgba(var(--surface), 0.9) !important;
+    background-color: rgba(var(--surface), 1) !important;
   }
 
   .lead-modal-shell .bg-surface\/75 {
-    background-color: rgba(var(--surface), 0.95) !important;
+    background-color: rgba(var(--surface), 1) !important;
   }
 }
 

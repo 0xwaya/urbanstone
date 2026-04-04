@@ -112,6 +112,7 @@ export default function LeadForm({ content, routeId = 'homepage', collapsible = 
     const isReusingSink = form.sinkBasinPreference === 'reuse-existing'
         && form.sinkMountPreference === 'reuse-existing'
         && form.sinkMaterialPreference === 'reuse-existing';
+    const isTearOutSelected = form.currentTopRemoval === 'yes';
     const useModal = collapsible;
     const showInlineForm = isExpanded && !useModal;
     const showModal = isExpanded && useModal;
@@ -152,6 +153,25 @@ export default function LeadForm({ content, routeId = 'homepage', collapsible = 
 
             const nextErrors = { ...current };
             delete nextErrors[name];
+            return nextErrors;
+        });
+    };
+
+    const handleCurrentTopRemovalSelect = (value) => {
+        setForm((current) => ({
+            ...current,
+            currentTopRemoval: value,
+            currentTopMaterial: value === 'yes' ? current.currentTopMaterial : '',
+        }));
+
+        setErrors((current) => {
+            const nextErrors = { ...current };
+            delete nextErrors.currentTopRemoval;
+
+            if (value !== 'yes') {
+                delete nextErrors.currentTopMaterial;
+            }
+
             return nextErrors;
         });
     };
@@ -473,7 +493,7 @@ export default function LeadForm({ content, routeId = 'homepage', collapsible = 
                                 key={option.value}
                                 type="button"
                                 className={`form-chip${form.currentTopRemoval === option.value ? ' form-chip--active' : ''}`}
-                                onClick={() => handleSingleSelect('currentTopRemoval', option.value)}
+                                onClick={() => handleCurrentTopRemovalSelect(option.value)}
                             >
                                 {option.label}
                             </button>
@@ -482,22 +502,24 @@ export default function LeadForm({ content, routeId = 'homepage', collapsible = 
                     {errors.currentTopRemoval && <span className="form-error">{errors.currentTopRemoval}</span>}
                 </div>
 
-                <div>
-                    <span className="mb-2 block text-sm font-medium text-text">Current tops material</span>
-                    <div className="flex flex-wrap gap-1.5">
-                        {currentTopMaterialOptions.map((option) => (
-                            <button
-                                key={option.value}
-                                type="button"
-                                className={`form-chip${form.currentTopMaterial.toLowerCase() === option.value ? ' form-chip--active' : ''}`}
-                                onClick={() => handleSingleSelect('currentTopMaterial', option.value)}
-                            >
-                                {option.label}
-                            </button>
-                        ))}
+                {isTearOutSelected ? (
+                    <div>
+                        <span className="mb-2 block text-sm font-medium text-text">Current tops material</span>
+                        <div className="flex flex-wrap gap-1.5">
+                            {currentTopMaterialOptions.map((option) => (
+                                <button
+                                    key={option.value}
+                                    type="button"
+                                    className={`form-chip${form.currentTopMaterial.toLowerCase() === option.value ? ' form-chip--active' : ''}`}
+                                    onClick={() => handleSingleSelect('currentTopMaterial', option.value)}
+                                >
+                                    {option.label}
+                                </button>
+                            ))}
+                        </div>
+                        {errors.currentTopMaterial && <span className="form-error">{errors.currentTopMaterial}</span>}
                     </div>
-                    {errors.currentTopMaterial && <span className="form-error">{errors.currentTopMaterial}</span>}
-                </div>
+                ) : null}
 
                 <div className="rounded-2xl border border-border bg-surface/50 p-4">
                     <div className="text-sm font-semibold text-text">Sink preference</div>
