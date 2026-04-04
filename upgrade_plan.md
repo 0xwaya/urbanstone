@@ -134,3 +134,31 @@ Latest live validation snapshot (Apr 4, 2026, ~04:24 local):
 
 ## Cost Notes
 - Apify usage is expected to remain low at current volume; monitor actor + proxy spend and adjust polling cadence/query limits as needed.
+
+---
+
+## Session Closeout — Apr 4, 2026
+
+### Frontend — Spring Offer UI
+- **`frontend/data/homepage-content.js`**: Replaced rebrand announcement with spring sink offer (`ctaLabel: 'Free Sinks'`, `ctaHref: '#quote'`, `disclaimer: 'Offer good through May 30, 2026.'`).
+- **`frontend/components/FeaturesBar.jsx`**: Wired spring offer, added fluorescent fuchsia bottom-edge glow and neon-lime "Free Sinks" CTA button.
+- **`frontend/styles/globals.css`**: Added `.feature-highlight--spring::after` (fuchsia glow bar) and `.feature-highlight-cta` (neon-lime button style). Widened `.nav-brand-secondary` letter-spacing to 0.52em to center "Collective" in navbar.
+
+### Dark Theme Default
+- **`frontend/pages/_document.jsx`**: Restored dark theme as default. Changed `savedTheme || systemPreference` to `savedTheme || 'dark'` to prevent washed-out light-mode flash on cold load. Commit: `9f5cb16`.
+
+### OG / Social Preview Fixes
+- **Invalid OG tags removed**: Eliminated non-standard `og:image:url` and `twitter:image:src` properties from all page templates (`index.jsx`, `materials/[slug].jsx`, `service-areas/[slug].jsx`, `coverage/index.jsx`). WhatsApp/Telegram strictly validate tag names; iMessage is lenient which masked the bug. Commits: `36526ff`, `d838806`.
+- **OG image switched to static PNG**: All templates now point to `/brand/urban-stone-og.png` (direct static asset, 153 KB, 1200×630). Eliminates API-route/robots conflict that previously could block WhatsApp's image fetch.
+- **`robots.txt.js` updated**: Added explicit `Allow: /api/og-image` before the broader `Disallow: /api/`. Cache of prior blocked-scrape may linger; force Meta Sharing Debugger re-scrape after next deploy.
+- **Coverage page unignored**: Removed stale gitignore suppression of `frontend/pages/coverage/index.jsx`. Page is now tracked, deployed, and serving clean OG tags. Commit: `d838806`.
+
+### Canonical Host Standardization (WhatsApp OG reliability)
+- **Root cause**: Meta/WhatsApp caches OG objects per full URL including scheme+host. Prior metadata churn (bare → www → bare) left failed cache entries on both host variants. Unifying to one canonical host prevents split-cache scenarios.
+- **`frontend/lib/site.js`**: Changed `DEFAULT_SITE_URL` from `https://urbanstone.co` → `https://www.urbanstone.co`. All generated canonical and OG URLs will use the www variant.
+- **`frontend/next.config.mjs`**: Added `redirects()` rule — permanent 301 from `urbanstone.co/:path*` → `https://www.urbanstone.co/:path*`. Ensures crawlers (WhatsApp `facebookexternalhit/1.1`, Telegram, Slack) always scrape the canonical www origin.
+- **`robots.txt.js`**: No change required — already calls `getSiteUrl()` which now returns `www.urbanstone.co`.
+
+### Post-Deploy Action Required
+- Open [Meta Sharing Debugger](https://developers.facebook.com/tools/debug/) and scrape both `https://urbanstone.co` (to flush the old redirect target) and `https://www.urbanstone.co` to seed a fresh valid cache.
+- Verify WhatsApp preview with a share link once Vercel deploy propagates (typically < 2 min).
