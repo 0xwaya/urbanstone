@@ -350,12 +350,31 @@ export const LEAD_SOURCER_NEAR_MISS_SCORE_THRESHOLD = Number(process.env.LEAD_SO
 // Craigslist Cincinnati area base URL
 export const CRAIGSLIST_BASE = 'https://cincinnati.craigslist.org';
 
-// Craigslist sections most likely to contain relevant posts
+// Craigslist sections to search.
+//
+// Section guide:
+//   hss  household services  — service providers advertising. Occasionally homeowners
+//                              post "looking for someone to install" here too.
+//   ggg  gigs (general)      — project-based work requests posted by homeowners; highest
+//                              buyer-intent section. "Need granite countertop installed."
+//   lbg  labor gigs          — secondary gigs section; smaller volume but same buyer intent.
+//
+// Excluded sections (previously searched, removed for yield quality):
+//   hsg  housing             — rental/property listings. Mentions granite as a feature
+//                              ("granite countertops in kitchen") not as a service request.
+//   rea  real estate         — same as hsg; property sale listings with amenity lists.
+//
 export const CRAIGSLIST_SECTIONS = [
-    { path: '/search/hss', label: 'household services' },
-    { path: '/search/hsg', label: 'housing' },
-    { path: '/search/rea', label: 'real estate' },
+    { path: '/search/ggg', label: 'gigs', buyerIntent: true },
+    { path: '/search/lbg', label: 'labor gigs', buyerIntent: true },
+    { path: '/search/hss', label: 'household services', buyerIntent: false },
 ];
+
+// Max number of Craigslist listing bodies to fetch per run to enrich borderline titles.
+export const CRAIGSLIST_BODY_FETCH_LIMIT = Number(process.env.LEAD_SOURCER_CRAIGSLIST_BODY_FETCH_LIMIT || 25);
+
+// Delay between individual Craigslist search requests (ms).
+export const CRAIGSLIST_REQUEST_DELAY_MS = Number(process.env.LEAD_SOURCER_CRAIGSLIST_REQUEST_DELAY_MS || 800);
 
 // How far back (in hours) to consider a post as new
 export const MAX_POST_AGE_HOURS = 48;

@@ -3,7 +3,7 @@
  * Craigslist's RSS endpoint returns 403; the static HTML search page is accessible.
  * Parses cl-static-search-result items directly from the no-JS HTML.
  */
-import { CRAIGSLIST_BASE, CRAIGSLIST_SECTIONS } from './config.js';
+import { CRAIGSLIST_BASE, CRAIGSLIST_SECTIONS, CRAIGSLIST_BODY_FETCH_LIMIT, CRAIGSLIST_REQUEST_DELAY_MS } from './config.js';
 import { buildLeadPayload, classifyLeadCandidate, scoreLeadCandidate } from './matcher.js';
 import { isSeen, markSeen } from './dedup.js';
 import 'dotenv/config';
@@ -27,6 +27,54 @@ function hasAnyKeyword(text, keywords) {
 
 function isCraigslistListingNoise(post) {
     return hasAnyKeyword(`${post.title}\n${post.body}`, CRAIGSLIST_LISTING_NOISE_KEYWORDS);
+}
+
+// Additional noise patterns that appear in real-estate/housing section body text
+// (property listings advertising granite as an amenity, not service requests).
+const PROPERTY_LISTING_NOISE_PATTERNS = [
+    /\d+\s*(bed|bath|br|ba)\b/i,
+    /sq\.?\s*ft/i,
+    /\$\s*\d{3,}\s*\/(mo|month)/i,
+    /open house/i,
+    /listed at/i,
+    /\bfor sale\b/i,
+    /\bfor rent\b/i,
+    /move.?in ready/i,
+    /newly remodeled (unit|condo|apt)/i,
+];
+
+function isPropertyListingBody(text) {
+    const haystack = String(text || '');
+    return PROPERTY_LISTING_NOISE_PATTERNS.some((pattern) => pattern.test(haystack));
+}
+
+/**
+ * Fetch the full body text from an individual Craigslist listing page.
+ * Returns empty string on any failure — the caller falls back to title-only classification.
+ */
+async function fetchListingBody(url) {
+    try {
+        const response = await fetch(url, { headers: BROWSER_HEADERS, signal: AbortSignal.timeout(8000) });
+        if (!response.ok) return '';
+        const html = await response.text();
+        // Primary container used by Craigslist posting pages.
+        const bodyMatch = html.match(/<section[^>]*class="[^"]*userbody[^"]*"[^>]*>([\s\S]*?)<\/section>/i)
+            || html.match(/<div[^>]*id="postingbody"[^>]*>([\s\S]*?)<\/div>/i);
+        if (!bodyMatch) return '';
+        // Strip tags, decode common HTML entities, collapse whitespace.
+        return bodyMatch[1]
+            .replace(/<[^>]+>/g, ' ')
+            .replace(/&amp;/g, '&')
+            .replace(/&lt;/g, '<')
+            .replace(/&gt;/g, '>')
+            .replace(/&nbsp;/g, ' ')
+            .replace(/&#\d+;/g, ' ')
+            .replace(/\s+/g, ' ')
+            .trim()
+            .slice(0, 2000);
+    } catch {
+        return '';
+    }
 }
 
 async function fetchSearchPage(section, keyword) {
@@ -78,6 +126,7 @@ function createStats() {
         fetched: 0,
         evaluated: 0,
         skippedSeen: 0,
+        bodyFetches: 0,
         matches: 0,
         borderline: 0,
         rejects: 0,
@@ -90,6 +139,7 @@ export async function pollCraigslist({ mode = 'live' } = {}) {
     const matches = [];
     const stats = createStats();
     const seenThisRun = new Set(); // dedup within this run across section+keyword permutations
+    let bodyFetchesThisRun = 0;
 
     for (const section of CRAIGSLIST_SECTIONS) {
         for (const keyword of CRAIGSLIST_QUERY_KEYWORDS) {
@@ -129,7 +179,36 @@ export async function pollCraigslist({ mode = 'live' } = {}) {
                 }
 
                 stats.evaluated += 1;
-                const classification = classifyLeadCandidate({ title: post.title, body: post.body });
+
+                // Title-only preliminary classification. For buyer-intent sections (gigs)
+                // or when the title is borderline, fetch the full listing body to give the
+                // classifier richer text before making a final verdict.
+                let titleClassification = classifyLeadCandidate({ title: post.title, body: '' });
+                const shouldEnrichBody = (
+                    bodyFetchesThisRun < CRAIGSLIST_BODY_FETCH_LIMIT
+                    && (section.buyerIntent || titleClassification.verdict === 'borderline')
+                    && titleClassification.verdict !== 'reject'
+                );
+
+                if (shouldEnrichBody) {
+                    const body = await fetchListingBody(post.url);
+                    if (body) {
+                        // Reject property-listing bodies even if the title was promising.
+                        if (isPropertyListingBody(body)) {
+                            stats.rejects += 1;
+                            if (modeFlags.shouldPersistSeen) markSeen(post.id);
+                            continue;
+                        }
+                        post.body = body;
+                        titleClassification = classifyLeadCandidate({ title: post.title, body });
+                    }
+                    bodyFetchesThisRun += 1;
+                    stats.bodyFetches += 1;
+                    // Small delay after individual listing fetches to stay polite.
+                    await new Promise((resolve) => setTimeout(resolve, 400));
+                }
+
+                const classification = titleClassification;
                 const softScore = scoreLeadCandidate(classification);
 
                 if (classification.verdict === 'borderline') {
@@ -196,8 +275,8 @@ export async function pollCraigslist({ mode = 'live' } = {}) {
                 matches.push(post);
             }
 
-            // Polite delay between Craigslist requests
-            await new Promise((resolve) => setTimeout(resolve, 1200));
+            // Polite delay between Craigslist search requests
+            await new Promise((resolve) => setTimeout(resolve, CRAIGSLIST_REQUEST_DELAY_MS));
         }
     }
 
