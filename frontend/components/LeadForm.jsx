@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { curatedSlabOptions } from '../data/curated-slab-options';
 
+const QUOTE_OPEN_EVENT = 'urbanstone:quote-opened';
+
 const initialForm = {
     name: '',
     email: '',
@@ -103,7 +105,6 @@ export default function LeadForm({ content, routeId = 'homepage', collapsible = 
     const [status, setStatus] = useState({ type: 'idle', message: '' });
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isExpanded, setIsExpanded] = useState(defaultExpanded);
-    const [isDesktopViewport, setIsDesktopViewport] = useState(false);
 
     const companyPhone = process.env.NEXT_PUBLIC_COMPANY_PHONE || '(513) 307-5840';
     const companyEmail = process.env.NEXT_PUBLIC_LEAD_EMAIL || 'sales@urbanstone.co';
@@ -111,9 +112,22 @@ export default function LeadForm({ content, routeId = 'homepage', collapsible = 
     const isReusingSink = form.sinkBasinPreference === 'reuse-existing'
         && form.sinkMountPreference === 'reuse-existing'
         && form.sinkMaterialPreference === 'reuse-existing';
-    const useDesktopModal = collapsible && isDesktopViewport;
-    const showInlineForm = isExpanded && !useDesktopModal;
-    const showDesktopModal = isExpanded && useDesktopModal;
+    const useModal = collapsible;
+    const showInlineForm = isExpanded && !useModal;
+    const showModal = isExpanded && useModal;
+
+    const notifyQuoteOpen = () => {
+        if (typeof document === 'undefined') {
+            return;
+        }
+
+        document.dispatchEvent(new CustomEvent(QUOTE_OPEN_EVENT));
+    };
+
+    const openForm = () => {
+        setIsExpanded(true);
+        notifyQuoteOpen();
+    };
 
     const handleChange = (event) => {
         const { name, value } = event.target;
@@ -288,7 +302,7 @@ export default function LeadForm({ content, routeId = 'homepage', collapsible = 
 
         const syncExpandedState = () => {
             if (window.location.hash === '#quote') {
-                setIsExpanded(true);
+                openForm();
             }
         };
 
@@ -301,7 +315,7 @@ export default function LeadForm({ content, routeId = 'homepage', collapsible = 
                 : null;
 
             if (trigger) {
-                setIsExpanded(true);
+                openForm();
             }
         };
 
@@ -314,21 +328,7 @@ export default function LeadForm({ content, routeId = 'homepage', collapsible = 
     }, [collapsible]);
 
     useEffect(() => {
-        if (typeof window === 'undefined') {
-            return undefined;
-        }
-
-        const mediaQuery = window.matchMedia('(min-width: 1024px)');
-        const syncViewport = () => setIsDesktopViewport(mediaQuery.matches);
-
-        syncViewport();
-        mediaQuery.addEventListener('change', syncViewport);
-
-        return () => mediaQuery.removeEventListener('change', syncViewport);
-    }, []);
-
-    useEffect(() => {
-        if (typeof document === 'undefined' || !showDesktopModal) {
+        if (typeof document === 'undefined' || !showModal) {
             return undefined;
         }
 
@@ -338,7 +338,7 @@ export default function LeadForm({ content, routeId = 'homepage', collapsible = 
         return () => {
             document.body.style.overflow = overflow;
         };
-    }, [showDesktopModal]);
+    }, [showModal]);
 
     const formPanel = (
         <>
@@ -684,7 +684,17 @@ export default function LeadForm({ content, routeId = 'homepage', collapsible = 
                             className="inline-flex min-w-[6.5rem] items-center justify-center self-start whitespace-nowrap rounded-full border border-border bg-panel/80 px-4 py-2 text-sm font-semibold text-text transition hover:border-accent hover:text-accent sm:self-auto"
                             aria-expanded={isExpanded}
                             aria-controls="quote-form-panel"
-                            onClick={() => setIsExpanded((current) => !current)}
+                            onClick={() => {
+                                setIsExpanded((current) => {
+                                    const next = !current;
+
+                                    if (next) {
+                                        notifyQuoteOpen();
+                                    }
+
+                                    return next;
+                                });
+                            }}
                         >
                             {isExpanded ? expandedLabel : collapsedLabel}
                         </button>
@@ -693,7 +703,7 @@ export default function LeadForm({ content, routeId = 'homepage', collapsible = 
 
                 {showInlineForm ? formPanel : null}
             </section>
-            {showDesktopModal ? (
+            {showModal ? (
                 <div className="lead-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="quote-modal-title" onClick={() => setIsExpanded(false)}>
                     <div className="lead-modal-shell" onClick={(event) => event.stopPropagation()}>
                         <div className="flex items-start justify-between gap-3">

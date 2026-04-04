@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 
 const DISMISS_STORAGE_KEY = 'urban-stone-chat-widget-dismissed';
+const QUOTE_OPEN_EVENT = 'urbanstone:quote-opened';
 
 function shouldOpenByDefault() {
     if (typeof window === 'undefined') {
@@ -31,6 +32,22 @@ export default function ChatWidget() {
         setHasHydrated(true);
     }, []);
 
+    useEffect(() => {
+        if (typeof document === 'undefined') {
+            return undefined;
+        }
+
+        const closeWidgetForQuote = () => {
+            setIsOpen(false);
+        };
+
+        document.addEventListener(QUOTE_OPEN_EVENT, closeWidgetForQuote);
+
+        return () => {
+            document.removeEventListener(QUOTE_OPEN_EVENT, closeWidgetForQuote);
+        };
+    }, []);
+
     const handleClose = () => {
         setIsOpen(false);
         window.sessionStorage.setItem(DISMISS_STORAGE_KEY, 'true');
@@ -39,6 +56,14 @@ export default function ChatWidget() {
     const handleOpen = () => {
         setIsOpen(true);
         window.sessionStorage.removeItem(DISMISS_STORAGE_KEY);
+    };
+
+    const handleOpenFormClick = () => {
+        setIsOpen(false);
+
+        if (typeof document !== 'undefined') {
+            document.dispatchEvent(new CustomEvent(QUOTE_OPEN_EVENT));
+        }
     };
 
     if (!hasHydrated) {
@@ -79,7 +104,7 @@ export default function ChatWidget() {
                 </div>
                 <p className="mt-2 text-sm text-muted">Use the estimate form, call for scheduling, or send photos, measurements, and layout details by email.</p>
                 <div className="mt-4 flex flex-wrap gap-2">
-                    <a className="brand-button-primary px-3 py-2 text-sm font-semibold" href="#quote">
+                    <a className="brand-button-primary px-3 py-2 text-sm font-semibold" href="#quote" onClick={handleOpenFormClick}>
                         Open form
                     </a>
                     <a className="brand-button-secondary inline-flex rounded-full px-3 py-2 text-sm font-semibold" href={`tel:${toTelHref(companyPhone)}`}>
