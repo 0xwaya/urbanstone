@@ -230,15 +230,16 @@ async function runTask(client, { taskId, taskLabel, input }) {
 }
 
 export async function pollApify({ mode = 'live' } = {}) {
+    const stats = createStats();
     const token = String(process.env.APIFY_TOKEN || '').trim();
     if (!token) {
         console.log('[apify] APIFY_TOKEN not set; skipping Apify poll.');
-        return [];
+        return { matches: [], stats };
     }
 
     if (!APIFY_NEXTDOOR_TASK_ID && !APIFY_FACEBOOK_TASK_ID && !APIFY_AD_LIBRARY_TASK_ID) {
         console.log('[apify] No Apify task IDs configured; skipping Apify poll. Expected one of: APIFY_NEXTDOOR_TASK_ID, APIFY_FACEBOOK_TASK_ID, APIFY_AD_LIBRARY_TASK_ID (or alias keys).');
-        return [];
+        return { matches: [], stats };
     }
 
     console.log(`[apify] Task IDs loaded — nextdoor=${Boolean(APIFY_NEXTDOOR_TASK_ID)} facebook=${Boolean(APIFY_FACEBOOK_TASK_ID)} adLibrary=${Boolean(APIFY_AD_LIBRARY_TASK_ID)}`);
@@ -247,7 +248,6 @@ export async function pollApify({ mode = 'live' } = {}) {
     const modeFlags = runModeFlags(mode);
     const client = new ApifyClient({ token });
     const matches = [];
-    const stats = createStats();
 
     const nextdoorInput = parseJsonEnv('APIFY_NEXTDOOR_TASK_INPUT', defaultNextdoorInput());
     const facebookInput = parseJsonEnv('APIFY_FACEBOOK_TASK_INPUT', defaultFacebookInput());
@@ -276,7 +276,7 @@ export async function pollApify({ mode = 'live' } = {}) {
 
     if (taskConfigs.length === 0) {
         console.log('[apify] No enabled Apify tasks with IDs found; skipping Apify poll.');
-        return [];
+        return { matches: [], stats };
     }
 
     const items = [];
