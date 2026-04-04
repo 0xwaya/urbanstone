@@ -3,9 +3,7 @@ import { Head, Html, Main, NextScript } from 'next/document';
 const themeInitScript = `(function () {
     try {
         var savedTheme = window.localStorage.getItem('urban-stone-theme');
-        var supportsMatchMedia = typeof window.matchMedia === 'function';
-        var preferredTheme = supportsMatchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
-        var theme = savedTheme || preferredTheme;
+        var theme = savedTheme || 'dark';
         document.documentElement.dataset.theme = theme;
         document.documentElement.style.colorScheme = theme;
     } catch (error) {
