@@ -233,6 +233,8 @@ Monitoring script:
 
 - `npm run summary:daily` — prints last-window run totals and zero-match streak from `runs/poll-runs.jsonl`
 - exits with code `2` when zero-match streak meets `LEAD_SOURCER_ZERO_MATCH_ALERT_THRESHOLD`
+- `npm run summary:weekly-tuning` — summarizes near-miss/review queues for threshold tuning
+- set `LEAD_SOURCER_TUNING_WINDOW_DAYS` (default `7`) to tune the weekly summary window
 
 Run modes (set via `--mode=` CLI flag or `LEAD_SOURCER_MODE` env var):
 
@@ -263,6 +265,13 @@ Operational notes:
   - `APIFY_ENABLE_AD_LIBRARY=true|false`
   - `APIFY_TASK_TIMEOUT_MS` (default: `120000`)
   - `APIFY_TASK_DELAY_MS` (default: `1200`)
+- one-time Reddit recency expansion controls:
+  - `LEAD_SOURCER_FIRST_RUN_EXTENDED_WINDOW=true|false` (default: `true`)
+  - `LEAD_SOURCER_FIRST_RUN_MAX_POST_AGE_HOURS=336` (default: 14 days)
+  - `LEAD_SOURCER_FIRST_RUN_MARKER_FILE=/custom/path.flag` (optional)
+- run-report relay control:
+  - `LEAD_SOURCER_SEND_RUN_REPORT=true|false` (default: `true`)
+  - every live cycle emits a run-report payload (including zero-match cycles)
 - Reddit regional gate control:
   - `LEAD_SOURCER_REQUIRE_REGIONAL_SIGNAL=true|false` (default: `true`)
   - set to `false` to allow non-r/cincinnati high-intent matches during growth/tuning windows
@@ -270,7 +279,7 @@ Operational notes:
 
 Current runtime state (April 3, 2026):
 
-- lead-sourcer unit tests are passing (`29/29`)
+- lead-sourcer unit tests are passing (`34/34`)
 - Zapier webhook transport responds `HTTP 200` on controlled wire-test payloads
 - Nextdoor and Facebook Groups Apify tasks are configured and fetching items
 - Ad Library can be disabled with `APIFY_ENABLE_AD_LIBRARY=false` when Apify account limits cause instability

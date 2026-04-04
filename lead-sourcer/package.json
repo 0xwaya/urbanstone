@@ -11,6 +11,7 @@
     "poll:craigslist": "node src/craigslist.js",
     "poll:apify": "node src/apify.js",
     "summary:daily": "node scripts/daily-summary.mjs",
+    "summary:weekly-tuning": "node scripts/weekly-tuning-summary.mjs",
     "test": "node --experimental-vm-modules node_modules/.bin/jest --testEnvironment node"
   },
   "engines": {

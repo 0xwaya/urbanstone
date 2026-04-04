@@ -66,16 +66,15 @@ Start building the stone selection scraper prototype and define the initial Supa
 
 Expected outcome: **40–120 qualified homeowner/GC leads/month** flowing to Zapier → Outlook by end of Phase 1.
 
-## Immediate Next Steps (To Activate Phase 1)
-1. **Set `APIFY_TOKEN` in `lead-sourcer/.env`** (already installed: `apify-client` in package.json)
-   ```
-   APIFY_TOKEN=apify_<secret>
-   APIFY_NEXTDOOR_TASK_ID=<id>
-   APIFY_FACEBOOK_TASK_ID=<id>
-   ```
-2. **Run a live cycle** to confirm leads flow to Zapier: `cd lead-sourcer && npm run start`
-3. **Monitor poll-runs.jsonl** for `totalMatches > 0` (should see 15–50 first run)
-4. **Switch to scheduled mode** via cron or vercel serverless to run every 12 min
+## Immediate Next Steps (Current Live Ops)
+1. **Verify env is loaded at runtime** (`APIFY_TOKEN`, `APIFY_NEXTDOOR_TASK_ID`, `APIFY_FACEBOOK_TASK_ID`, `LEAD_WEBHOOK_URL`).
+2. **Run a live cycle** and confirm the run-report heartbeat is sent even on zero-match windows:
+   - `cd lead-sourcer && npm start`
+3. **Track output quality and streaks**:
+   - `npm run summary:daily`
+   - `npm run summary:weekly-tuning`
+4. **Tune thresholds and source filters weekly** using near-miss/review summaries while keeping hard-match relay criteria stable.
+5. **Keep scheduler cadence at every 12 minutes** once run reports and match flow look stable.
 
 ## Phase 1.5 - Zapier Hardening (Deferred / Optional)
 - [ ] Add source guard filter before Outlook to suppress internal/test traffic (for example `wire-test`).

@@ -70,6 +70,7 @@ Run report behavior:
 - Every completed `live` poll cycle now sends a run-summary payload through the same webhook.
 - This includes zero-match runs, so operations always get a heartbeat report.
 - Disable only if needed: set `LEAD_SOURCER_SEND_RUN_REPORT=false`.
+- Optional streak warning: set `LEAD_SOURCER_ZERO_MATCH_ALERT_THRESHOLD=<n>` to warn after `n` consecutive zero-match cycles.
 
 ## Volume Expectations
 
@@ -91,6 +92,18 @@ Near-miss review queue (new):
 	- Tighten or loosen score threshold and source keyword filters accordingly.
 	- Keep hard match relay logic unchanged for safety.
 
+Weekly tuning command:
+
+```bash
+cd lead-sourcer && npm run summary:weekly-tuning
+```
+
+Optional window override:
+
+```bash
+LEAD_SOURCER_TUNING_WINDOW_DAYS=14 npm run summary:weekly-tuning
+```
+
 One-time first-run recency expansion (Reddit):
 
 - First run can evaluate up to 14 days of posts one time, then auto-falls back to 48h.
@@ -99,6 +112,7 @@ One-time first-run recency expansion (Reddit):
 	- `LEAD_SOURCER_FIRST_RUN_EXTENDED_WINDOW=true|false` (default `true`)
 	- `LEAD_SOURCER_FIRST_RUN_MAX_POST_AGE_HOURS=336` (default 14 days)
 	- `LEAD_SOURCER_FIRST_RUN_MARKER_FILE=/custom/path.flag` (optional)
+- To intentionally rerun the one-time extended pass, delete the marker file and run a new `live` cycle.
 
 ## Rollback
 
