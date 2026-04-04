@@ -16,12 +16,14 @@ import { pollReddit } from './reddit.js';
 import { pollCraigslist } from './craigslist.js';
 import { pollApify } from './apify.js';
 import { resolveRunMode } from './mode.js';
+import { relay } from './relay.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const RUN_LOG_FILE = process.env.LEAD_SOURCER_RUN_LOG_FILE || path.resolve(__dirname, '..', 'runs', 'poll-runs.jsonl');
 const INTERVAL_MINUTES = Number(process.env.LEAD_SOURCER_INTERVAL_MINUTES || 0);
 const MAX_CYCLES = Number(process.env.LEAD_SOURCER_MAX_CYCLES || 0);
 const ZERO_MATCH_ALERT_THRESHOLD = Number(process.env.LEAD_SOURCER_ZERO_MATCH_ALERT_THRESHOLD || 0);
+const SEND_RUN_REPORT = !['0', 'false', 'no', 'off'].includes(String(process.env.LEAD_SOURCER_SEND_RUN_REPORT || 'true').trim().toLowerCase());
 
 function delay(ms) {
     if (!Number.isFinite(ms) || ms <= 0) return Promise.resolve();
@@ -48,6 +50,68 @@ function normalizePollResult(result) {
     }
 
     return { matches: [], stats: {} };
+}
+
+function safeStat(stats, key) {
+    const value = stats?.[key];
+    return Number.isFinite(value) ? value : 0;
+}
+
+function buildRunReportDetails(summary) {
+    const reddit = summary.verdicts?.reddit || {};
+    const craigslist = summary.verdicts?.craigslist || {};
+    const apify = summary.verdicts?.apify || {};
+
+    const lines = [
+        '[LEAD SOURCER RUN REPORT]',
+        '',
+        `Run window: ${summary.startedAt} -> ${summary.completedAt}`,
+        `Mode: ${summary.mode}`,
+        '',
+        `Counts: reddit=${summary.counts.reddit}, craigslist=${summary.counts.craigslist}, apify=${summary.counts.apify}, totalMatches=${summary.counts.totalMatches}`,
+        '',
+        `Reddit: fetched=${safeStat(reddit, 'fetched')}, evaluated=${safeStat(reddit, 'evaluated')}, matches=${safeStat(reddit, 'matches')}, borderline=${safeStat(reddit, 'borderline')}, rejects=${safeStat(reddit, 'rejects')}, relayed=${safeStat(reddit, 'relayed')}`,
+        `Craigslist: fetched=${safeStat(craigslist, 'fetched')}, evaluated=${safeStat(craigslist, 'evaluated')}, matches=${safeStat(craigslist, 'matches')}, borderline=${safeStat(craigslist, 'borderline')}, rejects=${safeStat(craigslist, 'rejects')}, relayed=${safeStat(craigslist, 'relayed')}`,
+        `Apify: fetched=${safeStat(apify, 'fetched')}, evaluated=${safeStat(apify, 'evaluated')}, matches=${safeStat(apify, 'matches')}, borderline=${safeStat(apify, 'borderline')}, rejects=${safeStat(apify, 'rejects')}, relayed=${safeStat(apify, 'relayed')}`,
+    ];
+
+    if (Array.isArray(summary.errors) && summary.errors.length > 0) {
+        lines.push('', `Errors: ${summary.errors.map((error) => `${error.source}:${error.message}`).join(' | ')}`);
+    }
+
+    lines.push('', `Run log file: ${RUN_LOG_FILE}`);
+    return lines.join('\n');
+}
+
+async function maybeSendRunReport(summary) {
+    if (!SEND_RUN_REPORT || summary.mode !== 'live') return;
+
+    const reportId = `run-report:${summary.startedAt}`;
+    const payload = {
+        submittedAt: summary.completedAt,
+        source: 'lead-sourcer-run-report',
+        lead: {
+            name: 'Lead Sourcer Run Report',
+            email: null,
+            phone: null,
+            projectDetails: buildRunReportDetails(summary),
+            externalPostId: reportId,
+            externalPostUrl: null,
+        },
+        metadata: {
+            requestId: `lead-sourcer/report/${reportId}`,
+            routeId: 'lead-sourcer/report',
+            dedupeKey: reportId,
+            automated: true,
+        },
+    };
+
+    try {
+        await relay(payload);
+        console.log(`[lead-sourcer] Run report relayed for ${summary.startedAt}`);
+    } catch (error) {
+        console.warn('[lead-sourcer] Failed to relay run report:', error?.message || error);
+    }
 }
 
 async function runOnce(mode) {
@@ -115,6 +179,7 @@ async function runOnce(mode) {
     };
 
     await appendRunSummary(summary);
+    await maybeSendRunReport(summary);
     return summary;
 }
 

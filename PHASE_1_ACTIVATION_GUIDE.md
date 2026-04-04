@@ -65,6 +65,12 @@ Recommended cron:
 - Confirm Outlook receives lead emails.
 - If no emails, check `LEAD_WEBHOOK_URL` and Zap task logs.
 
+Run report behavior:
+
+- Every completed `live` poll cycle now sends a run-summary payload through the same webhook.
+- This includes zero-match runs, so operations always get a heartbeat report.
+- Disable only if needed: set `LEAD_SOURCER_SEND_RUN_REPORT=false`.
+
 ## Volume Expectations
 
 - Core (Reddit + Craigslist): ~40-80 leads/month.
