@@ -80,7 +80,6 @@ export default function ServiceAreaPage({ area }) {
                 <meta property="og:site_name" content="Urban Stone Collective" />
                 <meta property="og:locale" content="en_US" />
                 <meta property="og:image" content={ogImageUrl} />
-                <meta property="og:image:url" content={ogImageUrl} />
                 <meta property="og:image:secure_url" content={ogImageUrl} />
                 <meta property="og:image:type" content={ogImageType} />
                 <meta property="og:image:width" content={ogImageWidth} />
@@ -90,7 +89,6 @@ export default function ServiceAreaPage({ area }) {
                 <meta name="twitter:title" content={`${area.headline} | Urban Stone Collective`} />
                 <meta name="twitter:description" content={area.metaDescription} />
                 <meta name="twitter:image" content={ogImageUrl} />
-                <meta name="twitter:image:src" content={ogImageUrl} />
                 <meta name="twitter:image:alt" content="Urban Stone Collective social preview with brand wordmark on a dark stone-inspired background" />
                 <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
                 <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessSchema) }} />
