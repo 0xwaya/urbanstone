@@ -346,6 +346,8 @@ export const APIFY_TASK_TIMEOUT_MS = Number(process.env.APIFY_TASK_TIMEOUT_MS ||
 export const APIFY_TASK_DELAY_MS = Number(process.env.APIFY_TASK_DELAY_MS || 1200);
 export const LEAD_SOURCER_REQUIRE_REGIONAL_SIGNAL = envFlag('LEAD_SOURCER_REQUIRE_REGIONAL_SIGNAL', true);
 export const LEAD_SOURCER_NEAR_MISS_SCORE_THRESHOLD = Number(process.env.LEAD_SOURCER_NEAR_MISS_SCORE_THRESHOLD || 45);
+export const LEAD_SOURCER_RELAY_BORDERLINE = envFlag('LEAD_SOURCER_RELAY_BORDERLINE', true);
+export const LEAD_SOURCER_BORDERLINE_RELAY_MIN_SCORE = Number(process.env.LEAD_SOURCER_BORDERLINE_RELAY_MIN_SCORE || 35);
 
 // Craigslist Cincinnati area base URL
 export const CRAIGSLIST_BASE = 'https://cincinnati.craigslist.org';

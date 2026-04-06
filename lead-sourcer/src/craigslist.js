@@ -10,6 +10,7 @@ import 'dotenv/config';
 import { relay } from './relay.js';
 import { CRAIGSLIST_QUERY_KEYWORDS } from './config.js';
 import { CRAIGSLIST_LISTING_NOISE_KEYWORDS, LEAD_SOURCER_NEAR_MISS_SCORE_THRESHOLD } from './config.js';
+import { LEAD_SOURCER_RELAY_BORDERLINE, LEAD_SOURCER_BORDERLINE_RELAY_MIN_SCORE } from './config.js';
 import { resolveRunMode } from './mode.js';
 import { runModeFlags } from './mode.js';
 import { logNearMissCandidate, logReviewCandidate } from './review-log.js';
@@ -229,6 +230,23 @@ export async function pollCraigslist({ mode = 'live' } = {}) {
                             score: softScore,
                         });
                     }
+
+                    const shouldRelayBorderline = modeFlags.shouldRelay
+                        && LEAD_SOURCER_RELAY_BORDERLINE
+                        && softScore.score >= LEAD_SOURCER_BORDERLINE_RELAY_MIN_SCORE;
+
+                    if (shouldRelayBorderline) {
+                        markSeen(post.id);
+                        const borderlinePayload = buildLeadPayload(
+                            post,
+                            { verdict: 'borderline', scoreResult: softScore },
+                        );
+                        await relay(borderlinePayload);
+                        stats.relayed += 1;
+                        matches.push(post);
+                        continue;
+                    }
+
                     if (modeFlags.shouldPersistSeen) {
                         markSeen(post.id);
                     }
@@ -269,7 +287,10 @@ export async function pollCraigslist({ mode = 'live' } = {}) {
 
                 markSeen(post.id);
 
-                const payload = buildLeadPayload(post);
+                const payload = buildLeadPayload(
+                    post,
+                    { verdict: 'match', scoreResult: softScore },
+                );
                 await relay(payload);
                 stats.relayed += 1;
                 matches.push(post);

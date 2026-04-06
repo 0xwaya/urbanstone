@@ -249,7 +249,7 @@ Run modes (set via `--mode=` CLI flag or `LEAD_SOURCER_MODE` env var):
 Classification verdicts:
 
 - `match`: direct keyword + intent signal — relayed in live mode
-- `borderline`: material or context signal without clear intent — logged to `runs/review-candidates.jsonl` for manual review
+- `borderline`: material/context signal without clear intent — logged to `runs/review-candidates.jsonl`; can also relay in live mode when recall-first controls are enabled
 - `reject`: excluded noise terms or no relevant signal
 
 Operational notes:
@@ -279,7 +279,11 @@ Operational notes:
 - Reddit regional gate control:
   - `LEAD_SOURCER_REQUIRE_REGIONAL_SIGNAL=true|false` (default: `true`)
   - set to `false` to allow non-r/cincinnati high-intent matches during growth/tuning windows
-- automated relays include `lead.externalPostId`, `lead.externalPostUrl`, `metadata.automated=true`, `metadata.dedupeKey`, and `metadata.requestId` so the Zapier flow can distinguish sourced leads from website submissions and suppress duplicates consistently
+- recall-first relay controls:
+  - `LEAD_SOURCER_RELAY_BORDERLINE=true|false` (default: `true`)
+  - `LEAD_SOURCER_BORDERLINE_RELAY_MIN_SCORE=35` (default: `35`)
+  - use these to relay higher-signal borderline candidates while preserving manual review logs
+- automated relays include `lead.externalPostId`, `lead.externalPostUrl`, and enriched metadata for Zap triage: `metadata.automated=true`, `metadata.dedupeKey`, `metadata.requestId`, `metadata.verdict`, `metadata.score`, `metadata.scoreBand`, `metadata.hasAnchor`, and `metadata.signalFactors`
 
 Current runtime state (April 3, 2026):
 

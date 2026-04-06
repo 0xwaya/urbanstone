@@ -21,8 +21,22 @@ export function isRecent(createdUtcSeconds, maxAgeHours) {
  * Build a canonical lead payload for an outbound match so it flows
  * through the same Zapier → Outlook pipeline as form submissions.
  */
-export function buildLeadPayload({ id, source, title, body, url, author, createdAt }) {
-    return buildAutomatedLeadPayload({ id, source, title, body, url, author, createdAt });
+export function buildLeadPayload(
+    { id, source, title, body, url, author, createdAt, subreddit = null },
+    { verdict = null, scoreResult = null } = {},
+) {
+    return buildAutomatedLeadPayload({
+        id,
+        source,
+        title,
+        body,
+        url,
+        author,
+        createdAt,
+        sourceSubreddit: subreddit,
+        verdict,
+        scoreResult,
+    });
 }
 
 export { classifyLeadCandidate, classifyLeadText, matchesKeywords, normalizeText, scoreLeadCandidate };

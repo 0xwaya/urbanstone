@@ -164,6 +164,40 @@ describe('buildLeadPayload', () => {
         expect(metadata).toHaveProperty('requestId', 'lead-sourcer/reddit/abc123');
     });
 
+    test('includes score and verdict metadata when provided', () => {
+        const payload = buildLeadPayload(sample, {
+            verdict: 'borderline',
+            scoreResult: {
+                score: 52,
+                band: 'tepid',
+                anchored: true,
+                factors: {
+                    directMatches: 1,
+                    materialSignals: 1,
+                    projectContext: 0,
+                    intentSignals: 0,
+                    excluded: 0,
+                },
+            },
+        });
+
+        expect(payload).toHaveProperty('verdict', 'borderline');
+        expect(payload).toHaveProperty('score', 52);
+        expect(payload).toHaveProperty('scoreBand', 'tepid');
+        expect(payload).toHaveProperty('hasAnchor', true);
+        expect(payload.metadata).toHaveProperty('verdict', 'borderline');
+        expect(payload.metadata).toHaveProperty('score', 52);
+        expect(payload.metadata).toHaveProperty('scoreBand', 'tepid');
+        expect(payload.metadata).toHaveProperty('hasAnchor', true);
+        expect(payload.metadata.signalFactors).toMatchObject({
+            directMatches: 1,
+            materialSignals: 1,
+            projectContext: 0,
+            intentSignals: 0,
+            excluded: 0,
+        });
+    });
+
     test('projectDetails concatenates title and body', () => {
         const { lead } = buildLeadPayload(sample);
         expect(lead.projectDetails).toContain(sample.title);

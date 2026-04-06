@@ -15,6 +15,8 @@ import {
     APIFY_FACEBOOK_NEIGHBORHOOD_QUERIES,
     APIFY_POST_LOCATION_HINTS,
     LEAD_SOURCER_NEAR_MISS_SCORE_THRESHOLD,
+    LEAD_SOURCER_RELAY_BORDERLINE,
+    LEAD_SOURCER_BORDERLINE_RELAY_MIN_SCORE,
 } from './config.js';
 import { buildLeadPayload, classifyLeadCandidate, scoreLeadCandidate } from './matcher.js';
 import { isSeen, markSeen } from './dedup.js';
@@ -347,6 +349,24 @@ export async function pollApify({ mode = 'live' } = {}) {
                     score: softScore,
                 });
             }
+
+            const shouldRelayBorderline = modeFlags.shouldRelay
+                && LEAD_SOURCER_RELAY_BORDERLINE
+                && softScore.score >= LEAD_SOURCER_BORDERLINE_RELAY_MIN_SCORE;
+
+            if (shouldRelayBorderline) {
+                markSeen(post.id);
+                const borderlinePayload = buildLeadPayload(
+                    post,
+                    { verdict: 'borderline', scoreResult: softScore },
+                );
+                await relay(borderlinePayload);
+                stats.relayed += 1;
+                taskStats.relayed += 1;
+                matches.push(post);
+                continue;
+            }
+
             if (modeFlags.shouldPersistSeen) {
                 markSeen(post.id);
             }
@@ -388,7 +408,10 @@ export async function pollApify({ mode = 'live' } = {}) {
         }
 
         markSeen(post.id);
-        const payload = buildLeadPayload(post);
+        const payload = buildLeadPayload(
+            post,
+            { verdict: 'match', scoreResult: softScore },
+        );
         await relay(payload);
         stats.relayed += 1;
         taskStats.relayed += 1;
