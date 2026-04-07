@@ -103,7 +103,6 @@ jobs:
           fi
 
       - name: Sync env vars to Vercel project
-        working-directory: frontend
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: team_1kzXJnG8hT3T3zkXXhaWuWgL
@@ -117,10 +116,17 @@ jobs:
           NEXT_PUBLIC_LEAD_EMAIL: ${{ secrets.NEXT_PUBLIC_LEAD_EMAIL }}
           NEXT_PUBLIC_WAYALABS_URL: ${{ secrets.NEXT_PUBLIC_WAYALABS_URL }}
         run: |
+          rm -rf frontend/.vercel
+          vercel link --yes \
+            --cwd frontend \
+            --token "$VERCEL_TOKEN" \
+            --team "$VERCEL_ORG_ID" \
+            --project "$VERCEL_PROJECT_ID"
+
           upsert_env() {
             local key=$1 value=$2
-            vercel env rm "$key" production --yes --token "$VERCEL_TOKEN" 2>/dev/null || true
-            printf '%s' "$value" | vercel env add "$key" production --token "$VERCEL_TOKEN" --yes
+            vercel env remove "$key" production --cwd frontend --token "$VERCEL_TOKEN" --yes 2>/dev/null || true
+            printf '%s' "$value" | vercel env add "$key" production --cwd frontend --token "$VERCEL_TOKEN" --yes
             echo "Set $key"
           }
           upsert_env SUPABASE_PROJECT_URL      "$SUPABASE_PROJECT_URL"
