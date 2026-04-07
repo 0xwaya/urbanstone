@@ -293,6 +293,25 @@ Current runtime state (April 3, 2026):
 - Ad Library can be disabled with `APIFY_ENABLE_AD_LIBRARY=false` when Apify account limits cause instability
 - current no-email behavior is due to zero `match` verdicts in recent runs, not a broken webhook transport
 
+Safe-stop update (April 5, 2026):
+
+- recall-first backend changes are deployed on `main` (commit: `c113503`)
+- lead-sourcer tests are passing after recall-first updates (`35/35`)
+- a real automated relay test was sent through `lead-sourcer/src/relay.js` and returned `HTTP 200`
+- the test payload included path-routing fields used by Zapier Paths:
+  - `metadata.automated=true`
+  - `metadata.scoreBand=hot`
+  - `metadata.score=95`
+  - `metadata.routeId=lead-sourcer/reddit`
+- this confirms Path A/Path B eligible fields are present in live automated traffic (not fallback-only payload shape)
+
+Next session pickup checklist (tomorrow evening):
+
+1. Trigger one additional automated test with `metadata.scoreBand=tepid` to verify Path B end-to-end.
+2. Validate duplicate suppression by sending the same `metadata.dedupeKey` twice and confirming second send is blocked.
+3. Run one normal live cycle and inspect Zap run history distribution across Path A, Path B, and fallback.
+4. If fallback share is high, inspect incoming webhook samples and tighten path predicates only after confirming field presence.
+
 ## Roadmap
 
 Short-term:

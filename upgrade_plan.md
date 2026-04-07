@@ -162,3 +162,32 @@ Latest live validation snapshot (Apr 4, 2026, ~04:24 local):
 ### Post-Deploy Action Required
 - Open [Meta Sharing Debugger](https://developers.facebook.com/tools/debug/) and scrape both `https://urbanstone.co` (to flush the old redirect target) and `https://www.urbanstone.co` to seed a fresh valid cache.
 - Verify WhatsApp preview with a share link once Vercel deploy propagates (typically < 2 min).
+
+---
+
+## Session Closeout — Apr 5, 2026 (Safe Stop)
+
+### Completed Today
+- Recall-first relay + triage metadata update is deployed to `main` (`c113503`).
+- Lead-sourcer validation passed after implementation (`35/35` tests).
+- A real automated lead event was relayed through the lead-sourcer codepath and acknowledged by webhook (`HTTP 200`).
+- Verified live automated payload includes Zap routing fields for Paths:
+   - `metadata.automated=true`
+   - `metadata.scoreBand=hot`
+   - `metadata.score=95`
+   - `metadata.routeId=lead-sourcer/reddit`
+
+### Where Work Is Paused
+- Zap path logic is configured for hot/warm, tepid, and fallback.
+- Remaining work is operational confirmation in Zap history over real traffic windows, not backend code changes.
+
+### First Steps Tomorrow Evening
+1. Send one `tepid` automated test event to confirm Path B activation in Zap runs.
+2. Run duplicate test (same `metadata.dedupeKey` twice) and confirm second event is blocked.
+3. Capture one screenshot/export from Zap run history showing non-fallback path activation.
+4. Review first 24-hour routing mix (Path A vs Path B vs fallback) and adjust thresholds only if required.
+
+### Guardrails For Resume
+- Do not change webhook contract field names without updating Zap mappings in the same session.
+- Keep `LEAD_SOURCER_RELAY_BORDERLINE=true` and `LEAD_SOURCER_BORDERLINE_RELAY_MIN_SCORE=35` unless inbox noise is clearly excessive.
+- If fallback is unexpectedly dominant, validate incoming sample payloads before touching path rules.

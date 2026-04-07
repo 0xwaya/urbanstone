@@ -7,6 +7,7 @@ import LeadForm from '../components/LeadForm';
 import FAQSection from '../components/FAQSection';
 import ChatWidget from '../components/ChatWidget';
 import Footer from '../components/Footer';
+import ContractorCard from '../components/ContractorCard';
 import { homepageAnnouncement, homepageFaqContent, homepageFaqItems, homepageLeadFormContent } from '../data/homepage-content';
 import { getCanonicalUrl, getSiteUrl } from '../lib/site';
 import { getGeoRegion } from '../lib/seo';
@@ -140,6 +141,9 @@ export default function Home() {
             <Hero />
             <FeaturesBar announcement={homepageAnnouncement} />
             <div className="my-8 h-px bg-gradient-to-r from-transparent via-accent/40 to-transparent sm:my-10" />
+            <div className="mb-8">
+              <ContractorCard />
+            </div>
             <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
               <div className="lg:col-span-2">
                 <SuppliersSection />
