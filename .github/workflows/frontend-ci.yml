@@ -41,3 +41,47 @@ jobs:
 
       - name: Build
         run: npm run build
+
+  deploy-production:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: frontend
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install Vercel CLI
+        run: npm i -g vercel@latest
+
+      - name: Deploy to Vercel (production)
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: team_1kzXJnG8hT3T3zkXXhaWuWgL
+          VERCEL_PROJECT_ID: prj_RA55KfqImv5WyPIbxyvrM78tirkR
+          SUPABASE_PROJECT_URL: ${{ secrets.SUPABASE_PROJECT_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          CONTRACTOR_SESSION_SECRET: ${{ secrets.CONTRACTOR_SESSION_SECRET }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          NEXT_PUBLIC_SITE_URL: ${{ secrets.NEXT_PUBLIC_SITE_URL }}
+          NEXT_PUBLIC_COMPANY_PHONE: ${{ secrets.NEXT_PUBLIC_COMPANY_PHONE }}
+          NEXT_PUBLIC_LEAD_EMAIL: ${{ secrets.NEXT_PUBLIC_LEAD_EMAIL }}
+          NEXT_PUBLIC_WAYALABS_URL: ${{ secrets.NEXT_PUBLIC_WAYALABS_URL }}
+        run: |
+          vercel deploy --prod --cwd frontend --yes --token "$VERCEL_TOKEN" \
+            --env SUPABASE_PROJECT_URL="$SUPABASE_PROJECT_URL" \
+            --env SUPABASE_SERVICE_ROLE_KEY="$SUPABASE_SERVICE_ROLE_KEY" \
+            --env CONTRACTOR_SESSION_SECRET="$CONTRACTOR_SESSION_SECRET" \
+            --env RESEND_API_KEY="$RESEND_API_KEY" \
+            --env NEXT_PUBLIC_SITE_URL="$NEXT_PUBLIC_SITE_URL" \
+            --env NEXT_PUBLIC_COMPANY_PHONE="$NEXT_PUBLIC_COMPANY_PHONE" \
+            --env NEXT_PUBLIC_LEAD_EMAIL="$NEXT_PUBLIC_LEAD_EMAIL" \
+            --env NEXT_PUBLIC_WAYALABS_URL="$NEXT_PUBLIC_WAYALABS_URL" \
+            --build-env NEXT_PUBLIC_SITE_URL="$NEXT_PUBLIC_SITE_URL" \
+            --build-env NEXT_PUBLIC_COMPANY_PHONE="$NEXT_PUBLIC_COMPANY_PHONE" \
+            --build-env NEXT_PUBLIC_LEAD_EMAIL="$NEXT_PUBLIC_LEAD_EMAIL" \
+            --build-env NEXT_PUBLIC_WAYALABS_URL="$NEXT_PUBLIC_WAYALABS_URL"
