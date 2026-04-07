@@ -20,6 +20,17 @@ export default function ContractorLogin() {
     const [loginStatus, setLoginStatus] = useState(null);
     const [loginMsg, setLoginMsg] = useState('');
 
+    async function readApiResponse(res, fallbackMessage) {
+        const contentType = res.headers.get('content-type') || '';
+        if (contentType.includes('application/json')) {
+            const data = await res.json();
+            return data?.message || data?.error || fallbackMessage;
+        }
+
+        const text = await res.text();
+        return text || fallbackMessage;
+    }
+
     async function handleRegister(e) {
         e.preventDefault();
         setRegStatus('loading');
@@ -30,13 +41,14 @@ export default function ContractorLogin() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email: regEmail, company_name: regCompany, website: regWebsite }),
             });
-            const data = await res.json();
             if (res.ok) {
+                const message = await readApiResponse(res, 'Application submitted.');
                 setRegStatus('success');
-                setRegMsg(data.message);
+                setRegMsg(message);
             } else {
+                const message = await readApiResponse(res, 'Something went wrong. Please try again.');
                 setRegStatus('error');
-                setRegMsg(data.error || 'Something went wrong. Please try again.');
+                setRegMsg(message);
             }
         } catch {
             setRegStatus('error');
@@ -54,9 +66,15 @@ export default function ContractorLogin() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email: loginEmail }),
             });
-            const data = await res.json();
-            setLoginStatus('success');
-            setLoginMsg(data.message || 'Check your email for a magic link.');
+            if (res.ok) {
+                const message = await readApiResponse(res, 'Check your email for a magic link.');
+                setLoginStatus('success');
+                setLoginMsg(message);
+            } else {
+                const message = await readApiResponse(res, 'Magic link request failed. Please try again.');
+                setLoginStatus('error');
+                setLoginMsg(message);
+            }
         } catch {
             setLoginStatus('error');
             setLoginMsg('Network error. Please try again.');
