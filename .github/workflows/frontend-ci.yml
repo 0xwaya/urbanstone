@@ -58,6 +58,34 @@ jobs:
       - name: Install Vercel CLI
         run: npm i -g vercel@latest
 
+      - name: Validate required deployment secrets
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          SUPABASE_PROJECT_URL: ${{ secrets.SUPABASE_PROJECT_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          CONTRACTOR_SESSION_SECRET: ${{ secrets.CONTRACTOR_SESSION_SECRET }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          NEXT_PUBLIC_SITE_URL: ${{ secrets.NEXT_PUBLIC_SITE_URL }}
+          NEXT_PUBLIC_COMPANY_PHONE: ${{ secrets.NEXT_PUBLIC_COMPANY_PHONE }}
+          NEXT_PUBLIC_LEAD_EMAIL: ${{ secrets.NEXT_PUBLIC_LEAD_EMAIL }}
+          NEXT_PUBLIC_WAYALABS_URL: ${{ secrets.NEXT_PUBLIC_WAYALABS_URL }}
+        run: |
+          missing=()
+          [[ -z "$VERCEL_TOKEN" ]] && missing+=("VERCEL_TOKEN")
+          [[ -z "$SUPABASE_PROJECT_URL" ]] && missing+=("SUPABASE_PROJECT_URL")
+          [[ -z "$SUPABASE_SERVICE_ROLE_KEY" ]] && missing+=("SUPABASE_SERVICE_ROLE_KEY")
+          [[ -z "$CONTRACTOR_SESSION_SECRET" ]] && missing+=("CONTRACTOR_SESSION_SECRET")
+          [[ -z "$RESEND_API_KEY" ]] && missing+=("RESEND_API_KEY")
+          [[ -z "$NEXT_PUBLIC_SITE_URL" ]] && missing+=("NEXT_PUBLIC_SITE_URL")
+          [[ -z "$NEXT_PUBLIC_COMPANY_PHONE" ]] && missing+=("NEXT_PUBLIC_COMPANY_PHONE")
+          [[ -z "$NEXT_PUBLIC_LEAD_EMAIL" ]] && missing+=("NEXT_PUBLIC_LEAD_EMAIL")
+          [[ -z "$NEXT_PUBLIC_WAYALABS_URL" ]] && missing+=("NEXT_PUBLIC_WAYALABS_URL")
+
+          if (( ${#missing[@]} > 0 )); then
+            echo "Missing required GitHub secrets: ${missing[*]}"
+            exit 1
+          fi
+
       - name: Deploy to Vercel (production)
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
