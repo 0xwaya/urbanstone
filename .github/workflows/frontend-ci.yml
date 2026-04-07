@@ -102,11 +102,9 @@ jobs:
             exit 1
           fi
 
-      - name: Deploy to Vercel (production)
+      - name: Sync env vars to Vercel project
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-          VERCEL_ORG_ID: team_1kzXJnG8hT3T3zkXXhaWuWgL
-          VERCEL_PROJECT_ID: prj_RA55KfqImv5WyPIbxyvrM78tirkR
           SUPABASE_PROJECT_URL: ${{ secrets.SUPABASE_PROJECT_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           CONTRACTOR_SESSION_SECRET: ${{ secrets.CONTRACTOR_SESSION_SECRET }}
@@ -116,16 +114,51 @@ jobs:
           NEXT_PUBLIC_LEAD_EMAIL: ${{ secrets.NEXT_PUBLIC_LEAD_EMAIL }}
           NEXT_PUBLIC_WAYALABS_URL: ${{ secrets.NEXT_PUBLIC_WAYALABS_URL }}
         run: |
-          vercel deploy --prod --cwd frontend --yes --token "$VERCEL_TOKEN" \
-            --env SUPABASE_PROJECT_URL="$SUPABASE_PROJECT_URL" \
-            --env SUPABASE_SERVICE_ROLE_KEY="$SUPABASE_SERVICE_ROLE_KEY" \
-            --env CONTRACTOR_SESSION_SECRET="$CONTRACTOR_SESSION_SECRET" \
-            --env RESEND_API_KEY="$RESEND_API_KEY" \
-            --env NEXT_PUBLIC_SITE_URL="$NEXT_PUBLIC_SITE_URL" \
-            --env NEXT_PUBLIC_COMPANY_PHONE="$NEXT_PUBLIC_COMPANY_PHONE" \
-            --env NEXT_PUBLIC_LEAD_EMAIL="$NEXT_PUBLIC_LEAD_EMAIL" \
-            --env NEXT_PUBLIC_WAYALABS_URL="$NEXT_PUBLIC_WAYALABS_URL" \
-            --build-env NEXT_PUBLIC_SITE_URL="$NEXT_PUBLIC_SITE_URL" \
-            --build-env NEXT_PUBLIC_COMPANY_PHONE="$NEXT_PUBLIC_COMPANY_PHONE" \
-            --build-env NEXT_PUBLIC_LEAD_EMAIL="$NEXT_PUBLIC_LEAD_EMAIL" \
-            --build-env NEXT_PUBLIC_WAYALABS_URL="$NEXT_PUBLIC_WAYALABS_URL"
+          python3 - <<'EOF'
+          import os, urllib.request, json
+
+          token = os.environ['VERCEL_TOKEN']
+          project_id = 'prj_RA55KfqImv5WyPIbxyvrM78tirkR'
+          team_id = 'team_1kzXJnG8hT3T3zkXXhaWuWgL'
+          headers = {'Authorization': f'Bearer {token}', 'Content-Type': 'application/json'}
+
+          def api(method, path, body=None):
+              req = urllib.request.Request(
+                  f'https://api.vercel.com{path}?teamId={team_id}',
+                  data=json.dumps(body).encode() if body else None,
+                  headers=headers,
+                  method=method
+              )
+              with urllib.request.urlopen(req) as r:
+                  return json.loads(r.read())
+
+          existing = {e['key']: e['id'] for e in api('GET', f'/v9/projects/{project_id}/env').get('envs', [])}
+
+          env_vars = {
+              'SUPABASE_PROJECT_URL':       (os.environ['SUPABASE_PROJECT_URL'],       'encrypted'),
+              'SUPABASE_SERVICE_ROLE_KEY':  (os.environ['SUPABASE_SERVICE_ROLE_KEY'],  'encrypted'),
+              'CONTRACTOR_SESSION_SECRET':  (os.environ['CONTRACTOR_SESSION_SECRET'],  'encrypted'),
+              'RESEND_API_KEY':             (os.environ['RESEND_API_KEY'],             'encrypted'),
+              'NEXT_PUBLIC_SITE_URL':       (os.environ['NEXT_PUBLIC_SITE_URL'],       'plain'),
+              'NEXT_PUBLIC_COMPANY_PHONE':  (os.environ['NEXT_PUBLIC_COMPANY_PHONE'],  'plain'),
+              'NEXT_PUBLIC_LEAD_EMAIL':     (os.environ['NEXT_PUBLIC_LEAD_EMAIL'],     'plain'),
+              'NEXT_PUBLIC_WAYALABS_URL':   (os.environ['NEXT_PUBLIC_WAYALABS_URL'],   'plain'),
+          }
+
+          for key, (value, var_type) in env_vars.items():
+              payload = {'value': value, 'target': ['production', 'preview'], 'type': var_type}
+              if key in existing:
+                  api('PATCH', f'/v9/projects/{project_id}/env/{existing[key]}', payload)
+                  print(f'Updated {key}')
+              else:
+                  api('POST', f'/v10/projects/{project_id}/env', {**payload, 'key': key})
+                  print(f'Created {key}')
+          EOF
+
+      - name: Deploy to Vercel (production)
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: team_1kzXJnG8hT3T3zkXXhaWuWgL
+          VERCEL_PROJECT_ID: prj_RA55KfqImv5WyPIbxyvrM78tirkR
+        run: |
+          vercel deploy --prod --cwd frontend --yes --token "$VERCEL_TOKEN"
