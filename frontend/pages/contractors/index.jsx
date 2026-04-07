@@ -12,7 +12,7 @@ function toTelHref(value) {
 export default function ContractorPortal() {
     const companyPhone = process.env.NEXT_PUBLIC_COMPANY_PHONE || '(513) 307-5840';
     const companyEmail = process.env.NEXT_PUBLIC_LEAD_EMAIL || 'sales@urbanstone.co';
-    const [expandedTier, setExpandedTier] = useState(CONTRACTOR_TIERS[0]?.name || '');
+    const [expandedTier, setExpandedTier] = useState('');
 
     return (
         <>
@@ -24,11 +24,11 @@ export default function ContractorPortal() {
             <TopNav />
 
             <main className="bg-bg min-h-screen text-text">
-                <section className="mx-auto grid max-w-6xl gap-6 px-4 pb-10 pt-16 sm:px-6 sm:pb-12 sm:pt-18 lg:grid-cols-[minmax(0,1.3fr)_22rem] lg:items-start lg:gap-8">
+                <section className="mx-auto max-w-6xl px-4 pt-16 sm:px-6 sm:pt-18 pb-10 sm:pb-12">
                     <div className="rounded-[2rem] border border-border bg-surface/90 px-6 py-6 shadow-soft sm:px-8 sm:py-7">
                         <p className="eyebrow mb-4">Contractor Program</p>
                         <h1 className="max-w-3xl text-3xl font-display font-semibold leading-tight sm:text-4xl lg:text-[2.8rem]">
-                            Builder pricing in a cleaner spec sheet format.
+                            Installed quartz pricing for multi-unit contractors.
                         </h1>
                         <p className="mt-4 max-w-2xl text-sm leading-7 text-muted sm:text-base">
                             Designed for apartment developers, hospitality builders, and office contractors who need a fast visual read on core quartz options without digging through a residential quote flow.
@@ -46,31 +46,6 @@ export default function ContractorPortal() {
                             </span>
                         </div>
                     </div>
-
-                    <aside className="rounded-[2rem] border border-border bg-panel/90 p-5 shadow-soft sm:p-6">
-                        <div className="text-[11px] font-semibold uppercase tracking-[0.22em] text-muted">Direct inquiries</div>
-                        <h2 className="mt-3 text-xl font-semibold text-text">Need a fast contractor answer?</h2>
-                        <p className="mt-2 text-sm leading-6 text-muted">
-                            This page is intentionally trimmed down. For takeoffs, rollout schedules, and unit-count pricing, contact the sales desk directly.
-                        </p>
-                        <div className="mt-5 grid gap-3">
-                            <a
-                                className="brand-button-primary px-5 py-3 text-center text-sm font-semibold"
-                                href={`mailto:${companyEmail}?subject=Contractor%20Program%20Inquiry`}
-                            >
-                                Email {companyEmail}
-                            </a>
-                            <a
-                                className="brand-button-secondary inline-flex items-center justify-center rounded-full px-5 py-3 text-sm font-semibold"
-                                href={`sms:${toTelHref(companyPhone)}`}
-                            >
-                                Text {companyPhone}
-                            </a>
-                        </div>
-                        <div className="mt-5 border-t border-border/70 pt-4 text-xs leading-6 text-muted">
-                            Best message format: unit count, timeline, property type, and preferred material.
-                        </div>
-                    </aside>
                 </section>
 
                 <section className="mx-auto max-w-6xl px-4 pb-10 sm:px-6 sm:pb-12">
@@ -128,29 +103,20 @@ export default function ContractorPortal() {
 
                                         {isExpanded ? (
                                             <div className="border-t border-border/70 px-4 pb-4 pt-4 sm:px-5 sm:pb-5">
-                                                <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_16rem]">
-                                                    <div>
-                                                        <p className="text-sm font-medium text-accent">{tier.tagline}</p>
-                                                        <p className="mt-2 text-sm leading-7 text-muted">{tier.description}</p>
-                                                        <p className="mt-3 text-sm leading-7 text-muted">
-                                                            <span className="font-semibold text-text">Best fit:</span> {tier.applications}
-                                                        </p>
-                                                    </div>
-                                                    <div className="rounded-[1.25rem] border border-border bg-surface/80 p-4">
-                                                        <div className="text-[11px] font-semibold uppercase tracking-[0.2em] text-muted">Quick action</div>
-                                                        <a
-                                                            className="mt-3 inline-flex w-full items-center justify-center rounded-full border border-accent bg-accent px-4 py-2.5 text-sm font-semibold text-white transition hover:opacity-95"
-                                                            href={`mailto:${companyEmail}?subject=${encodeURIComponent(`Contractor pricing - ${tier.name}`)}`}
-                                                        >
-                                                            Email about {tier.name}
-                                                        </a>
-                                                        <a
-                                                            className="mt-2 inline-flex w-full items-center justify-center rounded-full border border-border bg-panel px-4 py-2.5 text-sm font-semibold text-text transition hover:border-accent hover:text-accent"
-                                                            href={`sms:${toTelHref(companyPhone)}?body=${encodeURIComponent(`Interested in ${tier.name} for a contractor project.`)}`}
-                                                        >
-                                                            Text for rollout pricing
-                                                        </a>
-                                                    </div>
+                                                <div className="rounded-[1.5rem] border border-border bg-surface/80 p-4">
+                                                    <div className="text-[11px] font-semibold uppercase tracking-[0.2em] text-muted">Quick action</div>
+                                                    <a
+                                                        className="mt-3 inline-flex w-full items-center justify-center rounded-full border border-accent bg-accent px-4 py-2.5 text-sm font-semibold text-white transition hover:opacity-95"
+                                                        href={`mailto:${companyEmail}?subject=${encodeURIComponent(`Contractor pricing - ${tier.name}`)}`}
+                                                    >
+                                                        Email about {tier.name}
+                                                    </a>
+                                                    <a
+                                                        className="mt-2 inline-flex w-full items-center justify-center rounded-full border border-border bg-panel px-4 py-2.5 text-sm font-semibold text-text transition hover:border-accent hover:text-accent"
+                                                        href={`sms:${toTelHref(companyPhone)}?body=${encodeURIComponent(`Interested in ${tier.name} for a contractor project.`)}`}
+                                                    >
+                                                        Text for rollout pricing
+                                                    </a>
                                                 </div>
                                             </div>
                                         ) : null}
@@ -161,7 +127,7 @@ export default function ContractorPortal() {
                     </div>
                 </section>
 
-                <section className="mx-auto grid max-w-6xl gap-6 px-4 pb-14 sm:px-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
+                <section className="mx-auto max-w-6xl px-4 pb-10 sm:px-6 sm:pb-12">
                     <div className="rounded-[2rem] border border-border bg-surface/85 p-6 shadow-soft sm:p-8">
                         <h2 className="mb-5 text-lg font-semibold text-text">Standard specifications</h2>
                         <div className="grid grid-cols-2 gap-5 md:grid-cols-3">
@@ -173,7 +139,9 @@ export default function ContractorPortal() {
                             ))}
                         </div>
                     </div>
+                </section>
 
+                <section className="mx-auto max-w-6xl px-4 pb-10 sm:px-6 sm:pb-12">
                     <div className="rounded-[2rem] border border-border bg-panel/90 p-6 shadow-soft">
                         <div className="text-[11px] font-semibold uppercase tracking-[0.22em] text-muted">Program notes</div>
                         <div className="mt-4 space-y-3">
@@ -182,6 +150,33 @@ export default function ContractorPortal() {
                                     {note}
                                 </p>
                             ))}
+                        </div>
+                    </div>
+                </section>
+
+                <section className="mx-auto max-w-6xl px-4 pb-14 sm:px-6">
+                    <div className="rounded-[2rem] border border-border bg-panel/90 p-5 shadow-soft sm:p-6">
+                        <div className="text-[11px] font-semibold uppercase tracking-[0.22em] text-muted">Direct inquiries</div>
+                        <h2 className="mt-3 text-xl font-semibold text-text">Need a fast contractor answer?</h2>
+                        <p className="mt-2 text-sm leading-6 text-muted">
+                            This page is intentionally trimmed down. For takeoffs, rollout schedules, and unit-count pricing, contact the sales desk directly.
+                        </p>
+                        <div className="mt-5 grid gap-3">
+                            <a
+                                className="brand-button-primary px-5 py-3 text-center text-sm font-semibold"
+                                href={`mailto:${companyEmail}?subject=Contractor%20Program%20Inquiry`}
+                            >
+                                Email {companyEmail}
+                            </a>
+                            <a
+                                className="brand-button-secondary inline-flex items-center justify-center rounded-full px-5 py-3 text-sm font-semibold"
+                                href={`sms:${toTelHref(companyPhone)}`}
+                            >
+                                Text {companyPhone}
+                            </a>
+                        </div>
+                        <div className="mt-5 border-t border-border/70 pt-4 text-xs leading-6 text-muted">
+                            Best message format: unit count, timeline, property type, and preferred material.
                         </div>
                     </div>
                 </section>
