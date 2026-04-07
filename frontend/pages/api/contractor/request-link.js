@@ -64,7 +64,7 @@ export default async function handler(req, res) {
     // Generate token
     const token = crypto.randomBytes(32).toString('hex');
     const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
-    const expiresAt = new Date(Date.now() + 30 * 60 * 1000).toISOString();
+    const expiresAt = new Date(Date.now() + 4 * 60 * 60 * 1000).toISOString(); // 4 hours
 
     const { error: insertError } = await supabase.from('magic_links').insert({
         contractor_id: contractor.id,
