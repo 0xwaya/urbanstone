@@ -35,9 +35,10 @@ lead-sourcer/.env
 lead-sourcer/seen-ids.json
 lead-sourcer/runs/*.jsonl
 
-# Environment and secrets
+# Environment and secrets — never commit real env files
 .env
 .env.*
+.env*.local
 !.env.example
 *.pem
 *.key
@@ -50,4 +51,3 @@ supplier-scraper/featured-stones.output.json
 .tmp/
 tmp/
 /test-results/
-.env*.local
