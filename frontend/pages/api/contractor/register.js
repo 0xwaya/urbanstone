@@ -1,5 +1,5 @@
 import { getSupabase } from '../../../lib/supabase';
-import { getEmailAccess } from '../../../lib/contractor-access';
+import { getEmailAccess, hasPrivateEmailDomain, hasBusinessWebsite } from '../../../lib/contractor-access';
 
 const RATE_WINDOW_MS = 60_000;
 const RATE_LIMIT = 5;
@@ -46,18 +46,24 @@ export default async function handler(req, res) {
     const emailAccess = getEmailAccess(email);
     const supabase = getSupabase();
 
+    // Auto-approve if the email is from a private (non-free-provider) domain,
+    // or if they provide a real business website. Both are signals of a real contractor.
+    const autoApprove = emailAccess.isApproved
+        || hasPrivateEmailDomain(email)
+        || hasBusinessWebsite(website);
+
     const { error } = await supabase.from('contractors').insert({
         email: emailAccess.normalizedEmail,
         company_name: company_name.trim(),
         website: website.trim(),
-        approved: emailAccess.isApproved,
+        approved: autoApprove,
     });
 
     if (error) {
         if (error.code === '23505') {
             // Already registered — return same message to avoid enumeration
             return res.status(201).json({
-                message: emailAccess.isApproved
+                message: autoApprove
                     ? 'Access is approved for this email. You can request a magic link now.'
                     : 'Application received. We will review and send a magic link when approved.',
             });
@@ -77,15 +83,15 @@ export default async function handler(req, res) {
                 email: emailAccess.normalizedEmail,
                 company_name: company_name.trim(),
                 website: website.trim(),
-                note: emailAccess.isApproved
-                    ? 'Whitelisted email registered. Access is already approved.'
-                    : 'Pending approval — go to Supabase dashboard and set approved = true, then contractor can request magic link.',
+                note: autoApprove
+                    ? 'Auto-approved (private domain or business website). Contractor can request a magic link now.'
+                    : 'Pending manual approval — set approved = true in Supabase dashboard.',
             }),
         }).catch(() => { }); // don't block response on webhook failure
     }
 
     return res.status(201).json({
-        message: emailAccess.isApproved
+        message: autoApprove
             ? 'Access is approved for this email. You can request a magic link now.'
             : 'Application received. We will review and send a magic link when approved.',
     });
