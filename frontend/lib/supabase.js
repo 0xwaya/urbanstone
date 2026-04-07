@@ -4,11 +4,9 @@ let client;
 
 export function getSupabase() {
     if (!client) {
-        client = createClient(
-            process.env.SUPABASE_URL,
-            process.env.SUPABASE_SERVICE_ROLE_KEY,
-            { auth: { autoRefreshToken: false, persistSession: false } }
-        );
+        const url = process.env.SUPABASE_URL || process.env.SUPABASE_PROJECT_URL;
+        const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+        client = createClient(url, key, { auth: { autoRefreshToken: false, persistSession: false } });
     }
     return client;
 }

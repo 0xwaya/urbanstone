@@ -15,7 +15,7 @@ export default function ContractorCard() {
             <div className="flex-shrink-0">
                 <Link
                     href="/contractors/login"
-                    className="brand-button-primary inline-block whitespace-nowrap"
+                    className="brand-button-primary inline-block whitespace-nowrap px-8 py-3"
                 >
                     Contractor Portal
                 </Link>

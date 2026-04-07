@@ -57,6 +57,8 @@ export default async function handler(req, res) {
         iat: Date.now(),
     }, secret);
 
-    res.setHeader('Set-Cookie', `${COOKIE_NAME}=${sessionValue}; HttpOnly; Secure; SameSite=Lax; Max-Age=${COOKIE_MAX_AGE}; Path=/`);
+    const isSecure = process.env.NODE_ENV === 'production';
+    const secureFlag = isSecure ? ' Secure;' : '';
+    res.setHeader('Set-Cookie', `${COOKIE_NAME}=${sessionValue}; HttpOnly;${secureFlag} SameSite=Lax; Max-Age=${COOKIE_MAX_AGE}; Path=/`);
     res.redirect(302, '/contractors');
 }

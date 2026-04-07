@@ -109,10 +109,11 @@ Recent supplier-browser updates in the frontend include:
 
 - compact supplier cards that keep the homepage focused on Urban Stone as the primary contact
 - curated slab previews lazy-loaded behind supplier-specific shortlist actions
-- collapsible hours-of-operation controls for supplier metadata
+- collapsible location and hours controls with a tighter single-card mobile layout
 - section-level handoff copy and CTA blocks that route visitors back to estimate and contact actions
 - softened supplier logo treatments and tighter card styling so the materials library stays inside the main brand system
 - extra anchor scroll offset and lighter sticky-header padding for cleaner mobile jumps into the materials section
+- contractor portal entry moved off the homepage body and into the mobile hamburger menu plus footer CTAs
 
 Quality gates:
 

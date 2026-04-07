@@ -55,7 +55,7 @@ export default function ContractorPortal() {
 
             <main className="bg-bg min-h-screen text-text">
                 {/* Hero */}
-                <section className="pt-28 pb-16 px-6 text-center max-w-3xl mx-auto">
+                <section className="pt-20 pb-12 px-6 text-center max-w-3xl mx-auto sm:pt-22 sm:pb-14">
                     <p className="eyebrow mb-4">Contractor Program</p>
                     <h1 className="text-4xl md:text-5xl font-display font-semibold leading-tight mb-4">
                         Builder &amp; Contractor Pricing
@@ -78,12 +78,12 @@ export default function ContractorPortal() {
                                 key={tier.name}
                                 className="bg-surface border border-border rounded-2xl overflow-hidden flex flex-col"
                             >
-                                <div className="relative w-full aspect-[4/3] bg-panel">
+                                <div className="relative w-full aspect-[4/3] bg-panel overflow-hidden">
                                     <Image
                                         src={tier.image}
                                         alt={tier.name}
                                         fill
-                                        className="object-cover"
+                                        className="object-cover object-center scale-110"
                                         sizes="(max-width: 768px) 100vw, 33vw"
                                         unoptimized
                                     />

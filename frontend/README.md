@@ -10,9 +10,10 @@ The supplier section now follows the current slab-first funnel:
 - curated slab previews are the primary action and lazy-load on demand
 - supplier phone and portal-first behavior are intentionally removed from the homepage flow
 - the materials section now includes an explicit Urban Stone next-step handoff after browsing
-- hours of operation remain collapsible per supplier
+- location and hours are collapsible and share a tighter single-card treatment on mobile
 - supplier logos are visually toned down to fit the current brand system
 - the supplier anchor target includes extra mobile scroll offset so the sticky header does not cover the section heading
+- contractor portal entry is now exposed from the mobile hamburger menu and footer CTA cluster instead of a standalone homepage card
 
 The active homepage funnel is:
 
@@ -225,6 +226,7 @@ The current baseline includes:
 Recent UI behavior worth preserving:
 
 - supplier cards are optimized to scan cleanly on mobile before expanding into desktop two-column layouts
+- location and hours metadata is compacted into a single mobile card to reduce vertical dead space
 - supplier browsing hands visitors back to Urban Stone with section-level estimate and call CTAs
 - the sticky mobile header has reduced vertical padding to lower overlap pressure on anchor navigation
 - supplier CTA and metadata spacing are intentionally tighter on narrow screens to keep the quote form below the fold

@@ -81,10 +81,15 @@ export default async function handler(req, res) {
     const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.urbanstone.co';
     const magicUrl = `${baseUrl}/api/contractor/verify?token=${encodeURIComponent(token)}`;
 
+    const isLocal = (process.env.NEXT_PUBLIC_SITE_URL || '').includes('localhost');
+    const fromAddress = isLocal
+        ? 'Urban Stone <onboarding@resend.dev>'
+        : 'Urban Stone <no-reply@urbanstone.co>';
+
     const resend = new Resend(process.env.RESEND_API_KEY);
-    await resend.emails.send({
-        from: 'Urban Stone <no-reply@urbanstone.co>',
-        to: normalizedEmail,
+    const { error: emailError } = await resend.emails.send({
+        from: fromAddress,
+        to: isLocal ? process.env.RESEND_TEST_TO || normalizedEmail : normalizedEmail,
         subject: 'Your Urban Stone Contractor Portal Access',
         html: `
       <div style="font-family:sans-serif;max-width:520px;margin:0 auto;padding:32px;">
@@ -97,7 +102,13 @@ export default async function handler(req, res) {
         <p style="color:#a8afc0;font-size:12px;">If you didn't request this, you can safely ignore this email.</p>
       </div>
     `,
-    }).catch(err => console.error('[contractor/request-link] email send failed', err.message));
+    });
+
+    if (emailError) {
+        console.error('[contractor/request-link] email send failed:', emailError);
+    } else {
+        console.log('[contractor/request-link] magic link sent to', normalizedEmail, isLocal ? '(dev mode)' : '');
+    }
 
     return ok();
 }

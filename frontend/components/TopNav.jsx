@@ -72,7 +72,7 @@ export default function TopNav() {
                             <a className="brand-button-primary mt-3 w-full px-4 py-3 text-base font-semibold" href="#quote" onClick={() => setIsMenuOpen(false)}>
                                 Get an Estimate
                             </a>
-                            <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-3">
+                            <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
                                 <a className="brand-menu-tile rounded-xl px-3 py-2.5 text-center" href="#suppliers" onClick={() => setIsMenuOpen(false)}>
                                     Materials
                                 </a>
@@ -82,6 +82,9 @@ export default function TopNav() {
                                 <a className="brand-menu-tile rounded-xl px-3 py-2.5 text-center" href="#faq" onClick={() => setIsMenuOpen(false)}>
                                     Q&amp;A
                                 </a>
+                                <Link className="brand-menu-tile rounded-xl px-3 py-2.5 text-center" href="/contractors/login" onClick={() => setIsMenuOpen(false)}>
+                                    Contractor Portal
+                                </Link>
                             </div>
                         </div>
 
