@@ -9,19 +9,19 @@ const TIERS = [
         name: 'Tropical Mist',
         price: '$48/SF Installed',
         badge: 'Most Popular',
-        summary: 'Fast-turn apartment and workforce-housing spec.',
+        summary: 'Best for high-volume apartment units.',
     },
     {
         name: 'Glimmer White',
         price: '$50/SF Installed',
         badge: '',
-        summary: 'Clean white surface for upgraded rental inventory.',
+        summary: 'Most versatile white.',
     },
     {
         name: 'Bianco Ivory',
         price: '$55/SF Installed',
         badge: 'Premium',
-        summary: 'Premium quartz look for higher-rent or executive spaces.',
+        summary: 'Soft veining. Premium finish.',
     },
 ];
 
@@ -63,7 +63,7 @@ function renderEmailHtml() {
             <div style="max-width:680px;margin:0 auto;background:#10182c;border:1px solid #24314d;border-radius:28px;overflow:hidden;box-shadow:0 20px 50px rgba(0,0,0,.28);">
                 <div style="padding:34px 34px 24px;background:linear-gradient(180deg,#111b31 0%,#0f1729 100%);border-bottom:1px solid #24314d;">
                     <div style="font-size:11px;font-weight:700;letter-spacing:.24em;text-transform:uppercase;color:#c9b487;">Urban Stone Contractor Program</div>
-                    <h1 style="margin:14px 0 12px;font-size:34px;line-height:1.08;color:#f7f3ea;">Builder pricing in a tighter, easier-to-scan format.</h1>
+                    <h1 style="margin:14px 0 12px;font-size:34px;line-height:1.08;color:#f7f3ea;">Installed quartz pricing for multi-unit contractors.</h1>
                     <p style="margin:0;font-size:15px;line-height:1.7;color:#c7cfdf;">Shared for apartment developers, hotel builders, and office contractors evaluating quick-turn quartz packages for multi-unit work.</p>
                 </div>
                 <div style="padding:28px 34px 20px;">
