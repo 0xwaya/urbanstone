@@ -41,6 +41,7 @@ What is present:
 - the primary landing page entry under `frontend/pages/index.jsx`
 - a standalone `frontend/package.json` and generated lockfile for the site
 - reusable marketing components for navigation, feature highlights, lead capture, hero, and supplier sections
+- a gated contractor portal with magic-link login, session cookie protection, and Supabase-backed access control
 - static brand and supplier material assets
 - the supplier scraper prototype and source list
 - Tailwind, ESLint, Vitest, Docker, and GitHub Actions CI for the frontend
@@ -49,6 +50,7 @@ What is present:
 What is still missing or incomplete:
 
 - a real CRM, email, or webhook destination behind `LEAD_WEBHOOK_URL`
+- production env configuration for contractor access and mail delivery (`SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `CONTRACTOR_SESSION_SECRET`, `CONTRACTOR_ADMIN_EMAILS`, optional `CONTRACTOR_APPROVED_EMAILS`, `RESEND_API_KEY`)
 - image optimization work if you want to replace the current flexible `img` usage with `next/image`
 - broader production concerns such as analytics, uptime monitoring, content workflow, and end-to-end browser tests
 
@@ -93,6 +95,14 @@ Local workflow:
 4. set `LEAD_WEBHOOK_URL` to the system that should receive quote requests
 5. `npm run dev`
 
+Contractor portal setup:
+
+- protected route: `/contractors`
+- public gate: `/contractors/login`
+- admins listed in `CONTRACTOR_ADMIN_EMAILS` can request a magic link without manual approval
+- pre-vetted contractors can be listed in `CONTRACTOR_APPROVED_EMAILS`
+- all other contractor applicants are inserted into Supabase with `approved=false` until manually approved
+
 The frontend now includes a mobile-spacing pass for the live landing page, including the quote card, hero layout, and supplier browsing flow.
 
 Recent supplier-browser updates in the frontend include:
@@ -121,6 +131,7 @@ Production note:
 - the standalone Next.js server requires `sharp` to be installed because the site uses Next image optimization in production
 - if you deploy on Vercel, keep the project Root Directory set to `frontend`
 - if you deploy via a process manager, run the install in `frontend`, build there, and start with `node .next/standalone/server.js` from that same directory so the standalone server can resolve its runtime dependencies
+- the contractor portal depends on a working Supabase project and Resend key in production; without those env vars, registration and magic-link delivery will not function
 
 For Vercel, the cleanest setup is to set the project Root Directory to `frontend` in the dashboard because that is where the Next.js app and lockfile live.
 

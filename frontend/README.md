@@ -43,10 +43,55 @@ Recommended local run command (avoids port conflicts):
 - `NEXT_PUBLIC_LEAD_EMAIL`: fallback email address rendered in the UI.
 - `NEXT_PUBLIC_SITE_URL`: canonical production origin used for metadata, robots, and sitemap output.
 - `LEAD_WEBHOOK_URL`: required for successful lead delivery from `/api/lead`.
+- `SUPABASE_URL`: Supabase project URL used by the contractor portal API routes.
+- `SUPABASE_SERVICE_ROLE_KEY`: server-side Supabase key for contractor records and magic-link state.
+- `CONTRACTOR_SESSION_SECRET`: HMAC secret used to sign the `contractor_session` cookie.
+- `CONTRACTOR_ADMIN_EMAILS`: comma-separated admin emails that bypass manual approval for portal access.
+- `CONTRACTOR_APPROVED_EMAILS`: optional comma-separated vetted contractor emails that should be auto-approved.
+- `RESEND_API_KEY`: required for contractor magic-link email delivery.
 
 If `LEAD_WEBHOOK_URL` is not set during local development, `/api/lead` falls back to the local route `/api/lead-dev-webhook` so form submissions still complete while you are building.
 
 In production, `LEAD_WEBHOOK_URL` is still required and missing configuration returns the expected 503 warning.
+
+## Contractor Portal
+
+The frontend now includes a gated contractor portal for multi-unit builder pricing.
+
+- public entry: `/contractors/login`
+- protected page: `/contractors`
+- middleware redirects unauthenticated portal requests to the login page
+- registration writes contractor records to Supabase
+- login issues one-time magic links and sets a signed `HttpOnly` session cookie after verification
+- portal pricing is not exposed on the public homepage; the homepage card only links to the gate
+
+Approval model:
+
+- emails in `CONTRACTOR_ADMIN_EMAILS` are treated as admins
+- emails in `CONTRACTOR_APPROVED_EMAILS` are treated as pre-vetted contractors
+- all other registrations remain pending until `approved=true` is set in Supabase
+
+Minimum Supabase tables:
+
+```sql
+CREATE TABLE contractors (
+  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  email text UNIQUE NOT NULL,
+  company_name text NOT NULL,
+  website text NOT NULL,
+  approved boolean DEFAULT false,
+  created_at timestamptz DEFAULT now(),
+  last_login_at timestamptz
+);
+
+CREATE TABLE magic_links (
+  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  contractor_id uuid REFERENCES contractors(id),
+  token_hash text NOT NULL,
+  expires_at timestamptz NOT NULL,
+  used boolean DEFAULT false
+);
+```
 
 Lead webhook payload notes:
 

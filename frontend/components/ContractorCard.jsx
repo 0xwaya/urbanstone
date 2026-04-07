@@ -17,7 +17,7 @@ export default function ContractorCard() {
                     href="/contractors/login"
                     className="brand-button-primary inline-block whitespace-nowrap"
                 >
-                    View Contractor Pricing
+                    Contractor Portal
                 </Link>
             </div>
         </div>

@@ -191,3 +191,37 @@ Latest live validation snapshot (Apr 4, 2026, ~04:24 local):
 - Do not change webhook contract field names without updating Zap mappings in the same session.
 - Keep `LEAD_SOURCER_RELAY_BORDERLINE=true` and `LEAD_SOURCER_BORDERLINE_RELAY_MIN_SCORE=35` unless inbox noise is clearly excessive.
 - If fallback is unexpectedly dominant, validate incoming sample payloads before touching path rules.
+
+---
+
+## Session Closeout — Apr 7, 2026
+
+### Contractor Portal
+- Added a gated contractor portal under `frontend/pages/contractors/index.jsx` with middleware protection and a public access gate at `frontend/pages/contractors/login.jsx`.
+- Public homepage card now links to the portal gate without exposing pricing on the public marketing surface.
+- Added contractor access APIs:
+   - `frontend/pages/api/contractor/register.js`
+   - `frontend/pages/api/contractor/request-link.js`
+   - `frontend/pages/api/contractor/verify.js`
+- Added `frontend/lib/supabase.js` and `frontend/lib/contractor-access.js` for Supabase access and whitelist parsing.
+
+### Access Model
+- `CONTRACTOR_ADMIN_EMAILS` is the admin bypass list for immediate access after registration/login request.
+- `CONTRACTOR_APPROVED_EMAILS` is the optional vetted-contractor whitelist.
+- Non-whitelisted contractors are stored with `approved=false` until manually approved in Supabase.
+- Current documented admin emails: `sales@urbanstone.co`, `mercado.ea@gmail.com`.
+
+### Runtime Requirements
+- Required env vars for the contractor flow:
+   - `SUPABASE_URL`
+   - `SUPABASE_SERVICE_ROLE_KEY`
+   - `CONTRACTOR_SESSION_SECRET`
+   - `CONTRACTOR_ADMIN_EMAILS`
+   - optional `CONTRACTOR_APPROVED_EMAILS`
+   - `RESEND_API_KEY`
+
+### Validation Completed
+- Public homepage reviewed locally: no contractor pricing is visible.
+- `/contractors` redirects to `/contractors/login` without a valid session.
+- Frontend tests passed after the contractor portal and whitelist changes.
+- Next.js production build completed successfully.

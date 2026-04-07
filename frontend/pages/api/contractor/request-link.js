@@ -40,12 +40,12 @@ export default async function handler(req, res) {
     // Always return same message to avoid enumeration
     const ok = () => res.status(200).json({ message: 'If your email is registered and approved, a magic link has been sent.' });
 
-    if (emailAccess.isAdmin && !contractor) {
+    if (emailAccess.isApproved && !contractor) {
         const { data: insertedContractor, error: insertContractorError } = await supabase
             .from('contractors')
             .insert({
                 email: normalizedEmail,
-                company_name: 'Urban Stone Admin',
+                company_name: emailAccess.isAdmin ? 'Urban Stone Admin' : 'Vetted Contractor',
                 website: 'https://urbanstone.co',
                 approved: true,
             })
