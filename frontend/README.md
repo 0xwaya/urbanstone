@@ -64,13 +64,21 @@ The frontend now includes a gated contractor portal for multi-unit builder prici
 - middleware redirects unauthenticated portal requests to the login page
 - registration writes contractor records to Supabase
 - login issues one-time magic links and sets a signed `HttpOnly` session cookie after verification
-- portal pricing is not exposed on the public homepage; the homepage card only links to the gate
+- portal pricing is not exposed on the public homepage; the portal is linked from mobile navigation and the footer CTA cluster
+- the contractor pricing page is intentionally trimmed down into expandable material cards with direct email/text inquiry actions instead of the residential estimate form
 
 Approval model:
 
 - emails in `CONTRACTOR_ADMIN_EMAILS` are treated as admins
 - emails in `CONTRACTOR_APPROVED_EMAILS` are treated as pre-vetted contractors
 - all other registrations remain pending until `approved=true` is set in Supabase
+
+Contractor pricing email preview:
+
+- preview send: `npm run contractor:email:preview`
+- approved-recipient send: `npm run contractor:email:approved`
+- preview defaults to `sales@urbanstone.co`
+- approved-recipient send currently targets the vetted whitelist maintained for contractor outreach
 
 Minimum Supabase tables:
 

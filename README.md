@@ -42,6 +42,7 @@ What is present:
 - a standalone `frontend/package.json` and generated lockfile for the site
 - reusable marketing components for navigation, feature highlights, lead capture, hero, and supplier sections
 - a gated contractor portal with magic-link login, session cookie protection, and Supabase-backed access control
+- a trimmed contractor pricing page with expandable material cards and direct sales contact actions
 - static brand and supplier material assets
 - the supplier scraper prototype and source list
 - Tailwind, ESLint, Vitest, Docker, and GitHub Actions CI for the frontend
@@ -102,6 +103,8 @@ Contractor portal setup:
 - admins listed in `CONTRACTOR_ADMIN_EMAILS` can request a magic link without manual approval
 - pre-vetted contractors can be listed in `CONTRACTOR_APPROVED_EMAILS`
 - all other contractor applicants are inserted into Supabase with `approved=false` until manually approved
+- direct contractor inquiries now route to email/text from inside the portal instead of the residential estimate form
+- contractor pricing email preview can be sent with `npm run contractor:email:preview`
 
 The frontend now includes a mobile-spacing pass for the live landing page, including the quote card, hero layout, and supplier browsing flow.
 
@@ -114,6 +117,7 @@ Recent supplier-browser updates in the frontend include:
 - softened supplier logo treatments and tighter card styling so the materials library stays inside the main brand system
 - extra anchor scroll offset and lighter sticky-header padding for cleaner mobile jumps into the materials section
 - contractor portal entry moved off the homepage body and into the mobile hamburger menu plus footer CTAs
+- contractor pricing now uses compact expandable material previews for faster visual scanning
 
 Quality gates:
 

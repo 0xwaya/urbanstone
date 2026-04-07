@@ -14,7 +14,9 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:smoke": "playwright test tests/browser-smoke.spec.mjs",
-    "snapshots:mobile": "node scripts/snapshot-pass.mjs"
+    "snapshots:mobile": "node scripts/snapshot-pass.mjs",
+    "contractor:email:preview": "node --env-file=.env.local scripts/send-contractor-deals-email.mjs",
+    "contractor:email:approved": "node --env-file=.env.local scripts/send-contractor-deals-email.mjs --approved"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.102.1",

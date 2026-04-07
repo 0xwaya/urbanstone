@@ -1,49 +1,19 @@
 import Head from 'next/head';
 import Image from 'next/image';
+import { useState } from 'react';
 import TopNav from '../../components/TopNav';
 import Footer from '../../components/Footer';
-import LeadForm from '../../components/LeadForm';
+import { CONTRACTOR_PROGRAM_NOTES, CONTRACTOR_SPECS, CONTRACTOR_TIERS } from '../../lib/contractor-deals';
 
-const TIERS = [
-    {
-        name: 'Tropical Mist',
-        price: '$48',
-        unit: '/SF Installed',
-        tagline: 'Best for high-volume apartment units.',
-        description: 'Maximum cost efficiency without sacrificing finish quality. The top choice for large-scale unit turnovers and new construction.',
-        image: '/builder%20materials/tropical%20mist.png',
-        badge: 'Most Popular',
-    },
-    {
-        name: 'Glimmer White',
-        price: '$50',
-        unit: '/SF Installed',
-        tagline: 'Most versatile white.',
-        description: 'Ideal for upgraded rental properties and mixed-use developments. Clean aesthetic that photographs well for listings.',
-        image: '/builder%20materials/glimmer%20white.png',
-        badge: null,
-    },
-    {
-        name: 'Bianco Ivory',
-        price: '$55',
-        unit: '/SF Installed',
-        tagline: 'Soft veining. Premium finish.',
-        description: 'Perfect for luxury apartments, boutique hotels, and Class A office builds where surface materials signal quality.',
-        image: '/builder%20materials/bianco%20ivory.png',
-        badge: 'Premium',
-    },
-];
-
-const SPECS = [
-    { label: 'Material', value: '3CM Quartz' },
-    { label: 'Slab Size', value: '127" × 64"' },
-    { label: 'Includes', value: 'Fabrication + Installation' },
-    { label: 'Lead Time', value: '2–3 weeks per unit block' },
-    { label: 'Min. Project', value: '3+ units' },
-    { label: 'Warranty', value: 'Lifetime limited' },
-];
+function toTelHref(value) {
+    return value.replace(/[^\d+]/g, '');
+}
 
 export default function ContractorPortal() {
+    const companyPhone = process.env.NEXT_PUBLIC_COMPANY_PHONE || '(513) 307-5840';
+    const companyEmail = process.env.NEXT_PUBLIC_LEAD_EMAIL || 'sales@urbanstone.co';
+    const [expandedTier, setExpandedTier] = useState(CONTRACTOR_TIERS[0]?.name || '');
+
     return (
         <>
             <Head>
@@ -54,65 +24,148 @@ export default function ContractorPortal() {
             <TopNav />
 
             <main className="bg-bg min-h-screen text-text">
-                {/* Hero */}
-                <section className="pt-20 pb-12 px-6 text-center max-w-3xl mx-auto sm:pt-22 sm:pb-14">
-                    <p className="eyebrow mb-4">Contractor Program</p>
-                    <h1 className="text-4xl md:text-5xl font-display font-semibold leading-tight mb-4">
-                        Builder &amp; Contractor Pricing
-                    </h1>
-                    <p className="text-lg text-muted leading-relaxed">
-                        Exclusive pricing for apartment developers, hotel builders, and office contractors.
-                        All prices include fabrication and installation. Volume discounts available for 10+ units.
-                    </p>
-                    <div className="mt-6 inline-flex items-center gap-2 bg-panel border border-border rounded-full px-4 py-2 text-xs text-muted">
-                        <span className="w-2 h-2 rounded-full bg-accent inline-block" />
-                        Prices valid for multi-unit projects only
+                <section className="mx-auto grid max-w-6xl gap-6 px-4 pb-10 pt-16 sm:px-6 sm:pb-12 sm:pt-18 lg:grid-cols-[minmax(0,1.3fr)_22rem] lg:items-start lg:gap-8">
+                    <div className="rounded-[2rem] border border-border bg-surface/90 px-6 py-6 shadow-soft sm:px-8 sm:py-7">
+                        <p className="eyebrow mb-4">Contractor Program</p>
+                        <h1 className="max-w-3xl text-3xl font-display font-semibold leading-tight sm:text-4xl lg:text-[2.8rem]">
+                            Builder pricing in a cleaner spec sheet format.
+                        </h1>
+                        <p className="mt-4 max-w-2xl text-sm leading-7 text-muted sm:text-base">
+                            Designed for apartment developers, hospitality builders, and office contractors who need a fast visual read on core quartz options without digging through a residential quote flow.
+                        </p>
+                        <div className="mt-5 flex flex-wrap items-center gap-2.5 text-xs text-muted sm:text-sm">
+                            <span className="inline-flex items-center gap-2 rounded-full border border-border bg-panel px-3 py-2">
+                                <span className="inline-block h-2 w-2 rounded-full bg-accent" />
+                                Installed pricing
+                            </span>
+                            <span className="inline-flex items-center rounded-full border border-border bg-panel px-3 py-2">
+                                3+ unit minimum
+                            </span>
+                            <span className="inline-flex items-center rounded-full border border-border bg-panel px-3 py-2">
+                                Volume rates for 10+ units
+                            </span>
+                        </div>
                     </div>
-                </section>
 
-                {/* Pricing tiers */}
-                <section className="px-6 pb-16 max-w-5xl mx-auto">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        {TIERS.map(tier => (
-                            <div
-                                key={tier.name}
-                                className="bg-surface border border-border rounded-2xl overflow-hidden flex flex-col"
+                    <aside className="rounded-[2rem] border border-border bg-panel/90 p-5 shadow-soft sm:p-6">
+                        <div className="text-[11px] font-semibold uppercase tracking-[0.22em] text-muted">Direct inquiries</div>
+                        <h2 className="mt-3 text-xl font-semibold text-text">Need a fast contractor answer?</h2>
+                        <p className="mt-2 text-sm leading-6 text-muted">
+                            This page is intentionally trimmed down. For takeoffs, rollout schedules, and unit-count pricing, contact the sales desk directly.
+                        </p>
+                        <div className="mt-5 grid gap-3">
+                            <a
+                                className="brand-button-primary px-5 py-3 text-center text-sm font-semibold"
+                                href={`mailto:${companyEmail}?subject=Contractor%20Program%20Inquiry`}
                             >
-                                <div className="relative w-full aspect-[4/3] bg-panel overflow-hidden">
-                                    <Image
-                                        src={tier.image}
-                                        alt={tier.name}
-                                        fill
-                                        className="object-cover object-center scale-110"
-                                        sizes="(max-width: 768px) 100vw, 33vw"
-                                        unoptimized
-                                    />
-                                    {tier.badge && (
-                                        <span className="absolute top-3 right-3 bg-accent/90 text-white text-xs font-semibold px-3 py-1 rounded-full">
-                                            {tier.badge}
-                                        </span>
-                                    )}
-                                </div>
-                                <div className="p-6 flex flex-col gap-3 flex-1">
-                                    <div className="flex items-end gap-1">
-                                        <span className="text-3xl font-display font-semibold text-text">{tier.price}</span>
-                                        <span className="text-sm text-muted mb-1">{tier.unit}</span>
-                                    </div>
-                                    <h2 className="text-lg font-semibold text-text">{tier.name}</h2>
-                                    <p className="text-sm font-medium text-accent">{tier.tagline}</p>
-                                    <p className="text-sm text-muted leading-relaxed flex-1">{tier.description}</p>
-                                </div>
+                                Email {companyEmail}
+                            </a>
+                            <a
+                                className="brand-button-secondary inline-flex items-center justify-center rounded-full px-5 py-3 text-sm font-semibold"
+                                href={`sms:${toTelHref(companyPhone)}`}
+                            >
+                                Text {companyPhone}
+                            </a>
+                        </div>
+                        <div className="mt-5 border-t border-border/70 pt-4 text-xs leading-6 text-muted">
+                            Best message format: unit count, timeline, property type, and preferred material.
+                        </div>
+                    </aside>
+                </section>
+
+                <section className="mx-auto max-w-6xl px-4 pb-10 sm:px-6 sm:pb-12">
+                    <div className="rounded-[2rem] border border-border bg-surface/85 p-3 shadow-soft sm:p-4">
+                        <div className="mb-4 flex items-center justify-between px-2 sm:px-3">
+                            <div>
+                                <h2 className="text-lg font-semibold text-text sm:text-xl">Core material lineup</h2>
+                                <p className="mt-1 text-sm text-muted">Tap a material to expand the full pricing card.</p>
                             </div>
-                        ))}
+                        </div>
+                        <div className="grid gap-3">
+                            {CONTRACTOR_TIERS.map((tier) => {
+                                const isExpanded = expandedTier === tier.name;
+
+                                return (
+                                    <article
+                                        key={tier.name}
+                                        className="overflow-hidden rounded-[1.5rem] border border-border bg-panel/80 transition hover:border-accent/50"
+                                    >
+                                        <button
+                                            type="button"
+                                            className="flex w-full items-center gap-4 px-4 py-4 text-left sm:px-5"
+                                            onClick={() => setExpandedTier((current) => (current === tier.name ? '' : tier.name))}
+                                            aria-expanded={isExpanded}
+                                        >
+                                            <div className="relative h-20 w-24 shrink-0 overflow-hidden rounded-2xl border border-border bg-bg sm:h-24 sm:w-28">
+                                                <Image
+                                                    src={tier.image}
+                                                    alt={tier.name}
+                                                    fill
+                                                    className="object-cover object-center scale-110"
+                                                    sizes="112px"
+                                                    unoptimized
+                                                />
+                                            </div>
+                                            <div className="min-w-0 flex-1">
+                                                <div className="flex flex-wrap items-center gap-2">
+                                                    <h3 className="text-base font-semibold text-text sm:text-lg">{tier.name}</h3>
+                                                    {tier.badge ? (
+                                                        <span className="rounded-full bg-accent/10 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.15em] text-accent">
+                                                            {tier.badge}
+                                                        </span>
+                                                    ) : null}
+                                                </div>
+                                                <p className="mt-1 text-sm text-muted">{tier.summary}</p>
+                                                <div className="mt-2 flex items-end gap-1">
+                                                    <span className="text-2xl font-display font-semibold text-text">{tier.price}</span>
+                                                    <span className="mb-0.5 text-xs text-muted sm:text-sm">{tier.unit}</span>
+                                                </div>
+                                            </div>
+                                            <div className="shrink-0 text-xs font-semibold uppercase tracking-[0.18em] text-muted">
+                                                {isExpanded ? 'Close' : 'Expand'}
+                                            </div>
+                                        </button>
+
+                                        {isExpanded ? (
+                                            <div className="border-t border-border/70 px-4 pb-4 pt-4 sm:px-5 sm:pb-5">
+                                                <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_16rem]">
+                                                    <div>
+                                                        <p className="text-sm font-medium text-accent">{tier.tagline}</p>
+                                                        <p className="mt-2 text-sm leading-7 text-muted">{tier.description}</p>
+                                                        <p className="mt-3 text-sm leading-7 text-muted">
+                                                            <span className="font-semibold text-text">Best fit:</span> {tier.applications}
+                                                        </p>
+                                                    </div>
+                                                    <div className="rounded-[1.25rem] border border-border bg-surface/80 p-4">
+                                                        <div className="text-[11px] font-semibold uppercase tracking-[0.2em] text-muted">Quick action</div>
+                                                        <a
+                                                            className="mt-3 inline-flex w-full items-center justify-center rounded-full border border-accent bg-accent px-4 py-2.5 text-sm font-semibold text-white transition hover:opacity-95"
+                                                            href={`mailto:${companyEmail}?subject=${encodeURIComponent(`Contractor pricing - ${tier.name}`)}`}
+                                                        >
+                                                            Email about {tier.name}
+                                                        </a>
+                                                        <a
+                                                            className="mt-2 inline-flex w-full items-center justify-center rounded-full border border-border bg-panel px-4 py-2.5 text-sm font-semibold text-text transition hover:border-accent hover:text-accent"
+                                                            href={`sms:${toTelHref(companyPhone)}?body=${encodeURIComponent(`Interested in ${tier.name} for a contractor project.`)}`}
+                                                        >
+                                                            Text for rollout pricing
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ) : null}
+                                    </article>
+                                );
+                            })}
+                        </div>
                     </div>
                 </section>
 
-                {/* Specs grid */}
-                <section className="px-6 pb-16 max-w-5xl mx-auto">
-                    <div className="bg-surface border border-border rounded-2xl p-8">
-                        <h2 className="text-lg font-semibold text-text mb-6">Standard Specifications</h2>
-                        <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
-                            {SPECS.map(spec => (
+                <section className="mx-auto grid max-w-6xl gap-6 px-4 pb-14 sm:px-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
+                    <div className="rounded-[2rem] border border-border bg-surface/85 p-6 shadow-soft sm:p-8">
+                        <h2 className="mb-5 text-lg font-semibold text-text">Standard specifications</h2>
+                        <div className="grid grid-cols-2 gap-5 md:grid-cols-3">
+                            {CONTRACTOR_SPECS.map(spec => (
                                 <div key={spec.label}>
                                     <p className="text-xs text-muted uppercase tracking-wider mb-1">{spec.label}</p>
                                     <p className="text-sm text-text font-medium">{spec.value}</p>
@@ -120,23 +173,16 @@ export default function ContractorPortal() {
                             ))}
                         </div>
                     </div>
-                </section>
 
-                {/* Disclaimer */}
-                <section className="px-6 pb-8 max-w-5xl mx-auto">
-                    <p className="text-xs text-muted text-center border-t border-border pt-6">
-                        Pricing is exclusive to qualified contractors on multi-unit projects. Subject to material availability. Contact us for volume pricing on 10+ units.
-                    </p>
-                </section>
-
-                {/* Quote CTA */}
-                <section className="px-6 pb-24 max-w-2xl mx-auto">
-                    <div className="bg-panel border border-border rounded-2xl p-8">
-                        <h2 className="text-xl font-semibold text-text mb-2">Request a Project Quote</h2>
-                        <p className="text-sm text-muted mb-6">
-                            Tell us about your project — unit count, material preference, and timeline — and we&apos;ll get back to you within one business day.
-                        </p>
-                        <LeadForm routeId="contractor-portal" />
+                    <div className="rounded-[2rem] border border-border bg-panel/90 p-6 shadow-soft">
+                        <div className="text-[11px] font-semibold uppercase tracking-[0.22em] text-muted">Program notes</div>
+                        <div className="mt-4 space-y-3">
+                            {CONTRACTOR_PROGRAM_NOTES.map((note) => (
+                                <p key={note} className="text-sm leading-6 text-muted">
+                                    {note}
+                                </p>
+                            ))}
+                        </div>
                     </div>
                 </section>
             </main>
