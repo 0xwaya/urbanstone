@@ -1,5 +1,17 @@
+// Hard-coded whitelists — edit here and push; no Vercel env vars needed.
+// Env overrides (CONTRACTOR_ADMIN_EMAILS / CONTRACTOR_APPROVED_EMAILS) are
+// merged in at runtime so you can still add entries without a redeploy.
+const STATIC_ADMIN_EMAILS = [
+    'sales@urbanstone.co',
+    'mercado.ea@gmail.com',
+];
+
+const STATIC_APPROVED_EMAILS = [
+    'fchomesolutions513@gmail.com',
+];
+
 function parseEmailList(value) {
-    return new Set(
+    return (
         String(value || '')
             .split(',')
             .map(email => email.trim().toLowerCase())
@@ -12,11 +24,13 @@ export function normalizeEmail(email) {
 }
 
 export function getContractorAdminEmails() {
-    return parseEmailList(process.env.CONTRACTOR_ADMIN_EMAILS);
+    const fromEnv = parseEmailList(process.env.CONTRACTOR_ADMIN_EMAILS);
+    return new Set([...STATIC_ADMIN_EMAILS, ...fromEnv]);
 }
 
 export function getContractorApprovedEmails() {
-    return parseEmailList(process.env.CONTRACTOR_APPROVED_EMAILS);
+    const fromEnv = parseEmailList(process.env.CONTRACTOR_APPROVED_EMAILS);
+    return new Set([...STATIC_APPROVED_EMAILS, ...fromEnv]);
 }
 
 export function getEmailAccess(email) {
