@@ -1,4 +1,5 @@
 import { getSupabase } from '../../../lib/supabase';
+import { getEmailAccess } from '../../../lib/contractor-access';
 
 const RATE_WINDOW_MS = 60_000;
 const RATE_LIMIT = 5;
@@ -42,19 +43,24 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: 'Invalid website URL' });
     }
 
+    const emailAccess = getEmailAccess(email);
     const supabase = getSupabase();
 
     const { error } = await supabase.from('contractors').insert({
-        email: email.toLowerCase().trim(),
+        email: emailAccess.normalizedEmail,
         company_name: company_name.trim(),
         website: website.trim(),
-        approved: false,
+        approved: emailAccess.isApproved,
     });
 
     if (error) {
         if (error.code === '23505') {
             // Already registered — return same message to avoid enumeration
-            return res.status(201).json({ message: 'Application received. We will review and send a magic link when approved.' });
+            return res.status(201).json({
+                message: emailAccess.isApproved
+                    ? 'Access is approved for this email. You can request a magic link now.'
+                    : 'Application received. We will review and send a magic link when approved.',
+            });
         }
         console.error('[contractor/register]', error.message);
         return res.status(500).json({ error: 'Registration failed. Please try again.' });
@@ -68,13 +74,19 @@ export default async function handler(req, res) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 type: 'contractor_registration',
-                email: email.toLowerCase().trim(),
+                email: emailAccess.normalizedEmail,
                 company_name: company_name.trim(),
                 website: website.trim(),
-                note: 'Pending approval — go to Supabase dashboard and set approved = true, then contractor can request magic link.',
+                note: emailAccess.isApproved
+                    ? 'Whitelisted email registered. Access is already approved.'
+                    : 'Pending approval — go to Supabase dashboard and set approved = true, then contractor can request magic link.',
             }),
         }).catch(() => { }); // don't block response on webhook failure
     }
 
-    return res.status(201).json({ message: 'Application received. We will review and send a magic link when approved.' });
+    return res.status(201).json({
+        message: emailAccess.isApproved
+            ? 'Access is approved for this email. You can request a magic link now.'
+            : 'Application received. We will review and send a magic link when approved.',
+    });
 }

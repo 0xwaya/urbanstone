@@ -1,5 +1,6 @@
 import crypto from 'crypto';
 import { getSupabase } from '../../../lib/supabase';
+import { getEmailAccess } from '../../../lib/contractor-access';
 
 const COOKIE_NAME = 'contractor_session';
 const COOKIE_MAX_AGE = 7 * 24 * 60 * 60; // 7 days in seconds
@@ -41,7 +42,20 @@ export default async function handler(req, res) {
         return res.status(500).send('Server configuration error.');
     }
 
-    const sessionValue = signPayload({ sub: link.contractor_id, iat: Date.now() }, secret);
+    const { data: contractor } = await supabase
+        .from('contractors')
+        .select('email')
+        .eq('id', link.contractor_id)
+        .single();
+
+    const contractorEmail = contractor?.email || '';
+    const emailAccess = getEmailAccess(contractorEmail);
+    const sessionValue = signPayload({
+        sub: link.contractor_id,
+        email: contractorEmail,
+        role: emailAccess.isAdmin ? 'admin' : 'contractor',
+        iat: Date.now(),
+    }, secret);
 
     res.setHeader('Set-Cookie', `${COOKIE_NAME}=${sessionValue}; HttpOnly; Secure; SameSite=Lax; Max-Age=${COOKIE_MAX_AGE}; Path=/`);
     res.redirect(302, '/contractors');

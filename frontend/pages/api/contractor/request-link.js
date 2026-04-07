@@ -1,5 +1,6 @@
 import crypto from 'crypto';
 import { getSupabase } from '../../../lib/supabase';
+import { getEmailAccess } from '../../../lib/contractor-access';
 import { Resend } from 'resend';
 
 const RATE_WINDOW_MS = 60_000;
@@ -25,11 +26,12 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: 'Valid email required' });
     }
 
-    const normalizedEmail = email.toLowerCase().trim();
+    const emailAccess = getEmailAccess(email);
+    const normalizedEmail = emailAccess.normalizedEmail;
     const supabase = getSupabase();
 
     // Look up contractor
-    const { data: contractor, error: lookupError } = await supabase
+    let { data: contractor, error: lookupError } = await supabase
         .from('contractors')
         .select('id, approved')
         .eq('email', normalizedEmail)
@@ -38,7 +40,26 @@ export default async function handler(req, res) {
     // Always return same message to avoid enumeration
     const ok = () => res.status(200).json({ message: 'If your email is registered and approved, a magic link has been sent.' });
 
-    if (lookupError || !contractor || !contractor.approved) return ok();
+    if (emailAccess.isAdmin && !contractor) {
+        const { data: insertedContractor, error: insertContractorError } = await supabase
+            .from('contractors')
+            .insert({
+                email: normalizedEmail,
+                company_name: 'Urban Stone Admin',
+                website: 'https://urbanstone.co',
+                approved: true,
+            })
+            .select('id, approved')
+            .single();
+
+        if (!insertContractorError) {
+            contractor = insertedContractor;
+            lookupError = null;
+        }
+    }
+
+    const hasAccess = Boolean(contractor && (contractor.approved || emailAccess.isApproved));
+    if (lookupError || !contractor || !hasAccess) return ok();
 
     // Generate token
     const token = crypto.randomBytes(32).toString('hex');
