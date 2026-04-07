@@ -89,5 +89,7 @@ jobs:
       - name: Deploy to Vercel (production)
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: team_1kzXJnG8hT3T3zkXXhaWuWgL
+          VERCEL_PROJECT_ID: prj_RA55KfqImv5WyPIbxyvrM78tirkR
         run: |
-          vercel deploy --prod --yes --scope 0xwaya-projects --token "$VERCEL_TOKEN"
+          vercel deploy --prod --yes --token "$VERCEL_TOKEN"
