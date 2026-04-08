@@ -88,13 +88,30 @@ export default function ContractorLogin() {
                 <meta name="robots" content="noindex,nofollow" />
             </Head>
 
-            <div className="min-h-screen bg-bg flex flex-col items-center justify-center px-4 py-16">
-                <div className="mb-10 flex flex-col items-center gap-3">
-                    <LogoMark className="w-10 h-10" />
-                    <p className="eyebrow">Contractor Program</p>
-                </div>
+            <div className="min-h-screen bg-bg px-4 py-12 sm:px-6 sm:py-16">
+                <div className="mx-auto grid w-full max-w-6xl gap-5 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
+                    <div className="rounded-[2.3rem] border border-border bg-surface/88 p-6 shadow-soft sm:p-8">
+                        <div className="flex items-center gap-3">
+                            <LogoMark className="h-10 w-10" />
+                            <p className="eyebrow mb-0">Contractor Program</p>
+                        </div>
+                        <h1 className="mt-6 text-3xl font-display font-semibold leading-tight text-text sm:text-[2.8rem]">
+                            Portal access for commercial and multi-unit countertop work.
+                        </h1>
+                        <p className="mt-4 text-sm leading-7 text-muted sm:text-base">
+                            Keep the current magic-link flow, but present it like a real contractor intake system: cleaner review, cleaner login, and better handoff into pricing and estimate planning.
+                        </p>
+                        <div className="mt-6 grid gap-3 sm:grid-cols-2">
+                            <div className="rounded-2xl border border-border bg-panel/80 px-4 py-4 text-sm leading-6 text-text">
+                                Access requests now feed direct admin notifications and structured webhook events for downstream sheet sync.
+                            </div>
+                            <div className="rounded-2xl border border-border bg-panel/80 px-4 py-4 text-sm leading-6 text-text">
+                                Approved contractors land inside a portal that now includes a commercial estimate assistant for unit-count projects.
+                            </div>
+                        </div>
+                    </div>
 
-                <div className="w-full max-w-md bg-surface border border-border rounded-2xl overflow-hidden">
+                    <div className="w-full bg-surface border border-border rounded-[2rem] overflow-hidden shadow-soft">
                     {/* Tab switcher */}
                     <div className="flex border-b border-border">
                         <button
@@ -179,7 +196,7 @@ export default function ContractorLogin() {
                                         <button
                                             type="submit"
                                             disabled={regStatus === 'loading'}
-                                            className="brand-button-primary mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                                            className="brand-button-primary mt-2 disabled:cursor-not-allowed disabled:opacity-50"
                                         >
                                             {regStatus === 'loading' ? 'Submitting…' : 'Submit Application'}
                                         </button>
@@ -219,7 +236,7 @@ export default function ContractorLogin() {
                                         <button
                                             type="submit"
                                             disabled={loginStatus === 'loading'}
-                                            className="brand-button-primary mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                                            className="brand-button-primary mt-2 disabled:cursor-not-allowed disabled:opacity-50"
                                         >
                                             {loginStatus === 'loading' ? 'Sending…' : 'Send Magic Link'}
                                         </button>
@@ -230,10 +247,11 @@ export default function ContractorLogin() {
                     </div>
                 </div>
 
-                <p className="mt-8 text-xs text-muted text-center max-w-xs">
-                    This portal is for qualified contractors only. Residential inquiries should use our{' '}
-                    <Link href="/" className="text-accent hover:underline">main site</Link>.
-                </p>
+                    <p className="mx-auto mt-6 max-w-xs text-center text-xs text-muted lg:mx-0">
+                        This portal is for qualified contractors only. Residential inquiries should use our{' '}
+                        <Link href="/" className="text-accent hover:underline">main site</Link>.
+                    </p>
+                </div>
             </div>
         </>
     );

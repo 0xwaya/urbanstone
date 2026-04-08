@@ -225,3 +225,12 @@ Latest live validation snapshot (Apr 4, 2026, ~04:24 local):
 - `/contractors` redirects to `/contractors/login` without a valid session.
 - Frontend tests passed after the contractor portal and whitelist changes.
 - Next.js production build completed successfully.
+
+---
+
+## Session Task Queue — Apr 8, 2026
+
+- [x] Add direct admin notification email on every successful contractor registration (default recipient: `sales@urbanstone.co`).
+- [x] Add dedicated contractor commercial estimate intake endpoint and protected portal assistant UI.
+- [x] Emit structured `contractor_registration` and `contractor_estimate` webhook payload contracts for downstream automation.
+- [ ] Add Google Sheets mailing-list automation for contractor registrations (Zapier/Apps Script): append one row per unique normalized contractor email using `mailingListRow` fields from `contractor_registration` events.

@@ -1,5 +1,10 @@
 import { getSupabase } from '../../../lib/supabase';
 import { getEmailAccess, hasPrivateEmailDomain, hasBusinessWebsite } from '../../../lib/contractor-access';
+import {
+    buildContractorRegistrationEvent,
+    relayContractorRegistrationEvent,
+    sendContractorRegistrationNotification,
+} from '../../../lib/contractor-notifications';
 
 const RATE_WINDOW_MS = 60_000;
 const RATE_LIMIT = 5;
@@ -51,12 +56,16 @@ export default async function handler(req, res) {
             || hasPrivateEmailDomain(email)
             || hasBusinessWebsite(website);
 
-        const { error } = await supabase.from('contractors').insert({
-            email: emailAccess.normalizedEmail,
-            company_name: company_name.trim(),
-            website: website.trim(),
-            approved: autoApprove,
-        });
+        const { data: contractor, error } = await supabase
+            .from('contractors')
+            .insert({
+                email: emailAccess.normalizedEmail,
+                company_name: company_name.trim(),
+                website: website.trim(),
+                approved: autoApprove,
+            })
+            .select('id, email, company_name, website, approved, created_at')
+            .single();
 
         if (error) {
             if (error.code === '23505') {
@@ -70,22 +79,51 @@ export default async function handler(req, res) {
             return res.status(500).json({ error: 'Registration failed. Please try again.' });
         }
 
-        const webhookUrl = process.env.LEAD_WEBHOOK_URL;
+        const event = buildContractorRegistrationEvent(contractor || {
+            email: emailAccess.normalizedEmail,
+            company_name: company_name.trim(),
+            website: website.trim(),
+            approved: autoApprove,
+        }, req);
+
+        const webhookUrl = process.env.CONTRACTOR_REGISTRATION_WEBHOOK_URL || process.env.LEAD_WEBHOOK_URL;
+        const notificationJobs = [];
+
         if (webhookUrl) {
-            await fetch(webhookUrl, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    type: 'contractor_registration',
-                    email: emailAccess.normalizedEmail,
-                    company_name: company_name.trim(),
-                    website: website.trim(),
-                    note: autoApprove
-                        ? 'Auto-approved (private domain or business website). Contractor can request a magic link now.'
-                        : 'Pending manual approval — set approved = true in Supabase dashboard.',
-                }),
-            }).catch(() => { });
+            notificationJobs.push(
+                relayContractorRegistrationEvent(event, webhookUrl)
+                    .then(() => ({ channel: 'webhook', ok: true }))
+                    .catch((notifyError) => ({ channel: 'webhook', ok: false, error: notifyError }))
+            );
         }
+
+        notificationJobs.push(
+            sendContractorRegistrationNotification(event)
+                .then(result => ({ channel: 'email', ok: true, result }))
+                .catch((notifyError) => ({ channel: 'email', ok: false, error: notifyError }))
+        );
+
+        const notificationResults = await Promise.all(notificationJobs);
+
+        notificationResults.forEach((result) => {
+            if (result.ok) {
+                console.log('[contractor/register] notification delivered', {
+                    channel: result.channel,
+                    requestId: event.requestId,
+                    email: event.contractor.email,
+                    notificationId: result.result?.id || null,
+                    skipped: result.result?.skipped || false,
+                });
+                return;
+            }
+
+            console.error('[contractor/register] notification failed', {
+                channel: result.channel,
+                requestId: event.requestId,
+                email: event.contractor.email,
+                message: result.error instanceof Error ? result.error.message : String(result.error),
+            });
+        });
 
         return res.status(201).json({
             message: autoApprove

@@ -51,6 +51,10 @@ Recommended local run command (avoids port conflicts):
 - `CONTRACTOR_APPROVED_EMAILS`: optional comma-separated vetted contractor emails that should be auto-approved.
 - `CONTRACTOR_EMAIL_FROM`: optional sender address override for contractor emails. Defaults to `Urban Stone <sales@urbanstone.co>`.
 - `CONTRACTOR_EMAIL_IMAGE_VERSION`: optional cache-busting version string appended to contractor promo image URLs (for example after replacing `tropical mist` or `bianco ivory` files).
+- `CONTRACTOR_NOTIFICATION_EMAILS`: optional comma-separated recipients for direct contractor registration alert emails. Defaults to `sales@urbanstone.co`.
+- `CONTRACTOR_APPROVAL_DASHBOARD_URL`: optional URL inserted into contractor registration alert emails for quick approval review.
+- `CONTRACTOR_ESTIMATE_WEBHOOK_URL`: optional dedicated webhook for contractor commercial estimate requests. Falls back to `LEAD_WEBHOOK_URL`.
+- `CONTRACTOR_REGISTRATION_WEBHOOK_URL`: optional dedicated webhook for contractor registration events. Falls back to `LEAD_WEBHOOK_URL`.
 - `RESEND_API_KEY`: required for contractor magic-link email delivery.
 
 If `LEAD_WEBHOOK_URL` is not set during local development, `/api/lead` falls back to the local route `/api/lead-dev-webhook` so form submissions still complete while you are building.
@@ -74,6 +78,12 @@ Approval model:
 - emails in `CONTRACTOR_ADMIN_EMAILS` are treated as admins
 - emails in `CONTRACTOR_APPROVED_EMAILS` are treated as pre-vetted contractors
 - all other registrations remain pending until `approved=true` is set in Supabase
+
+Operational notifications:
+
+- every successful contractor registration now triggers a direct app-side alert email to `sales@urbanstone.co` by default
+- the same registration also emits a structured `contractor_registration` webhook event with a `mailingListRow` object so Zapier, Make, or Apps Script can append a Google Sheet row without parsing email copy
+- contractor commercial estimate submissions post to `/api/contractor-estimate` and emit a `contractor_estimate` webhook payload for downstream follow-up and quoting workflows
 
 Contractor pricing email preview:
 
