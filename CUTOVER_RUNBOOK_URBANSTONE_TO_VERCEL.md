@@ -32,6 +32,7 @@ This runbook replaces the live Amazon Granite Vercel deployment with the upgrade
 - CONTRACTOR_SESSION_SECRET
 - RESEND_API_KEY
 - CONTRACTOR_EMAIL_FROM (optional; defaults to `Urban Stone <no-reply@send.urbanstone.co>`)
+- CONTRACTOR_EMAIL_FROM (optional; defaults to `Urban Stone <sales@urbanstone.co>`)
 - CONTRACTOR_ADMIN_EMAILS (optional; comma-separated runtime override)
 - CONTRACTOR_APPROVED_EMAILS (optional; comma-separated runtime override)
 
@@ -90,6 +91,9 @@ Rollback immediately if any of the following occurs for more than 5 minutes:
 - Contractor magic-link emails require RESEND_API_KEY and a verified sender domain in Resend.
   The default sender uses the `send.urbanstone.co` subdomain — verify this subdomain in the Resend
   dashboard before go-live, or override via CONTRACTOR_EMAIL_FROM.
+- Contractor magic-link emails require RESEND_API_KEY. The verified Resend domain is `urbanstone.co`
+  and the default sender is `sales@urbanstone.co` — no additional DNS setup needed.
+  Override via CONTRACTOR_EMAIL_FROM if needed.
 - NEXT_PUBLIC_SITE_URL must be the production origin (e.g. `https://www.urbanstone.co`). This
   variable is embedded at build time for metadata but the contractor magic-link URL is resolved from
   request headers at runtime, so a stale build value will not break email links.

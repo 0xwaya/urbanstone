@@ -49,7 +49,7 @@ Recommended local run command (avoids port conflicts):
 - `CONTRACTOR_SESSION_SECRET`: HMAC secret used to sign the `contractor_session` cookie.
 - `CONTRACTOR_ADMIN_EMAILS`: comma-separated admin emails that bypass manual approval for portal access.
 - `CONTRACTOR_APPROVED_EMAILS`: optional comma-separated vetted contractor emails that should be auto-approved.
-- `CONTRACTOR_EMAIL_FROM`: optional sender address override for contractor emails. Defaults to `Urban Stone <no-reply@send.urbanstone.co>`.
+- `CONTRACTOR_EMAIL_FROM`: optional sender address override for contractor emails. Defaults to `Urban Stone <sales@urbanstone.co>`.
 - `RESEND_API_KEY`: required for contractor magic-link email delivery.
 
 If `LEAD_WEBHOOK_URL` is not set during local development, `/api/lead` falls back to the local route `/api/lead-dev-webhook` so form submissions still complete while you are building.

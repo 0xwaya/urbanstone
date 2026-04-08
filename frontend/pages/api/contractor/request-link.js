@@ -51,7 +51,7 @@ export default async function handler(req, res) {
                 .from('contractors')
                 .insert({
                     email: normalizedEmail,
-                    company_name: emailAccess.isAdmin ? 'Urban Stone Admin' : 'Vetted Contractor',
+                    company_name: 'Approved Contractor',
                     website: 'https://urbanstone.co',
                     approved: true,
                 })

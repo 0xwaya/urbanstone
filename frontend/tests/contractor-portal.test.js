@@ -27,6 +27,7 @@ describe('contractor access wiring', () => {
         ]);
         expect(STATIC_APPROVED_EMAILS).toEqual([
             'fchomesolutions513@gmail.com',
+            'havenlove55@gmail.com',
         ]);
 
         expect(getEmailAccess('sales@urbanstone.co')).toMatchObject({ isAdmin: true, isApproved: true });
@@ -56,7 +57,7 @@ describe('contractor portal runtime config', () => {
         process.env = originalEnv;
     });
 
-    it('defaults contractor sender to the send subdomain', () => {
+    it('defaults contractor sender to a reply-capable urbanstone inbox', () => {
         process.env = { ...originalEnv };
         delete process.env.CONTRACTOR_EMAIL_FROM;
 
@@ -66,30 +67,30 @@ describe('contractor portal runtime config', () => {
     it('allows contractor sender override from env', () => {
         process.env = {
             ...originalEnv,
-            CONTRACTOR_EMAIL_FROM: 'Urban Stone <portal@send.urbanstone.co>',
+            CONTRACTOR_EMAIL_FROM: 'Urban Stone <portal@urbanstone.co>',
         };
 
-        expect(getContractorEmailFrom()).toBe('Urban Stone <portal@send.urbanstone.co>');
+        expect(getContractorEmailFrom()).toBe('Urban Stone <portal@urbanstone.co>');
     });
 
     it('prefers forwarded request host for magic-link URLs', () => {
         const req = {
             headers: {
                 'x-forwarded-proto': 'https',
-                'x-forwarded-host': 'www.urbanstone.co',
+                'x-forwarded-host': 'urbanstone.co',
             },
         };
 
-        expect(getContractorPortalBaseUrl(req)).toBe('https://www.urbanstone.co');
+        expect(getContractorPortalBaseUrl(req)).toBe('https://urbanstone.co');
     });
 
     it('falls back to NEXT_PUBLIC_SITE_URL and trims trailing slashes', () => {
         process.env = {
             ...originalEnv,
-            NEXT_PUBLIC_SITE_URL: 'https://www.urbanstone.co/',
+            NEXT_PUBLIC_SITE_URL: 'https://urbanstone.co/',
         };
 
-        expect(getContractorPortalBaseUrl({ headers: {} })).toBe('https://www.urbanstone.co');
+        expect(getContractorPortalBaseUrl({ headers: {} })).toBe('https://urbanstone.co');
     });
 
     it('uses the hard fallback when no runtime URL is available', () => {

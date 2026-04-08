@@ -1,6 +1,5 @@
 import crypto from 'crypto';
 import { getSupabase } from '../../../lib/supabase';
-import { getEmailAccess } from '../../../lib/contractor-access';
 
 const COOKIE_NAME = 'contractor_session';
 const COOKIE_MAX_AGE = 7 * 24 * 60 * 60; // 7 days in seconds
@@ -49,11 +48,10 @@ export default async function handler(req, res) {
         .single();
 
     const contractorEmail = contractor?.email || '';
-    const emailAccess = getEmailAccess(contractorEmail);
     const sessionValue = signPayload({
         sub: link.contractor_id,
         email: contractorEmail,
-        role: emailAccess.isAdmin ? 'admin' : 'contractor',
+        role: 'contractor',
         iat: Date.now(),
     }, secret);
 

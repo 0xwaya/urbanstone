@@ -51,6 +51,7 @@ export const STATIC_ADMIN_EMAILS = [
 
 export const STATIC_APPROVED_EMAILS = [
     'fchomesolutions513@gmail.com',
+    'havenlove55@gmail.com',
 ];
 
 function parseEmailList(value) {

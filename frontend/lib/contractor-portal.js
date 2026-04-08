@@ -1,5 +1,5 @@
-export const DEFAULT_CONTRACTOR_EMAIL_FROM = 'Urban Stone <no-reply@send.urbanstone.co>';
-export const DEFAULT_CONTRACTOR_PORTAL_BASE_URL = 'https://www.urbanstone.co';
+export const DEFAULT_CONTRACTOR_EMAIL_FROM = 'Urban Stone <sales@urbanstone.co>';
+export const DEFAULT_CONTRACTOR_PORTAL_BASE_URL = 'https://urbanstone.co';
 
 function normalizeBaseUrl(value) {
     return String(value || '').trim().replace(/\/$/, '');

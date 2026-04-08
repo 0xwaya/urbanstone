@@ -1,29 +1,12 @@
 import { Resend } from 'resend';
+import { CONTRACTOR_TIERS } from '../lib/contractor-deals.js';
 
 const APPROVED_RECIPIENTS = [
     'fchomesolutions513@gmail.com',
+    'havenlove55@gmail.com',
 ];
 
-const TIERS = [
-    {
-        name: 'Tropical Mist',
-        price: '$48/SF Installed',
-        badge: 'Most Popular',
-        summary: 'Best for high-volume apartment units.',
-    },
-    {
-        name: 'Glimmer White',
-        price: '$50/SF Installed',
-        badge: '',
-        summary: 'Most versatile white.',
-    },
-    {
-        name: 'Bianco Ivory',
-        price: '$55/SF Installed',
-        badge: 'Premium',
-        summary: 'Soft veining. Premium finish.',
-    },
-];
+const SITE_URL = 'https://urbanstone.co';
 
 function getRecipients(argv) {
     if (argv.includes('--approved')) {
@@ -43,16 +26,26 @@ function getRecipients(argv) {
 }
 
 function renderTierCards() {
-    return TIERS.map((tier) => `
-        <div style="border:1px solid #d6c39b;background:#fcf7ed;border-radius:20px;padding:18px 18px 16px;">
+    return CONTRACTOR_TIERS.map((tier) => `
+        <div style="border:1px solid #d6c39b;background:#fcf7ed;border-radius:20px;padding:18px 18px 16px;overflow:hidden;">
+            <div style="margin:-18px -18px 16px;">
+                <img
+                    src="${SITE_URL}${tier.image}"
+                    alt="${tier.name} quartz slab"
+                    width="640"
+                    height="420"
+                    style="display:block;width:100%;height:auto;max-height:220px;object-fit:cover;background:#efe6d2;"
+                />
+            </div>
             <div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start;">
                 <div>
                     <div style="font-size:18px;font-weight:700;color:#141414;">${tier.name}</div>
-                    <div style="margin-top:6px;font-size:13px;line-height:1.6;color:#5f5a50;">${tier.summary}</div>
+                    <div style="margin-top:6px;font-size:13px;line-height:1.6;color:#5f5a50;">${tier.description}</div>
                 </div>
                 ${tier.badge ? `<div style="white-space:nowrap;border-radius:999px;background:#1f5f4a;color:#ffffff;padding:6px 10px;font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;">${tier.badge}</div>` : ''}
             </div>
-            <div style="margin-top:14px;font-size:24px;font-weight:700;color:#141414;">${tier.price}</div>
+            <div style="margin-top:14px;font-size:24px;font-weight:700;color:#141414;">${tier.price}${tier.unit}</div>
+            <div style="margin-top:8px;font-size:12px;line-height:1.7;color:#6e675b;">${tier.applications}</div>
         </div>
     `).join('');
 }
@@ -78,9 +71,9 @@ function renderEmailHtml() {
                     </div>
                     <div style="margin-top:22px;border-top:1px solid #24314d;padding-top:20px;">
                         <div style="font-size:11px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:#c9b487;">Direct inquiries</div>
-                        <p style="margin:12px 0 0;font-size:14px;line-height:1.8;color:#c7cfdf;">Reply to this email or contact <a href="mailto:sales@urbanstone.co" style="color:#f3d28d;text-decoration:none;">sales@urbanstone.co</a> / <a href="sms:+15133075840" style="color:#f3d28d;text-decoration:none;">(513) 307-5840</a> with unit count, timeline, and preferred material.</p>
+                        <p style="margin:12px 0 0;font-size:14px;line-height:1.8;color:#c7cfdf;">Reply to this email or contact <a href="mailto:sales@urbanstone.co" style="color:#f3d28d;text-decoration:none;">sales@urbanstone.co</a> or call (513) 307-5840 with unit count, timeline, and preferred material.</p>
                         <div style="margin-top:18px;">
-                            <a href="https://www.urbanstone.co/contractors/login" style="display:inline-block;border-radius:999px;background:#d2b378;color:#141414;text-decoration:none;padding:14px 22px;font-size:14px;font-weight:700;">Open Contractor Portal</a>
+                            <a href="${SITE_URL}/contractors/login" style="display:inline-block;border-radius:999px;background:#d2b378;color:#141414;text-decoration:none;padding:14px 22px;font-size:14px;font-weight:700;">Open Contractor Portal</a>
                         </div>
                     </div>
                 </div>
@@ -92,7 +85,7 @@ function renderEmailHtml() {
 async function main() {
     const recipients = getRecipients(process.argv.slice(2));
     const apiKey = process.env.RESEND_API_KEY;
-    const from = process.env.CONTRACTOR_EMAIL_FROM || 'Urban Stone <no-reply@send.urbanstone.co>';
+    const from = process.env.CONTRACTOR_EMAIL_FROM || 'Urban Stone <sales@urbanstone.co>';
 
     if (!apiKey) {
         throw new Error('RESEND_API_KEY is required');
