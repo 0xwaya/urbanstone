@@ -10,6 +10,9 @@ const SITE_URL = 'https://urbanstone.co';
 
 function getRecipients(argv) {
     if (argv.includes('--approved')) {
+        if (!argv.includes('--confirm-approved-send')) {
+            throw new Error('Approved recipient send blocked. Re-run with --approved --confirm-approved-send only when explicitly requested.');
+        }
         return APPROVED_RECIPIENTS;
     }
 
@@ -37,15 +40,11 @@ function renderTierCards() {
                     style="display:block;width:100%;height:auto;max-height:220px;object-fit:cover;background:#efe6d2;"
                 />
             </div>
-            <div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start;">
-                <div>
-                    <div style="font-size:18px;font-weight:700;color:#141414;">${tier.name}</div>
-                    <div style="margin-top:6px;font-size:13px;line-height:1.6;color:#5f5a50;">${tier.description}</div>
-                </div>
-                ${tier.badge ? `<div style="white-space:nowrap;border-radius:999px;background:#1f5f4a;color:#ffffff;padding:6px 10px;font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;">${tier.badge}</div>` : ''}
-            </div>
+            <div style="font-size:18px;font-weight:700;color:#141414;line-height:1.25;word-break:normal;overflow-wrap:normal;">${tier.name}</div>
+            ${tier.badge ? `<div style="display:inline-block;margin-top:10px;border-radius:999px;background:#1f5f4a;color:#ffffff;padding:6px 10px;font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;white-space:nowrap;">${tier.badge}</div>` : ''}
+            <div style="margin-top:10px;font-size:13px;line-height:1.6;color:#5f5a50;word-break:normal;overflow-wrap:normal;">${tier.description}</div>
             <div style="margin-top:14px;font-size:24px;font-weight:700;color:#141414;">${tier.price}${tier.unit}</div>
-            <div style="margin-top:8px;font-size:12px;line-height:1.7;color:#6e675b;">${tier.applications}</div>
+            <div style="margin-top:8px;font-size:12px;line-height:1.7;color:#6e675b;word-break:normal;overflow-wrap:normal;">${tier.applications}</div>
         </div>
     `).join('');
 }

@@ -77,9 +77,9 @@ Approval model:
 Contractor pricing email preview:
 
 - preview send: `npm run contractor:email:preview`
-- approved-recipient send: `npm run contractor:email:approved`
+- approved-recipient send: `node --env-file=.env.local scripts/send-contractor-deals-email.mjs --approved --confirm-approved-send`
 - preview defaults to `sales@urbanstone.co`
-- approved-recipient send currently targets the vetted whitelist maintained for contractor outreach
+- approved-recipient sends are safety-locked and require explicit runtime confirmation (`--confirm-approved-send`) to avoid accidental customer blasts
 
 Minimum Supabase tables:
 
