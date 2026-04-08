@@ -92,7 +92,7 @@ function renderEmailHtml() {
 async function main() {
     const recipients = getRecipients(process.argv.slice(2));
     const apiKey = process.env.RESEND_API_KEY;
-    const from = process.env.CONTRACTOR_EMAIL_FROM || 'Urban Stone <no-reply@urbanstone.co>';
+    const from = process.env.CONTRACTOR_EMAIL_FROM || 'Urban Stone <no-reply@send.urbanstone.co>';
 
     if (!apiKey) {
         throw new Error('RESEND_API_KEY is required');

@@ -27,6 +27,13 @@ This runbook replaces the live Amazon Granite Vercel deployment with the upgrade
 - NEXT_PUBLIC_TIKTOK_URL
 - NEXT_PUBLIC_WAYALABS_URL
 - LEAD_WEBHOOK_URL
+- SUPABASE_URL
+- SUPABASE_SERVICE_ROLE_KEY
+- CONTRACTOR_SESSION_SECRET
+- RESEND_API_KEY
+- CONTRACTOR_EMAIL_FROM (optional; defaults to `Urban Stone <no-reply@send.urbanstone.co>`)
+- CONTRACTOR_ADMIN_EMAILS (optional; comma-separated runtime override)
+- CONTRACTOR_APPROVED_EMAILS (optional; comma-separated runtime override)
 
 ## Pre-Cutover Checklist
 1. Capture baseline from current live project:
@@ -80,3 +87,11 @@ Rollback immediately if any of the following occurs for more than 5 minutes:
 ## Notes
 - In production, urbanstone requires LEAD_WEBHOOK_URL; it will not use local dev webhook fallback.
 - Local dev webhook route is disabled in production by design.
+- Contractor magic-link emails require RESEND_API_KEY and a verified sender domain in Resend.
+  The default sender uses the `send.urbanstone.co` subdomain — verify this subdomain in the Resend
+  dashboard before go-live, or override via CONTRACTOR_EMAIL_FROM.
+- NEXT_PUBLIC_SITE_URL must be the production origin (e.g. `https://www.urbanstone.co`). This
+  variable is embedded at build time for metadata but the contractor magic-link URL is resolved from
+  request headers at runtime, so a stale build value will not break email links.
+- Admin emails are hard-coded in `lib/contractor-access.js`. Use CONTRACTOR_ADMIN_EMAILS env var
+  to add entries without a redeploy.

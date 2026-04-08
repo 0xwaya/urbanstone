@@ -190,7 +190,7 @@ export default function ContractorLogin() {
                             <>
                                 <h1 className="text-xl font-semibold text-text mb-1">Get Your Access Link</h1>
                                 <p className="text-sm text-muted mb-6">
-                                    Already approved? Enter your email and we&apos;ll send a secure login link valid for 30 minutes.
+                                    Already approved? Enter your email and we&apos;ll send a secure login link valid for 4 hours.
                                 </p>
 
                                 {loginStatus === 'success' ? (
