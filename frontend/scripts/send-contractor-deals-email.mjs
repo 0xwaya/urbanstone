@@ -7,6 +7,12 @@ const APPROVED_RECIPIENTS = [
 ];
 
 const SITE_URL = 'https://urbanstone.co';
+const EMAIL_IMAGE_VERSION = process.env.CONTRACTOR_EMAIL_IMAGE_VERSION || '2026-04-08-1';
+
+function withImageVersion(path) {
+    const separator = path.includes('?') ? '&' : '?';
+    return `${path}${separator}v=${encodeURIComponent(EMAIL_IMAGE_VERSION)}`;
+}
 
 function getRecipients(argv) {
     if (argv.includes('--approved')) {
@@ -33,7 +39,7 @@ function renderTierCards() {
         <div style="border:1px solid #d6c39b;background:#fcf7ed;border-radius:20px;padding:18px 18px 16px;overflow:hidden;">
             <div style="margin:-18px -18px 16px;">
                 <img
-                    src="${SITE_URL}${tier.image}"
+                    src="${SITE_URL}${withImageVersion(tier.image)}"
                     alt="${tier.name} quartz slab"
                     width="640"
                     height="420"
