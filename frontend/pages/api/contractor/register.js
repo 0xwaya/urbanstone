@@ -56,7 +56,8 @@ export default async function handler(req, res) {
             || hasPrivateEmailDomain(email)
             || hasBusinessWebsite(website);
 
-        const { data: contractor, error } = await supabase
+        let contractor = null;
+        const { data: insertedContractor, error } = await supabase
             .from('contractors')
             .insert({
                 email: emailAccess.normalizedEmail,
@@ -67,14 +68,24 @@ export default async function handler(req, res) {
             .select('id, email, company_name, website, approved, created_at')
             .single();
 
-        if (error) {
-            if (error.code === '23505') {
-                return res.status(201).json({
-                    message: autoApprove
-                        ? 'Access is approved for this email. You can request a magic link now.'
-                        : 'Application received. We will review and send a magic link when approved.',
-                });
+        if (!error && insertedContractor) {
+            contractor = insertedContractor;
+        }
+
+        if (error && error.code === '23505') {
+            const { data: existingContractor, error: refetchError } = await supabase
+                .from('contractors')
+                .select('id, email, company_name, website, approved, created_at')
+                .eq('email', emailAccess.normalizedEmail)
+                .maybeSingle();
+
+            if (refetchError || !existingContractor) {
+                console.error('[contractor/register] duplicate contractor refetch failed', refetchError?.message || 'missing contractor');
+                return res.status(500).json({ error: 'Registration failed. Please try again.' });
             }
+
+            contractor = existingContractor;
+        } else if (error) {
             console.error('[contractor/register]', error.message);
             return res.status(500).json({ error: 'Registration failed. Please try again.' });
         }

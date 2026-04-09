@@ -30,6 +30,26 @@ describe('contractor registration automation', () => {
         expect(getContractorNotificationEmails()).toEqual(['ops@example.com', 'sales@urbanstone.co']);
     });
 
+    it('appends backup recipients to notification list', () => {
+        process.env = {
+            ...originalEnv,
+            CONTRACTOR_NOTIFICATION_EMAILS: 'sales@urbanstone.co',
+            CONTRACTOR_NOTIFICATION_BACKUP_EMAILS: 'mercado.ea@gmail.com',
+        };
+
+        expect(getContractorNotificationEmails()).toEqual(['sales@urbanstone.co', 'mercado.ea@gmail.com']);
+    });
+
+    it('dedupes notification recipients when backup repeats primary', () => {
+        process.env = {
+            ...originalEnv,
+            CONTRACTOR_NOTIFICATION_EMAILS: 'sales@urbanstone.co, mercado.ea@gmail.com',
+            CONTRACTOR_NOTIFICATION_BACKUP_EMAILS: 'mercado.ea@gmail.com, sales@urbanstone.co',
+        };
+
+        expect(getContractorNotificationEmails()).toEqual(['sales@urbanstone.co', 'mercado.ea@gmail.com']);
+    });
+
     it('builds a spreadsheet-friendly contractor registration event', () => {
         const event = buildContractorRegistrationEvent({
             id: 'contractor-1',

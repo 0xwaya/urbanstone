@@ -23,7 +23,10 @@ function parseEmailList(value) {
 
 export function getContractorNotificationEmails(env = process.env) {
     const configured = parseEmailList(env.CONTRACTOR_NOTIFICATION_EMAILS);
-    return configured.length > 0 ? configured : DEFAULT_CONTRACTOR_NOTIFICATION_EMAILS;
+    const backup = parseEmailList(env.CONTRACTOR_NOTIFICATION_BACKUP_EMAILS);
+    const primary = configured.length > 0 ? configured : DEFAULT_CONTRACTOR_NOTIFICATION_EMAILS;
+
+    return [...new Set([...primary, ...backup])];
 }
 
 export function buildContractorRegistrationEvent(contractor, request) {

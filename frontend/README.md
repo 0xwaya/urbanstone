@@ -52,6 +52,7 @@ Recommended local run command (avoids port conflicts):
 - `CONTRACTOR_EMAIL_FROM`: optional sender address override for contractor emails. Defaults to `Urban Stone <sales@urbanstone.co>`.
 - `CONTRACTOR_EMAIL_IMAGE_VERSION`: optional cache-busting version string appended to contractor promo image URLs (for example after replacing `tropical mist` or `bianco ivory` files).
 - `CONTRACTOR_NOTIFICATION_EMAILS`: optional comma-separated recipients for direct contractor registration alert emails. Defaults to `sales@urbanstone.co`.
+- `CONTRACTOR_NOTIFICATION_BACKUP_EMAILS`: optional comma-separated backup recipients always appended to contractor registration alerts (for example a personal Gmail failover during DNS incidents).
 - `CONTRACTOR_APPROVAL_DASHBOARD_URL`: optional URL inserted into contractor registration alert emails for quick approval review.
 - `CONTRACTOR_ESTIMATE_WEBHOOK_URL`: optional dedicated webhook for contractor commercial estimate requests. Falls back to `LEAD_WEBHOOK_URL`.
 - `CONTRACTOR_REGISTRATION_WEBHOOK_URL`: optional dedicated webhook for contractor registration events. Falls back to `LEAD_WEBHOOK_URL`.

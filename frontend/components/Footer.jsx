@@ -1,6 +1,6 @@
 import Link from 'next/link';
 
-const INSTAGRAM_FALLBACK = 'https://www.instagram.com/';
+const INSTAGRAM_FALLBACK = 'https://instagram.com/urbanstonec';
 const FACEBOOK_FALLBACK = 'https://www.facebook.com/';
 const TIKTOK_FALLBACK = 'https://www.tiktok.com/';
 const WAYALABS_FALLBACK = 'https://wayalabs.com';
