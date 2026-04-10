@@ -223,8 +223,8 @@ Manual workflow:
 - optional Apify: `APIFY_TOKEN=...`
 - optional Apify task IDs: `APIFY_NEXTDOOR_TASK_ID=...`, `APIFY_FACEBOOK_TASK_ID=...`, `APIFY_AD_LIBRARY_TASK_ID=...`
 
-1. `npm install`
-2. `npm run run`
+4. `npm install`
+5. `npm run run`
 
 Direct source runs:
 
@@ -317,25 +317,21 @@ Operational notes:
   - use these to relay higher-signal borderline candidates while preserving manual review logs
 - automated relays include `lead.externalPostId`, `lead.externalPostUrl`, and enriched metadata for Zap triage: `metadata.automated=true`, `metadata.dedupeKey`, `metadata.requestId`, `metadata.verdict`, `metadata.score`, `metadata.scoreBand`, `metadata.hasAnchor`, and `metadata.signalFactors`
 
-Current runtime state (April 3, 2026):
+Current runtime state (April 10, 2026):
 
-- lead-sourcer unit tests are passing (`34/34`)
-- Zapier webhook transport responds `HTTP 200` on controlled wire-test payloads
-- Nextdoor and Facebook Groups Apify tasks are configured and fetching items
-- Ad Library can be disabled with `APIFY_ENABLE_AD_LIBRARY=false` when Apify account limits cause instability
-- current no-email behavior is due to zero `match` verdicts in recent runs, not a broken webhook transport
+- lead-sourcer tests are passing (`35/35`)
+- OpenTelemetry tracing is integrated in `lead-sourcer/src/tracing.js` and initialized at startup from `lead-sourcer/src/index.js`
+- tracing default endpoint is `http://localhost:4318/v1/traces` and works with AI Toolkit Trace Viewer
+- run-report payloads now include both plain text (`lead.projectDetails`) and HTML (`lead.htmlReport`) so downstream automation can render a chart-style digest email
+- live runs continue to relay run reports successfully (`HTTP 200`) even on zero-match cycles
+- current no-individual-email behavior is still expected when recent cycles classify `0 match` leads (dedupe and filters working as designed)
 
-Safe-stop update (April 5, 2026):
+Safe-stop update (April 10, 2026):
 
-- recall-first backend changes are deployed on `main` (commit: `c113503`)
-- lead-sourcer tests are passing after recall-first updates (`35/35`)
-- a real automated relay test was sent through `lead-sourcer/src/relay.js` and returned `HTTP 200`
-- the test payload included path-routing fields used by Zapier Paths:
-  - `metadata.automated=true`
-  - `metadata.scoreBand=hot`
-  - `metadata.score=95`
-  - `metadata.routeId=lead-sourcer/reddit`
-- this confirms Path A/Path B eligible fields are present in live automated traffic (not fallback-only payload shape)
+- recall-first backend changes remain active on `main` (commit: `c113503`)
+- tracing dependencies were added to `lead-sourcer/package.json` and lockfile for reproducible local runs
+- a tracing bootstrap smoke test completed successfully and logs: `OpenTelemetry enabled (service=lead-sourcer, endpoint=http://localhost:4318/v1/traces)`
+- run-report relay remains healthy with `HTTP 200` responses after recent reporting-format updates
 
 Vercel cron integration (every 4 hours):
 
@@ -347,7 +343,7 @@ Vercel cron integration (every 4 hours):
 - optional Vercel env var:
   - `LEAD_SOURCER_TRIGGER_SECRET` (bearer token sent to runner endpoint)
 
-Next session pickup checklist (tomorrow evening):
+Next session pickup checklist:
 
 1. Trigger one additional automated test with `metadata.scoreBand=tepid` to verify Path B end-to-end.
 2. Validate duplicate suppression by sending the same `metadata.dedupeKey` twice and confirming second send is blocked.
