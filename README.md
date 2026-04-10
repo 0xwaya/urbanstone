@@ -242,6 +242,9 @@ Scheduler and run-observability controls (implemented in `lead-sourcer/src/index
 - `LEAD_SOURCER_RUN_LOG_FILE` (default: `lead-sourcer/runs/poll-runs.jsonl`) — JSONL summaries per cycle
 - `LEAD_SOURCER_ZERO_MATCH_ALERT_THRESHOLD` (default: `0`) — warn after N consecutive zero-match cycles
 - `LEAD_SOURCER_SUMMARY_WINDOW_HOURS` (default: `24`) — reporting window for daily summary script
+- `LEAD_SOURCER_TRACING_ENABLED` (default: `true`) — enable OpenTelemetry tracing export
+- `LEAD_SOURCER_OTEL_SERVICE_NAME` (default: `lead-sourcer`) — service name in traces
+- `OTEL_EXPORTER_OTLP_TRACES_ENDPOINT` (default: `http://localhost:4318/v1/traces`) — OTLP HTTP traces endpoint
 
 Examples:
 
@@ -255,6 +258,12 @@ Monitoring script:
 - exits with code `2` when zero-match streak meets `LEAD_SOURCER_ZERO_MATCH_ALERT_THRESHOLD`
 - `npm run summary:weekly-tuning` — summarizes near-miss/review queues for threshold tuning
 - set `LEAD_SOURCER_TUNING_WINDOW_DAYS` (default `7`) to tune the weekly summary window
+
+Tracing:
+
+- open the local collector/viewer in VS Code with command `AI Toolkit: Open Trace Viewer`
+- run `bash lead-sourcer/run.sh` (or existing npm scripts) and traces are emitted automatically
+- set `LEAD_SOURCER_TRACING_ENABLED=false` to disable tracing for a run
 
 Run modes (set via `--mode=` CLI flag or `LEAD_SOURCER_MODE` env var):
 

@@ -18,6 +18,9 @@
     "node": ">=20.11.0"
   },
   "dependencies": {
+    "@opentelemetry/auto-instrumentations-node": "^0.72.0",
+    "@opentelemetry/exporter-trace-otlp-http": "^0.214.0",
+    "@opentelemetry/sdk-node": "^0.214.0",
     "apify-client": "^2.12.0",
     "dotenv": "^16.6.1",
     "fast-xml-parser": "^4.4.1"

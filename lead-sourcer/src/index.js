@@ -17,6 +17,7 @@ import { pollCraigslist } from './craigslist.js';
 import { pollApify } from './apify.js';
 import { resolveRunMode } from './mode.js';
 import { relay } from './relay.js';
+import { initializeTracing } from './tracing.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const RUN_LOG_FILE = process.env.LEAD_SOURCER_RUN_LOG_FILE || path.resolve(__dirname, '..', 'runs', 'poll-runs.jsonl');
@@ -24,6 +25,8 @@ const INTERVAL_MINUTES = Number(process.env.LEAD_SOURCER_INTERVAL_MINUTES || 0);
 const MAX_CYCLES = Number(process.env.LEAD_SOURCER_MAX_CYCLES || 0);
 const ZERO_MATCH_ALERT_THRESHOLD = Number(process.env.LEAD_SOURCER_ZERO_MATCH_ALERT_THRESHOLD || 0);
 const SEND_RUN_REPORT = !['0', 'false', 'no', 'off'].includes(String(process.env.LEAD_SOURCER_SEND_RUN_REPORT || 'true').trim().toLowerCase());
+
+await initializeTracing();
 
 function delay(ms) {
     if (!Number.isFinite(ms) || ms <= 0) return Promise.resolve();
@@ -83,10 +86,147 @@ function buildRunReportDetails(summary) {
     return lines.join('\n');
 }
 
+function buildRunReportHtml(summary) {
+    const reddit = summary.verdicts?.reddit || {};
+    const craigslist = summary.verdicts?.craigslist || {};
+    const apify = summary.verdicts?.apify || {};
+
+    const redditMatches = safeStat(reddit, 'matches');
+    const clMatches = safeStat(craigslist, 'matches');
+    const apifyMatches = safeStat(apify, 'matches');
+    const totalMatches = redditMatches + clMatches + apifyMatches;
+
+    const redditFetched = safeStat(reddit, 'fetched');
+    const clFetched = safeStat(craigslist, 'fetched');
+    const apifyFetched = safeStat(apify, 'fetched');
+    const totalFetched = redditFetched + clFetched + apifyFetched;
+
+    // Helper to create a bar chart
+    function renderBar(label, value, max) {
+        if (max === 0) return `<div style="margin: 8px 0; font-size: 13px;"><strong>${label}:</strong> ${value}</div>`;
+        const percentage = Math.round((value / max) * 100);
+        const barWidth = Math.max(1, Math.round(percentage * 2));
+        return `<div style="margin: 8px 0;"><strong>${label}:</strong> ${value}<div style="background: #e0e0e0; height: 20px; margin-top: 4px; border-radius: 3px; overflow: hidden;"><div style="background: #2196F3; height: 100%; width: ${percentage}%; transition: width 0.3s;"></div></div></div>`;
+    }
+
+    const durationMs = new Date(summary.completedAt) - new Date(summary.startedAt);
+    const durationSec = (durationMs / 1000).toFixed(1);
+
+    const html = `<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Lead Sourcer Run Report</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; background: #f5f5f5; margin: 0; padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 0; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; border-radius: 8px 8px 0 0; }
+        .header h1 { margin: 0; font-size: 28px; }
+        .header p { margin: 8px 0 0 0; opacity: 0.9; font-size: 14px; }
+        .content { padding: 30px; }
+        .summary-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 30px; }
+        .metric-card { background: #f9f9f9; padding: 20px; border-radius: 8px; border-left: 4px solid #667eea; }
+        .metric-value { font-size: 32px; font-weight: bold; color: #333; }
+        .metric-label { font-size: 12px; color: #999; text-transform: uppercase; margin-top: 8px; }
+        .source-section { margin-bottom: 30px; }
+        .source-section h2 { font-size: 18px; color: #333; margin: 0 0 15px 0; border-bottom: 2px solid #f0f0f0; padding-bottom: 10px; }
+        .stats-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; font-size: 13px; }
+        .stat { background: #f5f5f5; padding: 10px; border-radius: 4px; }
+        .stat strong { color: #667eea; }
+        .footer { background: #f9f9f9; padding: 20px 30px; border-radius: 0 0 8px 8px; font-size: 12px; color: #999; border-top: 1px solid #e0e0e0; }
+        .match-highlight { padding: 15px; background: ${totalMatches > 0 ? '#e8f5e9' : '#fff3e0'}; border-left: 4px solid ${totalMatches > 0 ? '#4caf50' : '#ff9800'}; border-radius: 4px; margin-bottom: 20px; }
+        .match-highlight p { margin: 0; font-size: 14px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Lead Sourcer Run Report</h1>
+            <p>Automated lead sourcing from Reddit, Craigslist, and Apify</p>
+        </div>
+        <div class="content">
+            <div class="match-highlight">
+                <p><strong>🎯 Total Matches Found: ${totalMatches}</strong> (${durationSec}s)</p>
+            </div>
+
+            <div class="summary-grid">
+                <div class="metric-card">
+                    <div class="metric-label">Total Items Fetched</div>
+                    <div class="metric-value">${totalFetched}</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Total Matches</div>
+                    <div class="metric-value" style="color: ${totalMatches > 0 ? '#4caf50' : '#999'};">${totalMatches}</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Total Relayed</div>
+                    <div class="metric-value" style="color: ${summary.counts.totalMatches > 0 ? '#2196f3' : '#999'};">${summary.counts.totalMatches}</div>
+                </div>
+            </div>
+
+            <div class="source-section">
+                <h2>📱 Reddit</h2>
+                <div class="stats-row">
+                    <div class="stat"><strong>Fetched:</strong> ${redditFetched}</div>
+                    <div class="stat"><strong>Matches:</strong> ${redditMatches}</div>
+                </div>
+                <div class="stats-row">
+                    <div class="stat"><strong>Relayed:</strong> ${safeStat(reddit, 'relayed')}</div>
+                    <div class="stat"><strong>Rejects:</strong> ${safeStat(reddit, 'rejects')}</div>
+                </div>
+            </div>
+
+            <div class="source-section">
+                <h2>🏷️ Craigslist</h2>
+                <div class="stats-row">
+                    <div class="stat"><strong>Fetched:</strong> ${clFetched}</div>
+                    <div class="stat"><strong>Matches:</strong> ${clMatches}</div>
+                </div>
+                <div class="stats-row">
+                    <div class="stat"><strong>Relayed:</strong> ${safeStat(craigslist, 'relayed')}</div>
+                    <div class="stat"><strong>Rejects:</strong> ${safeStat(craigslist, 'rejects')}</div>
+                </div>
+            </div>
+
+            <div class="source-section">
+                <h2>🤖 Apify</h2>
+                <div class="stats-row">
+                    <div class="stat"><strong>Fetched:</strong> ${apifyFetched}</div>
+                    <div class="stat"><strong>Matches:</strong> ${apifyMatches}</div>
+                </div>
+                <div class="stats-row">
+                    <div class="stat"><strong>Relayed:</strong> ${safeStat(apify, 'relayed')}</div>
+                    <div class="stat"><strong>Rejects:</strong> ${safeStat(apify, 'rejects')}</div>
+                </div>
+            </div>
+
+            ${Array.isArray(summary.errors) && summary.errors.length > 0 ? `
+            <div class="source-section" style="background: #ffebee; border-left: 4px solid #f44336; padding: 15px; border-radius: 4px;">
+                <h3 style="margin: 0 0 10px 0; color: #f44336;">⚠️ Errors</h3>
+                ${summary.errors.map(err => `<p style="margin: 5px 0; font-size: 13px;"><strong>${err.source}:</strong> ${err.message}</p>`).join('')}
+            </div>
+            ` : ''}
+        </div>
+        <div class="footer">
+            <p><strong>Run Window:</strong> ${new Date(summary.startedAt).toLocaleString()} → ${new Date(summary.completedAt).toLocaleString()}</p>
+            <p><strong>Mode:</strong> ${summary.mode} | <strong>Duration:</strong> ${durationSec}s</p>
+            <p>Lead Sourcer v1.0</p>
+        </div>
+    </div>
+</body>
+</html>`;
+
+    return html;
+}
+
 async function maybeSendRunReport(summary) {
     if (!SEND_RUN_REPORT || summary.mode !== 'live') return;
 
     const reportId = `run-report:${summary.startedAt}`;
+    const htmlReport = buildRunReportHtml(summary);
+    const textReport = buildRunReportDetails(summary);
+
     const payload = {
         submittedAt: summary.completedAt,
         source: 'lead-sourcer-run-report',
@@ -94,7 +234,8 @@ async function maybeSendRunReport(summary) {
             name: 'Lead Sourcer Run Report',
             email: null,
             phone: null,
-            projectDetails: buildRunReportDetails(summary),
+            projectDetails: textReport,
+            htmlReport,
             externalPostId: reportId,
             externalPostUrl: null,
         },
