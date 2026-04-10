@@ -1,0 +1,8 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/lead-sourcer",
+      "schedule": "0 */4 * * *"
+    }
+  ]
+}

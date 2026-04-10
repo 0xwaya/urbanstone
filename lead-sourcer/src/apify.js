@@ -6,13 +6,13 @@ import {
     APIFY_ENABLE_AD_LIBRARY,
     APIFY_ENABLE_FACEBOOK,
     APIFY_ENABLE_NEXTDOOR,
+    APIFY_OVERRIDE_TASK_INPUT,
     APIFY_FACEBOOK_TASK_ID,
     APIFY_NEXTDOOR_TASK_ID,
     APIFY_TASK_DELAY_MS,
     APIFY_TASK_TIMEOUT_MS,
     BASE_LEAD_QUERIES,
     GEO_TARGET_CITIES,
-    APIFY_FACEBOOK_NEIGHBORHOOD_QUERIES,
     APIFY_POST_LOCATION_HINTS,
     LEAD_SOURCER_NEAR_MISS_SCORE_THRESHOLD,
     LEAD_SOURCER_RELAY_BORDERLINE,
@@ -97,26 +97,15 @@ function normalizeItem(taskLabel, item) {
 
 function defaultNextdoorInput() {
     return {
-        location: 'Cincinnati, OH',
-        neighborhoods: GEO_TARGET_CITIES.slice(0, 24),
-        keywords: [
-            'granite countertops',
-            'quartz countertops',
-            'quartzite countertops',
-            'countertop installer',
-            'kitchen remodel',
-            'bathroom remodel',
-        ],
-        maxPosts: 80,
+        locations: GEO_TARGET_CITIES.slice(0, 12).map((city) => `${city}, OH`),
         proxyConfiguration: { useApifyProxy: true },
     };
 }
 
 function defaultFacebookInput() {
     return {
-        maxPosts: 120,
-        commentsLimit: 10,
-        keywords: APIFY_FACEBOOK_NEIGHBORHOOD_QUERIES.length > 0 ? APIFY_FACEBOOK_NEIGHBORHOOD_QUERIES : BASE_LEAD_QUERIES,
+        resultsLimit: 120,
+        startUrls: [],
         proxyConfiguration: { useApifyProxy: true },
     };
 }
@@ -213,7 +202,7 @@ function getTaskStats(stats, taskLabel) {
 async function runTask(client, { taskId, taskLabel, input }) {
     if (!taskId) return [];
 
-    const run = await client.task(taskId).call(input);
+    const run = input ? await client.task(taskId).call(input) : await client.task(taskId).call();
     const datasetId = run?.defaultDatasetId;
     if (!datasetId) {
         console.warn(`[apify] ${taskLabel}: task completed without dataset id.`);
@@ -229,6 +218,39 @@ async function runTask(client, { taskId, taskLabel, input }) {
     const items = Array.isArray(dataset?.items) ? dataset.items : [];
     console.log(`[apify] ${taskLabel}: fetched ${items.length} item(s)`);
     return items.map((item) => normalizeItem(taskLabel, item));
+}
+
+function extractTaskInput(taskMeta) {
+    return taskMeta && typeof taskMeta.input === 'object' && taskMeta.input !== null
+        ? taskMeta.input
+        : {};
+}
+
+function warnOnSuspiciousTaskInput(taskLabel, taskMeta) {
+    const taskInput = extractTaskInput(taskMeta);
+
+    if (taskLabel === 'facebook-groups') {
+        const startUrls = Array.isArray(taskInput.startUrls) ? taskInput.startUrls : [];
+        const flattenedUrls = startUrls
+            .map((entry) => (typeof entry === 'string' ? entry : entry?.url))
+            .filter((value) => typeof value === 'string')
+            .map((value) => value.toLowerCase());
+
+        if (flattenedUrls.some((url) => url.includes('facebook.com/humansofnewyork'))) {
+            console.warn('[apify] facebook-groups task appears misconfigured: startUrls contains humansofnewyork. Replace with local market pages/groups.');
+        }
+
+        if (flattenedUrls.length === 0 && !APIFY_OVERRIDE_TASK_INPUT) {
+            console.warn('[apify] facebook-groups task has no startUrls configured in Apify task input. Configure startUrls in Apify console or set APIFY_OVERRIDE_TASK_INPUT=true with APIFY_FACEBOOK_TASK_INPUT.');
+        }
+    }
+
+    if (taskLabel === 'nextdoor') {
+        const locations = Array.isArray(taskInput.locations) ? taskInput.locations : [];
+        if (locations.length === 0 && !APIFY_OVERRIDE_TASK_INPUT) {
+            console.warn('[apify] nextdoor task has no locations configured in Apify task input. Add locations in Apify console or set APIFY_OVERRIDE_TASK_INPUT=true with APIFY_NEXTDOOR_TASK_INPUT.');
+        }
+    }
 }
 
 export async function pollApify({ mode = 'live' } = {}) {
@@ -254,6 +276,10 @@ export async function pollApify({ mode = 'live' } = {}) {
     const nextdoorInput = parseJsonEnv('APIFY_NEXTDOOR_TASK_INPUT', defaultNextdoorInput());
     const facebookInput = parseJsonEnv('APIFY_FACEBOOK_TASK_INPUT', defaultFacebookInput());
     const adLibraryInput = parseJsonEnv('APIFY_AD_LIBRARY_TASK_INPUT', defaultAdLibraryInput());
+
+    if (!APIFY_OVERRIDE_TASK_INPUT) {
+        console.log('[apify] Using saved Apify task inputs (APIFY_OVERRIDE_TASK_INPUT=false).');
+    }
 
     const taskConfigs = [
         {
@@ -281,12 +307,32 @@ export async function pollApify({ mode = 'live' } = {}) {
         return { matches: [], stats };
     }
 
+    const taskMetaById = new Map();
+    await Promise.all(taskConfigs.map(async (task) => {
+        try {
+            const taskMeta = await client.task(task.taskId).get();
+            taskMetaById.set(task.taskId, taskMeta);
+            warnOnSuspiciousTaskInput(task.taskLabel, taskMeta);
+        } catch (error) {
+            console.warn(`[apify] ${task.taskLabel}: unable to inspect task metadata: ${error?.message || error}`);
+        }
+    }));
+
     const items = [];
     for (let i = 0; i < taskConfigs.length; i += 1) {
         const task = taskConfigs[i];
         try {
+            const taskMeta = taskMetaById.get(task.taskId);
+            const taskInput = APIFY_OVERRIDE_TASK_INPUT
+                ? task.input
+                : null;
+
+            if (APIFY_OVERRIDE_TASK_INPUT && (!taskMeta || Object.keys(extractTaskInput(taskMeta)).length === 0)) {
+                console.warn(`[apify] ${task.taskLabel}: task has no saved input; using APIFY_*_TASK_INPUT override.`);
+            }
+
             const taskItems = await withTimeout(
-                runTask(client, task),
+                runTask(client, { ...task, input: taskInput }),
                 APIFY_TASK_TIMEOUT_MS,
                 task.taskLabel,
             );

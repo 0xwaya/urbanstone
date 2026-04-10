@@ -283,8 +283,15 @@ Operational notes:
   - `APIFY_ENABLE_NEXTDOOR=true|false`
   - `APIFY_ENABLE_FACEBOOK=true|false`
   - `APIFY_ENABLE_AD_LIBRARY=true|false`
+  - `APIFY_OVERRIDE_TASK_INPUT=true|false` (default: `false`)
+    - `false` (recommended): uses saved input from each Apify task in Apify Console
+    - `true`: forces runtime overrides from `APIFY_*_TASK_INPUT` JSON env values
   - `APIFY_TASK_TIMEOUT_MS` (default: `120000`)
   - `APIFY_TASK_DELAY_MS` (default: `1200`)
+  - common troubleshooting:
+    - if logs show `fetched > 0` and `skippedSeen == fetched`, the task is returning previously seen posts (dedupe is working as designed)
+    - if Facebook task output looks unrelated (example: `humansofnewyork`), reconfigure the Apify task `startUrls` in Apify Console
+    - if Nextdoor returns zero items repeatedly, validate task `locations` in Apify Console and account/session health
 - one-time Reddit recency expansion controls:
   - `LEAD_SOURCER_FIRST_RUN_EXTENDED_WINDOW=true|false` (default: `true`)
   - `LEAD_SOURCER_FIRST_RUN_MAX_POST_AGE_HOURS=336` (default: 14 days)
@@ -320,6 +327,16 @@ Safe-stop update (April 5, 2026):
   - `metadata.score=95`
   - `metadata.routeId=lead-sourcer/reddit`
 - this confirms Path A/Path B eligible fields are present in live automated traffic (not fallback-only payload shape)
+
+Vercel cron integration (every 4 hours):
+
+- `frontend/vercel.json` schedules `0 */4 * * *` for `/api/cron/lead-sourcer`
+- `frontend/pages/api/cron/lead-sourcer.js` is a secure trigger endpoint
+- required Vercel env vars:
+  - `CRON_SECRET` (Vercel cron auth)
+  - `LEAD_SOURCER_TRIGGER_URL` (your runner endpoint that actually executes `lead-sourcer`)
+- optional Vercel env var:
+  - `LEAD_SOURCER_TRIGGER_SECRET` (bearer token sent to runner endpoint)
 
 Next session pickup checklist (tomorrow evening):
 

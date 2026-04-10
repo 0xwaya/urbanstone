@@ -342,6 +342,7 @@ export const APIFY_DATASET_LIMIT = Number(process.env.APIFY_DATASET_LIMIT || 200
 export const APIFY_ENABLE_NEXTDOOR = envFlag('APIFY_ENABLE_NEXTDOOR', true);
 export const APIFY_ENABLE_FACEBOOK = envFlag('APIFY_ENABLE_FACEBOOK', true);
 export const APIFY_ENABLE_AD_LIBRARY = envFlag('APIFY_ENABLE_AD_LIBRARY', false);
+export const APIFY_OVERRIDE_TASK_INPUT = envFlag('APIFY_OVERRIDE_TASK_INPUT', false);
 export const APIFY_TASK_TIMEOUT_MS = Number(process.env.APIFY_TASK_TIMEOUT_MS || 120000);
 export const APIFY_TASK_DELAY_MS = Number(process.env.APIFY_TASK_DELAY_MS || 1200);
 export const LEAD_SOURCER_REQUIRE_REGIONAL_SIGNAL = envFlag('LEAD_SOURCER_REQUIRE_REGIONAL_SIGNAL', true);
