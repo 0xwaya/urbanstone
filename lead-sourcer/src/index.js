@@ -26,6 +26,16 @@ const MAX_CYCLES = Number(process.env.LEAD_SOURCER_MAX_CYCLES || 0);
 const ZERO_MATCH_ALERT_THRESHOLD = Number(process.env.LEAD_SOURCER_ZERO_MATCH_ALERT_THRESHOLD || 0);
 const SEND_RUN_REPORT = !['0', 'false', 'no', 'off'].includes(String(process.env.LEAD_SOURCER_SEND_RUN_REPORT || 'true').trim().toLowerCase());
 
+function envFlag(name, defaultValue = true) {
+    const raw = String(process.env[name] || '').trim().toLowerCase();
+    if (!raw) return defaultValue;
+    return !['0', 'false', 'no', 'off'].includes(raw);
+}
+
+const ENABLE_REDDIT = envFlag('LEAD_SOURCER_ENABLE_REDDIT', true);
+const ENABLE_CRAIGSLIST = envFlag('LEAD_SOURCER_ENABLE_CRAIGSLIST', true);
+const ENABLE_APIFY = envFlag('LEAD_SOURCER_ENABLE_APIFY', true);
+
 await initializeTracing();
 
 function delay(ms) {
@@ -259,10 +269,14 @@ async function runOnce(mode) {
     const startedAt = new Date();
     console.log(`[lead-sourcer] Starting poll at ${startedAt.toISOString()} (mode=${mode})`);
 
+    if (!ENABLE_REDDIT) console.log('[lead-sourcer] Reddit poller disabled (LEAD_SOURCER_ENABLE_REDDIT=false).');
+    if (!ENABLE_CRAIGSLIST) console.log('[lead-sourcer] Craigslist poller disabled (LEAD_SOURCER_ENABLE_CRAIGSLIST=false).');
+    if (!ENABLE_APIFY) console.log('[lead-sourcer] Apify poller disabled (LEAD_SOURCER_ENABLE_APIFY=false).');
+
     const [redditMatches, craigslistMatches, apifyMatches] = await Promise.allSettled([
-        pollReddit({ mode }),
-        pollCraigslist({ mode }),
-        pollApify({ mode }),
+        ENABLE_REDDIT ? pollReddit({ mode }) : Promise.resolve({ matches: [], stats: {} }),
+        ENABLE_CRAIGSLIST ? pollCraigslist({ mode }) : Promise.resolve({ matches: [], stats: {} }),
+        ENABLE_APIFY ? pollApify({ mode }) : Promise.resolve({ matches: [], stats: {} }),
     ]);
 
     const redditResult = redditMatches.status === 'fulfilled'
