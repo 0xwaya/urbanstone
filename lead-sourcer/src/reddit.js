@@ -22,6 +22,7 @@ import { logNearMissCandidate, logReviewCandidate } from './review-log.js';
 const REDDIT_API_BASE = 'https://www.reddit.com';
 const USER_AGENT = 'UrbanStoneLeadSourcer/1.0 (lead monitoring; contact sales@urbanstone.co)';
 const TARGET_REGIONS = ['cincinnati', ...GEO_TARGET_CITIES.map((city) => city.toLowerCase())];
+const LOCAL_SUBREDDITS = new Set(['cincinnati']);
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const FIRST_RUN_EXTENDED_WINDOW_ENABLED = !['0', 'false', 'no', 'off'].includes(
@@ -286,7 +287,7 @@ export async function pollReddit({ mode = 'live' } = {}) {
                 continue;
             }
 
-            if (LEAD_SOURCER_REQUIRE_REGIONAL_SIGNAL && subreddit.toLowerCase() !== 'cincinnati' && !hasRegionalSignal(post)) {
+            if (LEAD_SOURCER_REQUIRE_REGIONAL_SIGNAL && !LOCAL_SUBREDDITS.has(subreddit.toLowerCase()) && !hasRegionalSignal(post)) {
                 stats.regionFiltered += 1;
                 logReviewCandidate({
                     mode,

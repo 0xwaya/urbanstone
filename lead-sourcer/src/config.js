@@ -254,6 +254,8 @@ export const BASE_LEAD_QUERIES = [
     'countertop replacement',
     'granite repair',
     'vanity top',
+    'countertop fabricator',
+    'stone fabricator',
 ];
 
 const APIFY_FACEBOOK_QUERY_SUFFIXES = [
@@ -295,7 +297,7 @@ export const CRAIGSLIST_QUERY_KEYWORDS = compactLocations([
     ...GEO_AWARE_QUERIES,
 ]).slice(0, CRAIGSLIST_QUERY_LIMIT);
 
-export const REDDIT_SEARCH_SUBREDDITS = ['cincinnati'];
+export const REDDIT_SEARCH_SUBREDDITS = ['cincinnati', 'homeowners', 'KitchenRemodel'];
 
 const REDDIT_SEARCH_QUERY_LIMIT = Number(process.env.LEAD_SOURCER_REDDIT_SEARCH_QUERY_LIMIT || 12);
 

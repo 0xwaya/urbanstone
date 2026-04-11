@@ -14,6 +14,7 @@ import {
     BASE_LEAD_QUERIES,
     GEO_TARGET_CITIES,
     APIFY_POST_LOCATION_HINTS,
+    APIFY_FACEBOOK_NEIGHBORHOOD_QUERIES,
     LEAD_SOURCER_NEAR_MISS_SCORE_THRESHOLD,
     LEAD_SOURCER_RELAY_BORDERLINE,
     LEAD_SOURCER_BORDERLINE_RELAY_MIN_SCORE,
@@ -97,15 +98,21 @@ function normalizeItem(taskLabel, item) {
 
 function defaultNextdoorInput() {
     return {
-        locations: GEO_TARGET_CITIES.slice(0, 12).map((city) => `${city}, OH`),
+        locations: GEO_TARGET_CITIES.slice(0, 8).map((city) => `${city}, OH`),
         proxyConfiguration: { useApifyProxy: true },
     };
+}
+
+function buildFacebookSearchUrls() {
+    return APIFY_FACEBOOK_NEIGHBORHOOD_QUERIES.map((query) => ({
+        url: `https://www.facebook.com/search/groups/?q=${encodeURIComponent(query)}`,
+    }));
 }
 
 function defaultFacebookInput() {
     return {
         resultsLimit: 120,
-        startUrls: [],
+        startUrls: buildFacebookSearchUrls(),
         proxyConfiguration: { useApifyProxy: true },
     };
 }
@@ -236,7 +243,7 @@ function warnOnSuspiciousTaskInput(taskLabel, taskMeta) {
             .filter((value) => typeof value === 'string')
             .map((value) => value.toLowerCase());
 
-        if (flattenedUrls.some((url) => url.includes('facebook.com/humansofnewyork'))) {
+        if (!APIFY_OVERRIDE_TASK_INPUT && flattenedUrls.some((url) => url.includes('facebook.com/humansofnewyork'))) {
             console.warn('[apify] facebook-groups task appears misconfigured: startUrls contains humansofnewyork. Replace with local market pages/groups.');
         }
 
