@@ -24,8 +24,11 @@ function toTelHref(value) {
 export default function ChatWidget() {
     const [isOpen, setIsOpen] = useState(false);
     const [hasHydrated, setHasHydrated] = useState(false);
+    const [showBot, setShowBot] = useState(false);
     const companyPhone = process.env.NEXT_PUBLIC_COMPANY_PHONE || '(513) 307-5840';
     const companyEmail = process.env.NEXT_PUBLIC_LEAD_EMAIL || 'sales@urbanstone.co';
+    const chatbotUrl = process.env.NEXT_PUBLIC_WAYALABS_CHATBOT_URL || '';
+    const chatbotLabel = process.env.NEXT_PUBLIC_WAYALABS_CHATBOT_LABEL || 'Chat with AI concierge';
 
     useEffect(() => {
         setIsOpen(shouldOpenByDefault());
@@ -64,6 +67,10 @@ export default function ChatWidget() {
         if (typeof document !== 'undefined') {
             document.dispatchEvent(new CustomEvent(QUOTE_OPEN_EVENT));
         }
+    };
+
+    const toggleBot = () => {
+        setShowBot((prev) => !prev);
     };
 
     if (!hasHydrated) {
@@ -113,6 +120,15 @@ export default function ChatWidget() {
                     <a className="brand-button-secondary inline-flex rounded-full px-3 py-2 text-sm font-semibold" href={`mailto:${companyEmail}`}>
                         Email
                     </a>
+                    {chatbotUrl ? (
+                        <button
+                            type="button"
+                            className="brand-button-secondary inline-flex rounded-full px-3 py-2 text-sm font-semibold"
+                            onClick={toggleBot}
+                        >
+                            {showBot ? 'Hide AI chat' : chatbotLabel}
+                        </button>
+                    ) : null}
                     <button
                         type="button"
                         className="brand-button-secondary inline-flex rounded-full px-3 py-2 text-sm font-semibold"
@@ -121,6 +137,20 @@ export default function ChatWidget() {
                         Dismiss
                     </button>
                 </div>
+                {chatbotUrl && showBot ? (
+                    <div className="mt-4">
+                        <div className="text-xs font-semibold uppercase tracking-wide text-muted">AI concierge</div>
+                        <div className="mt-2 h-80 overflow-hidden rounded-2xl border border-border bg-white">
+                            <iframe
+                                title="Urbanstone AI assistant"
+                                src={chatbotUrl}
+                                className="h-full w-full"
+                                allow="clipboard-write; microphone"
+                                loading="lazy"
+                            />
+                        </div>
+                    </div>
+                ) : null}
             </div>
         </aside>
     );

@@ -1,0 +1,44 @@
+{
+  "placeholders": [
+    "first_name",
+    "project_type",
+    "preferred_material",
+    "budget_range",
+    "timeline",
+    "portfolio_url",
+    "calendar_url",
+    "phone",
+    "email"
+  ],
+  "email": {
+    "day0": {
+      "subject": "Thanks for reaching out about your {{project_type}}",
+      "body": "Hi {{first_name}},\n\nThanks for connecting with Urbanstone. I’d love to help you design the right {{project_type}} with a material that fits your style and budget.\n\nA few quick questions so we can move fast:\n1) What material are you leaning toward (quartz, granite, quartzite, porcelain)?\n2) Any preferred colors or patterns?\n3) What’s your rough timeline?\n\nIf you prefer a call, grab a time here: {{calendar_url}}\n\n— Urbanstone Team\n{{phone}}\n{{email}}"
+    },
+    "day1": {
+      "subject": "Recent {{project_type}} installs you might like",
+      "body": "Hi {{first_name}},\n\nSharing a few recent installs similar to what you described: {{portfolio_url}}. We specialize in clean, modern surfaces with premium finishes.\n\nIf you want a fast estimate, reply with:\n- Rough dimensions or photos\n- Preferred material\n- Target budget range\n\nOr book a 15‑minute design call: {{calendar_url}}"
+    },
+    "day3": {
+      "subject": "Quartz vs granite vs quartzite — quick breakdown",
+      "body": "Hi {{first_name}},\n\nHere’s a fast guide:\n- Quartz: low maintenance, consistent patterns\n- Granite: natural variation, durable\n- Quartzite: premium look, high-end feel\n\nIf you want tailored recommendations, send any inspo photos or color preferences."
+    },
+    "day6": {
+      "subject": "Case study: {{project_type}} transformation in Cincinnati",
+      "body": "Hi {{first_name}},\n\nWe recently completed a {{project_type}} that started with a similar scope. We helped select a durable, stain‑resistant surface and finished in under 3 weeks.\n\nIf you’re ready, we can lock a measurement slot: {{calendar_url}}"
+    },
+    "day10": {
+      "subject": "Want us to hold a measurement slot for you?",
+      "body": "Hi {{first_name}},\n\nJust checking in—happy to reserve a measurement slot and send a design‑ready estimate. If now isn’t the right time, no worries—just let me know your timeline."
+    },
+    "day14": {
+      "subject": "Quick check-in + seasonal availability",
+      "body": "Hi {{first_name}},\n\nIf you’re still exploring options, we can provide a fast estimate and material recommendations. We also have availability for {{timeline}} projects if you want to move soon.\n\nReply with any updates and we’ll take it from there."
+    }
+  },
+  "sms": {
+    "day0": "Hi {{first_name}}—thanks for reaching out to Urbanstone. Quick Q: which material are you considering + your timeline? If easier, book a quick call: {{calendar_url}}",
+    "day3": "Need help choosing? Quartz = low maintenance, granite = natural variation, quartzite = premium. Want a quick rec? Reply with a photo or style you like.",
+    "day10": "Still interested in a countertop estimate? I can hold a measurement slot this week if you want."
+  }
+}

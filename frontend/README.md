@@ -43,6 +43,8 @@ Recommended local run command (avoids port conflicts):
 - `NEXT_PUBLIC_COMPANY_PHONE`: phone number rendered in the UI.
 - `NEXT_PUBLIC_LEAD_EMAIL`: fallback email address rendered in the UI.
 - `NEXT_PUBLIC_SITE_URL`: canonical production origin used for metadata, robots, and sitemap output.
+- `NEXT_PUBLIC_WAYALABS_CHATBOT_URL`: optional Wayalabs chatbot embed URL for the AI concierge panel.
+- `NEXT_PUBLIC_WAYALABS_CHATBOT_LABEL`: optional CTA label for the chatbot button (defaults to "Chat with AI concierge").
 - `LEAD_WEBHOOK_URL`: required for successful lead delivery from `/api/lead`.
 - `SUPABASE_URL`: Supabase project URL used by the contractor portal API routes.
 - `SUPABASE_SERVICE_ROLE_KEY`: server-side Supabase key for contractor records and magic-link state.
