@@ -64,6 +64,9 @@ export default async function handler(req, res) {
         email: process.env.NEXT_PUBLIC_LEAD_EMAIL || 'sales@urbanstone.co'
       }});
     } catch (error) {
+      // Enhanced logging for debugging
+      console.error('API /api/chat error:', error);
+      console.error('Request body:', req.body);
       // default to knowledge base on error
       const kbReply = getChatReply(message);
       return res.status(200).json({ reply: kbReply.reply, sources: kbReply.sources, contact: {
