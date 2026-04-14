@@ -1,6 +1,7 @@
 import { homepageFaqItems } from '../../data/homepage-content';
 import { materialPages } from '../../data/material-pages';
 import { serviceAreas } from '../../data/service-areas';
+import { chatbotPolicies } from '../../data/chatbot-knowledge';
 
 const MAX_MATERIAL_PAGES = 30;
 const MAX_SERVICE_AREAS = 30;
@@ -23,6 +24,24 @@ function scoreEntry(tokens, entry) {
 
 function buildEntries() {
     const entries = [];
+
+    chatbotPolicies.liabilityNotes.forEach((note, index) => {
+        entries.push({
+            id: `policy-liability-${index}`,
+            title: 'Natural stone and fabrication liability note',
+            text: note,
+            tags: ['liability', 'natural stone', 'fabrication', 'policy'],
+        });
+    });
+
+    chatbotPolicies.approvedMessaging.forEach((note, index) => {
+        entries.push({
+            id: `policy-approved-${index}`,
+            title: 'Approved operations messaging',
+            text: note,
+            tags: ['policy', 'operations'],
+        });
+    });
 
     homepageFaqItems.forEach((item, index) => {
         entries.push({

@@ -15,8 +15,13 @@ export default function handler(req, res) {
     const phone = process.env.NEXT_PUBLIC_COMPANY_PHONE || '(513) 307-5840';
     const email = process.env.NEXT_PUBLIC_LEAD_EMAIL || 'sales@urbanstone.co';
 
+    const needsDisclaimer = /vein|veining|match|matching|seam|slab|angle|miter|mitre|layout/i.test(message);
+    const disclaimer = needsDisclaimer
+        ? '\n\nNote: Natural stone varies by slab and final vein matching or angled layouts depend on slab size and templating review.'
+        : '';
+
     return res.status(200).json({
-        reply,
+        reply: `${reply}${disclaimer}`,
         sources,
         contact: {
             phone,
