@@ -1,0 +1,7 @@
+# Ignore chatbot source and config until fully trained
+chatbot/
+chatbot-config/
+# Standard Next.js and node ignores
+.next/
+node_modules/
+.env*

@@ -3,7 +3,7 @@ import { useState } from 'react';
 const initialMessages = [
     {
         role: 'assistant',
-        content: 'Hi! I’m HavenBot, your countertop and surfaces assistant. Tell me about your project, location, and material preference, and I’ll guide you fast.',
+        content: 'Hi! I’m Stone Haven, your countertop and surfaces assistant. Tell me about your project, location, and material preference, and I’ll guide you fast.',
     },
 ];
 
@@ -59,10 +59,10 @@ export default function AiChatPage() {
         <div className="min-h-screen bg-slate-950 text-white">
             <div className="mx-auto flex min-h-screen max-w-2xl flex-col px-6 py-10">
                 <header className="mb-6">
-                    <p className="text-xs uppercase tracking-[0.3em] text-slate-400">HavenBot</p>
+                    <p className="text-xs uppercase tracking-[0.3em] text-slate-400">Stone Haven</p>
                     <h1 className="mt-2 text-3xl font-semibold">Countertop & surfaces guidance, fast.</h1>
                     <p className="mt-2 text-sm text-slate-300">
-                        Ask HavenBot about materials, timing, service areas, or how to get a quick estimate.
+                        Ask Stone Haven about materials, timing, service areas, or how to get a quick estimate.
                     </p>
                 </header>
 
@@ -71,8 +71,8 @@ export default function AiChatPage() {
                         <div
                             key={`${message.role}-${index}`}
                             className={`rounded-2xl px-4 py-3 text-sm leading-relaxed ${message.role === 'assistant'
-                                    ? 'bg-slate-800/80 text-slate-100'
-                                    : 'bg-white text-slate-900'
+                                ? 'bg-slate-800/80 text-slate-100'
+                                : 'bg-white text-slate-900'
                                 }`}
                         >
                             {message.content}

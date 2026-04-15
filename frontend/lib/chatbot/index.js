@@ -98,7 +98,7 @@ export function getChatReply(message) {
 
     if (!tokens.length) {
         return {
-            reply: 'Tell me a bit about your project (kitchen, bath, bar, etc.) and what material you’re considering, and HavenBot will help fast.',
+            reply: 'Tell me a bit about your project (kitchen, bath, bar, etc.) and what material you’re considering, and Stone Haven will help fast.',
             sources: [],
         };
     }
@@ -113,7 +113,7 @@ export function getChatReply(message) {
 
     if (!scored.length) {
         return {
-            reply: 'HavenBot can help with material selection, timing, and estimates. Share your city, project type, and any preferred material and you’ll get guidance from here.',
+            reply: 'Stone Haven can help with material selection, timing, and estimates. Share your city, project type, and any preferred material and you’ll get guidance from here.',
             sources: [],
         };
     }

@@ -1,5 +1,7 @@
+
 import { getChatReply } from '../../lib/chatbot';
 import { exec } from 'child_process';
+import { queryMemPalace } from '../../lib/mempalace';
 
 const OLLAMA_MODEL_NAME = process.env.OLLAMA_MODEL_NAME || "llama3.1:8b";
 const OLLAMA_BASE_URL = process.env.OLLAMA_BASE_URL || "http://localhost:11434";
@@ -49,22 +51,36 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Message is required.' });
   }
 
+  let mempalaceContext = '';
   try {
-    const ollamaReply = await callOllamaChat(message);
+    mempalaceContext = await queryMemPalace(message);
+  } catch (err) {
+    // If MemPalace fails, log and continue without context
+    console.warn('MemPalace query failed:', err);
+  }
+
+  // Prepend MemPalace context if available
+  let fullMessage = message;
+  if (mempalaceContext && typeof mempalaceContext === 'string' && mempalaceContext.trim().length > 0) {
+    fullMessage = `[context]\n${mempalaceContext.trim()}\n[/context]\n${message}`;
+  }
+
+  try {
+    const ollamaReply = await callOllamaChat(fullMessage);
     // fallback to knowledge base if Ollama fails or is empty
     if (!ollamaReply || ollamaReply.trim().length === 0) {
       const kbReply = getChatReply(message);
       return res.status(200).json({
         reply: kbReply.reply, sources: kbReply.sources, contact: {
           phone: process.env.NEXT_PUBLIC_COMPANY_PHONE || '(513) 307-5840',
-          email: process.env.NEXT_PUBLIC_LEAD_EMAIL || 'havenbot@urbanstone.co'
+          email: process.env.NEXT_PUBLIC_LEAD_EMAIL || 'stonehaven@urbanstone.co'
         }
       });
     }
     return res.status(200).json({
       reply: ollamaReply, sources: [], contact: {
         phone: process.env.NEXT_PUBLIC_COMPANY_PHONE || '(513) 307-5840',
-        email: process.env.NEXT_PUBLIC_LEAD_EMAIL || 'havenbot@urbanstone.co'
+        email: process.env.NEXT_PUBLIC_LEAD_EMAIL || 'stonehaven@urbanstone.co'
       }
     });
   } catch (error) {
@@ -76,7 +92,7 @@ export default async function handler(req, res) {
     return res.status(200).json({
       reply: kbReply.reply, sources: kbReply.sources, contact: {
         phone: process.env.NEXT_PUBLIC_COMPANY_PHONE || '(513) 307-5840',
-        email: process.env.NEXT_PUBLIC_LEAD_EMAIL || 'havenbot@urbanstone.co'
+        email: process.env.NEXT_PUBLIC_LEAD_EMAIL || 'stonehaven@urbanstone.co'
       }
     });
   }

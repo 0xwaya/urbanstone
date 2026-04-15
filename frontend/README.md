@@ -255,3 +255,15 @@ Recent UI behavior worth preserving:
 - supplier CTA and metadata spacing are intentionally tighter on narrow screens to keep the quote form below the fold
 
 Before a real production launch, add external monitoring, persistent rate limiting, and a verified lead-delivery integration.
+
+## Recent Updates (April 2026)
+
+- Rebranded all HavenBot references to Stone Haven, including UI, avatar, and chatbot labels.
+- Updated fallback contact email to stonehaven@urbanstone.co.
+- Fixed missing styling/scripts and static asset issues in live browser.
+- Changed 'Dismiss' button to 'Chat' and implemented a modern popup chat window with emoji/avatar.
+- Made 'wayalabs' in the footer all lowercase for consistent branding.
+- Improved chat popup UX: only one popup at a time, draggable header, resets position on close, and improved accessibility.
+- Added `.gitignore` to prevent chatbot source/config from being pushed until fully trained.
+- Documented troubleshooting steps for port conflicts and static asset errors.
+- Noted that the chatbot backend requires the `ollama` binary for LLM inference (see API errors if missing).

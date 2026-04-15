@@ -78,7 +78,7 @@ export default function Footer() {
                             <div className="mt-1">
                                 Built by{' '}
                                 <a className="font-semibold text-text transition hover:text-accent" href={wayaLabsUrl} target="_blank" rel="noreferrer">
-                                    WayaLabs
+                                    wayalabs
                                 </a>
                             </div>
                         </div>
