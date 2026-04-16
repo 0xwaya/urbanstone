@@ -9,12 +9,14 @@ Create a clean public repository for Amazon Granite without leaking unrelated wo
 The repository was populated from the committed `AmazonGranite-Rebranding` subtree of the source workspace.
 
 Included:
+
 - frontend source snapshot
 - supplier scraper source
 - committed static assets
 - project notes and planning files
 
 Excluded or cleaned up:
+
 - unrelated monorepo history
 - workspace-level files outside the Amazon Granite subtree
 - generated scraper output (`supplier-scraper/featured-stones.output.json`)
@@ -25,6 +27,7 @@ Excluded or cleaned up:
 The recovered subtree is incomplete as an application.
 
 Examples:
+
 - `frontend/pages/index.jsx` references shared components that are not present in the recovered subtree
 - the frontend subtree does not currently include its own package manifest
 

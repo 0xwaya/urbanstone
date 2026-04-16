@@ -1,12 +1,15 @@
 # Blog Outline — Stone Trends 2026
 
 ## Working title
+
 Stone Trends 2026: Colors, Finishes, and Styles Homeowners Want Now
 
 ## Audience
+
 Cincinnati metro homeowners, designers, and builders.
 
 ## Outline
+
 1. What’s driving 2026 stone trends (maintenance + luxury look)
 2. Color palette: warm whites, creamy beiges, soft greige
 3. Statement veining: bold but balanced

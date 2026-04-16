@@ -1,6 +1,7 @@
 # Phase 1 Activation Guide - Lead Sniffer Live (April 4, 2026)
 
 ## Status: READY FOR PRODUCTION
+
 ## What Is Live Now
 
 - Reddit and Craigslist pollers are active now.
@@ -88,9 +89,9 @@ Near-miss review queue (new):
 - A second queue now logs non-match but promising posts to `lead-sourcer/runs/near-miss-candidates.jsonl`.
 - Soft score threshold env: `LEAD_SOURCER_NEAR_MISS_SCORE_THRESHOLD` (default `45`).
 - Weekly tuning loop:
-	- Review near-miss rows and mark converted/not-converted.
-	- Tighten or loosen score threshold and source keyword filters accordingly.
-	- Keep hard match relay logic unchanged for safety.
+  - Review near-miss rows and mark converted/not-converted.
+  - Tighten or loosen score threshold and source keyword filters accordingly.
+  - Keep hard match relay logic unchanged for safety.
 
 Weekly tuning command:
 
@@ -109,9 +110,9 @@ One-time first-run recency expansion (Reddit):
 - First run can evaluate up to 14 days of posts one time, then auto-falls back to 48h.
 - Marker file: `lead-sourcer/runs/reddit-first-run-window-used.flag`.
 - Controls:
-	- `LEAD_SOURCER_FIRST_RUN_EXTENDED_WINDOW=true|false` (default `true`)
-	- `LEAD_SOURCER_FIRST_RUN_MAX_POST_AGE_HOURS=336` (default 14 days)
-	- `LEAD_SOURCER_FIRST_RUN_MARKER_FILE=/custom/path.flag` (optional)
+  - `LEAD_SOURCER_FIRST_RUN_EXTENDED_WINDOW=true|false` (default `true`)
+  - `LEAD_SOURCER_FIRST_RUN_MAX_POST_AGE_HOURS=336` (default 14 days)
+  - `LEAD_SOURCER_FIRST_RUN_MARKER_FILE=/custom/path.flag` (optional)
 - To intentionally rerun the one-time extended pass, delete the marker file and run a new `live` cycle.
 
 ## Rollback

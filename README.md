@@ -223,8 +223,8 @@ Manual workflow:
 - optional Apify: `APIFY_TOKEN=...`
 - optional Apify task IDs: `APIFY_NEXTDOOR_TASK_ID=...`, `APIFY_FACEBOOK_TASK_ID=...`, `APIFY_AD_LIBRARY_TASK_ID=...`
 
-4. `npm install`
-5. `npm run run`
+1. `npm install`
+2. `npm run run`
 
 Direct source runs:
 

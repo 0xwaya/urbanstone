@@ -259,7 +259,7 @@ Before a real production launch, add external monitoring, persistent rate limiti
 ## Recent Updates (April 2026)
 
 - Rebranded all HavenBot references to Stone Haven, including UI, avatar, and chatbot labels.
-- Updated fallback contact email to stonehaven@urbanstone.co.
+- Updated fallback contact email to <stonehaven@urbanstone.co>.
 - Fixed missing styling/scripts and static asset issues in live browser.
 - Changed 'Dismiss' button to 'Chat' and implemented a modern popup chat window with emoji/avatar.
 - Made 'wayalabs' in the footer all lowercase for consistent branding.

@@ -42,9 +42,11 @@ Current payload and filters align with Zap flow:
 ### 1) Auto-load .env for runtime commands
 
 Problem:
+
 - .env existed but could be missed unless explicitly exported in shell commands.
 
 Fix:
+
 - Added dotenv auto-loading to executable entrypoints:
   - lead-sourcer/src/index.js
   - lead-sourcer/src/reddit.js
@@ -52,21 +54,25 @@ Fix:
   - lead-sourcer/src/apify.js
 
 Result:
+
 - LEAD_WEBHOOK_URL and APIFY_* env vars are available consistently when launching via npm/node.
 
 ### 2) Fixed runOnce crash when a poller returns array shape
 
 Problem:
+
 - Live run could crash with:
   - TypeError: Cannot read properties of undefined (reading 'length')
 - Trigger: skip paths where a poller returned [] instead of { matches, stats }.
 
 Fix:
+
 - Added result normalization in lead-sourcer/src/index.js before counting matches.
 - All poller outputs are normalized to:
   - { matches: [], stats: {} } shape.
 
 Result:
+
 - Live polling now completes and writes run summaries even when a source is skipped.
 
 ## Apify Task ID Support
@@ -74,18 +80,21 @@ Result:
 Lead-sourcer accepts these env key variants for task IDs:
 
 Nextdoor:
+
 - APIFY_NEXTDOOR_TASK_ID
 - APIFY_TASK_ID_NEXTDOOR
 - APIFY_NEXTDOOR_ID
 - NEXTDOOR_TASK_ID
 
 Facebook Groups:
+
 - APIFY_FACEBOOK_TASK_ID
 - APIFY_FACEBOOK_GROUPS_TASK_ID
 - APIFY_TASK_ID_FACEBOOK
 - FACEBOOK_TASK_ID
 
 Ad Library (optional):
+
 - APIFY_AD_LIBRARY_TASK_ID
 - APIFY_FACEBOOK_AD_LIBRARY_TASK_ID
 - APIFY_TASK_ID_AD_LIBRARY
@@ -94,9 +103,11 @@ Ad Library (optional):
 ## Live Validation Results
 
 ### Regression tests
+
 - 34/34 passing
 
 ### Live run behavior
+
 - Full live runs now complete without the previous TypeError crash.
 - Latest run summaries were appended to runs/poll-runs.jsonl successfully.
 - Recent sample runs produced zero matches in that window:
@@ -105,6 +116,7 @@ Ad Library (optional):
   - no relay sends in those specific windows
 
 Interpretation:
+
 - Backend execution path is healthy.
 - Low yield in recent windows is content/market-window dependent, not a pipeline crash.
 

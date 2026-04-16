@@ -11,6 +11,7 @@ Hi {{first_name}},
 Thanks for connecting with Urbanstone. I’d love to help you design the right {{project_type}} with a material that fits your style and budget.
 
 A few quick questions so we can move fast:
+
 1) What material are you leaning toward (quartz, granite, quartzite, porcelain)?
 2) Any preferred colors or patterns?
 3) What’s your rough timeline?
@@ -35,6 +36,7 @@ Hi {{first_name}},
 Sharing a few recent installs similar to what you described: {{portfolio_url}}. We specialize in clean, modern surfaces with premium finishes.
 
 If you want a fast estimate, reply with:
+
 - Rough dimensions or photos
 - Preferred material
 - Target budget range
@@ -50,6 +52,7 @@ Or book a 15‑minute design call: {{calendar_url}}
 Hi {{first_name}},
 
 Here’s a fast guide:
+
 - Quartz: low maintenance, consistent patterns
 - Granite: natural variation, durable
 - Quartzite: premium look, high-end feel
