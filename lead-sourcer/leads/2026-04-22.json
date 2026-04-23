@@ -1,0 +1,425 @@
+[tracing] OpenTelemetry enabled (service=lead-sourcer, endpoint=http://localhost:4318/v1/traces)
+[lead-sourcer] Starting poll at 2026-04-23T02:57:17.842Z (mode=live)
+[apify] APIFY_TOKEN not set; skipping Apify poll.
+[reddit] Skipping r/cincinnati: fetch is not defined
+[craigslist] Skipping gigs/countertop: fetch is not defined
+[reddit] Skipping r/HomeImprovement: fetch is not defined
+[craigslist] Skipping gigs/countertops: fetch is not defined
+[reddit] Skipping r/KitchenRemodel: fetch is not defined
+[craigslist] Skipping gigs/granite: fetch is not defined
+[reddit] Skipping r/homeowners: fetch is not defined
+[craigslist] Skipping gigs/quartz: fetch is not defined
+[reddit] Skipping r/FirstTimeHomeBuyer: fetch is not defined
+[craigslist] Skipping gigs/quartzite: fetch is not defined
+[reddit] Skipping r/Remodel: fetch is not defined
+[craigslist] Skipping gigs/granite countertop: fetch is not defined
+[reddit] Skipping r/DIY: fetch is not defined
+[craigslist] Skipping gigs/quartz countertop: fetch is not defined
+[craigslist] Skipping gigs/quartzite countertop: fetch is not defined
+[craigslist] Skipping gigs/granite countertops: fetch is not defined
+[craigslist] Skipping gigs/quartz countertops: fetch is not defined
+[craigslist] Skipping gigs/quartzite countertops: fetch is not defined
+[craigslist] Skipping gigs/kitchen remodel: fetch is not defined
+[craigslist] Skipping gigs/bathroom remodel: fetch is not defined
+[craigslist] Skipping gigs/countertop installer: fetch is not defined
+[craigslist] Skipping gigs/countertop quote: fetch is not defined
+[craigslist] Skipping gigs/countertop replacement: fetch is not defined
+[craigslist] Skipping gigs/granite repair: fetch is not defined
+[craigslist] Skipping gigs/vanity top: fetch is not defined
+[craigslist] Skipping gigs/countertop fabricator: fetch is not defined
+[craigslist] Skipping gigs/stone fabricator: fetch is not defined
+[craigslist] Skipping gigs/Cincinnati countertop: fetch is not defined
+[craigslist] Skipping gigs/Cincinnati countertops: fetch is not defined
+[craigslist] Skipping gigs/Cincinnati granite countertops: fetch is not defined
+[craigslist] Skipping gigs/Cincinnati quartz countertops: fetch is not defined
+[craigslist] Skipping gigs/Cincinnati quartzite countertops: fetch is not defined
+[craigslist] Skipping gigs/Cincinnati countertop installer: fetch is not defined
+[craigslist] Skipping gigs/Cincinnati kitchen remodel: fetch is not defined
+[craigslist] Skipping gigs/Cincinnati bathroom remodel: fetch is not defined
+[craigslist] Skipping gigs/Mason countertop: fetch is not defined
+[craigslist] Skipping gigs/Mason countertops: fetch is not defined
+[craigslist] Skipping gigs/Mason granite countertops: fetch is not defined
+[craigslist] Skipping gigs/Mason quartz countertops: fetch is not defined
+[craigslist] Skipping gigs/Mason quartzite countertops: fetch is not defined
+[craigslist] Skipping gigs/Mason countertop installer: fetch is not defined
+[craigslist] Skipping gigs/Mason kitchen remodel: fetch is not defined
+[craigslist] Skipping gigs/Mason bathroom remodel: fetch is not defined
+[craigslist] Skipping gigs/West Chester countertop: fetch is not defined
+[craigslist] Skipping gigs/West Chester countertops: fetch is not defined
+[craigslist] Skipping gigs/West Chester granite countertops: fetch is not defined
+[craigslist] Skipping gigs/West Chester quartz countertops: fetch is not defined
+[craigslist] Skipping gigs/West Chester quartzite countertops: fetch is not defined
+[craigslist] Skipping gigs/West Chester countertop installer: fetch is not defined
+[craigslist] Skipping gigs/West Chester kitchen remodel: fetch is not defined
+[craigslist] Skipping gigs/West Chester bathroom remodel: fetch is not defined
+[craigslist] Skipping gigs/Liberty Township countertop: fetch is not defined
+[craigslist] Skipping gigs/Liberty Township countertops: fetch is not defined
+[craigslist] Skipping gigs/Liberty Township granite countertops: fetch is not defined
+[craigslist] Skipping gigs/Liberty Township quartz countertops: fetch is not defined
+[craigslist] Skipping gigs/Liberty Township quartzite countertops: fetch is not defined
+[craigslist] Skipping gigs/Liberty Township countertop installer: fetch is not defined
+[craigslist] Skipping gigs/Liberty Township kitchen remodel: fetch is not defined
+[craigslist] Skipping gigs/Liberty Township bathroom remodel: fetch is not defined
+[craigslist] Skipping gigs/Fairfield countertop: fetch is not defined
+[craigslist] Skipping gigs/Fairfield countertops: fetch is not defined
+[craigslist] Skipping gigs/Fairfield granite countertops: fetch is not defined
+[craigslist] Skipping gigs/Fairfield quartz countertops: fetch is not defined
+[craigslist] Skipping gigs/Fairfield quartzite countertops: fetch is not defined
+[craigslist] Skipping gigs/Fairfield countertop installer: fetch is not defined
+[craigslist] Skipping gigs/Fairfield kitchen remodel: fetch is not defined
+[craigslist] Skipping gigs/Fairfield bathroom remodel: fetch is not defined
+[craigslist] Skipping gigs/Hamilton countertop: fetch is not defined
+[craigslist] Skipping gigs/Hamilton countertops: fetch is not defined
+[craigslist] Skipping gigs/Hamilton granite countertops: fetch is not defined
+[craigslist] Skipping gigs/Hamilton quartz countertops: fetch is not defined
+[craigslist] Skipping gigs/Hamilton quartzite countertops: fetch is not defined
+[craigslist] Skipping gigs/Hamilton countertop installer: fetch is not defined
+[craigslist] Skipping gigs/Hamilton kitchen remodel: fetch is not defined
+[craigslist] Skipping gigs/Hamilton bathroom remodel: fetch is not defined
+[craigslist] Skipping gigs/Blue Ash countertop: fetch is not defined
+[craigslist] Skipping gigs/Blue Ash countertops: fetch is not defined
+[craigslist] Skipping gigs/Blue Ash granite countertops: fetch is not defined
+[craigslist] Skipping gigs/Blue Ash quartz countertops: fetch is not defined
+[craigslist] Skipping gigs/Blue Ash quartzite countertops: fetch is not defined
+[craigslist] Skipping gigs/Blue Ash countertop installer: fetch is not defined
+[craigslist] Skipping gigs/Blue Ash kitchen remodel: fetch is not defined
+[craigslist] Skipping gigs/Blue Ash bathroom remodel: fetch is not defined
+[craigslist] Skipping gigs/Loveland countertop: fetch is not defined
+[craigslist] Skipping gigs/Loveland countertops: fetch is not defined
+[craigslist] Skipping gigs/Loveland granite countertops: fetch is not defined
+[craigslist] Skipping gigs/Loveland quartz countertops: fetch is not defined
+[craigslist] Skipping gigs/Loveland quartzite countertops: fetch is not defined
+[craigslist] Skipping gigs/Loveland countertop installer: fetch is not defined
+[craigslist] Skipping gigs/Loveland kitchen remodel: fetch is not defined
+[craigslist] Skipping gigs/Loveland bathroom remodel: fetch is not defined
+[craigslist] Skipping gigs/Milford countertop: fetch is not defined
+[craigslist] Skipping gigs/Milford countertops: fetch is not defined
+[craigslist] Skipping gigs/Milford granite countertops: fetch is not defined
+[craigslist] Skipping gigs/Milford quartz countertops: fetch is not defined
+[craigslist] Skipping gigs/Milford quartzite countertops: fetch is not defined
+[craigslist] Skipping gigs/Milford countertop installer: fetch is not defined
+[craigslist] Skipping gigs/Milford kitchen remodel: fetch is not defined
+[craigslist] Skipping gigs/Milford bathroom remodel: fetch is not defined
+[craigslist] Skipping gigs/Anderson Township countertop: fetch is not defined
+[craigslist] Skipping gigs/Anderson Township countertops: fetch is not defined
+[craigslist] Skipping gigs/Anderson Township granite countertops: fetch is not defined
+[craigslist] Skipping gigs/Anderson Township quartz countertops: fetch is not defined
+[craigslist] Skipping gigs/Anderson Township quartzite countertops: fetch is not defined
+[craigslist] Skipping gigs/Anderson Township countertop installer: fetch is not defined
+[craigslist] Skipping gigs/Anderson Township kitchen remodel: fetch is not defined
+[craigslist] Skipping gigs/Anderson Township bathroom remodel: fetch is not defined
+[craigslist] Skipping gigs/Covington countertop: fetch is not defined
+[craigslist] Skipping gigs/Covington countertops: fetch is not defined
+[craigslist] Skipping gigs/Covington granite countertops: fetch is not defined
+[craigslist] Skipping gigs/Covington quartz countertops: fetch is not defined
+[craigslist] Skipping gigs/Covington quartzite countertops: fetch is not defined
+[craigslist] Skipping gigs/Covington countertop installer: fetch is not defined
+[craigslist] Skipping gigs/Covington kitchen remodel: fetch is not defined
+[craigslist] Skipping gigs/Covington bathroom remodel: fetch is not defined
+[craigslist] Skipping gigs/Newport countertop: fetch is not defined
+[craigslist] Skipping gigs/Newport countertops: fetch is not defined
+[craigslist] Skipping gigs/Newport granite countertops: fetch is not defined
+[craigslist] Skipping gigs/Newport quartz countertops: fetch is not defined
+[craigslist] Skipping gigs/Newport quartzite countertops: fetch is not defined
+[craigslist] Skipping gigs/Newport countertop installer: fetch is not defined
+[craigslist] Skipping gigs/Newport kitchen remodel: fetch is not defined
+[craigslist] Skipping gigs/Newport bathroom remodel: fetch is not defined
+[craigslist] Skipping gigs/Florence countertop: fetch is not defined
+[craigslist] Skipping gigs/Florence countertops: fetch is not defined
+[craigslist] Skipping gigs/Florence granite countertops: fetch is not defined
+[craigslist] Skipping gigs/Florence quartz countertops: fetch is not defined
+[craigslist] Skipping labor gigs/countertop: fetch is not defined
+[craigslist] Skipping labor gigs/countertops: fetch is not defined
+[craigslist] Skipping labor gigs/granite: fetch is not defined
+[craigslist] Skipping labor gigs/quartz: fetch is not defined
+[craigslist] Skipping labor gigs/quartzite: fetch is not defined
+[craigslist] Skipping labor gigs/granite countertop: fetch is not defined
+[craigslist] Skipping labor gigs/quartz countertop: fetch is not defined
+[craigslist] Skipping labor gigs/quartzite countertop: fetch is not defined
+[craigslist] Skipping labor gigs/granite countertops: fetch is not defined
+[craigslist] Skipping labor gigs/quartz countertops: fetch is not defined
+[craigslist] Skipping labor gigs/quartzite countertops: fetch is not defined
+[craigslist] Skipping labor gigs/kitchen remodel: fetch is not defined
+[craigslist] Skipping labor gigs/bathroom remodel: fetch is not defined
+[craigslist] Skipping labor gigs/countertop installer: fetch is not defined
+[craigslist] Skipping labor gigs/countertop quote: fetch is not defined
+[craigslist] Skipping labor gigs/countertop replacement: fetch is not defined
+[craigslist] Skipping labor gigs/granite repair: fetch is not defined
+[craigslist] Skipping labor gigs/vanity top: fetch is not defined
+[craigslist] Skipping labor gigs/countertop fabricator: fetch is not defined
+[craigslist] Skipping labor gigs/stone fabricator: fetch is not defined
+[craigslist] Skipping labor gigs/Cincinnati countertop: fetch is not defined
+[craigslist] Skipping labor gigs/Cincinnati countertops: fetch is not defined
+[craigslist] Skipping labor gigs/Cincinnati granite countertops: fetch is not defined
+[craigslist] Skipping labor gigs/Cincinnati quartz countertops: fetch is not defined
+[craigslist] Skipping labor gigs/Cincinnati quartzite countertops: fetch is not defined
+[craigslist] Skipping labor gigs/Cincinnati countertop installer: fetch is not defined
+[craigslist] Skipping labor gigs/Cincinnati kitchen remodel: fetch is not defined
+[craigslist] Skipping labor gigs/Cincinnati bathroom remodel: fetch is not defined
+[craigslist] Skipping labor gigs/Mason countertop: fetch is not defined
+[craigslist] Skipping labor gigs/Mason countertops: fetch is not defined
+[craigslist] Skipping labor gigs/Mason granite countertops: fetch is not defined
+[craigslist] Skipping labor gigs/Mason quartz countertops: fetch is not defined
+[craigslist] Skipping labor gigs/Mason quartzite countertops: fetch is not defined
+[craigslist] Skipping labor gigs/Mason countertop installer: fetch is not defined
+[craigslist] Skipping labor gigs/Mason kitchen remodel: fetch is not defined
+[craigslist] Skipping labor gigs/Mason bathroom remodel: fetch is not defined
+[craigslist] Skipping labor gigs/West Chester countertop: fetch is not defined
+[craigslist] Skipping labor gigs/West Chester countertops: fetch is not defined
+[craigslist] Skipping labor gigs/West Chester granite countertops: fetch is not defined
+[craigslist] Skipping labor gigs/West Chester quartz countertops: fetch is not defined
+[craigslist] Skipping labor gigs/West Chester quartzite countertops: fetch is not defined
+[craigslist] Skipping labor gigs/West Chester countertop installer: fetch is not defined
+[craigslist] Skipping labor gigs/West Chester kitchen remodel: fetch is not defined
+[craigslist] Skipping labor gigs/West Chester bathroom remodel: fetch is not defined
+[craigslist] Skipping labor gigs/Liberty Township countertop: fetch is not defined
+[craigslist] Skipping labor gigs/Liberty Township countertops: fetch is not defined
+[craigslist] Skipping labor gigs/Liberty Township granite countertops: fetch is not defined
+[craigslist] Skipping labor gigs/Liberty Township quartz countertops: fetch is not defined
+[craigslist] Skipping labor gigs/Liberty Township quartzite countertops: fetch is not defined
+[craigslist] Skipping labor gigs/Liberty Township countertop installer: fetch is not defined
+[craigslist] Skipping labor gigs/Liberty Township kitchen remodel: fetch is not defined
+[craigslist] Skipping labor gigs/Liberty Township bathroom remodel: fetch is not defined
+[craigslist] Skipping labor gigs/Fairfield countertop: fetch is not defined
+[craigslist] Skipping labor gigs/Fairfield countertops: fetch is not defined
+[craigslist] Skipping labor gigs/Fairfield granite countertops: fetch is not defined
+[craigslist] Skipping labor gigs/Fairfield quartz countertops: fetch is not defined
+[craigslist] Skipping labor gigs/Fairfield quartzite countertops: fetch is not defined
+[craigslist] Skipping labor gigs/Fairfield countertop installer: fetch is not defined
+[craigslist] Skipping labor gigs/Fairfield kitchen remodel: fetch is not defined
+[craigslist] Skipping labor gigs/Fairfield bathroom remodel: fetch is not defined
+[craigslist] Skipping labor gigs/Hamilton countertop: fetch is not defined
+[craigslist] Skipping labor gigs/Hamilton countertops: fetch is not defined
+[craigslist] Skipping labor gigs/Hamilton granite countertops: fetch is not defined
+[craigslist] Skipping labor gigs/Hamilton quartz countertops: fetch is not defined
+[craigslist] Skipping labor gigs/Hamilton quartzite countertops: fetch is not defined
+[craigslist] Skipping labor gigs/Hamilton countertop installer: fetch is not defined
+[craigslist] Skipping labor gigs/Hamilton kitchen remodel: fetch is not defined
+[craigslist] Skipping labor gigs/Hamilton bathroom remodel: fetch is not defined
+[craigslist] Skipping labor gigs/Blue Ash countertop: fetch is not defined
+[craigslist] Skipping labor gigs/Blue Ash countertops: fetch is not defined
+[craigslist] Skipping labor gigs/Blue Ash granite countertops: fetch is not defined
+[craigslist] Skipping labor gigs/Blue Ash quartz countertops: fetch is not defined
+[craigslist] Skipping labor gigs/Blue Ash quartzite countertops: fetch is not defined
+[craigslist] Skipping labor gigs/Blue Ash countertop installer: fetch is not defined
+[craigslist] Skipping labor gigs/Blue Ash kitchen remodel: fetch is not defined
+[craigslist] Skipping labor gigs/Blue Ash bathroom remodel: fetch is not defined
+[craigslist] Skipping labor gigs/Loveland countertop: fetch is not defined
+[craigslist] Skipping labor gigs/Loveland countertops: fetch is not defined
+[craigslist] Skipping labor gigs/Loveland granite countertops: fetch is not defined
+[craigslist] Skipping labor gigs/Loveland quartz countertops: fetch is not defined
+[craigslist] Skipping labor gigs/Loveland quartzite countertops: fetch is not defined
+[craigslist] Skipping labor gigs/Loveland countertop installer: fetch is not defined
+[craigslist] Skipping labor gigs/Loveland kitchen remodel: fetch is not defined
+[craigslist] Skipping labor gigs/Loveland bathroom remodel: fetch is not defined
+[craigslist] Skipping labor gigs/Milford countertop: fetch is not defined
+[craigslist] Skipping labor gigs/Milford countertops: fetch is not defined
+[craigslist] Skipping labor gigs/Milford granite countertops: fetch is not defined
+[craigslist] Skipping labor gigs/Milford quartz countertops: fetch is not defined
+[craigslist] Skipping labor gigs/Milford quartzite countertops: fetch is not defined
+[craigslist] Skipping labor gigs/Milford countertop installer: fetch is not defined
+[craigslist] Skipping labor gigs/Milford kitchen remodel: fetch is not defined
+[craigslist] Skipping labor gigs/Milford bathroom remodel: fetch is not defined
+[craigslist] Skipping labor gigs/Anderson Township countertop: fetch is not defined
+[craigslist] Skipping labor gigs/Anderson Township countertops: fetch is not defined
+[craigslist] Skipping labor gigs/Anderson Township granite countertops: fetch is not defined
+[craigslist] Skipping labor gigs/Anderson Township quartz countertops: fetch is not defined
+[craigslist] Skipping labor gigs/Anderson Township quartzite countertops: fetch is not defined
+[craigslist] Skipping labor gigs/Anderson Township countertop installer: fetch is not defined
+[craigslist] Skipping labor gigs/Anderson Township kitchen remodel: fetch is not defined
+[craigslist] Skipping labor gigs/Anderson Township bathroom remodel: fetch is not defined
+[craigslist] Skipping labor gigs/Covington countertop: fetch is not defined
+[craigslist] Skipping labor gigs/Covington countertops: fetch is not defined
+[craigslist] Skipping labor gigs/Covington granite countertops: fetch is not defined
+[craigslist] Skipping labor gigs/Covington quartz countertops: fetch is not defined
+[craigslist] Skipping labor gigs/Covington quartzite countertops: fetch is not defined
+[craigslist] Skipping labor gigs/Covington countertop installer: fetch is not defined
+[craigslist] Skipping labor gigs/Covington kitchen remodel: fetch is not defined
+[craigslist] Skipping labor gigs/Covington bathroom remodel: fetch is not defined
+[craigslist] Skipping labor gigs/Newport countertop: fetch is not defined
+[craigslist] Skipping labor gigs/Newport countertops: fetch is not defined
+[craigslist] Skipping labor gigs/Newport granite countertops: fetch is not defined
+[craigslist] Skipping labor gigs/Newport quartz countertops: fetch is not defined
+[craigslist] Skipping labor gigs/Newport quartzite countertops: fetch is not defined
+[craigslist] Skipping labor gigs/Newport countertop installer: fetch is not defined
+[craigslist] Skipping labor gigs/Newport kitchen remodel: fetch is not defined
+[craigslist] Skipping labor gigs/Newport bathroom remodel: fetch is not defined
+[craigslist] Skipping labor gigs/Florence countertop: fetch is not defined
+[craigslist] Skipping labor gigs/Florence countertops: fetch is not defined
+[craigslist] Skipping labor gigs/Florence granite countertops: fetch is not defined
+[craigslist] Skipping labor gigs/Florence quartz countertops: fetch is not defined
+[craigslist] Skipping household services/countertop: fetch is not defined
+[craigslist] Skipping household services/countertops: fetch is not defined
+[craigslist] Skipping household services/granite: fetch is not defined
+[craigslist] Skipping household services/quartz: fetch is not defined
+[craigslist] Skipping household services/quartzite: fetch is not defined
+[craigslist] Skipping household services/granite countertop: fetch is not defined
+[craigslist] Skipping household services/quartz countertop: fetch is not defined
+[craigslist] Skipping household services/quartzite countertop: fetch is not defined
+[craigslist] Skipping household services/granite countertops: fetch is not defined
+[craigslist] Skipping household services/quartz countertops: fetch is not defined
+[craigslist] Skipping household services/quartzite countertops: fetch is not defined
+[craigslist] Skipping household services/kitchen remodel: fetch is not defined
+[craigslist] Skipping household services/bathroom remodel: fetch is not defined
+[craigslist] Skipping household services/countertop installer: fetch is not defined
+[craigslist] Skipping household services/countertop quote: fetch is not defined
+[craigslist] Skipping household services/countertop replacement: fetch is not defined
+[craigslist] Skipping household services/granite repair: fetch is not defined
+[craigslist] Skipping household services/vanity top: fetch is not defined
+[craigslist] Skipping household services/countertop fabricator: fetch is not defined
+[craigslist] Skipping household services/stone fabricator: fetch is not defined
+[craigslist] Skipping household services/Cincinnati countertop: fetch is not defined
+[craigslist] Skipping household services/Cincinnati countertops: fetch is not defined
+[craigslist] Skipping household services/Cincinnati granite countertops: fetch is not defined
+[craigslist] Skipping household services/Cincinnati quartz countertops: fetch is not defined
+[craigslist] Skipping household services/Cincinnati quartzite countertops: fetch is not defined
+[craigslist] Skipping household services/Cincinnati countertop installer: fetch is not defined
+[craigslist] Skipping household services/Cincinnati kitchen remodel: fetch is not defined
+[craigslist] Skipping household services/Cincinnati bathroom remodel: fetch is not defined
+[craigslist] Skipping household services/Mason countertop: fetch is not defined
+[craigslist] Skipping household services/Mason countertops: fetch is not defined
+[craigslist] Skipping household services/Mason granite countertops: fetch is not defined
+[craigslist] Skipping household services/Mason quartz countertops: fetch is not defined
+[craigslist] Skipping household services/Mason quartzite countertops: fetch is not defined
+[craigslist] Skipping household services/Mason countertop installer: fetch is not defined
+[craigslist] Skipping household services/Mason kitchen remodel: fetch is not defined
+[craigslist] Skipping household services/Mason bathroom remodel: fetch is not defined
+[craigslist] Skipping household services/West Chester countertop: fetch is not defined
+[craigslist] Skipping household services/West Chester countertops: fetch is not defined
+[craigslist] Skipping household services/West Chester granite countertops: fetch is not defined
+[craigslist] Skipping household services/West Chester quartz countertops: fetch is not defined
+[craigslist] Skipping household services/West Chester quartzite countertops: fetch is not defined
+[craigslist] Skipping household services/West Chester countertop installer: fetch is not defined
+[craigslist] Skipping household services/West Chester kitchen remodel: fetch is not defined
+[craigslist] Skipping household services/West Chester bathroom remodel: fetch is not defined
+[craigslist] Skipping household services/Liberty Township countertop: fetch is not defined
+[craigslist] Skipping household services/Liberty Township countertops: fetch is not defined
+[craigslist] Skipping household services/Liberty Township granite countertops: fetch is not defined
+[craigslist] Skipping household services/Liberty Township quartz countertops: fetch is not defined
+[craigslist] Skipping household services/Liberty Township quartzite countertops: fetch is not defined
+[craigslist] Skipping household services/Liberty Township countertop installer: fetch is not defined
+[craigslist] Skipping household services/Liberty Township kitchen remodel: fetch is not defined
+[craigslist] Skipping household services/Liberty Township bathroom remodel: fetch is not defined
+[craigslist] Skipping household services/Fairfield countertop: fetch is not defined
+[craigslist] Skipping household services/Fairfield countertops: fetch is not defined
+[craigslist] Skipping household services/Fairfield granite countertops: fetch is not defined
+[craigslist] Skipping household services/Fairfield quartz countertops: fetch is not defined
+[craigslist] Skipping household services/Fairfield quartzite countertops: fetch is not defined
+[craigslist] Skipping household services/Fairfield countertop installer: fetch is not defined
+[craigslist] Skipping household services/Fairfield kitchen remodel: fetch is not defined
+[craigslist] Skipping household services/Fairfield bathroom remodel: fetch is not defined
+[craigslist] Skipping household services/Hamilton countertop: fetch is not defined
+[craigslist] Skipping household services/Hamilton countertops: fetch is not defined
+[craigslist] Skipping household services/Hamilton granite countertops: fetch is not defined
+[craigslist] Skipping household services/Hamilton quartz countertops: fetch is not defined
+[craigslist] Skipping household services/Hamilton quartzite countertops: fetch is not defined
+[craigslist] Skipping household services/Hamilton countertop installer: fetch is not defined
+[craigslist] Skipping household services/Hamilton kitchen remodel: fetch is not defined
+[craigslist] Skipping household services/Hamilton bathroom remodel: fetch is not defined
+[craigslist] Skipping household services/Blue Ash countertop: fetch is not defined
+[craigslist] Skipping household services/Blue Ash countertops: fetch is not defined
+[craigslist] Skipping household services/Blue Ash granite countertops: fetch is not defined
+[craigslist] Skipping household services/Blue Ash quartz countertops: fetch is not defined
+[craigslist] Skipping household services/Blue Ash quartzite countertops: fetch is not defined
+[craigslist] Skipping household services/Blue Ash countertop installer: fetch is not defined
+[craigslist] Skipping household services/Blue Ash kitchen remodel: fetch is not defined
+[craigslist] Skipping household services/Blue Ash bathroom remodel: fetch is not defined
+[craigslist] Skipping household services/Loveland countertop: fetch is not defined
+[craigslist] Skipping household services/Loveland countertops: fetch is not defined
+[craigslist] Skipping household services/Loveland granite countertops: fetch is not defined
+[craigslist] Skipping household services/Loveland quartz countertops: fetch is not defined
+[craigslist] Skipping household services/Loveland quartzite countertops: fetch is not defined
+[craigslist] Skipping household services/Loveland countertop installer: fetch is not defined
+[craigslist] Skipping household services/Loveland kitchen remodel: fetch is not defined
+[craigslist] Skipping household services/Loveland bathroom remodel: fetch is not defined
+[craigslist] Skipping household services/Milford countertop: fetch is not defined
+[craigslist] Skipping household services/Milford countertops: fetch is not defined
+[craigslist] Skipping household services/Milford granite countertops: fetch is not defined
+[craigslist] Skipping household services/Milford quartz countertops: fetch is not defined
+[craigslist] Skipping household services/Milford quartzite countertops: fetch is not defined
+[craigslist] Skipping household services/Milford countertop installer: fetch is not defined
+[craigslist] Skipping household services/Milford kitchen remodel: fetch is not defined
+[craigslist] Skipping household services/Milford bathroom remodel: fetch is not defined
+[craigslist] Skipping household services/Anderson Township countertop: fetch is not defined
+[craigslist] Skipping household services/Anderson Township countertops: fetch is not defined
+[craigslist] Skipping household services/Anderson Township granite countertops: fetch is not defined
+[craigslist] Skipping household services/Anderson Township quartz countertops: fetch is not defined
+[craigslist] Skipping household services/Anderson Township quartzite countertops: fetch is not defined
+[craigslist] Skipping household services/Anderson Township countertop installer: fetch is not defined
+[craigslist] Skipping household services/Anderson Township kitchen remodel: fetch is not defined
+[craigslist] Skipping household services/Anderson Township bathroom remodel: fetch is not defined
+[craigslist] Skipping household services/Covington countertop: fetch is not defined
+[craigslist] Skipping household services/Covington countertops: fetch is not defined
+[craigslist] Skipping household services/Covington granite countertops: fetch is not defined
+[craigslist] Skipping household services/Covington quartz countertops: fetch is not defined
+[craigslist] Skipping household services/Covington quartzite countertops: fetch is not defined
+[craigslist] Skipping household services/Covington countertop installer: fetch is not defined
+[craigslist] Skipping household services/Covington kitchen remodel: fetch is not defined
+[craigslist] Skipping household services/Covington bathroom remodel: fetch is not defined
+[craigslist] Skipping household services/Newport countertop: fetch is not defined
+[craigslist] Skipping household services/Newport countertops: fetch is not defined
+[craigslist] Skipping household services/Newport granite countertops: fetch is not defined
+[craigslist] Skipping household services/Newport quartz countertops: fetch is not defined
+[craigslist] Skipping household services/Newport quartzite countertops: fetch is not defined
+[craigslist] Skipping household services/Newport countertop installer: fetch is not defined
+[craigslist] Skipping household services/Newport kitchen remodel: fetch is not defined
+[craigslist] Skipping household services/Newport bathroom remodel: fetch is not defined
+[craigslist] Skipping household services/Florence countertop: fetch is not defined
+[craigslist] Skipping household services/Florence countertops: fetch is not defined
+[craigslist] Skipping household services/Florence granite countertops: fetch is not defined
+[craigslist] Skipping household services/Florence quartz countertops: fetch is not defined
+[lead-sourcer] Poll complete — Reddit: 0 match(es), Craigslist: 0 match(es), Apify: 0 match(es), mode=live
+[lead-sourcer] Verdict stats {
+  reddit: {
+    fetched: 0,
+    evaluated: 0,
+    skippedSeen: 0,
+    skippedStale: 0,
+    matches: 0,
+    borderline: 0,
+    rejects: 0,
+    regionFiltered: 0,
+    relayed: 0
+  },
+  craigslist: {
+    fetched: 0,
+    evaluated: 0,
+    skippedSeen: 0,
+    bodyFetches: 0,
+    matches: 0,
+    borderline: 0,
+    rejects: 0,
+    relayed: 0
+  },
+  apify: {
+    fetched: 0,
+    evaluated: 0,
+    skippedSeen: 0,
+    matches: 0,
+    borderline: 0,
+    rejects: 0,
+    relayed: 0,
+    byTask: {}
+  }
+}
+[relay] LEAD_WEBHOOK_URL not set — printing payload instead:
+ {
+  "submittedAt": "2026-04-23T02:57:18.143Z",
+  "source": "lead-sourcer-run-report",
+  "lead": {
+    "name": "Lead Sourcer Run Report",
+    "email": null,
+    "phone": null,
+    "projectDetails": "[LEAD SOURCER RUN REPORT]\n\nRun window: 2026-04-23T02:57:17.842Z -> 2026-04-23T02:57:18.143Z\nMode: live\n\nCounts: reddit=0, craigslist=0, apify=0, totalMatches=0\n\nReddit: fetched=0, evaluated=0, matches=0, borderline=0, rejects=0, relayed=0\nCraigslist: fetched=0, evaluated=0, bodyFetches=0, matches=0, borderline=0, rejects=0, relayed=0\nApify: fetched=0, evaluated=0, matches=0, borderline=0, rejects=0, relayed=0\n\nRun log file: /Users/pc/.openclaw/workspace/urbanstone/lead-sourcer/runs/poll-runs.jsonl",
+    "htmlReport": "<!DOCTYPE html>\n<html>\n<head>\n    <meta charset=\"utf-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n    <title>Lead Sourcer Run Report</title>\n    <style>\n        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; background: #f5f5f5; margin: 0; padding: 20px; }\n        .container { max-width: 800px; margin: 0 auto; background: white; padding: 0; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }\n        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; border-radius: 8px 8px 0 0; }\n        .header h1 { margin: 0; font-size: 28px; }\n        .header p { margin: 8px 0 0 0; opacity: 0.9; font-size: 14px; }\n        .content { padding: 30px; }\n        .summary-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 30px; }\n        .metric-card { background: #f9f9f9; padding: 20px; border-radius: 8px; border-left: 4px solid #667eea; }\n        .metric-value { font-size: 32px; font-weight: bold; color: #333; }\n        .metric-label { font-size: 12px; color: #999; text-transform: uppercase; margin-top: 8px; }\n        .source-section { margin-bottom: 30px; }\n        .source-section h2 { font-size: 18px; color: #333; margin: 0 0 15px 0; border-bottom: 2px solid #f0f0f0; padding-bottom: 10px; }\n        .stats-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; font-size: 13px; }\n        .stat { background: #f5f5f5; padding: 10px; border-radius: 4px; }\n        .stat strong { color: #667eea; }\n        .footer { background: #f9f9f9; padding: 20px 30px; border-radius: 0 0 8px 8px; font-size: 12px; color: #999; border-top: 1px solid #e0e0e0; }\n        .match-highlight { padding: 15px; background: #fff3e0; border-left: 4px solid #ff9800; border-radius: 4px; margin-bottom: 20px; }\n        .match-highlight p { margin: 0; font-size: 14px; }\n    </style>\n</head>\n<body>\n    <div class=\"container\">\n        <div class=\"header\">\n            <h1>Lead Sourcer Run Report</h1>\n            <p>Automated lead sourcing from Reddit, Craigslist, and Apify</p>\n        </div>\n        <div class=\"content\">\n            <div class=\"match-highlight\">\n                <p><strong>🎯 Total Matches Found: 0</strong> (0.3s)</p>\n            </div>\n\n            <div class=\"summary-grid\">\n                <div class=\"metric-card\">\n                    <div class=\"metric-label\">Total Items Fetched</div>\n                    <div class=\"metric-value\">0</div>\n                </div>\n                <div class=\"metric-card\">\n                    <div class=\"metric-label\">Total Matches</div>\n                    <div class=\"metric-value\" style=\"color: #999;\">0</div>\n                </div>\n                <div class=\"metric-card\">\n                    <div class=\"metric-label\">Total Relayed</div>\n                    <div class=\"metric-value\" style=\"color: #999;\">0</div>\n                </div>\n            </div>\n\n            <div class=\"source-section\">\n                <h2>📱 Reddit</h2>\n                <div class=\"stats-row\">\n                    <div class=\"stat\"><strong>Fetched:</strong> 0</div>\n                    <div class=\"stat\"><strong>Matches:</strong> 0</div>\n                </div>\n                <div class=\"stats-row\">\n                    <div class=\"stat\"><strong>Relayed:</strong> 0</div>\n                    <div class=\"stat\"><strong>Rejects:</strong> 0</div>\n                </div>\n            </div>\n\n            <div class=\"source-section\">\n                <h2>🏷️ Craigslist</h2>\n                <div class=\"stats-row\">\n                    <div class=\"stat\"><strong>Fetched:</strong> 0</div>\n                    <div class=\"stat\"><strong>Matches:</strong> 0</div>\n                </div>\n                <div class=\"stats-row\">\n                    <div class=\"stat\"><strong>Relayed:</strong> 0</div>\n                    <div class=\"stat\"><strong>Rejects:</strong> 0</div>\n                </div>\n            </div>\n\n            <div class=\"source-section\">\n                <h2>🤖 Apify</h2>\n                <div class=\"stats-row\">\n                    <div class=\"stat\"><strong>Fetched:</strong> 0</div>\n                    <div class=\"stat\"><strong>Matches:</strong> 0</div>\n                </div>\n                <div class=\"stats-row\">\n                    <div class=\"stat\"><strong>Relayed:</strong> 0</div>\n                    <div class=\"stat\"><strong>Rejects:</strong> 0</div>\n                </div>\n            </div>\n\n            \n        </div>\n        <div class=\"footer\">\n            <p><strong>Run Window:</strong> 4/22/2026, 10:57:17 PM → 4/22/2026, 10:57:18 PM</p>\n            <p><strong>Mode:</strong> live | <strong>Duration:</strong> 0.3s</p>\n            <p>Lead Sourcer v1.0</p>\n        </div>\n    </div>\n</body>\n</html>",
+    "externalPostId": "run-report:2026-04-23T02:57:17.842Z",
+    "externalPostUrl": null
+  },
+  "metadata": {
+    "requestId": "lead-sourcer/report/run-report:2026-04-23T02:57:17.842Z",
+    "routeId": "lead-sourcer/report",
+    "dedupeKey": "run-report:2026-04-23T02:57:17.842Z",
+    "automated": true
+  }
+}
+[lead-sourcer] Run report relayed for 2026-04-23T02:57:17.842Z

@@ -15,7 +15,7 @@
     "test": "node --experimental-vm-modules node_modules/.bin/jest --testEnvironment node"
   },
   "engines": {
-    "node": ">=20.11.0"
+    "node": "20.x"
   },
   "dependencies": {
     "@opentelemetry/auto-instrumentations-node": "^0.72.0",
