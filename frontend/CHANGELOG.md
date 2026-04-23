@@ -18,7 +18,12 @@
 - Bot intake: Fixed name-capture loop by accepting plain full-name replies after explicit full-name prompt while rejecting non-name probe text
 - Bot UX: Added branded header logo, removed duplicate embedded header inside the popup, and aligned footer button colors with established theme tokens
 - Bot UX: Added visible in-panel chat scroll rail indicator so users can see scroll state in long conversations
+- Bot UX: Replaced the custom drag-scroll rail with stable native chat scrollbars for consistent Opera/Chromium behavior and easier message navigation
 - Bot logic: Prevented duplicate self-introduction greetings within the same conversation history
+- Bot tuning: Added strict policy/disclosure gating, retrieval re-ranking for chat intent, confidence-based field clarification, smart re-ask prompts, and intake memory-card persistence hooks
+- Frontend design: Standardized section/card surfaces with new shared `brand-section` and `brand-card` classes and applied them across homepage, coverage, service-area, material, and contractor pages
+- Frontend design: Refined chat popup contrast and footer controls to stay inside Urban Stone theme tokens and improve button readability
+- Quality: Ran full frontend lint and test suite after styling and chatbot upgrades (`70/70` tests passing)
 - Testing: Increased the homepage render test timeout to reduce local flake under heavy CPU and low-disk conditions
 - Rebrand: All HavenBot references replaced with Stone Haven (UI, avatar, chatbot labels)
 - Contact: Fallback email updated to <stonehaven@urbanstone.co>

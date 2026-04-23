@@ -136,12 +136,12 @@ export default function Home() {
       </Head>
       <div id="top" className="min-h-screen bg-bg text-text selection:bg-accent selection:text-white">
         <div className="page-shell mx-auto max-w-7xl px-4 sm:px-8">
-          <TopNav />
-          <main>
+            <TopNav />
+          <main className="pb-6">
             <Hero />
             <FeaturesBar announcement={homepageAnnouncement} />
             <section className="mx-auto max-w-6xl px-4 mt-8 mb-8 sm:px-6">
-              <div className="rounded-2xl border border-border bg-surface/90 p-6 sm:p-8 flex flex-col md:flex-row md:items-center gap-6 shadow-soft">
+              <div className="brand-section flex flex-col gap-6 p-6 sm:p-8 md:flex-row md:items-center">
                 <div className="flex-1">
                   <h2 className="text-2xl sm:text-3xl font-display font-bold mb-2">Contractor Portal</h2>
                   <p className="text-base text-muted mb-0">Access exclusive pricing, project planning tools, and commercial estimate intake for multi-unit builders, developers, and contractors.</p>

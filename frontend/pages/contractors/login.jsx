@@ -117,9 +117,9 @@ export default function ContractorLogin() {
                 <meta name="robots" content="noindex,nofollow" />
             </Head>
 
-            <div className="min-h-screen bg-bg px-4 py-12 sm:px-6 sm:py-16">
+            <div className="min-h-screen bg-bg px-4 py-12 text-text selection:bg-accent selection:text-white sm:px-6 sm:py-16">
                 <div className="mx-auto grid w-full max-w-6xl gap-5 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
-                    <div className="rounded-[2.3rem] border border-border bg-surface/88 p-6 shadow-soft sm:p-8">
+                    <div className="brand-section rounded-[2.3rem] p-6 sm:p-8">
                         <div className="flex items-center gap-3">
                             <LogoMark className="h-10 w-10" />
                             <p className="eyebrow mb-0">Contractor Program</p>
@@ -131,16 +131,16 @@ export default function ContractorLogin() {
                             Apply for access to our contractor portal and unlock exclusive pricing, project planning tools, and fast commercial estimates for multi-unit projects.
                         </p>
                         <div className="mt-6 grid gap-3 sm:grid-cols-2">
-                            <div className="rounded-2xl border border-border bg-panel/80 px-4 py-4 text-sm leading-6 text-text">
+                            <div className="brand-card px-4 py-4 text-sm leading-6 text-text">
                                 Submit your business details to request access. Approved contractors receive a secure login link by email.
                             </div>
-                            <div className="rounded-2xl border border-border bg-panel/80 px-4 py-4 text-sm leading-6 text-text">
+                            <div className="brand-card px-4 py-4 text-sm leading-6 text-text">
                                 Once approved, you can view contractor pricing and use our estimate assistant for your upcoming projects.
                             </div>
                         </div>
                     </div>
 
-                    <div className="w-full bg-surface border border-border rounded-[2rem] overflow-hidden shadow-soft">
+                    <div className="brand-section w-full overflow-hidden rounded-[2rem]">
                         {/* Tab switcher */}
                         <div className="flex border-b border-border">
                             <button
@@ -188,7 +188,7 @@ export default function ContractorLogin() {
                                                     value={regEmail}
                                                     onChange={e => setRegEmail(e.target.value)}
                                                     placeholder="you@yourcompany.com"
-                                                    className="w-full bg-panel border border-border rounded-lg px-4 py-2.5 text-sm text-text placeholder:text-muted focus:outline-none focus:border-accent transition-colors"
+                                                    className="form-input rounded-lg py-2.5 text-sm"
                                                 />
                                             </div>
                                             <div>
@@ -202,7 +202,7 @@ export default function ContractorLogin() {
                                                     value={regCompany}
                                                     onChange={e => setRegCompany(e.target.value)}
                                                     placeholder="Apex Builders LLC"
-                                                    className="w-full bg-panel border border-border rounded-lg px-4 py-2.5 text-sm text-text placeholder:text-muted focus:outline-none focus:border-accent transition-colors"
+                                                    className="form-input rounded-lg py-2.5 text-sm"
                                                 />
                                             </div>
                                             <div>
@@ -216,7 +216,7 @@ export default function ContractorLogin() {
                                                     value={regWebsite}
                                                     onChange={e => setRegWebsite(e.target.value)}
                                                     placeholder="https://yourcompany.com"
-                                                    className="w-full bg-panel border border-border rounded-lg px-4 py-2.5 text-sm text-text placeholder:text-muted focus:outline-none focus:border-accent transition-colors"
+                                                    className="form-input rounded-lg py-2.5 text-sm"
                                                 />
                                             </div>
                                             {regStatus === 'error' && (
@@ -256,7 +256,7 @@ export default function ContractorLogin() {
                                                     value={loginEmail}
                                                     onChange={e => setLoginEmail(e.target.value)}
                                                     placeholder="you@yourcompany.com"
-                                                    className="w-full bg-panel border border-border rounded-lg px-4 py-2.5 text-sm text-text placeholder:text-muted focus:outline-none focus:border-accent transition-colors"
+                                                    className="form-input rounded-lg py-2.5 text-sm"
                                                 />
                                             </div>
                                             {loginStatus === 'error' && (

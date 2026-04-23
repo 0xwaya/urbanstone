@@ -42,7 +42,7 @@ export default function ContractorPortal() {
 
                         <section className="pb-8 sm:pb-10">
                             <div className="grid gap-4 lg:grid-cols-[1.2fr_0.8fr]">
-                                <div className="rounded-[2rem] border border-border bg-surface/85 p-6 shadow-soft sm:p-7">
+                                <div className="brand-section rounded-[2rem] p-6 sm:p-7">
                                     <div className="eyebrow">Program fit</div>
                                     <h2 className="font-display text-3xl font-semibold leading-tight sm:text-[2.4rem]">
                                         Structured for repeatable multi-unit installs, not one-off residential quoting.
@@ -81,7 +81,7 @@ export default function ContractorPortal() {
                                     </div>
                                 </div>
 
-                                <aside className="rounded-[2rem] border border-border bg-surface/85 p-6 shadow-soft sm:p-7">
+                                <aside className="brand-section rounded-[2rem] p-6 sm:p-7">
                                     <div className="eyebrow">Program specs</div>
                                     <div className="grid gap-3">
                                         {CONTRACTOR_SPECS.map((spec) => (
@@ -129,7 +129,7 @@ export default function ContractorPortal() {
                         </section>
 
                         <section className="pb-8 sm:pb-10">
-                            <div className="rounded-[2rem] border border-border bg-surface/85 p-5 shadow-soft sm:p-6">
+                            <div className="brand-section rounded-[2rem] p-5 sm:p-6">
                                 <div className="flex flex-col gap-4 border-b border-border/70 pb-5 sm:flex-row sm:items-end sm:justify-between">
                                     <div>
                                         <div className="eyebrow mb-3">Builder selections</div>
@@ -151,10 +151,7 @@ export default function ContractorPortal() {
                                         const isExpanded = expandedTier === tier.name;
 
                                         return (
-                                            <article
-                                                key={tier.name}
-                                                className="overflow-hidden rounded-[1.7rem] border border-border bg-panel/80 transition hover:border-accent/45"
-                                            >
+                                            <article key={tier.name} className="brand-card overflow-hidden rounded-[1.7rem]">
                                                 <button
                                                     type="button"
                                                     className="flex w-full flex-col gap-4 px-4 py-4 text-left sm:flex-row sm:items-center sm:px-5"
@@ -241,7 +238,7 @@ export default function ContractorPortal() {
                         </section>
 
                         <section className="pb-4">
-                            <div className="rounded-[2rem] border border-border bg-surface/80 p-5 shadow-soft sm:p-6">
+                            <div className="brand-section rounded-[2rem] p-5 sm:p-6">
                                 <div className="eyebrow">Program notes</div>
                                 <div className="grid gap-3 lg:grid-cols-3">
                                     {CONTRACTOR_PROGRAM_NOTES.map((note) => (

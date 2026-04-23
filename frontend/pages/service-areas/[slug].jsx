@@ -118,10 +118,10 @@ export default function ServiceAreaPage({ area }) {
                                     <span className="rounded-full border border-border bg-panel px-3 py-1">3-5 day turnaround</span>
                                 </div>
                                 <div className="mt-8 flex flex-wrap gap-3">
-                                    <a className="inline-flex items-center justify-center rounded-md bg-accent px-5 py-3 font-semibold text-white transition hover:bg-accentDark" href="#quote">
+                                    <a className="brand-button-primary px-5 py-3 font-semibold" href="#quote">
                                         Request Estimate
                                     </a>
-                                    <Link className="inline-flex items-center justify-center rounded-md border border-border px-5 py-3 font-semibold transition hover:border-accent" href="/#suppliers">
+                                    <Link className="brand-button-secondary inline-flex items-center justify-center rounded-full px-5 py-3 font-semibold" href="/#suppliers">
                                         View Materials
                                     </Link>
                                 </div>
@@ -143,7 +143,7 @@ export default function ServiceAreaPage({ area }) {
                         </section>
 
                         <section id="suppliers" className="grid gap-6 lg:grid-cols-3">
-                            <article className="rounded-3xl border border-border bg-surface/75 p-5 shadow-soft lg:col-span-2">
+                            <article className="brand-section p-5 lg:col-span-2">
                                 <div className="eyebrow">Materials we install</div>
                                 <h2 className="font-display text-3xl font-semibold sm:text-4xl">Countertop Options for {area.city} Projects</h2>
                                 <div className="mt-5 space-y-4 text-sm leading-7 text-muted sm:text-base">
@@ -167,7 +167,7 @@ export default function ServiceAreaPage({ area }) {
                                 </div>
                             </article>
 
-                            <aside className="rounded-3xl border border-border bg-panel p-5 shadow-soft">
+                            <aside className="brand-section p-5">
                                 <div className="eyebrow">Nearby coverage</div>
                                 <h2 className="font-display text-2xl font-semibold">Also serving nearby areas</h2>
                                 <div className="mt-4 flex flex-wrap gap-2 text-sm">
@@ -224,12 +224,12 @@ export default function ServiceAreaPage({ area }) {
                             footerLink={{ href: '/coverage', label: 'View all city and material pages' }}
                         />
 
-                        <section className="mt-10 rounded-3xl border border-border bg-surface/75 p-5 shadow-soft sm:p-6">
+                        <section className="brand-section mt-10 p-5 sm:p-6">
                             <div className="eyebrow">FAQ</div>
                             <h2 className="font-display text-3xl font-semibold sm:text-4xl">Questions We Hear in {area.city}</h2>
                             <div className="mt-6 space-y-4">
                                 {faqItems.map((item) => (
-                                    <article key={item.question} className="rounded-2xl border border-border bg-panel/70 p-4 sm:p-5">
+                                    <article key={item.question} className="brand-card p-4 sm:p-5">
                                         <h3 className="text-lg font-semibold text-text sm:text-xl">{item.question}</h3>
                                         <p className="mt-2 text-sm leading-7 text-muted sm:text-base">{item.answer}</p>
                                     </article>

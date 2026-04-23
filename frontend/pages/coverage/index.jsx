@@ -94,7 +94,7 @@ export default function CoverageHubPage() {
                                 </p>
                             </div>
 
-                            <aside className="rounded-3xl border border-border bg-panel p-5 shadow-soft">
+                            <aside className="brand-section p-5">
                                 <div className="eyebrow">What you will find</div>
                                 <div className="mt-4 space-y-3 text-sm leading-7 text-muted sm:text-base">
                                     <p>City pages for quartz countertops, granite countertops, and quartzite countertops around Cincinnati.</p>
@@ -104,7 +104,7 @@ export default function CoverageHubPage() {
                             </aside>
                         </section>
 
-                        <section className="rounded-3xl border border-border bg-surface/75 p-5 shadow-soft sm:p-6">
+                        <section className="brand-section p-5 sm:p-6">
                             <div className="eyebrow">Location pages</div>
                             <h2 className="font-display text-3xl font-semibold sm:text-4xl">City Pages Across the 50-Mile Service Area</h2>
                             <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
@@ -112,7 +112,7 @@ export default function CoverageHubPage() {
                                     <Link
                                         key={area.slug}
                                         href={`/service-areas/${area.slug}`}
-                                        className="rounded-2xl border border-border bg-panel/70 p-4 transition hover:-translate-y-0.5 hover:border-accent hover:shadow-soft"
+                                        className="brand-card p-4"
                                     >
                                         <div className="text-xs uppercase tracking-[0.24em] text-muted">{area.state}</div>
                                         <div className="mt-2 text-xl font-semibold text-text">{area.city}</div>
@@ -124,7 +124,7 @@ export default function CoverageHubPage() {
                             </div>
                         </section>
 
-                        <section className="mt-10 rounded-3xl border border-border bg-surface/75 p-5 shadow-soft sm:p-6">
+                        <section className="brand-section mt-10 p-5 sm:p-6">
                             <div className="eyebrow">Material pages</div>
                             <h2 className="font-display text-3xl font-semibold sm:text-4xl">High-Intent Material and City Combinations</h2>
                             <div className="mt-6 grid gap-4 md:grid-cols-3">
@@ -132,7 +132,7 @@ export default function CoverageHubPage() {
                                     <Link
                                         key={page.slug}
                                         href={`/materials/${page.slug}`}
-                                        className="rounded-2xl border border-border bg-panel/70 p-4 transition hover:-translate-y-0.5 hover:border-accent hover:shadow-soft"
+                                        className="brand-card p-4"
                                     >
                                         <div className="text-xs uppercase tracking-[0.24em] text-muted">{page.materialLabel}</div>
                                         <div className="mt-2 text-xl font-semibold text-text">{page.headline}</div>

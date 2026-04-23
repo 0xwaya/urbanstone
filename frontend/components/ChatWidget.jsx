@@ -26,7 +26,6 @@ function clampChatPosition(position) {
 }
 
 function ChatPopup({
-    chatbotLabel,
     chatbotUrl,
     companyPhone,
     companyEmail,
@@ -45,11 +44,11 @@ function ChatPopup({
 
     return (
         <div
-            className={`fixed z-[60] flex w-[min(23rem,calc(100vw-1rem))] max-h-[calc(100dvh-5.5rem)] flex-col overflow-hidden rounded-[1.6rem] border border-white/20 bg-[linear-gradient(160deg,rgba(14,24,43,0.94),rgba(12,18,34,0.88))] shadow-[0_30px_90px_rgba(6,12,26,0.55)] ring-1 ring-white/10 backdrop-blur-xl ${position ? '' : 'bottom-20 left-2 right-2 sm:bottom-24 sm:left-auto sm:right-5'}`.trim()}
+            className={`fixed z-[60] flex w-[min(23rem,calc(100vw-1rem))] max-h-[calc(100dvh-5.5rem)] flex-col overflow-hidden rounded-[1.6rem] border border-border/90 bg-[linear-gradient(160deg,rgba(13,21,38,0.96),rgba(10,17,31,0.92))] shadow-[0_30px_90px_rgba(6,12,26,0.55)] ring-1 ring-border/55 backdrop-blur-xl ${position ? '' : 'bottom-20 left-2 right-2 sm:bottom-24 sm:left-auto sm:right-5'}`.trim()}
             style={popupStyle}
         >
             <div
-                className={`flex items-center justify-between gap-3 border-b border-white/15 bg-[linear-gradient(140deg,rgba(54,105,187,0.95),rgba(27,54,109,0.96))] px-4 py-3 text-white ${typeof window !== 'undefined' && window.innerWidth >= DESKTOP_BREAKPOINT ? 'cursor-move' : ''}`.trim()}
+                className={`flex items-center justify-between gap-3 border-b border-border/70 bg-[linear-gradient(140deg,rgba(50,93,165,0.95),rgba(21,42,84,0.96))] px-4 py-3 text-white ${typeof window !== 'undefined' && window.innerWidth >= DESKTOP_BREAKPOINT ? 'cursor-move' : ''}`.trim()}
                 onMouseDown={onDragStart}
             >
                 <div className="flex min-w-0 items-center gap-2.5">
@@ -63,7 +62,7 @@ function ChatPopup({
                 </div>
                 <button
                     type="button"
-                    className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-white/30 bg-white/10 text-lg font-medium transition hover:bg-white/20"
+                    className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-white/25 bg-white/10 text-lg font-medium transition hover:bg-white/20"
                     onClick={onClose}
                     aria-label="Close chat"
                 >
@@ -71,7 +70,7 @@ function ChatPopup({
                 </button>
             </div>
 
-            <div className="h-[min(62dvh,29rem)] min-h-0 bg-white/95 sm:h-[min(66dvh,31rem)]">
+            <div className="h-[min(62dvh,29rem)] min-h-0 bg-bg sm:h-[min(66dvh,31rem)]">
                 {isExternalEmbed ? (
                     <iframe
                         title="Stone Haven AI assistant"
@@ -85,10 +84,10 @@ function ChatPopup({
                 )}
             </div>
 
-            <div className="flex flex-wrap items-center gap-2 border-t border-white/10 bg-surface/95 px-3 py-2.5 backdrop-blur">
+            <div className="flex flex-wrap items-center gap-2 border-t border-border/80 bg-surface/92 px-3 py-2.5 backdrop-blur">
                 <button
                     type="button"
-                    className="rounded-full bg-accent px-3 py-1.5 text-xs font-semibold text-white shadow-[0_8px_18px_rgba(54,105,187,0.35)] transition hover:bg-accentDark"
+                    className="brand-button-primary px-3.5 py-1.5 text-xs font-semibold"
                     onClick={onOpenQuote}
                 >
                     Open estimate form
@@ -256,7 +255,6 @@ export default function ChatWidget() {
 
             {showBot ? (
                 <ChatPopup
-                    chatbotLabel={chatbotLabel}
                     chatbotUrl={chatbotUrl}
                     companyPhone={companyPhone}
                     companyEmail={companyEmail}
