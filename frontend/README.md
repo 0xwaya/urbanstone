@@ -2,7 +2,7 @@
 
 Standalone Next.js pages application for the Urban Stone Collective marketing site.
 
-This frontend includes the current live mobile layout pass for navigation, hero spacing, curated material browsing, and quote capture.
+This frontend includes the current live layout pass for navigation, homepage hierarchy, curated material browsing, contractor intake, and quote capture.
 
 The supplier section now follows the current slab-first funnel:
 
@@ -13,7 +13,7 @@ The supplier section now follows the current slab-first funnel:
 - location and hours are collapsible and share a tighter single-card treatment on mobile
 - supplier logos are visually toned down to fit the current brand system
 - the supplier anchor target includes extra mobile scroll offset so the sticky header does not cover the section heading
-- contractor portal entry is now exposed from the mobile hamburger menu and footer CTA cluster instead of a standalone homepage card
+- contractor portal entry is exposed from the homepage teaser, mobile hamburger menu, and footer CTA cluster
 
 The active homepage funnel is:
 
@@ -43,9 +43,10 @@ Recommended local run command (avoids port conflicts):
 - `NEXT_PUBLIC_COMPANY_PHONE`: phone number rendered in the UI.
 - `NEXT_PUBLIC_LEAD_EMAIL`: fallback email address rendered in the UI.
 - `NEXT_PUBLIC_SITE_URL`: canonical production origin used for metadata, robots, and sitemap output.
-- `NEXT_PUBLIC_WAYALABS_CHATBOT_URL`: optional Wayalabs chatbot embed URL for the AI concierge panel.
-- `NEXT_PUBLIC_WAYALABS_CHATBOT_LABEL`: optional CTA label for the chatbot button (defaults to "Chat with AI concierge").
+- `NEXT_PUBLIC_WAYALABS_CHATBOT_URL`: optional external chatbot embed URL. If unset, the floating widget falls back to the local Stone Haven client that also powers `/ai-chat`.
+- `NEXT_PUBLIC_WAYALABS_CHATBOT_LABEL`: optional CTA label for the chatbot button (defaults to "Chat with Stone Haven").
 - `LEAD_WEBHOOK_URL`: required for successful lead delivery from `/api/lead`.
+- `ENABLE_CHAT_PRICE_PREVIEW`: optional chat-only flag. Keep unset/`false` to suppress price ranges in chat intake (recommended); set to `true` only for controlled internal testing.
 - `SUPABASE_URL`: Supabase project URL used by the contractor portal API routes.
 - `SUPABASE_SERVICE_ROLE_KEY`: server-side Supabase key for contractor records and magic-link state.
 - `CONTRACTOR_SESSION_SECRET`: HMAC secret used to sign the `contractor_session` cookie.
@@ -73,8 +74,8 @@ The frontend now includes a gated contractor portal for multi-unit builder prici
 - middleware redirects unauthenticated portal requests to the login page
 - registration writes contractor records to Supabase
 - login issues one-time magic links and sets a signed `HttpOnly` session cookie after verification
-- portal pricing is not exposed on the public homepage; the portal is linked from mobile navigation and the footer CTA cluster
-- the contractor pricing page is intentionally trimmed down into expandable material cards with direct email/text inquiry actions instead of the residential estimate form
+- portal pricing is not exposed on the public homepage; the portal is linked from the homepage teaser plus the primary navigation/footer entry points
+- the contractor pricing page now pairs a commercial intake assistant with expandable material tiers, program specs, and direct call/email actions
 
 Approval model:
 
@@ -184,6 +185,16 @@ Server-side validation and normalization for these fields is implemented in `lib
 - rerun smoke tests with an explicit base URL, for example:
   `PLAYWRIGHT_BASE_URL=http://127.0.0.1:3001 npm run test:smoke`
 
+Chatbot troubleshooting:
+
+- if `NEXT_PUBLIC_WAYALABS_CHATBOT_URL` is not set, the widget intentionally renders the local Stone Haven chat client instead of a blank placeholder panel
+- `/api/chat` now falls back to the internal knowledge base when `ollama` is not installed or not reachable, instead of leaving the chat waiting on a failing local model call
+- MemPalace context is optional; if the local CLI is unavailable or returns no results, chat still responds from the repo knowledge base
+- Stone Haven now starts with an assistant welcome message and then runs estimate intake only when estimate intent is explicit or an active intake session exists
+- chat intake submission is intentionally strict (`send it`/`submit estimate`) to avoid accidental lead routing
+- chat-origin lead relays now include top-level `requestId`, `dedupeKey`, and `metadata` for Zap contract consistency
+- browser-level chat verification may require `npx playwright install chromium`; local validation will fail if the machine is out of disk space during browser download
+
 Generated build output and local validation backup directories are not part of the source review surface and should stay ignored during routine lint and git review.
 
 Current optimization priorities from the live review:
@@ -248,11 +259,17 @@ The current baseline includes:
 
 Recent UI behavior worth preserving:
 
+- the homepage hero now uses a two-column layout with fast-scan proof points and a short next-step brief without changing the core brand voice
 - supplier cards are optimized to scan cleanly on mobile before expanding into desktop two-column layouts
 - location and hours metadata is compacted into a single mobile card to reduce vertical dead space
 - supplier browsing hands visitors back to Urban Stone with section-level estimate and call CTAs
 - the sticky mobile header has reduced vertical padding to lower overlap pressure on anchor navigation
 - supplier CTA and metadata spacing are intentionally tighter on narrow screens to keep the quote form below the fold
+- the homepage contractor teaser should remain a secondary section, not a pricing dump or visual takeover
+
+Local test note:
+
+- `tests/home-page.test.jsx` intentionally mocks `ChatWidget` so homepage rendering assertions stay fast and do not depend on the floating contact/chat panel
 
 Before a real production launch, add external monitoring, persistent rate limiting, and a verified lead-delivery integration.
 
@@ -262,8 +279,12 @@ Before a real production launch, add external monitoring, persistent rate limiti
 - Updated fallback contact email to <stonehaven@urbanstone.co>.
 - Fixed missing styling/scripts and static asset issues in live browser.
 - Changed 'Dismiss' button to 'Chat' and implemented a modern popup chat window with emoji/avatar.
+- Reworked the floating chat widget into a single stable popup path and wired the local fallback to the shared Stone Haven chat client used by `/ai-chat`.
+- Tightened `/api/chat` fallback behavior so missing `ollama` or missing MemPalace context do not leave the bot screen hanging.
 - Made 'wayalabs' in the footer all lowercase for consistent branding.
 - Improved chat popup UX: only one popup at a time, draggable header, resets position on close, and improved accessibility.
+- Added a default Stone Haven welcome greeting and tightened chat intake state handling to reduce scripted loops.
+- Aligned chat estimate relay payloads with lead webhook contract fields (`requestId`, `dedupeKey`, `metadata`).
 - Added `.gitignore` to prevent chatbot source/config from being pushed until fully trained.
 - Documented troubleshooting steps for port conflicts and static asset errors.
 - Noted that the chatbot backend requires the `ollama` binary for LLM inference (see API errors if missing).
