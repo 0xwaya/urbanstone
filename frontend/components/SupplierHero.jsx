@@ -11,14 +11,10 @@ export default function SupplierHero({
     galleryError,
     onToggleGallery,
 }) {
-    const [isHoursOpen, setIsHoursOpen] = useState(false);
-    const [isLocationOpen, setIsLocationOpen] = useState(false);
-    const hoursRegionId = useId();
-    const locationRegionId = useId();
-    const hoursRegionIdMobile = `${hoursRegionId}-mobile`;
-    const hoursRegionIdDesktop = `${hoursRegionId}-desktop`;
-    const locationRegionIdMobile = `${locationRegionId}-mobile`;
-    const locationRegionIdDesktop = `${locationRegionId}-desktop`;
+    const [isInfoOpen, setIsInfoOpen] = useState(false);
+    const infoRegionId = useId();
+    const infoRegionIdMobile = `${infoRegionId}-mobile`;
+    const infoRegionIdDesktop = `${infoRegionId}-desktop`;
     const hoursLines = supplier.hoursLines || (supplier.hours
         ? [`Mon-Fri ${supplier.hours.mon_fri}${supplier.hours.sat ? ` · Sat ${supplier.hours.sat}` : ''}`]
         : []);
@@ -91,137 +87,78 @@ export default function SupplierHero({
                     <>
                         <div className="mt-3 sm:hidden">
                             <div className="supplier-meta-card">
-                                {hasLocation ? (
-                                    <>
-                                        <button
-                                            type="button"
-                                            className="supplier-hours-button"
-                                            aria-expanded={isLocationOpen}
-                                            aria-controls={locationRegionIdMobile}
-                                            onClick={() => setIsLocationOpen((current) => !current)}
-                                        >
-                                            <span className="supplier-hours-button__summary">
-                                                <span className="supplier-meta-card__label">Location</span>
-                                                <span className="supplier-hours-button__state">
-                                                    {isLocationOpen ? 'Hide' : 'Show'}
-                                                </span>
-                                            </span>
-                                            <svg
-                                                viewBox="0 0 20 20"
-                                                fill="none"
-                                                aria-hidden="true"
-                                                className={`supplier-chevron h-5 w-5 ${isLocationOpen ? 'rotate-180' : ''}`.trim()}
-                                            >
-                                                <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-                                            </svg>
-                                        </button>
-                                        <div id={locationRegionIdMobile} className={`${isLocationOpen ? 'mt-3 block' : 'hidden'}`}>
-                                            <div className="supplier-hours-list">{supplier.address}</div>
-                                        </div>
-                                    </>
-                                ) : null}
-
-                                {hasLocation && hasHours ? <div className="my-2 border-t border-border/60" /> : null}
-
-                                {hasHours ? (
-                                    <>
-                                        <button
-                                            type="button"
-                                            className="supplier-hours-button"
-                                            aria-expanded={isHoursOpen}
-                                            aria-controls={hoursRegionIdMobile}
-                                            onClick={() => setIsHoursOpen((current) => !current)}
-                                        >
-                                            <span className="supplier-hours-button__summary">
-                                                <span className="supplier-meta-card__label">Hours</span>
-                                                <span className="supplier-hours-button__state">
-                                                    {isHoursOpen ? 'Hide' : 'Show'}
-                                                </span>
-                                            </span>
-                                            <svg
-                                                viewBox="0 0 20 20"
-                                                fill="none"
-                                                aria-hidden="true"
-                                                className={`supplier-chevron h-5 w-5 ${isHoursOpen ? 'rotate-180' : ''}`.trim()}
-                                            >
-                                                <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-                                            </svg>
-                                        </button>
-                                        <div id={hoursRegionIdMobile} className={`${isHoursOpen ? 'mt-3 block' : 'hidden'}`}>
-                                            <div className="supplier-hours-list">
-                                                {hoursLines.map((line) => (
-                                                    <div key={line}>{line}</div>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    </>
-                                ) : null}
+                                <button
+                                    type="button"
+                                    className="supplier-hours-button"
+                                    aria-expanded={isInfoOpen}
+                                    aria-controls={infoRegionIdMobile}
+                                    onClick={() => setIsInfoOpen((current) => !current)}
+                                >
+                                    <span className="supplier-hours-button__summary">
+                                        <span className="supplier-meta-card__label">Location &amp; Hours</span>
+                                        <span className="supplier-hours-button__state">
+                                            {isInfoOpen ? 'Hide' : 'Show'}
+                                        </span>
+                                    </span>
+                                    <svg
+                                        viewBox="0 0 20 20"
+                                        fill="none"
+                                        aria-hidden="true"
+                                        className={`supplier-chevron h-5 w-5 ${isInfoOpen ? 'rotate-180' : ''}`.trim()}
+                                    >
+                                        <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                                    </svg>
+                                </button>
+                                <div id={infoRegionIdMobile} className={`${isInfoOpen ? 'mt-3 block' : 'hidden'}`}>
+                                    <div className="supplier-hours-list">
+                                        {hasLocation ? <div>{supplier.address}</div> : null}
+                                        {hasLocation && hasHours ? <div className="my-2 border-t border-border/60" /> : null}
+                                        {hasHours
+                                            ? hoursLines.map((line) => (
+                                                <div key={line}>{line}</div>
+                                            ))
+                                            : null}
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
-                        <div className="supplier-contact-grid mt-4 hidden grid-cols-1 gap-2.5 sm:grid sm:grid-cols-[minmax(0,1.35fr)_minmax(15rem,0.9fr)] sm:gap-3">
-                            {hasLocation ? (
-                                <div className="supplier-meta-card">
-                                    <button
-                                        type="button"
-                                        className="supplier-hours-button"
-                                        aria-expanded={isLocationOpen}
-                                        aria-controls={locationRegionIdDesktop}
-                                        onClick={() => setIsLocationOpen((current) => !current)}
-                                    >
-                                        <span className="supplier-hours-button__summary">
-                                            <span className="supplier-meta-card__label">Location</span>
-                                            <span className="supplier-hours-button__state">
-                                                {isLocationOpen ? 'Hide' : 'Show'}
-                                            </span>
+                        <div className="supplier-contact-grid mt-4 hidden grid-cols-1 gap-2.5 sm:grid sm:grid-cols-1 sm:gap-3">
+                            <div className="supplier-meta-card">
+                                <button
+                                    type="button"
+                                    className="supplier-hours-button"
+                                    aria-expanded={isInfoOpen}
+                                    aria-controls={infoRegionIdDesktop}
+                                    onClick={() => setIsInfoOpen((current) => !current)}
+                                >
+                                    <span className="supplier-hours-button__summary">
+                                        <span className="supplier-meta-card__label">Location &amp; Hours</span>
+                                        <span className="supplier-hours-button__state">
+                                            {isInfoOpen ? 'Hide' : 'Show'}
                                         </span>
-                                        <svg
-                                            viewBox="0 0 20 20"
-                                            fill="none"
-                                            aria-hidden="true"
-                                            className={`supplier-chevron h-5 w-5 ${isLocationOpen ? 'rotate-180' : ''}`.trim()}
-                                        >
-                                            <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-                                        </svg>
-                                    </button>
-                                    <div id={locationRegionIdDesktop} className={`${isLocationOpen ? 'mt-3 block' : 'hidden'}`}>
-                                        <div className="supplier-hours-list">{supplier.address}</div>
-                                    </div>
-                                </div>
-                            ) : null}
-                            {hasHours ? (
-                                <div className="supplier-meta-card">
-                                    <button
-                                        type="button"
-                                        className="supplier-hours-button"
-                                        aria-expanded={isHoursOpen}
-                                        aria-controls={hoursRegionIdDesktop}
-                                        onClick={() => setIsHoursOpen((current) => !current)}
+                                    </span>
+                                    <svg
+                                        viewBox="0 0 20 20"
+                                        fill="none"
+                                        aria-hidden="true"
+                                        className={`supplier-chevron h-5 w-5 ${isInfoOpen ? 'rotate-180' : ''}`.trim()}
                                     >
-                                        <span className="supplier-hours-button__summary">
-                                            <span className="supplier-meta-card__label">Hours</span>
-                                            <span className="supplier-hours-button__state">
-                                                {isHoursOpen ? 'Hide' : 'Show'}
-                                            </span>
-                                        </span>
-                                        <svg
-                                            viewBox="0 0 20 20"
-                                            fill="none"
-                                            aria-hidden="true"
-                                            className={`supplier-chevron h-5 w-5 ${isHoursOpen ? 'rotate-180' : ''}`.trim()}
-                                        >
-                                            <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-                                        </svg>
-                                    </button>
-                                    <div id={hoursRegionIdDesktop} className={`${isHoursOpen ? 'mt-3 block' : 'hidden'}`}>
-                                        <div className="supplier-hours-list">
-                                            {hoursLines.map((line) => (
+                                        <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                                    </svg>
+                                </button>
+                                <div id={infoRegionIdDesktop} className={`${isInfoOpen ? 'mt-3 block' : 'hidden'}`}>
+                                    <div className="supplier-hours-list">
+                                        {hasLocation ? <div>{supplier.address}</div> : null}
+                                        {hasLocation && hasHours ? <div className="my-2 border-t border-border/60" /> : null}
+                                        {hasHours
+                                            ? hoursLines.map((line) => (
                                                 <div key={line}>{line}</div>
-                                            ))}
-                                        </div>
+                                            ))
+                                            : null}
                                     </div>
                                 </div>
-                            ) : null}
+                            </div>
                         </div>
                     </>
                 ) : null}
