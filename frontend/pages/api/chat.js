@@ -2,15 +2,23 @@ import { execFile } from 'child_process';
 import { createHash, randomUUID } from 'node:crypto';
 
 import { getChatReply } from '../../lib/chatbot';
-import { queryMemPalace } from '../../lib/mempalace';
+import { persistIntakeMemoryCard, queryMemPalace } from '../../lib/mempalace';
 import { chatbotPolicies } from '../../data/chatbot-knowledge';
 import {
+    buildIntakeMemoryCard,
+    buildSegmentClarificationPrompt,
     buildEstimateSummary,
     detectGreetingIntent,
+    detectIntakePauseIntent,
     extractEstimateIntake,
+    extractEstimateIntakeFromHistory,
+    getEstimateConversationStage,
+    hasActiveEstimateIntakeSession,
     getLiveEstimateRange,
     getMissingEstimateFields,
-    getNextEstimateQuestion,
+    getSmartNextEstimateQuestion,
+    parsePendingSegmentClarification,
+    parseYesNo,
     shouldStartEstimateIntake,
     shouldSubmitIntake,
 } from '../../lib/chat-intake';
@@ -28,11 +36,54 @@ const CONTACT = {
 
 let ollamaAvailablePromise;
 
-function respondWithKnowledge(res, message) {
-    const kbReply = getChatReply(message);
+function trimReplyToBudget(raw, { maxChars = 650, maxParagraphs = 3 } = {}) {
+    const text = String(raw || '').trim();
+    if (!text) {
+        return '';
+    }
+
+    const paragraphs = text
+        .split(/\n\s*\n/)
+        .map((p) => p.trim())
+        .filter(Boolean)
+        .slice(0, maxParagraphs);
+    let compacted = paragraphs.join('\n\n');
+
+    if (compacted.length > maxChars) {
+        compacted = `${compacted.slice(0, maxChars - 1).trimEnd()}…`;
+    }
+
+    return compacted;
+}
+
+function hashForTelemetry(value) {
+    return createHash('sha256').update(String(value || '')).digest('hex').slice(0, 12);
+}
+
+function emitChatTelemetry(event, payload = {}) {
+    try {
+        const record = {
+            ts: new Date().toISOString(),
+            event,
+            ...payload,
+        };
+        // Non-PII telemetry only.
+        console.info('[chat-telemetry]', JSON.stringify(record));
+    } catch {
+        // never block on telemetry
+    }
+}
+
+function respondWithKnowledge(res, message, history = []) {
+    const kbReply = getChatReply(message, { history });
+    const reply = trimReplyToBudget(kbReply.reply);
+    emitChatTelemetry('knowledge_fallback', {
+        messageHash: hashForTelemetry(message),
+        sourceCount: Array.isArray(kbReply.sources) ? kbReply.sources.length : 0,
+    });
 
     return res.status(200).json({
-        reply: kbReply.reply,
+        reply,
         sources: kbReply.sources,
         contact: CONTACT,
         mode: 'knowledge-base',
@@ -191,6 +242,30 @@ function resolveWebhookUrl(request) {
     return 'http://127.0.0.1:3001/api/lead-dev-webhook';
 }
 
+function persistIntakeMemoryCardAsync({ request, message, intake, memoryCard, stage, requestId, dedupeKey }) {
+    const payload = {
+        source: 'urban-stone-chat',
+        requestId,
+        dedupeKey,
+        stage,
+        message,
+        memoryCard,
+        projectType: intake?.projectType || '',
+        city: intake?.city || '',
+        squareFootage: intake?.squareFootage || '',
+        material: intake?.material || '',
+        timeline: intake?.timeline || '',
+        name: intake?.name || '',
+        email: intake?.email || '',
+        phone: intake?.phone || '',
+        referer: request?.headers?.referer || '',
+    };
+
+    persistIntakeMemoryCard(payload).catch(() => {
+        // Memory persistence is best-effort and must never block chat responses.
+    });
+}
+
 async function relayChatIntake(request, intake, conversation) {
     const webhookUrl = resolveWebhookUrl(request);
     if (!webhookUrl) {
@@ -261,7 +336,7 @@ async function relayChatIntake(request, intake, conversation) {
             body: JSON.stringify(payload),
             signal: AbortSignal.timeout(5000),
         });
-        return { ok: response.ok };
+        return { ok: response.ok, requestId, dedupeKey };
     } catch {
         return { ok: false, reason: 'relay_failed' };
     }
@@ -306,59 +381,189 @@ async function maybeHandleGreeting(res, message, history) {
 }
 
 async function handleEstimateIntake(req, res, message, history) {
+    if (detectIntakePauseIntent(message) && hasActiveEstimateIntakeSession(history)) {
+        emitChatTelemetry('intake_paused', { messageHash: hashForTelemetry(message) });
+        return res.status(200).json({
+            reply: trimReplyToBudget('No problem, we can pause here. When you are ready, send city, rough sqft, and material direction and I will continue from where we left off.'),
+            sources: [],
+            contact: CONTACT,
+            mode: 'intake-paused',
+        });
+    }
+
     if (!shouldStartEstimateIntake(message, history)) {
         return false;
     }
 
+    const previousIntake = extractEstimateIntakeFromHistory(history);
     const intake = extractEstimateIntake(message, history);
-    const missing = getMissingEstimateFields(intake);
+    const pendingSegment = parsePendingSegmentClarification(history);
+    const yesNo = parseYesNo(message);
+    if (pendingSegment) {
+        if (yesNo === 'yes') {
+            intake.customerSegment = pendingSegment;
+        } else if (yesNo === 'no') {
+            intake.customerSegment = '';
+            const memoryCard = buildIntakeMemoryCard(intake);
+            persistIntakeMemoryCardAsync({ request: req, message, intake, memoryCard, stage: 'qualify' });
+            emitChatTelemetry('intake_segment_clarification_declined', {
+                messageHash: hashForTelemetry(message),
+                stage: 'qualify',
+            });
+            return res.status(200).json({
+                reply: trimReplyToBudget(`${memoryCard}\n\nNo problem. Which project lane fits best: residential custom, contractor/home flipper, or builder/new construction multi-unit?`),
+                sources: [],
+                contact: CONTACT,
+                mode: 'intake-qualify',
+                intake: {
+                    memoryCard,
+                    stage: 'qualify',
+                    pendingClarification: '',
+                    missingFields: getMissingEstimateFields(intake),
+                    collected: Object.keys(intake).filter((key) => intake[key]),
+                },
+            });
+        } else {
+            const memoryCard = buildIntakeMemoryCard(intake);
+            persistIntakeMemoryCardAsync({ request: req, message, intake, memoryCard, stage: 'qualify' });
+            emitChatTelemetry('intake_segment_clarification_retry', {
+                messageHash: hashForTelemetry(message),
+                stage: 'qualify',
+            });
+            return res.status(200).json({
+                reply: trimReplyToBudget(`${memoryCard}\n\nPlease reply yes or no so I can route this correctly.`),
+                sources: [],
+                contact: CONTACT,
+                mode: 'intake-qualify',
+                intake: {
+                    memoryCard,
+                    stage: 'qualify',
+                    pendingClarification: 'customerSegment',
+                    missingFields: getMissingEstimateFields(intake),
+                    collected: Object.keys(intake).filter((key) => intake[key]),
+                },
+            });
+        }
+    }
 
-    if (missing.length > 0) {
-        const question = getNextEstimateQuestion(missing);
+    const customerSegmentConfidence = intake?._signals?.customerSegmentConfidence || 'none';
+    const needsSegmentClarification = customerSegmentConfidence === 'low'
+        && intake.customerSegment
+        && !previousIntake.customerSegment;
+    if (needsSegmentClarification) {
+        const memoryCard = buildIntakeMemoryCard(intake);
+        persistIntakeMemoryCardAsync({ request: req, message, intake, memoryCard, stage: 'qualify' });
+        emitChatTelemetry('intake_segment_clarification_prompted', {
+            messageHash: hashForTelemetry(message),
+            stage: 'qualify',
+        });
         return res.status(200).json({
-            reply: `I can run estimate intake here and hand it to Urban Stone.\n\n${question}`,
+            reply: trimReplyToBudget(`${memoryCard}\n\n${buildSegmentClarificationPrompt(intake.customerSegment)}`),
             sources: [],
             contact: CONTACT,
-            mode: 'intake',
+            mode: 'intake-qualify',
             intake: {
-                missingFields: missing,
+                memoryCard,
+                stage: 'qualify',
+                pendingClarification: 'customerSegment',
+                missingFields: getMissingEstimateFields(intake),
                 collected: Object.keys(intake).filter((key) => intake[key]),
             },
         });
     }
 
+    const missing = getMissingEstimateFields(intake);
+    const stage = getEstimateConversationStage({ missingFields: missing, readyToSubmit: false });
+
+    if (missing.length > 0) {
+        const question = getSmartNextEstimateQuestion(missing, stage, history);
+        const memoryCard = buildIntakeMemoryCard(intake);
+        persistIntakeMemoryCardAsync({ request: req, message, intake, memoryCard, stage });
+        const stagePreface = stage === 'discover'
+            ? 'Perfect. I can shape this into a clean estimate path.'
+            : stage === 'qualify'
+                ? 'Great direction. Let’s dial in the right material and install cadence.'
+                : 'Excellent. I just need your best contact details so we can take care of the follow-up.';
+        emitChatTelemetry('intake_stage_progress', {
+            messageHash: hashForTelemetry(message),
+            stage,
+            missingCount: missing.length,
+        });
+        return res.status(200).json({
+            reply: trimReplyToBudget(`${stagePreface}\n\n${memoryCard}\n\n${question}`),
+            sources: [],
+            contact: CONTACT,
+            mode: `intake-${stage}`,
+            intake: {
+                memoryCard,
+                missingFields: missing,
+                collected: Object.keys(intake).filter((key) => intake[key]),
+                stage,
+            },
+        });
+    }
+
     const readyToSubmit = shouldSubmitIntake(message);
+    const finalStage = getEstimateConversationStage({ missingFields: missing, readyToSubmit });
     const liveEstimate = ENABLE_CHAT_PRICE_PREVIEW ? getLiveEstimateRange(intake) : null;
     const liveEstimateLine = liveEstimate
         ? `\n\nProvisional installed estimate: $${liveEstimate.low.toLocaleString()} - $${liveEstimate.high.toLocaleString()} (about $${liveEstimate.unitRateLow}-${liveEstimate.unitRateHigh}/sq ft, subject to final templating and Edward's on-site measurements).`
         : '';
     if (!readyToSubmit) {
+        const memoryCard = buildIntakeMemoryCard(intake);
+        persistIntakeMemoryCardAsync({ request: req, message, intake, memoryCard, stage: finalStage });
+        emitChatTelemetry('intake_stage_confirm', {
+            messageHash: hashForTelemetry(message),
+            stage: finalStage,
+        });
         return res.status(200).json({
-            reply: `I have enough to route this ${getSegmentLabel(intake.customerSegment)} estimate request.\n\n${buildEstimateSummary(intake)}${liveEstimateLine}\n\nReply with "send it" and I will submit this to admin for follow-up.`,
+            reply: trimReplyToBudget(`Everything looks complete for this ${getSegmentLabel(intake.customerSegment)} request.\n\n${buildEstimateSummary(intake)}${liveEstimateLine}\n\nIf this looks right, reply with "send it" and I’ll submit it right away.`),
             sources: [],
             contact: CONTACT,
-            mode: 'intake-review',
-            intake: { missingFields: [], collected: Object.keys(intake).filter((key) => intake[key]) },
+            mode: `intake-${finalStage}`,
+            intake: {
+                memoryCard,
+                missingFields: [],
+                collected: Object.keys(intake).filter((key) => intake[key]),
+                stage: finalStage,
+            },
         });
     }
 
     const conversation = [...history, { role: 'user', content: message }];
     const relay = await relayChatIntake(req, intake, conversation);
+    persistIntakeMemoryCardAsync({
+        request: req,
+        message,
+        intake,
+        memoryCard: buildIntakeMemoryCard(intake),
+        stage: finalStage,
+        requestId: relay?.requestId,
+        dedupeKey: relay?.dedupeKey,
+    });
 
     if (!relay.ok) {
+        emitChatTelemetry('intake_submit_failed', {
+            messageHash: hashForTelemetry(message),
+            reason: relay.reason || 'relay_failed',
+        });
         return res.status(200).json({
-            reply: 'I have the intake details, but submission failed right now. Please call or email sales and we will route it manually immediately.',
+            reply: trimReplyToBudget('I have the intake details, but submission failed right now. Please call or email sales and we will route it manually immediately.'),
             sources: [],
             contact: CONTACT,
             mode: 'intake-error',
         });
     }
 
+    emitChatTelemetry('intake_submitted', {
+        messageHash: hashForTelemetry(message),
+        stage: finalStage,
+    });
     return res.status(200).json({
-        reply: `Estimate intake sent to admin for ${getSegmentLabel(intake.customerSegment)} follow-up.${liveEstimateLine ? ` ${liveEstimateLine.trim()}` : ''} Edward will validate final pricing after physical measurements, and the team will follow up using your contact details.`,
+        reply: trimReplyToBudget(`Done. I’ve submitted your ${getSegmentLabel(intake.customerSegment)} intake for priority follow-up.${liveEstimateLine ? ` ${liveEstimateLine.trim()}` : ''} Edward will validate final pricing after on-site measurements, and the team will reach out using your contact details.`),
         sources: [],
         contact: CONTACT,
-        mode: 'intake-submitted',
+        mode: `intake-${finalStage}`,
     });
 }
 
@@ -437,6 +642,7 @@ export default async function handler(req, res) {
 
     const greetingHandled = await maybeHandleGreeting(res, message, history);
     if (greetingHandled) {
+        emitChatTelemetry('greeting_handled', { messageHash: hashForTelemetry(message) });
         return greetingHandled;
     }
 
@@ -454,7 +660,7 @@ export default async function handler(req, res) {
 
     const hasOllama = await checkOllamaAvailability();
     if (!hasOllama) {
-        return respondWithKnowledge(res, message);
+        return respondWithKnowledge(res, message, history);
     }
 
     const fullMessage = mempalaceContext && mempalaceContext.trim().length > 0
@@ -464,17 +670,22 @@ export default async function handler(req, res) {
     try {
         const ollamaReply = normalizeModelReply(await callOllamaChat(fullMessage));
         if (!ollamaReply) {
-            return respondWithKnowledge(res, message);
+            return respondWithKnowledge(res, message, history);
         }
 
+        emitChatTelemetry('ollama_reply', {
+            messageHash: hashForTelemetry(message),
+            hasContext: Boolean(mempalaceContext),
+        });
         return res.status(200).json({
-            reply: ollamaReply,
+            reply: trimReplyToBudget(ollamaReply),
             sources: mempalaceContext ? ['MemPalace workspace context'] : [],
             contact: CONTACT,
             mode: 'ollama',
         });
     } catch (error) {
         console.error('API /api/chat error:', error);
-        return respondWithKnowledge(res, message);
+        emitChatTelemetry('ollama_error_fallback', { messageHash: hashForTelemetry(message) });
+        return respondWithKnowledge(res, message, history);
     }
 }

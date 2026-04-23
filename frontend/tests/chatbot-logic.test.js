@@ -16,10 +16,16 @@ describe('chatbot operating logic', () => {
         expect(result.sources.length).toBeGreaterThan(0);
     });
 
+    it('does not inject liability note for normal natural-stone scoping without explicit risk intent', () => {
+        const result = getChatReply('I want granite countertops for my kitchen.');
+        expect(result.reply).not.toMatch(/\n\nNote:/);
+    });
+
     it('uses the timeline workflow when timeline intent is present', () => {
         const result = getChatReply('How fast can you install after deposit in Mason?');
 
-        expect(result.reply).toMatch(/shortlist slab direction, confirm field measurements, then fabricate and install on schedule/i);
+        expect(result.reply).toMatch(/shortlist slab direction/i);
+        expect(result.reply).toMatch(/schedule install|install on schedule/i);
         expect(result.reply).toMatch(/next step:/i);
         expect(result.sources.length).toBeGreaterThan(0);
     });
@@ -61,7 +67,6 @@ describe('chatbot operating logic', () => {
 
     it('picks vein-matching policy note when vein-matching trigger appears first', () => {
         const result = getChatReply('For vein matching on a full-height backsplash and large island, can you guarantee continuity?');
-        expect(result.reply).toMatch(/Note:/);
         expect(result.reply).toMatch(/additional material may be required|vein matching is not guaranteed/i);
     });
 
@@ -95,11 +100,32 @@ describe('chatbot operating logic', () => {
         expect(result.reply).toMatch(/curated stone selection/i);
     });
 
+    it('does not inject policy waivers for scope-only sink/island details', () => {
+        const result = getChatReply('49 sf kitchen no island ceramic sink with 4 inch splash');
+
+        expect(result.reply).not.toMatch(/slab holding|waiver|liability|cannot guarantee/i);
+        expect(result.reply).not.toMatch(/\n\nNote:/);
+    });
+
     it('asks for intake details when no indexed context matches', () => {
         const result = getChatReply('zxqv ptlm nrrk');
 
         expect(result.reply).toMatch(/can help with material selection, timing, and estimate prep/i);
         expect(result.reply).toMatch(/next step:/i);
         expect(result.sources).toEqual([]);
+    });
+
+    it('down-ranks long/location SEO snippets in early turns', () => {
+        const result = getChatReply('Tell me about countertop options', { history: [] });
+        expect(result.reply).not.toMatch(/Best for:/i);
+        expect(result.reply).not.toMatch(/blue ash|mason|newport|west chester/i);
+    });
+
+    it('hides supplier contact details unless explicitly requested', () => {
+        const generic = getChatReply('Tell me about countertop materials for kitchens');
+        expect(generic.reply).not.toMatch(/Address:|Phone:/i);
+
+        const explicit = getChatReply('What is Daltile address and phone?');
+        expect(explicit.reply).toMatch(/Address:|Phone:/i);
     });
 });

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { curatedSlabOptions } from '../data/curated-slab-options';
 
 const QUOTE_OPEN_EVENT = 'urbanstone:quote-opened';
@@ -117,18 +117,18 @@ export default function LeadForm({ content, routeId = 'homepage', collapsible = 
     const showInlineForm = isExpanded && !useModal;
     const showModal = isExpanded && useModal;
 
-    const notifyQuoteOpen = () => {
+    const notifyQuoteOpen = useCallback(() => {
         if (typeof document === 'undefined') {
             return;
         }
 
         document.dispatchEvent(new CustomEvent(QUOTE_OPEN_EVENT));
-    };
+    }, []);
 
-    const openForm = () => {
+    const openForm = useCallback(() => {
         setIsExpanded(true);
         notifyQuoteOpen();
-    };
+    }, [notifyQuoteOpen]);
 
     const handleChange = (event) => {
         const { name, value } = event.target;
@@ -344,7 +344,7 @@ export default function LeadForm({ content, routeId = 'homepage', collapsible = 
             window.removeEventListener('hashchange', handleHashChange);
             document.removeEventListener('click', handleDocumentClick);
         };
-    }, [collapsible]);
+    }, [collapsible, openForm]);
 
     useEffect(() => {
         if (typeof document === 'undefined' || !showModal) {

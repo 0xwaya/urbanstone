@@ -37,6 +37,30 @@ const RATE_BY_MATERIAL_GROUP = {
     quartzite: { low: 75, high: 110 },
     marble: { low: 80, high: 120 },
 };
+const STAGE_DISCOVER_FIELDS = ['projectType', 'city', 'squareFootage'];
+const STAGE_QUALIFY_FIELDS = ['material', 'timeline', 'projectPhase', 'projectStatus', 'customerSegment', 'tentativeBudget'];
+const STAGE_CAPTURE_FIELDS = ['name', 'email', 'phone'];
+const STAGE_QUESTION_PRIORITY = {
+    discover: ['projectType', 'city', 'squareFootage', 'material'],
+    qualify: ['material', 'timeline', 'projectPhase', 'projectStatus', 'customerSegment', 'tentativeBudget'],
+    capture: ['name', 'email', 'phone'],
+};
+const AFFIRMATIVE_PATTERN = /^(yes|yep|yeah|correct|right|that'?s right|sounds right|exactly)\b/i;
+const NEGATIVE_PATTERN = /^(no|nope|nah|incorrect|not right)\b/i;
+const FIELD_PROMPT_PATTERNS = {
+    name: /(full name|what is your full name)/i,
+    email: /(best email|email for your estimate)/i,
+    phone: /(best phone|phone number for scheduling)/i,
+    customerSegment: /(project lane best fits|residential custom|home flip\/contractor|builder\/new construction)/i,
+    city: /(what city is the project in)/i,
+    projectType: /(is this for a kitchen, bath, bar, laundry, whole-home, or commercial project)/i,
+    projectPhase: /(what phase are you in right now)/i,
+    projectStatus: /(is the property occupied, vacant, tenant-occupied, or owner-occupied)/i,
+    tentativeBudget: /(tentative countertop budget range)/i,
+    material: /(material\/slab direction|calacatta laza|kodiak|taj mahal|quartzite)/i,
+    squareFootage: /(rough square footage \(sq ft\))/i,
+    timeline: /(target timeline \(asap, 1-2 weeks, around a month, or a target date\))/i,
+};
 
 function normalizeText(value) {
     return String(value || '').toLowerCase();
@@ -76,20 +100,27 @@ function detectProjectType(text) {
 }
 
 function detectCustomerSegment(text) {
+    return detectCustomerSegmentSignal(text).value;
+}
+
+function detectCustomerSegmentSignal(text) {
     const normalized = normalizeText(text);
 
     if (/(builder|new construction|ground up|multi-unit|multifamily|developer|development|apartments|units)/.test(normalized)) {
-        return 'builder-multi-unit';
+        return { value: 'builder-multi-unit', confidence: 'high' };
     }
     if (/(flipper|flip|rehab|investment property|rental turn|turnover|investor)/.test(normalized)) {
-        return 'contractor-flipper';
+        return { value: 'contractor-flipper', confidence: 'high' };
     }
 
-    if (/(residential|homeowner|my home|kitchen|bath|vanity|house)/.test(normalized)) {
-        return 'residential-custom';
+    if (/(residential|homeowner|my home)/.test(normalized)) {
+        return { value: 'residential-custom', confidence: 'high' };
+    }
+    if (/(kitchen|bath|vanity|house)/.test(normalized)) {
+        return { value: 'residential-custom', confidence: 'low' };
     }
 
-    return '';
+    return { value: '', confidence: 'none' };
 }
 
 function detectCity(text) {
@@ -238,6 +269,15 @@ function hasIntakeIntent(text) {
     return /(estimate|quote|price|pricing|how much|budget|cost)/.test(normalized);
 }
 
+function hasScopeCue(text) {
+    const normalized = normalizeText(text);
+    const hasSqft = /(\d{2,5}(?:\.\d+)?)\s*(?:sq\s*ft|square\s*feet|sf)\b/i.test(normalized);
+    const hasProjectCore = /(countertop|countertops|kitchen|bath|bathroom|vanity)/.test(normalized);
+    const hasFixtureOrLayout = /(island|sink|backsplash|edge|overhang|cutout|cut-out)/.test(normalized);
+
+    return hasSqft && (hasProjectCore || hasFixtureOrLayout);
+}
+
 function hasActiveIntakeSession(history = []) {
     const recentAssistant = history
         .filter((entry) => entry?.role === 'assistant')
@@ -251,9 +291,22 @@ function hasActiveIntakeSession(history = []) {
     );
 }
 
+export function detectIntakePauseIntent(message) {
+    const normalized = normalizeText(message).trim();
+    if (!normalized) {
+        return false;
+    }
+
+    return /(just browsing|not ready|no quote yet|don['’]?t submit|do not submit|pause|hold off|not now|later)/.test(normalized);
+}
+
+export function hasActiveEstimateIntakeSession(history = []) {
+    return hasActiveIntakeSession(history);
+}
+
 export function shouldStartEstimateIntake(message, history = []) {
     const normalized = normalizeText(message);
-    if (hasIntakeIntent(normalized)) {
+    if (hasIntakeIntent(normalized) || hasScopeCue(normalized)) {
         return true;
     }
 
@@ -318,11 +371,12 @@ export function extractEstimateIntake(message, history = []) {
     const squareFootage = squareFootageRaw ? Number.parseFloat(squareFootageRaw) : null;
 
     const detectedName = detectName(merged) || detectPromptedPlainName(message, history);
+    const segmentSignal = detectCustomerSegmentSignal(merged);
     const intake = {
         name: detectedName,
         email,
         phone,
-        customerSegment: detectCustomerSegment(merged),
+        customerSegment: segmentSignal.value,
         city: detectCity(merged),
         projectType: detectProjectType(merged),
         projectPhase: detectProjectPhase(merged),
@@ -337,9 +391,16 @@ export function extractEstimateIntake(message, history = []) {
                 .slice(0, 800)
         ),
         ...detectMaterial(merged),
+        _signals: {
+            customerSegmentConfidence: segmentSignal.confidence,
+        },
     };
 
     return intake;
+}
+
+export function extractEstimateIntakeFromHistory(history = []) {
+    return extractEstimateIntake('', history);
 }
 
 export function getMissingEstimateFields(intake) {
@@ -357,8 +418,48 @@ export function getMissingEstimateFields(intake) {
     return baselineMissing;
 }
 
+function hasAnyMissing(missingFields, candidates) {
+    return candidates.some((field) => missingFields.includes(field));
+}
+
+export function getEstimateConversationStage({ missingFields = [], readyToSubmit = false } = {}) {
+    const missing = Array.isArray(missingFields) ? missingFields : [];
+    if (readyToSubmit && missing.length === 0) {
+        return 'submit';
+    }
+
+    if (missing.length === 0) {
+        return 'confirm';
+    }
+
+    if (hasAnyMissing(missing, STAGE_DISCOVER_FIELDS)) {
+        return 'discover';
+    }
+
+    if (hasAnyMissing(missing, STAGE_QUALIFY_FIELDS)) {
+        return 'qualify';
+    }
+
+    if (hasAnyMissing(missing, STAGE_CAPTURE_FIELDS)) {
+        return 'capture';
+    }
+
+    return 'qualify';
+}
+
+export function getBestNextEstimateField(missingFields, stage = 'qualify') {
+    const missing = Array.isArray(missingFields) ? missingFields : [];
+    if (missing.length === 0) {
+        return '';
+    }
+
+    const ordered = STAGE_QUESTION_PRIORITY[stage] || STAGE_QUESTION_PRIORITY.qualify;
+    const picked = ordered.find((field) => missing.includes(field));
+    return picked || missing[0];
+}
+
 export function getNextEstimateQuestion(missingFields) {
-    const next = missingFields[0];
+    const next = Array.isArray(missingFields) ? missingFields[0] : '';
 
     switch (next) {
     case 'name':
@@ -388,6 +489,111 @@ export function getNextEstimateQuestion(missingFields) {
     default:
         return 'Share any additional project notes and I will route this for estimate follow-up.';
     }
+}
+
+export function getBestNextEstimateQuestion(missingFields, stage = 'qualify') {
+    const nextField = getBestNextEstimateField(missingFields, stage);
+    if (!nextField) {
+        return 'Share any additional project notes and I will route this for estimate follow-up.';
+    }
+
+    return getNextEstimateQuestion([nextField]);
+}
+
+function countFieldAskAttempts(field, history = []) {
+    const pattern = FIELD_PROMPT_PATTERNS[field];
+    if (!pattern) {
+        return 0;
+    }
+
+    return history
+        .filter((entry) => entry?.role === 'assistant')
+        .map((entry) => String(entry.content || ''))
+        .filter((content) => pattern.test(content))
+        .length;
+}
+
+const SMART_REASK_QUESTION = {
+    city: 'To confirm service routing, what city is the project in? For example: Mason, West Chester, or Cincinnati.',
+    material: 'To narrow the right slab lane, what material/look do you want (quartz, granite, quartzite, or a specific slab like Calacatta Laza)?',
+    squareFootage: 'What rough square footage should I use for scoping? Even an approximate `XX sq ft` is enough.',
+    timeline: 'What timeline should we plan around: ASAP, 1-2 weeks, around a month, or a target date?',
+    name: 'What full name should I place on this request so the team addresses you correctly?',
+    email: 'What is the best email for your estimate follow-up? We use it to send summary and scheduling updates.',
+    phone: 'What is the best phone number for scheduling and templating coordination?',
+};
+
+export function getSmartNextEstimateQuestion(missingFields, stage = 'qualify', history = []) {
+    const field = getBestNextEstimateField(missingFields, stage);
+    if (!field) {
+        return getBestNextEstimateQuestion(missingFields, stage);
+    }
+
+    const attempts = countFieldAskAttempts(field, history);
+    if (attempts >= 2 && SMART_REASK_QUESTION[field]) {
+        return SMART_REASK_QUESTION[field];
+    }
+
+    return getBestNextEstimateQuestion(missingFields, stage);
+}
+
+const SEGMENT_LABEL_TO_VALUE = {
+    'residential custom': 'residential-custom',
+    'contractor/home flipper': 'contractor-flipper',
+    'builder/new construction multi-unit': 'builder-multi-unit',
+};
+
+export function buildSegmentClarificationPrompt(segmentValue) {
+    const label = segmentValue === 'builder-multi-unit'
+        ? 'builder/new construction multi-unit'
+        : segmentValue === 'contractor-flipper'
+            ? 'contractor/home flipper'
+            : 'residential custom';
+
+    return `Quick check: I read this as "${label}" based on your note. Is that correct? (yes/no)`;
+}
+
+export function parsePendingSegmentClarification(history = []) {
+    const lastAssistant = [...history]
+        .reverse()
+        .find((entry) => entry?.role === 'assistant');
+
+    const content = String(lastAssistant?.content || '');
+    const match = content.match(/Quick check: I read this as "([^"]+)"/i);
+    if (!match) {
+        return '';
+    }
+
+    return SEGMENT_LABEL_TO_VALUE[match[1].toLowerCase()] || '';
+}
+
+export function parseYesNo(message) {
+    const text = compact(message);
+    if (AFFIRMATIVE_PATTERN.test(text)) {
+        return 'yes';
+    }
+    if (NEGATIVE_PATTERN.test(text)) {
+        return 'no';
+    }
+    return '';
+}
+
+export function buildIntakeMemoryCard(intake) {
+    const compactSqft = Number.isFinite(Number(intake.squareFootage)) && Number(intake.squareFootage) > 0
+        ? `${Number(intake.squareFootage)} sq ft`
+        : '—';
+    const pieces = [
+        `Project: ${intake.projectType || '—'}`,
+        `City: ${intake.city || '—'}`,
+        `Sqft: ${compactSqft}`,
+        `Material: ${intake.material || '—'}`,
+        `Timeline: ${intake.timeline || '—'}`,
+        `Name: ${intake.name || '—'}`,
+        `Email: ${intake.email || '—'}`,
+        `Phone: ${intake.phone || '—'}`,
+    ];
+
+    return `Captured so far: ${pieces.join(' | ')}`;
 }
 
 export function buildEstimateSummary(intake) {

@@ -24,7 +24,7 @@ function tokenize(text) {
         .filter((token) => token.length > 2 && !STOP_WORDS.has(token));
 }
 
-function scoreEntry(tokens, entry, normalizedMessage) {
+function scoreEntry(tokens, entry, normalizedMessage, options = {}) {
     const haystack = normalize(`${entry.title} ${entry.text} ${entry.tags.join(' ')}`);
     let score = 0;
 
@@ -49,6 +49,26 @@ function scoreEntry(tokens, entry, normalizedMessage) {
             score += 3;
         }
     });
+
+    const baseScore = score;
+
+    if (options.earlyTurn && baseScore > 0) {
+        if (/^ops-/.test(entry.id)) {
+            score += 4;
+        }
+        if (/^material-|^service-/.test(entry.id)) {
+            score -= 6;
+        }
+        if (/^faq-/.test(entry.id)) {
+            score -= 2;
+        }
+        if (entry.text.length > 220) {
+            score -= 3;
+        }
+        if (entry.text.length < 190 && /^ops-/.test(entry.id)) {
+            score += 2;
+        }
+    }
 
     return score;
 }
@@ -354,6 +374,24 @@ function isLocationBoundEntry(entry) {
     return /^material-/.test(entry.id) || /^service-/.test(entry.id);
 }
 
+function isPolicyEntry(entry) {
+    return /^ops-material-handling-/.test(entry.id) || /^policy-liability-/.test(entry.id);
+}
+
+function isSupplierEntry(entry) {
+    return /^supplier-/.test(entry.id);
+}
+
+function hasSupplierIntent(message) {
+    const normalized = normalize(message);
+    return /(supplier|distributor|showroom|address|location|phone|contact|daltile|msi|quartamerica|citiquartz)/.test(normalized);
+}
+
+function hasPolicyIntent(message) {
+    const normalized = normalize(message);
+    return /(policy|waiver|liability|disclosure|guarantee|risk|reuse|reinstall|remove|removal|tear.?out|vein match|slab hold|variation|fissure|bookmatch)/.test(normalized);
+}
+
 function firstMatchIndex(text, pattern) {
     const match = text.match(pattern);
     return match ? match.index : Number.POSITIVE_INFINITY;
@@ -361,9 +399,6 @@ function firstMatchIndex(text, pattern) {
 
 function detectIntents(message) {
     const normalized = normalize(message);
-    const naturalStoneSelection = /(granite|quartzite|marble|natural stone)/.test(normalized);
-    const naturalStoneRiskTopic = /(variation|vein|veining|fissure|movement|seam|guarantee|exact match|bookmatch)/.test(normalized);
-    const removalReuseTopic = /(tear.?out|tear out|removal|remove|reuse|reinstall|existing tops|backsplash|vanity|porcelain|sink|chip|crack|separate)/.test(normalized);
 
     return {
         serviceArea: hasAny(normalized, INTENT_KEYWORDS.serviceArea),
@@ -373,8 +408,21 @@ function detectIntents(message) {
         commercial: hasAny(normalized, INTENT_KEYWORDS.commercial),
         flipper: hasAny(normalized, INTENT_KEYWORDS.flipper),
         residential: hasAny(normalized, INTENT_KEYWORDS.residential),
-        naturalStoneDisclosure: naturalStoneSelection || (naturalStoneRiskTopic && naturalStoneSelection),
-        removalDisclosure: removalReuseTopic,
+    };
+}
+
+function detectDisclosureTriggers(message) {
+    const normalized = normalize(message);
+    const naturalStoneMention = /(granite|quartzite|marble|natural stone)/.test(normalized);
+    const naturalVariationTopic = /(variation|vein|veining|fissure|movement|exact match|bookmatch|cannot match)/.test(normalized);
+    const veinMatchTopic = /(vein match|vein matching|bookmatch|full.?height backsplash|large island|oversized island|additional slab|pattern continuity)/.test(normalized);
+    const removalReuseTopic = /(tear.?out|tear out|removal|remove|reuse|reinstall|existing tops|backsplash removal|vanity removal|can you remove|remove intact|chip|crack|separate|intact)/.test(normalized);
+
+    return {
+        naturalVariation: naturalStoneMention && naturalVariationTopic,
+        veinMatch: veinMatchTopic,
+        removalReuse: removalReuseTopic,
+        any: (naturalStoneMention && naturalVariationTopic) || veinMatchTopic || removalReuseTopic,
     };
 }
 
@@ -417,7 +465,7 @@ function resolveSpecificWaiverNote(message) {
     const normalized = normalize(message);
     const removalIdx = firstMatchIndex(
         normalized,
-        /(tear.?out|tear out|removal|remove|reuse|reinstall|existing tops|backsplash|vanity|porcelain|sink|chip|crack|separate)/
+        /(tear.?out|tear out|removal|remove|reuse|reinstall|existing tops|backsplash removal|vanity removal|chip|crack|separate|intact)/
     );
     const naturalStoneIdx = firstMatchIndex(
         normalized,
@@ -506,7 +554,7 @@ function buildOperationalReply(message, scoredEntries) {
     if (intents.timeline) {
         const merged = includeIfNotDuplicate(
             'Our workflow is straightforward: shortlist slab direction, confirm field measurements, then fabricate and install on schedule.',
-            ['urban stone workflow', 'shortlist slab direction']
+            ['urban stone workflow']
         );
         return `${merged}\n\n${cta}`;
     }
@@ -518,10 +566,16 @@ function buildOperationalReply(message, scoredEntries) {
     return `${topText}\n\n${cta}`;
 }
 
-export function getChatReply(message) {
+export function getChatReply(message, options = {}) {
     const tokens = tokenize(message);
     const normalizedMessage = normalize(message);
     const intents = detectIntents(message);
+    const policyIntent = hasPolicyIntent(message);
+    const supplierIntent = hasSupplierIntent(message);
+    const disclosureTriggers = detectDisclosureTriggers(message);
+    const history = Array.isArray(options.history) ? options.history : [];
+    const priorUserTurns = history.filter((entry) => entry?.role === 'user').length;
+    const earlyTurn = priorUserTurns <= 1;
 
     if (detectRecommendationIntent(message)) {
         return {
@@ -539,11 +593,11 @@ export function getChatReply(message) {
 
     const scored = KNOWLEDGE_BASE.map((entry) => ({
         entry,
-        score: scoreEntry(tokens, entry, normalizedMessage),
+        score: scoreEntry(tokens, entry, normalizedMessage, { earlyTurn }),
     }))
         .filter((item) => item.score > 0)
         .sort((a, b) => b.score - a.score)
-        .slice(0, 3);
+        .slice(0, 8);
 
     const cityMentioned = hasCityInMessage(message);
     const contextScored = scored.filter((item) => {
@@ -553,7 +607,10 @@ export function getChatReply(message) {
 
         return intents.serviceArea || cityMentioned;
     });
-    const resolvedScored = contextScored.length > 0 ? contextScored : scored;
+    const nonPolicyContext = contextScored.filter((item) => !isPolicyEntry(item.entry));
+    const nonSupplierContext = (policyIntent ? contextScored : nonPolicyContext)
+        .filter((item) => (supplierIntent ? true : !isSupplierEntry(item.entry)));
+    const resolvedScored = nonSupplierContext;
 
     if (!resolvedScored.length) {
         return {
@@ -564,7 +621,7 @@ export function getChatReply(message) {
 
     const reply = buildOperationalReply(message, resolvedScored);
     const note = resolveSpecificWaiverNote(message);
-    const liabilityNote = (intents.naturalStoneDisclosure || intents.removalDisclosure) && note
+    const liabilityNote = disclosureTriggers.any && note
         ? `\n\nNote: ${note}`
         : '';
     const sources = Array.from(new Set(resolvedScored.slice(0, 3).map((item) => item.entry.title))).slice(0, 2);

@@ -1,9 +1,17 @@
 import {
+    buildIntakeMemoryCard,
+    buildSegmentClarificationPrompt,
     buildSeasonalWeatherNote,
     detectGreetingIntent,
+    detectIntakePauseIntent,
     extractEstimateIntake,
+    getBestNextEstimateField,
+    getEstimateConversationStage,
     getLiveEstimateRange,
     getMissingEstimateFields,
+    getSmartNextEstimateQuestion,
+    parsePendingSegmentClarification,
+    parseYesNo,
     shouldStartEstimateIntake,
     shouldSubmitIntake,
 } from '../lib/chat-intake';
@@ -11,6 +19,10 @@ import {
 describe('chat estimate intake', () => {
     it('detects intake intent from pricing language', () => {
         expect(shouldStartEstimateIntake('Can you give me a quote for my kitchen?', [])).toBe(true);
+    });
+
+    it('starts intake from structured scope details even without explicit pricing words', () => {
+        expect(shouldStartEstimateIntake('49 sf kitchen no island ceramic sink with 4 inch splash', [])).toBe(true);
     });
 
     it('does not force intake for unrelated messages when no active intake session exists', () => {
@@ -136,5 +148,64 @@ describe('chat estimate intake', () => {
         ]);
 
         expect(intake.name).toBe('');
+    });
+
+    it('uses stage machine ordering for missing-field progression', () => {
+        const missing = ['name', 'email', 'phone', 'projectType', 'city', 'squareFootage', 'material'];
+        const discoverStage = getEstimateConversationStage({ missingFields: missing, readyToSubmit: false });
+        expect(discoverStage).toBe('discover');
+        expect(getBestNextEstimateField(missing, discoverStage)).toBe('projectType');
+
+        const qualifyMissing = ['name', 'email', 'phone', 'material', 'timeline'];
+        const qualifyStage = getEstimateConversationStage({ missingFields: qualifyMissing, readyToSubmit: false });
+        expect(qualifyStage).toBe('qualify');
+        expect(getBestNextEstimateField(qualifyMissing, qualifyStage)).toBe('material');
+
+        const captureMissing = ['name', 'email'];
+        const captureStage = getEstimateConversationStage({ missingFields: captureMissing, readyToSubmit: false });
+        expect(captureStage).toBe('capture');
+        expect(getBestNextEstimateField(captureMissing, captureStage)).toBe('name');
+    });
+
+    it('builds a compact intake memory card with placeholders', () => {
+        const card = buildIntakeMemoryCard({
+            projectType: 'kitchen',
+            city: 'Mason',
+            squareFootage: 49,
+            material: '',
+            timeline: '',
+            name: '',
+            email: '',
+            phone: '',
+        });
+
+        expect(card).toMatch(/Captured so far:/);
+        expect(card).toMatch(/Project: kitchen/);
+        expect(card).toMatch(/City: Mason/);
+        expect(card).toMatch(/Sqft: 49 sq ft/);
+        expect(card).toMatch(/Material: —/);
+    });
+
+    it('escalates re-ask copy after repeated prompts for the same field', () => {
+        const question = getSmartNextEstimateQuestion(['city'], 'discover', [
+            { role: 'assistant', content: 'What city is the project in?' },
+            { role: 'assistant', content: 'What city is the project in?' },
+        ]);
+
+        expect(question).toMatch(/confirm service routing/i);
+    });
+
+    it('supports segment clarification prompt and yes/no parsing', () => {
+        const prompt = buildSegmentClarificationPrompt('residential-custom');
+        expect(prompt).toMatch(/Quick check: I read this as "residential custom"/i);
+        expect(parsePendingSegmentClarification([{ role: 'assistant', content: prompt }])).toBe('residential-custom');
+        expect(parseYesNo('yes that is right')).toBe('yes');
+        expect(parseYesNo('nope')).toBe('no');
+    });
+
+    it('detects intake pause intent phrases', () => {
+        expect(detectIntakePauseIntent('just browsing for now')).toBe(true);
+        expect(detectIntakePauseIntent('no quote yet, hold off')).toBe(true);
+        expect(detectIntakePauseIntent('kitchen project in mason')).toBe(false);
     });
 });

@@ -76,15 +76,15 @@ export default function SuppliersSection() {
     };
 
     return (
-        <section id="suppliers" className="scroll-mt-28 py-6 sm:scroll-mt-36 sm:py-8">
-            <div className="mb-4 flex flex-col gap-2 sm:mb-5 sm:flex-row sm:items-end sm:justify-between sm:gap-3">
-                <div>
-                    <div className="eyebrow">Materials library</div>
-                    <h2 className="font-display text-3xl font-semibold sm:text-4xl">Curated Countertop Materials</h2>
-                    <p className="max-w-3xl text-muted">Shortlist slab directions faster, then let Urban Stone handle final stone selection, measurements, deposit, fabrication, and installation.</p>
+        <section id="suppliers" className="scroll-mt-28 py-8 sm:scroll-mt-36 sm:py-12">
+            <div className="mb-7 flex flex-col gap-4 sm:mb-8 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
+                <div className="pl-1 pr-1 sm:pl-4 sm:pr-4">
+                    <div className="eyebrow mb-3 sm:mb-4">Materials Library</div>
+                    <h2 className="font-display text-4xl font-bold leading-tight sm:text-5xl sm:leading-tight mb-3">Curated Countertop Materials</h2>
+                    <p className="max-w-3xl text-lg text-muted sm:text-xl">Shortlist slab directions faster, then let Urban Stone handle final stone selection, measurements, deposit, fabrication, and installation.</p>
                 </div>
-                <div className="flex flex-col gap-2 sm:max-w-[18rem] sm:items-end">
-                    <a className="materials-next-step-button w-full sm:w-auto" href="#quote">Request estimate</a>
+                <div className="flex flex-col gap-2 sm:max-w-[18rem] sm:items-end mt-4 sm:mt-0">
+                    <a className="materials-next-step-button materials-next-step-button--shine w-full sm:w-auto text-base font-bold px-8 py-4 shadow-lg" href="#quote">ESTIMATE</a>
                 </div>
             </div>
             {sortedSupplierSummaries.map((summary) => (

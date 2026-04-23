@@ -242,7 +242,7 @@ export default function ChatWidget() {
     return (
         <>
             <div className="pointer-events-none fixed bottom-4 right-4 z-50">
-                <div className="pointer-events-auto flex items-center gap-2 rounded-full border border-border/80 bg-surface/95 p-1.5 shadow-[0_16px_34px_rgba(8,12,24,0.36)] backdrop-blur">
+                <div className="pointer-events-auto flex items-center rounded-full border border-border/80 bg-surface/95 p-1.5 shadow-[0_16px_34px_rgba(8,12,24,0.36)] backdrop-blur">
                     <button
                         type="button"
                         className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-accent text-lg text-white shadow-[0_8px_18px_rgba(54,105,187,0.45)] transition hover:bg-accentDark"
@@ -250,13 +250,6 @@ export default function ChatWidget() {
                         aria-label={showBot ? 'Close Stone Haven chat' : chatbotLabel}
                     >
                         {showBot ? '×' : '💬'}
-                    </button>
-                    <button
-                        type="button"
-                        className="hidden rounded-full px-3 py-2 text-sm font-semibold text-text transition hover:text-accent sm:inline-flex"
-                        onClick={showBot ? handleChatClose : handleChatOpen}
-                    >
-                        {showBot ? 'Hide assistant' : 'Stone Haven'}
                     </button>
                 </div>
             </div>

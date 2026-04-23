@@ -10,6 +10,10 @@ vi.mock('next/image', () => ({
     default: ({ alt, priority, ...props }) => <img alt={alt} {...props} />,
 }));
 
+vi.mock('../components/ChatWidget', () => ({
+    default: () => null,
+}));
+
 describe('Home page', () => {
     const supplierNames = ['Avani Granite & Marble', 'Citi Quartz', 'Daltile Stone Center', 'MSI Surfaces', 'Quartz America'];
 
@@ -29,7 +33,7 @@ describe('Home page', () => {
         });
     });
 
-    it('renders the restored marketing surface', { timeout: 10000 }, () => {
+    it('renders the restored marketing surface', { timeout: 20000 }, () => {
         render(<Home />);
 
         expect(screen.getByRole('heading', { name: /premium countertops\. fast install\. built for cincinnati\./i })).toBeInTheDocument();

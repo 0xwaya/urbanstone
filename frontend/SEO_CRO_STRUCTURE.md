@@ -10,9 +10,11 @@ This document covers how the frontend is organized for local SEO discovery, inte
 - `pages/coverage/index.jsx`: crawlable hub for city pages and material pages
 - `pages/service-areas/[slug].jsx`: city-level landing pages
 - `pages/materials/[slug].jsx`: material-by-city landing pages
+- `pages/ai-chat.jsx`: local Stone Haven chat experience used when no external embed URL is configured
 - `pages/robots.txt.js`: crawl directives
 - `pages/sitemap.xml.js`: sitemap assembled from shared data arrays
 - `pages/api/lead.js`: quote-request intake endpoint
+- `pages/api/chat.js`: Stone Haven chat endpoint with local knowledge-base fallback
 
 ### Shared Data Layer
 
@@ -31,7 +33,7 @@ This document covers how the frontend is organized for local SEO discovery, inte
 - `FAQSection`: homepage FAQ block and FAQ schema source
 - `RelatedPages`: reusable internal-link block used by city and material templates
 - `Footer`: persistent coverage-hub and deep-link cluster
-- `ChatWidget`: floating contact support path
+- `ChatWidget`: floating contact support path that opens either an external embed or the shared local Stone Haven chat client
 
 ## SEO Model
 
@@ -55,6 +57,7 @@ The homepage and landing pages use a staged conversion flow:
 5. `LeadForm` captures the quote request once intent is established.
 6. `FAQSection` resolves final objections.
 7. `Footer` gives one more navigation and conversion path.
+8. `ChatWidget` provides a lightweight conversational assist layer without replacing the primary quote funnel.
 
 ## Data Contract Notes
 
@@ -109,7 +112,9 @@ flowchart TD
     B --> B4[materials/[slug].jsx]
     B --> B5[robots.txt.js]
     B --> B6[sitemap.xml.js]
-    B --> B7[api/lead.js]
+    B --> B7[ai-chat.jsx]
+    B --> B8[api/lead.js]
+    B --> B9[api/chat.js]
 
     D --> D1[service-areas.js]
     D --> D2[material-pages.js]
@@ -204,6 +209,8 @@ flowchart TD
     SA -. deeper location discovery .-> B3[service-areas/[slug].jsx]
     SG -. material exploration .-> B4[materials/[slug].jsx]
     LF -. quote capture .-> API[api/lead.js]
+    CW -. conversational assist .-> CHAT[ai-chat.jsx]
+    CHAT -. response generation .-> API2[api/chat.js]
     FQ -. objection handling .-> LF
     FT -. persistent deep links .-> B2[coverage/index.jsx]
 ```
@@ -214,3 +221,4 @@ flowchart TD
 - `LeadForm` already accepts route-specific copy; extend those content objects instead of editing the component for each landing page.
 - Add optional schema fields into the data layer if individual pages need richer JSON-LD beyond current business + FAQ coverage.
 - If the page count grows substantially, consider separating SEO content data from routing data so editors can update copy without touching template logic.
+- Keep chat as a support layer for material guidance and estimate prep, not the primary conversion path; the quote form should remain the main close action.
