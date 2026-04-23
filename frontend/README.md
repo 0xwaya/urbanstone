@@ -290,6 +290,8 @@ Before a real production launch, add external monitoring, persistent rate limiti
 - Improved chat popup UX: only one popup at a time, draggable header, resets position on close, and improved accessibility.
 - Added a default Stone Haven welcome greeting and tightened chat intake state handling to reduce scripted loops.
 - Aligned chat estimate relay payloads with lead webhook contract fields (`requestId`, `dedupeKey`, `metadata`).
+- Updated chat visual palette to the Urban Stone gold lane (launcher, popup header gradients, in-chat accents, and scrollbar thumb), removing remaining off-brand blue highlights.
+- Current state: chat window uses native overflow scrollbar behavior (Opera/Chromium friendly), with branded gold accents and consistent contrast in popup footer actions.
 - Added `.gitignore` to prevent chatbot source/config from being pushed until fully trained.
 - Documented troubleshooting steps for port conflicts and static asset errors.
 - Noted that the chatbot backend requires the `ollama` binary for LLM inference (see API errors if missing).

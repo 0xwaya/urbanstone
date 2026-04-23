@@ -160,7 +160,7 @@ a {
 
 .chat-scrollbar {
   scrollbar-width: thin;
-  scrollbar-color: rgba(54, 105, 187, 0.7) rgba(var(--panel), 0.22);
+  scrollbar-color: rgba(196, 173, 128, 0.9) rgba(var(--panel), 0.22);
   scrollbar-gutter: stable both-edges;
   overscroll-behavior: contain;
 }
@@ -175,13 +175,13 @@ a {
 }
 
 .chat-scrollbar::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, rgba(54, 105, 187, 0.88), rgba(33, 76, 145, 0.88));
+  background: linear-gradient(180deg, rgba(212, 193, 152, 0.96), rgba(171, 147, 103, 0.96));
   border-radius: 999px;
   border: 2px solid rgba(var(--surface), 0.55);
 }
 
 .chat-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, rgba(74, 144, 226, 0.95), rgba(54, 105, 187, 0.95));
+  background: linear-gradient(180deg, rgba(223, 203, 159, 0.98), rgba(184, 160, 114, 0.98));
 }
 
 * {

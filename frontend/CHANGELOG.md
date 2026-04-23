@@ -19,6 +19,8 @@
 - Bot UX: Added branded header logo, removed duplicate embedded header inside the popup, and aligned footer button colors with established theme tokens
 - Bot UX: Added visible in-panel chat scroll rail indicator so users can see scroll state in long conversations
 - Bot UX: Replaced the custom drag-scroll rail with stable native chat scrollbars for consistent Opera/Chromium behavior and easier message navigation
+- Bot UX: Replaced remaining blue chat accents with branded gold gradients (launcher button, popup header, scrollbar thumb, user bubble accents, and in-chat link tint) while preserving shading and depth
+- Bot UX: Updated chat footer action hover colors to gold-theme tones for consistent readability against dark surfaces
 - Bot logic: Prevented duplicate self-introduction greetings within the same conversation history
 - Bot tuning: Added strict policy/disclosure gating, retrieval re-ranking for chat intent, confidence-based field clarification, smart re-ask prompts, and intake memory-card persistence hooks
 - Frontend design: Standardized section/card surfaces with new shared `brand-section` and `brand-card` classes and applied them across homepage, coverage, service-area, material, and contractor pages

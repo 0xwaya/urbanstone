@@ -48,7 +48,7 @@ function ChatPopup({
             style={popupStyle}
         >
             <div
-                className={`flex items-center justify-between gap-3 border-b border-border/70 bg-[linear-gradient(140deg,rgba(50,93,165,0.95),rgba(21,42,84,0.96))] px-4 py-3 text-white ${typeof window !== 'undefined' && window.innerWidth >= DESKTOP_BREAKPOINT ? 'cursor-move' : ''}`.trim()}
+                className={`flex items-center justify-between gap-3 border-b border-[rgba(196,173,128,0.48)] bg-[linear-gradient(145deg,rgba(125,98,57,0.95),rgba(71,53,30,0.96))] px-4 py-3 text-[#f8efdf] ${typeof window !== 'undefined' && window.innerWidth >= DESKTOP_BREAKPOINT ? 'cursor-move' : ''}`.trim()}
                 onMouseDown={onDragStart}
             >
                 <div className="flex min-w-0 items-center gap-2.5">
@@ -93,13 +93,13 @@ function ChatPopup({
                     Open estimate form
                 </button>
                 <a
-                    className="rounded-full border border-border bg-panel/80 px-3 py-1.5 text-xs font-semibold text-text transition hover:border-accent hover:text-accent"
+                    className="rounded-full border border-border bg-panel/80 px-3 py-1.5 text-xs font-semibold text-text transition hover:border-[rgba(196,173,128,0.65)] hover:text-[#dcc491]"
                     href={`tel:${toTelHref(companyPhone)}`}
                 >
                     Call
                 </a>
                 <a
-                    className="rounded-full border border-border bg-panel/80 px-3 py-1.5 text-xs font-semibold text-text transition hover:border-accent hover:text-accent"
+                    className="rounded-full border border-border bg-panel/80 px-3 py-1.5 text-xs font-semibold text-text transition hover:border-[rgba(196,173,128,0.65)] hover:text-[#dcc491]"
                     href={`mailto:${companyEmail}`}
                 >
                     Email
@@ -244,7 +244,7 @@ export default function ChatWidget() {
                 <div className="pointer-events-auto flex items-center rounded-full border border-border/80 bg-surface/95 p-1.5 shadow-[0_16px_34px_rgba(8,12,24,0.36)] backdrop-blur">
                     <button
                         type="button"
-                        className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-accent text-lg text-white shadow-[0_8px_18px_rgba(54,105,187,0.45)] transition hover:bg-accentDark"
+                        className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[rgba(210,187,142,0.66)] bg-[linear-gradient(145deg,rgba(223,199,154,0.96),rgba(164,134,86,0.96))] text-lg text-[#122033] shadow-[0_10px_24px_rgba(96,72,40,0.45)] transition hover:bg-[linear-gradient(145deg,rgba(206,181,136,0.96),rgba(146,118,73,0.96))]"
                         onClick={showBot ? handleChatClose : handleChatOpen}
                         aria-label={showBot ? 'Close Stone Haven chat' : chatbotLabel}
                     >

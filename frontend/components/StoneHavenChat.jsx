@@ -25,7 +25,7 @@ function renderMessageContent(content) {
                     href={segment}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="font-medium text-accent underline underline-offset-2"
+                    className="font-medium text-[#d8c59c] underline underline-offset-2"
                 >
                     {segment}
                 </a>
@@ -41,7 +41,7 @@ function ChatBubble({ message }) {
 
     return (
         <div
-            className={`rounded-2xl border px-4 py-3 text-sm leading-6 ${isAssistant ? 'border-border bg-surface text-text' : 'border-accent/35 bg-accent/10 text-text'}`.trim()}
+            className={`rounded-2xl border px-4 py-3 text-sm leading-6 ${isAssistant ? 'border-border bg-surface text-text' : 'border-[rgba(196,173,128,0.45)] bg-[rgba(196,173,128,0.14)] text-[#f6eedf]'}`.trim()}
         >
             <div className="whitespace-pre-line">{renderMessageContent(message.content)}</div>
         </div>
