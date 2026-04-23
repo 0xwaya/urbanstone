@@ -14,6 +14,11 @@
 - Bot payloads: Aligned chat-estimate relay payloads with lead webhook contract fields (`requestId`, `dedupeKey`, and `metadata`)
 - Bot knowledge: Expanded Stone Haven owner/history/service/quote policy references in local chatbot knowledge config
 - Bot tuning: Added curated recommendation routing for residential/contractor/builder asks, suppressed chat price ranges by default, and reduced repetitive residential guidance wording
+- Bot tuning: Prevented location-specific reply drift for generic countertop asks and shifted follow-up prompts toward curated material/look discovery
+- Bot intake: Fixed name-capture loop by accepting plain full-name replies after explicit full-name prompt while rejecting non-name probe text
+- Bot UX: Added branded header logo, removed duplicate embedded header inside the popup, and aligned footer button colors with established theme tokens
+- Bot UX: Added visible in-panel chat scroll rail indicator so users can see scroll state in long conversations
+- Bot logic: Prevented duplicate self-introduction greetings within the same conversation history
 - Testing: Increased the homepage render test timeout to reduce local flake under heavy CPU and low-disk conditions
 - Rebrand: All HavenBot references replaced with Stone Haven (UI, avatar, chatbot labels)
 - Contact: Fallback email updated to <stonehaven@urbanstone.co>

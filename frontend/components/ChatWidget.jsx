@@ -1,42 +1,130 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import StoneHavenChat from './StoneHavenChat';
+import LogoMark from './LogoMark';
 
-const DISMISS_STORAGE_KEY = 'urban-stone-chat-widget-dismissed';
 const QUOTE_OPEN_EVENT = 'urbanstone:quote-opened';
-
-function shouldOpenByDefault() {
-    if (typeof window === 'undefined') {
-        return false;
-    }
-
-    if (window.sessionStorage.getItem(DISMISS_STORAGE_KEY) === 'true') {
-        return false;
-    }
-
-    return typeof window.matchMedia === 'function'
-        ? window.matchMedia('(min-width: 640px)').matches
-        : true;
-}
+const DESKTOP_BREAKPOINT = 640;
+const CHAT_WINDOW_WIDTH = 368;
+const CHAT_WINDOW_HEIGHT = 560;
 
 function toTelHref(value) {
     return value.replace(/[^\d+]/g, '');
 }
 
+function clampChatPosition(position) {
+    if (typeof window === 'undefined' || !position) {
+        return position;
+    }
+
+    const maxX = Math.max(12, window.innerWidth - CHAT_WINDOW_WIDTH - 12);
+    const maxY = Math.max(12, window.innerHeight - CHAT_WINDOW_HEIGHT - 12);
+
+    return {
+        x: Math.min(Math.max(12, position.x), maxX),
+        y: Math.min(Math.max(12, position.y), maxY),
+    };
+}
+
+function ChatPopup({
+    chatbotLabel,
+    chatbotUrl,
+    companyPhone,
+    companyEmail,
+    isExternalEmbed,
+    onClose,
+    onDragStart,
+    onOpenQuote,
+    position,
+}) {
+    const popupStyle = position
+        ? {
+            left: `${position.x}px`,
+            top: `${position.y}px`,
+        }
+        : undefined;
+
+    return (
+        <div
+            className={`fixed z-[60] flex w-[min(23rem,calc(100vw-1rem))] max-h-[calc(100dvh-5.5rem)] flex-col overflow-hidden rounded-[1.6rem] border border-white/20 bg-[linear-gradient(160deg,rgba(14,24,43,0.94),rgba(12,18,34,0.88))] shadow-[0_30px_90px_rgba(6,12,26,0.55)] ring-1 ring-white/10 backdrop-blur-xl ${position ? '' : 'bottom-20 left-2 right-2 sm:bottom-24 sm:left-auto sm:right-5'}`.trim()}
+            style={popupStyle}
+        >
+            <div
+                className={`flex items-center justify-between gap-3 border-b border-white/15 bg-[linear-gradient(140deg,rgba(54,105,187,0.95),rgba(27,54,109,0.96))] px-4 py-3 text-white ${typeof window !== 'undefined' && window.innerWidth >= DESKTOP_BREAKPOINT ? 'cursor-move' : ''}`.trim()}
+                onMouseDown={onDragStart}
+            >
+                <div className="flex min-w-0 items-center gap-2.5">
+                    <div className="h-9 w-9 rounded-xl border border-white/25 bg-[rgba(7,14,28,0.45)] p-1.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.18)]">
+                        <LogoMark className="h-full w-full" />
+                    </div>
+                    <div className="min-w-0">
+                        <div className="truncate text-sm font-semibold">Haven</div>
+                        <div className="text-[11px] text-white/75">Urban Stone • Live now</div>
+                    </div>
+                </div>
+                <button
+                    type="button"
+                    className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-white/30 bg-white/10 text-lg font-medium transition hover:bg-white/20"
+                    onClick={onClose}
+                    aria-label="Close chat"
+                >
+                    ×
+                </button>
+            </div>
+
+            <div className="h-[min(62dvh,29rem)] min-h-0 bg-white/95 sm:h-[min(66dvh,31rem)]">
+                {isExternalEmbed ? (
+                    <iframe
+                        title="Stone Haven AI assistant"
+                        src={chatbotUrl}
+                        className="h-full w-full border-0"
+                        allow="clipboard-write; microphone"
+                        loading="lazy"
+                    />
+                ) : (
+                    <StoneHavenChat embedded showHeader={false} />
+                )}
+            </div>
+
+            <div className="flex flex-wrap items-center gap-2 border-t border-white/10 bg-surface/95 px-3 py-2.5 backdrop-blur">
+                <button
+                    type="button"
+                    className="rounded-full bg-accent px-3 py-1.5 text-xs font-semibold text-white shadow-[0_8px_18px_rgba(54,105,187,0.35)] transition hover:bg-accentDark"
+                    onClick={onOpenQuote}
+                >
+                    Open estimate form
+                </button>
+                <a
+                    className="rounded-full border border-border bg-panel/80 px-3 py-1.5 text-xs font-semibold text-text transition hover:border-accent hover:text-accent"
+                    href={`tel:${toTelHref(companyPhone)}`}
+                >
+                    Call
+                </a>
+                <a
+                    className="rounded-full border border-border bg-panel/80 px-3 py-1.5 text-xs font-semibold text-text transition hover:border-accent hover:text-accent"
+                    href={`mailto:${companyEmail}`}
+                >
+                    Email
+                </a>
+            </div>
+        </div>
+    );
+}
+
 export default function ChatWidget() {
-    const [isOpen, setIsOpen] = useState(false);
     const [hasHydrated, setHasHydrated] = useState(false);
     const [showBot, setShowBot] = useState(false);
-    // For draggable chat popup
-    const [chatPosition, setChatPosition] = useState({ x: 0, y: 0 });
+    const [chatPosition, setChatPosition] = useState(null);
     const [dragging, setDragging] = useState(false);
-    const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
-    const chatPopupRef = useRef(null);
+    const dragOffsetRef = useRef({ x: 0, y: 0 });
+
     const companyPhone = process.env.NEXT_PUBLIC_COMPANY_PHONE || '(513) 307-5840';
     const companyEmail = process.env.NEXT_PUBLIC_LEAD_EMAIL || 'sales@urbanstone.co';
-    const chatbotUrl = process.env.NEXT_PUBLIC_WAYALABS_CHATBOT_URL || '';
-    const chatbotLabel = process.env.NEXT_PUBLIC_WAYALABS_CHATBOT_LABEL || 'Chat with AI concierge';
+    const externalChatbotUrl = (process.env.NEXT_PUBLIC_WAYALABS_CHATBOT_URL || '').trim();
+    const isExternalEmbed = Boolean(externalChatbotUrl);
+    const chatbotUrl = externalChatbotUrl || '/ai-chat';
+    const chatbotLabel = (process.env.NEXT_PUBLIC_WAYALABS_CHATBOT_LABEL || 'Chat with Stone Haven').trim() || 'Chat with Stone Haven';
 
     useEffect(() => {
-        setIsOpen(shouldOpenByDefault());
         setHasHydrated(true);
     }, []);
 
@@ -46,7 +134,9 @@ export default function ChatWidget() {
         }
 
         const closeWidgetForQuote = () => {
-            setIsOpen(false);
+            setShowBot(false);
+            setChatPosition(null);
+            setDragging(false);
         };
 
         document.addEventListener(QUOTE_OPEN_EVENT, closeWidgetForQuote);
@@ -56,221 +146,134 @@ export default function ChatWidget() {
         };
     }, []);
 
+    useEffect(() => {
+        if (!dragging || typeof window === 'undefined') {
+            return undefined;
+        }
 
-    // Instead of dismiss, open chat popup
-    const handleChat = () => {
+        const handleMouseMove = (event) => {
+            setChatPosition(
+                clampChatPosition({
+                    x: event.clientX - dragOffsetRef.current.x,
+                    y: event.clientY - dragOffsetRef.current.y,
+                })
+            );
+        };
+
+        const stopDragging = () => {
+            setDragging(false);
+        };
+
+        window.addEventListener('mousemove', handleMouseMove);
+        window.addEventListener('mouseup', stopDragging);
+
+        return () => {
+            window.removeEventListener('mousemove', handleMouseMove);
+            window.removeEventListener('mouseup', stopDragging);
+        };
+    }, [dragging]);
+
+    useEffect(() => {
+        if (!showBot || typeof window === 'undefined') {
+            return undefined;
+        }
+
+        const handleResize = () => {
+            setChatPosition((current) => clampChatPosition(current));
+        };
+
+        const handleEscape = (event) => {
+            if (event.key === 'Escape') {
+                setShowBot(false);
+                setDragging(false);
+            }
+        };
+
+        window.addEventListener('resize', handleResize);
+        window.addEventListener('keydown', handleEscape);
+
+        return () => {
+            window.removeEventListener('resize', handleResize);
+            window.removeEventListener('keydown', handleEscape);
+        };
+    }, [showBot]);
+
+    const handleChatOpen = () => {
         setShowBot(true);
-        setChatPosition({ x: 0, y: 0 }); // Reset position on open
+        setDragging(false);
+        setChatPosition(null);
     };
 
-    const handleClose = () => {
-        setIsOpen(false);
+    const handleChatClose = () => {
         setShowBot(false);
-        setChatPosition({ x: 0, y: 0 }); // Reset position on close
-        window.sessionStorage.setItem(DISMISS_STORAGE_KEY, 'true');
-    };
-
-    const handleOpen = () => {
-        setIsOpen(true);
-        window.sessionStorage.removeItem(DISMISS_STORAGE_KEY);
+        setDragging(false);
+        setChatPosition(null);
     };
 
     const handleOpenFormClick = () => {
-        setIsOpen(false);
-
         if (typeof document !== 'undefined') {
             document.dispatchEvent(new CustomEvent(QUOTE_OPEN_EVENT));
         }
     };
 
-    const toggleBot = () => {
-        setShowBot((prev) => !prev);
+    const handleDragStart = (event) => {
+        if (typeof window === 'undefined' || window.innerWidth < DESKTOP_BREAKPOINT) {
+            return;
+        }
+
+        const nextPosition = chatPosition || clampChatPosition({
+            x: window.innerWidth - CHAT_WINDOW_WIDTH - 20,
+            y: window.innerHeight - CHAT_WINDOW_HEIGHT - 20,
+        });
+
+        dragOffsetRef.current = {
+            x: event.clientX - nextPosition.x,
+            y: event.clientY - nextPosition.y,
+        };
+
+        setChatPosition(nextPosition);
+        setDragging(true);
     };
 
     if (!hasHydrated) {
         return null;
     }
 
-    if (!isOpen) {
-        return (
-            <div className="pointer-events-none fixed bottom-4 right-4 z-50">
-                <button
-                    type="button"
-                    className="brand-button-primary pointer-events-auto px-4 py-3 text-sm font-semibold"
-                    onClick={handleOpen}
-                    aria-label="Open quick contact panel"
-                >
-                    Fast estimate
-                </button>
-                {/* Floating chat button */}
-                <button
-                    type="button"
-                    className="ml-3 brand-button-secondary pointer-events-auto px-4 py-3 text-sm font-semibold rounded-full shadow-lg flex items-center gap-2"
-                    onClick={handleChat}
-                    aria-label="Open chat with Stone Haven"
-                    style={{ position: 'relative', zIndex: 100 }}
-                    disabled={showBot}
-                >
-                    <span role="img" aria-label="Stone Haven">🧑‍🦰</span> Chat
-                </button>
-                {/* Chat popup */}
-                {showBot && (
-                    <div
-                        ref={chatPopupRef}
-                        className="fixed bottom-24 right-4 z-50 w-full max-w-xs sm:max-w-sm rounded-2xl border border-border bg-surface/98 shadow-2xl flex flex-col"
-                        style={{
-                            left: chatPosition.x ? chatPosition.x : 'auto',
-                            top: chatPosition.y ? chatPosition.y : 'auto',
-                            cursor: dragging ? 'grabbing' : 'default',
-                        }}
-                    >
-                        <div
-                            className="chat-popup-header flex items-center justify-between gap-2 px-4 py-2 bg-accent text-white rounded-t-2xl cursor-move select-none"
-                            onMouseDown={(e) => {
-                                setDragging(true);
-                                setDragOffset({ x: e.clientX - (chatPosition.x || window.innerWidth - 360), y: e.clientY - (chatPosition.y || window.innerHeight - 500) });
-                            }}
-                            onMouseUp={() => setDragging(false)}
-                            onMouseMove={(e) => {
-                                if (dragging) {
-                                    setChatPosition({ x: e.clientX - dragOffset.x, y: e.clientY - dragOffset.y });
-                                }
-                            }}
-                            onMouseLeave={() => setDragging(false)}
-                        >
-                            <div className="flex items-center gap-2">
-                                <span className="text-2xl">🧑‍🦰</span>
-                                <span className="font-bold">Stone Haven</span>
-                                <span className="ml-1 text-lg">🤖</span>
-                            </div>
-                            <button
-                                className="text-white hover:text-red-300 text-xl font-bold"
-                                onClick={() => setShowBot(false)}
-                                aria-label="Close chat"
-                            >
-                                ×
-                            </button>
-                        </div>
-                        <div className="flex-1 bg-white p-0 rounded-b-2xl overflow-hidden" style={{ minHeight: 400, maxHeight: 500 }}>
-                            {/* Embed chat iframe or custom chat UI here */}
-                            {chatbotUrl ? (
-                                <iframe
-                                    title="Stone Haven AI assistant"
-                                    src={chatbotUrl}
-                                    className="h-full w-full border-0"
-                                    allow="clipboard-write; microphone"
-                                    loading="lazy"
-                                    style={{ borderRadius: '0 0 1rem 1rem' }}
-                                />
-                            ) : (
-                                <div className="flex flex-col items-center justify-center h-full text-center p-4 text-muted">
-                                    <span className="text-4xl mb-2">🧑‍🦰🤖</span>
-                                    <div className="font-semibold">Hi, I&apos;m Stone Haven, Urban Stone Collective&apos;s assistant!<br />How can I help you with your countertop project?</div>
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                )}
-            </div>
-        );
-    }
-
     return (
-        <aside className="pointer-events-none fixed bottom-4 left-4 right-4 z-50 sm:left-auto sm:max-w-sm">
-            <div className="pointer-events-auto rounded-3xl border border-border bg-surface/92 p-4 shadow-soft backdrop-blur">
-                <div className="flex items-start justify-between gap-3">
-                    <div>
-                        <div className="eyebrow">Fast response</div>
-                        <div className="font-display text-2xl font-semibold leading-tight sm:text-3xl">Need a countertop estimate today?</div>
-                    </div>
+        <>
+            <div className="pointer-events-none fixed bottom-4 right-4 z-50">
+                <div className="pointer-events-auto flex items-center gap-2 rounded-full border border-border/80 bg-surface/95 p-1.5 shadow-[0_16px_34px_rgba(8,12,24,0.36)] backdrop-blur">
                     <button
                         type="button"
-                        className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border text-lg font-medium text-muted transition hover:border-accent hover:text-text"
-                        aria-label="Close quick contact panel"
-                        onClick={handleClose}
+                        className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-accent text-lg text-white shadow-[0_8px_18px_rgba(54,105,187,0.45)] transition hover:bg-accentDark"
+                        onClick={showBot ? handleChatClose : handleChatOpen}
+                        aria-label={showBot ? 'Close Stone Haven chat' : chatbotLabel}
                     >
-                        ×
+                        {showBot ? '×' : '💬'}
                     </button>
-                </div>
-                <p className="mt-2 text-sm text-muted">Use the estimate form, call for scheduling, or send photos, measurements, and layout details by email.</p>
-                <div className="mt-4 flex flex-wrap gap-2">
-                    <a className="brand-button-primary px-3 py-2 text-sm font-semibold" href="#quote" onClick={handleOpenFormClick}>
-                        Open form
-                    </a>
-                    <a className="brand-button-secondary inline-flex rounded-full px-3 py-2 text-sm font-semibold" href={`tel:${toTelHref(companyPhone)}`}>
-                        Call
-                    </a>
-                    <a className="brand-button-secondary inline-flex rounded-full px-3 py-2 text-sm font-semibold" href={`mailto:${companyEmail}`}>
-                        Email
-                    </a>
                     <button
                         type="button"
-                        className="brand-button-secondary inline-flex rounded-full px-3 py-2 text-sm font-semibold"
-                        onClick={handleChat}
-                        disabled={showBot}
+                        className="hidden rounded-full px-3 py-2 text-sm font-semibold text-text transition hover:text-accent sm:inline-flex"
+                        onClick={showBot ? handleChatClose : handleChatOpen}
                     >
-                        <span role="img" aria-label="Stone Haven">🧑‍🦰</span> Chat
+                        {showBot ? 'Hide assistant' : 'Stone Haven'}
                     </button>
                 </div>
-                {/* Chat popup in panel mode */}
-                {showBot && (
-                    <div
-                        ref={chatPopupRef}
-                        className="fixed bottom-24 right-4 z-50 w-full max-w-xs sm:max-w-sm rounded-2xl border border-border bg-surface/98 shadow-2xl flex flex-col"
-                        style={{
-                            left: chatPosition.x ? chatPosition.x : 'auto',
-                            top: chatPosition.y ? chatPosition.y : 'auto',
-                            cursor: dragging ? 'grabbing' : 'default',
-                        }}
-                    >
-                        <div
-                            className="chat-popup-header flex items-center justify-between gap-2 px-4 py-2 bg-accent text-white rounded-t-2xl cursor-move select-none"
-                            onMouseDown={(e) => {
-                                setDragging(true);
-                                setDragOffset({ x: e.clientX - (chatPosition.x || window.innerWidth - 360), y: e.clientY - (chatPosition.y || window.innerHeight - 500) });
-                            }}
-                            onMouseUp={() => setDragging(false)}
-                            onMouseMove={(e) => {
-                                if (dragging) {
-                                    setChatPosition({ x: e.clientX - dragOffset.x, y: e.clientY - dragOffset.y });
-                                }
-                            }}
-                            onMouseLeave={() => setDragging(false)}
-                        >
-                            <div className="flex items-center gap-2">
-                                <span className="text-2xl">🧑‍🦰</span>
-                                <span className="font-bold">Stone Haven</span>
-                                <span className="ml-1 text-lg">🤖</span>
-                            </div>
-                            <button
-                                className="text-white hover:text-red-300 text-xl font-bold"
-                                onClick={() => setShowBot(false)}
-                                aria-label="Close chat"
-                            >
-                                ×
-                            </button>
-                        </div>
-                        <div className="flex-1 bg-white p-0 rounded-b-2xl overflow-hidden" style={{ minHeight: 400, maxHeight: 500 }}>
-                            {/* Embed chat iframe or custom chat UI here */}
-                            {chatbotUrl ? (
-                                <iframe
-                                    title="Stone Haven AI assistant"
-                                    src={chatbotUrl}
-                                    className="h-full w-full border-0"
-                                    allow="clipboard-write; microphone"
-                                    loading="lazy"
-                                    style={{ borderRadius: '0 0 1rem 1rem' }}
-                                />
-                            ) : (
-                                <div className="flex flex-col items-center justify-center h-full text-center p-4 text-muted">
-                                    <span className="text-4xl mb-2">🧑‍🦰🤖</span>
-                                    <div className="font-semibold">Hi, I'm Stone Haven, Urban Stone Collective's assistant!<br />How can I help you with your countertop project?</div>
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                )}
             </div>
-        </aside>
+
+            {showBot ? (
+                <ChatPopup
+                    chatbotLabel={chatbotLabel}
+                    chatbotUrl={chatbotUrl}
+                    companyPhone={companyPhone}
+                    companyEmail={companyEmail}
+                    isExternalEmbed={isExternalEmbed}
+                    onClose={handleChatClose}
+                    onDragStart={handleDragStart}
+                    onOpenQuote={handleOpenFormClick}
+                    position={chatPosition}
+                />
+            ) : null}
+        </>
     );
 }

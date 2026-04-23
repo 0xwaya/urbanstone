@@ -211,7 +211,9 @@ function buildEntries() {
 }
 
 const KNOWLEDGE_BASE = buildEntries();
-const PRIMARY_INTAKE_QUESTION = 'To move this forward quickly, share your city, project type, rough measurements (or sqft), material direction, and target timeline.';
+const PRIMARY_INTAKE_QUESTION = 'To move this forward quickly, share your first name, city, project type, rough measurements (or sqft), material direction, and target timeline.';
+const ESTIMATE_LINK = `${String(process.env.NEXT_PUBLIC_SITE_URL || 'https://urbanstone.co').replace(/\/+$/, '')}/#quote`;
+const SERVICE_CITY_SET = new Set(serviceAreas.map((area) => normalize(area.city)));
 
 const INTENT_KEYWORDS = {
     serviceArea: ['serve', 'service', 'coverage', 'travel', 'near me', 'city', 'location', 'zip'],
@@ -268,8 +270,14 @@ function detectRecommendationIntent(message) {
     const normalized = normalize(message);
     const hasRecommendationCue = hasAny(normalized, RECOMMENDATION_KEYWORDS);
     const hasCountertopCue = /(countertop|kitchen|bath|vanity|slab|material|quartz|granite|quartzite|stone)/.test(normalized);
+    const hasPreferenceCue = /(something like|like|looking for|leaning toward|thinking about|interested in|similar to)/.test(normalized);
+    const hasNeedCue = /(need|want|shopping|new|replace|remodel)/.test(normalized);
+    const hasSizeCue = /\b\d{2,4}\s*(sq\.?\s*ft|sqft|sf)\b/.test(normalized);
+    const hasMaterialCue = /(quartz|granite|quartzite|marble|absolute black|calacatta|kodiak|taj mahal|dolomite)/.test(normalized);
 
-    return hasRecommendationCue && hasCountertopCue;
+    return (hasRecommendationCue && hasCountertopCue)
+        || (hasCountertopCue && hasNeedCue)
+        || (hasCountertopCue && hasMaterialCue && (hasPreferenceCue || hasSizeCue));
 }
 
 function detectSegmentForRecommendation(message) {
@@ -283,6 +291,21 @@ function detectSegmentForRecommendation(message) {
     }
 
     return 'residential';
+}
+
+function hasCityInMessage(message) {
+    const normalized = normalize(message);
+    return Array.from(SERVICE_CITY_SET).some((city) => normalized.includes(city));
+}
+
+function shouldOfferEstimateLink(message) {
+    const normalized = normalize(message);
+    const hasSqft = /\b\d{2,4}\s*(sq\.?\s*ft|sqft|sf)\b/.test(normalized);
+    const hasMaterial = /(quartz|granite|quartzite|marble|absolute black|calacatta|kodiak|taj mahal|dolomite)/.test(normalized);
+    const hasProjectType = /(kitchen|bath|bathroom|vanity|island|countertop|backsplash)/.test(normalized);
+    const hasCity = hasCityInMessage(normalized);
+
+    return (hasSqft && hasMaterial) || (hasCity && hasProjectType && hasMaterial);
 }
 
 function buildCuratedRecommendationReply(message) {
@@ -320,7 +343,15 @@ function buildCuratedRecommendationReply(message) {
             ? 'For contractor/flipper work, we prioritize durable lanes that move quickly through templating and install.'
             : 'For residential custom projects, we prioritize design fit, durability, and practical maintenance.';
 
-    return `${segmentLine}\n\n${laneHint} ${pickLine}\n\nNext step: share your city, rough sqft, and preferred look (clean white, warm veining, or bold movement), and I’ll narrow this to the best 2-3 curated options.`;
+    const estimateLinkLine = shouldOfferEstimateLink(message)
+        ? `If helpful, you can start your estimate here: ${ESTIMATE_LINK}.\n\nIf you prefer, stay in chat and share your first name and city, and I’ll walk it in for you.`
+        : 'What material or look do you have in mind? Have you seen our curated stone selection yet?\n\nNext step: share your first name, city, and rough sqft, and I’ll narrow this to the best 2-3 curated options.';
+
+    return `${segmentLine}\n\n${laneHint} ${pickLine}\n\n${estimateLinkLine}`;
+}
+
+function isLocationBoundEntry(entry) {
+    return /^material-/.test(entry.id) || /^service-/.test(entry.id);
 }
 
 function firstMatchIndex(text, pattern) {
@@ -490,6 +521,7 @@ function buildOperationalReply(message, scoredEntries) {
 export function getChatReply(message) {
     const tokens = tokenize(message);
     const normalizedMessage = normalize(message);
+    const intents = detectIntents(message);
 
     if (detectRecommendationIntent(message)) {
         return {
@@ -513,20 +545,29 @@ export function getChatReply(message) {
         .sort((a, b) => b.score - a.score)
         .slice(0, 3);
 
-    if (!scored.length) {
+    const cityMentioned = hasCityInMessage(message);
+    const contextScored = scored.filter((item) => {
+        if (!isLocationBoundEntry(item.entry)) {
+            return true;
+        }
+
+        return intents.serviceArea || cityMentioned;
+    });
+    const resolvedScored = contextScored.length > 0 ? contextScored : scored;
+
+    if (!resolvedScored.length) {
         return {
             reply: `Urban Stone can help with material selection, timing, and estimate prep.\n\nNext step: ${PRIMARY_INTAKE_QUESTION.replace('To move this forward quickly, ', '').replace(/^share/i, 'Share')}`,
             sources: [],
         };
     }
 
-    const reply = buildOperationalReply(message, scored);
-    const intents = detectIntents(message);
+    const reply = buildOperationalReply(message, resolvedScored);
     const note = resolveSpecificWaiverNote(message);
     const liabilityNote = (intents.naturalStoneDisclosure || intents.removalDisclosure) && note
         ? `\n\nNote: ${note}`
         : '';
-    const sources = Array.from(new Set(scored.slice(0, 3).map((item) => item.entry.title))).slice(0, 2);
+    const sources = Array.from(new Set(resolvedScored.slice(0, 3).map((item) => item.entry.title))).slice(0, 2);
 
     return {
         reply: `${reply}${liabilityNote}`,

@@ -74,8 +74,25 @@ describe('chatbot operating logic', () => {
         const result = getChatReply('I need countertops for my kitchen, what do you recommend');
 
         expect(result.reply).toMatch(/curated shortlist/i);
-        expect(result.reply).toMatch(/next step: share your city, rough sqft/i);
+        expect(result.reply).toMatch(/next step: share your first name, city, and rough sqft/i);
         expect(result.reply).not.toMatch(/\$\d|price|pricing/i);
+    });
+
+    it('offers a soft estimate link when enough scope detail is already present', () => {
+        const result = getChatReply('60sf kitchen, granite like Absolute Black.');
+
+        expect(result.reply).toMatch(/curated shortlist/i);
+        expect(result.reply).toMatch(/start your estimate here: https:\/\/urbanstone\.co\/#quote/i);
+        expect(result.reply).toMatch(/share your first name and city/i);
+        expect(result.reply).not.toMatch(/\$\d|price|pricing/i);
+    });
+
+    it('keeps generic kitchen requests city-agnostic and asks material/look follow-up', () => {
+        const result = getChatReply('hi i need new countertops for my kitchen');
+
+        expect(result.reply).not.toMatch(/blue ash|mason|cincinnati|newport/i);
+        expect(result.reply).toMatch(/what material or look do you have in mind/i);
+        expect(result.reply).toMatch(/curated stone selection/i);
     });
 
     it('asks for intake details when no indexed context matches', () => {

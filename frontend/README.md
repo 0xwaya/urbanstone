@@ -191,8 +191,13 @@ Chatbot troubleshooting:
 - `/api/chat` now falls back to the internal knowledge base when `ollama` is not installed or not reachable, instead of leaving the chat waiting on a failing local model call
 - MemPalace context is optional; if the local CLI is unavailable or returns no results, chat still responds from the repo knowledge base
 - Stone Haven now starts with an assistant welcome message and then runs estimate intake only when estimate intent is explicit or an active intake session exists
+- Stone Haven greeting is now one-time per conversation history; simple follow-up greetings do not trigger a second self-introduction
 - chat intake submission is intentionally strict (`send it`/`submit estimate`) to avoid accidental lead routing
+- when intake asks for full name, plain replies such as `john doe` are now captured; obvious probe text (for example `echo line`) is ignored
+- generic countertop questions now stay city-agnostic unless the user includes a service-area/city context
+- recommendation follow-ups now prioritize natural prompts (`material/look` + curated selection) over location-specific SEO snippets
 - chat-origin lead relays now include top-level `requestId`, `dedupeKey`, and `metadata` for Zap contract consistency
+- chat transcript area now includes a persistent in-panel scroll rail indicator so long conversations show visible scroll affordance
 - browser-level chat verification may require `npx playwright install chromium`; local validation will fail if the machine is out of disk space during browser download
 
 Generated build output and local validation backup directories are not part of the source review surface and should stay ignored during routine lint and git review.

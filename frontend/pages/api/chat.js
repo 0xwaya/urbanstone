@@ -287,7 +287,11 @@ async function maybeHandleGreeting(res, message, history) {
     }
 
     const priorUserTurns = history.filter((entry) => entry.role === 'user').length;
-    if (priorUserTurns > 1) {
+    const alreadyIntroduced = history.some((entry) =>
+        entry?.role === 'assistant'
+        && /i['’]?\s?m haven|i am haven/i.test(String(entry.content || ''))
+    );
+    if (priorUserTurns > 0 || alreadyIntroduced) {
         return false;
     }
 
