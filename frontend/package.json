@@ -4,7 +4,7 @@
   "private": true,
   "description": "Production baseline for the Urban Stone Collective marketing site.",
   "engines": {
-    "node": "20.x"
+    "node": "24.x"
   },
   "scripts": {
     "dev": "next dev",
