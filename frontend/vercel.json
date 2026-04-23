@@ -2,7 +2,7 @@
   "crons": [
     {
       "path": "/api/cron/lead-sourcer",
-      "schedule": "0 */4 * * *"
+      "schedule": "0 13 * * *"
     }
   ]
 }
