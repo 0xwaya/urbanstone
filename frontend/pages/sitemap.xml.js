@@ -2,7 +2,17 @@ import { getCanonicalUrl } from '../lib/site';
 import { materialPages } from '../data/material-pages';
 import { serviceAreas } from '../data/service-areas';
 
+function escapeXml(value) {
+    return String(value)
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&apos;');
+}
+
 export async function getServerSideProps({ res }) {
+    const lastmod = process.env.SITEMAP_LASTMOD || new Date().toISOString();
     const urls = [
         {
             loc: getCanonicalUrl('/'),
@@ -29,7 +39,8 @@ export async function getServerSideProps({ res }) {
     const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${urls.map((entry) => `  <url>
-    <loc>${entry.loc}</loc>
+    <loc>${escapeXml(entry.loc)}</loc>
+    <lastmod>${lastmod}</lastmod>
     <changefreq>${entry.changefreq}</changefreq>
     <priority>${entry.priority}</priority>
   </url>`).join('\n')}

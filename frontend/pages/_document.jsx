@@ -14,8 +14,10 @@ const themeInitScript = `(function () {
 
 export default function Document() {
     return (
-        <Html lang="en">
+        <Html lang="en-US">
             <Head>
+                <link rel="preconnect" href="https://fonts.googleapis.com" />
+                <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
                 <link rel="icon" type="image/svg+xml" href="/brand/urban-stone-favicon.svg?v=20260401e" />
                 <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png?v=20260401e" />
                 <link rel="apple-touch-icon" href="/favicon.png?v=20260401e" />

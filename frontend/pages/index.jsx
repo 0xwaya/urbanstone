@@ -77,6 +77,14 @@ export default function Home() {
       },
     ],
   };
+  const websiteSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    '@id': `${siteUrl}#website`,
+    url: siteUrl,
+    name: 'Urban Stone Collective',
+    inLanguage: 'en-US',
+  };
   const faqStructuredData = {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
@@ -107,6 +115,7 @@ export default function Home() {
         <meta property="og:url" content={canonicalUrl} />
         <meta property="og:site_name" content="Urban Stone Collective" />
         <meta property="og:locale" content="en_US" />
+        <meta property="og:locale:alternate" content="en_GB" />
         <meta property="og:image" content={ogImageUrl} />
         <meta property="og:image:secure_url" content={ogImageUrl} />
         <meta property="og:image:type" content={ogImageType} />
@@ -124,6 +133,10 @@ export default function Home() {
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
         />
         <script
           type="application/ld+json"

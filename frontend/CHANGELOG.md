@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+- SEO: Hardened canonical origin resolution so production metadata cannot fall back to localhost-style origins
+- SEO: Upgraded dynamic sitemap output with `lastmod` timestamps and XML escaping for safer indexing
+- SEO: Tightened robots directives (`/contractors/login` and querystring crawl suppression) and kept sitemap/host hints explicit
+- SEO: Added `X-Robots-Tag` noindex headers for API routes and contractor login endpoint
+- SEO: Added font preconnect hints and explicit `en-US` document language for cleaner crawl/render signals
+- SEO: Added homepage `WebSite` JSON-LD schema and expanded Open Graph locale metadata
 - Contractor portal: Rebuilt `/contractors` after a broken JSX merge left the page with an unexpected EOF build failure
 - Homepage UX: Reworked the hero into a stronger two-column layout with proof points and a clearer next-step briefing while keeping the existing brand system
 - Homepage UX: Restored the contractor portal teaser on the homepage as a secondary conversion block instead of exposing contractor pricing publicly

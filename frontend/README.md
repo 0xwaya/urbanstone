@@ -292,6 +292,9 @@ Before a real production launch, add external monitoring, persistent rate limiti
 - Aligned chat estimate relay payloads with lead webhook contract fields (`requestId`, `dedupeKey`, `metadata`).
 - Updated chat visual palette to the Urban Stone gold lane (launcher, popup header gradients, in-chat accents, and scrollbar thumb), removing remaining off-brand blue highlights.
 - Current state: chat window uses native overflow scrollbar behavior (Opera/Chromium friendly), with branded gold accents and consistent contrast in popup footer actions.
+- SEO hardening: canonical URL resolution now protects production metadata from localhost fallback origins.
+- SEO indexing: `sitemap.xml` now includes escaped URLs plus `lastmod`, and `robots.txt` disallows non-canonical query crawls and contractor login indexing.
+- SEO crawl controls: API and contractor-login responses include `X-Robots-Tag: noindex, nofollow, noarchive`.
 - Added `.gitignore` to prevent chatbot source/config from being pushed until fully trained.
 - Documented troubleshooting steps for port conflicts and static asset errors.
 - Noted that the chatbot backend requires the `ollama` binary for LLM inference (see API errors if missing).
