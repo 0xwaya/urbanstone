@@ -164,6 +164,14 @@ describe('buildLeadPayload', () => {
         expect(metadata).toHaveProperty('requestId', 'lead-sourcer/reddit/abc123');
     });
 
+    test('adds top-level request trace fields', () => {
+        const payload = buildLeadPayload(sample);
+        expect(payload).toHaveProperty('requestId', 'lead-sourcer/reddit/abc123');
+        expect(payload).toHaveProperty('dedupeKey', 'abc123');
+        expect(payload.lead).toHaveProperty('email', '');
+        expect(payload.lead).toHaveProperty('phone', '');
+    });
+
     test('includes score and verdict metadata when provided', () => {
         const payload = buildLeadPayload(sample, {
             verdict: 'borderline',

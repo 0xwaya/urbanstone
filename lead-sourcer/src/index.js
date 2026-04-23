@@ -240,14 +240,16 @@ async function maybeSendRunReport(summary) {
     const payload = {
         submittedAt: summary.completedAt,
         source: 'lead-sourcer-run-report',
+        requestId: `lead-sourcer/report/${reportId}`,
+        dedupeKey: reportId,
         lead: {
             name: 'Lead Sourcer Run Report',
-            email: null,
-            phone: null,
+            email: '',
+            phone: '',
             projectDetails: textReport,
             htmlReport,
             externalPostId: reportId,
-            externalPostUrl: null,
+            externalPostUrl: '',
         },
         metadata: {
             requestId: `lead-sourcer/report/${reportId}`,

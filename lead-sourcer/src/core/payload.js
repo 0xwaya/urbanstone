@@ -33,23 +33,27 @@ export function buildAutomatedLeadPayload({
         }
         : null;
 
+    const requestId = buildAutomatedRequestId({ routePrefix, source, id });
+
     return {
         submittedAt: createdAt,
         source,
+        requestId,
+        dedupeKey: id,
         verdict: normalizedVerdict,
         score: normalizedScore,
         scoreBand: normalizedBand,
         hasAnchor: normalizedAnchored,
         lead: {
             name: author || 'Anonymous',
-            email: null,
-            phone: null,
+            email: '',
+            phone: '',
             projectDetails: formatProjectDetails({ source, title, body, url }),
             externalPostId: id,
-            externalPostUrl: url,
+            externalPostUrl: url || '',
         },
         metadata: {
-            requestId: buildAutomatedRequestId({ routePrefix, source, id }),
+            requestId,
             routeId: `${routePrefix}/${source}`,
             dedupeKey: id,
             automated: true,
