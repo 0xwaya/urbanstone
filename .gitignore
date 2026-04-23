@@ -51,3 +51,4 @@ supplier-scraper/featured-stones.output.json
 .tmp/
 tmp/
 /test-results/
+.vercel

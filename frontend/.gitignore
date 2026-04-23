@@ -5,3 +5,5 @@ chatbot-config/
 .next/
 node_modules/
 .env*
+.vercel
+.env*.local
