@@ -56,11 +56,11 @@ function scoreEntry(tokens, entry, normalizedMessage, options = {}) {
         if (/^ops-/.test(entry.id)) {
             score += 4;
         }
+        if (/^faq-/.test(entry.id) || /\-faq-\d+$/.test(entry.id)) {
+            score += 4;
+        }
         if (/^material-|^service-/.test(entry.id)) {
             score -= 6;
-        }
-        if (/^faq-/.test(entry.id)) {
-            score -= 2;
         }
         if (entry.text.length > 220) {
             score -= 3;
@@ -68,6 +68,10 @@ function scoreEntry(tokens, entry, normalizedMessage, options = {}) {
         if (entry.text.length < 190 && /^ops-/.test(entry.id)) {
             score += 2;
         }
+    }
+
+    if (options.nonLocationTurn && /^material-|^service-/.test(entry.id)) {
+        score -= 8;
     }
 
     return score;
@@ -246,6 +250,8 @@ const INTENT_KEYWORDS = {
 };
 
 const RECOMMENDATION_KEYWORDS = ['recommend', 'suggest', 'best option', 'which one', 'what should i choose', 'what do you recommend'];
+const FAQ_FIRST_MAX_USER_TURNS = 3;
+const FAQ_SITE_SOURCE_LABEL = 'Site FAQ knowledge base';
 
 const RESIDENTIAL_CURATED = [
     'Calacatta Laza',
@@ -265,6 +271,107 @@ const BUILDER_CURATED = [
     'Carrara Classique',
     'Calacatta Nile',
     'Absolute Black',
+];
+
+const FAQ_INTENT_TEMPLATES = [
+    {
+        id: 'materials-compare',
+        patterns: [
+            /difference.*quartz.*granite.*quartzite/,
+            /quartz.*granite.*quartzite/,
+            /compare.*quartz.*granite/,
+            /which.*quartz.*granite/,
+        ],
+        sourceQuestion: homepageFaqItems[0]?.question || FAQ_SITE_SOURCE_LABEL,
+        reply:
+            'Quick breakdown: quartz is engineered and low maintenance, granite is natural stone with unique movement, and quartzite is premium natural stone with bold character and strong heat resistance.\n\nIf you want, I can narrow this to the best lane for your project based on look, upkeep, and timeline.',
+    },
+    {
+        id: 'quartz-kitchen-fit',
+        patterns: [
+            /are.*quartz.*good.*kitchen/,
+            /is quartz good.*kitchen/,
+            /quartz.*kitchen.*recommend/,
+            /should i choose quartz.*kitchen/,
+        ],
+        sourceQuestion: homepageFaqItems[1]?.question || FAQ_SITE_SOURCE_LABEL,
+        reply:
+            'Yes, quartz is usually a strong kitchen fit when you want a clean look, durability, and lower maintenance.\n\nWhat look do you want most: bright marble-look, warm concrete-look, or solid modern?',
+    },
+    {
+        id: 'granite-vs-quartz',
+        patterns: [
+            /when.*choose.*granite/,
+            /granite.*instead of.*quartz/,
+            /granite or quartz/,
+            /quartz vs granite/,
+        ],
+        sourceQuestion: homepageFaqItems[2]?.question || FAQ_SITE_SOURCE_LABEL,
+        reply:
+            'Choose granite when you want a true natural-stone look with one-of-a-kind slab movement. Choose quartz when you want lower maintenance and a more consistent pattern.\n\nIf you share your style goal, I can suggest the better lane right away.',
+    },
+    {
+        id: 'quartzite-fit',
+        patterns: [
+            /quartzite.*worth it/,
+            /should i choose quartzite/,
+            /is quartzite worth/,
+            /quartzite.*(kitchen|bath)/,
+        ],
+        sourceQuestion: homepageFaqItems[3]?.question || FAQ_SITE_SOURCE_LABEL,
+        reply:
+            'Quartzite is worth considering when your priority is premium natural-stone character and a statement slab.\n\nIf you want, I can suggest where quartzite makes sense versus a high-end quartz alternative.',
+    },
+    {
+        id: 'service-area',
+        patterns: [
+            /how far.*travel/,
+            /do you serve/,
+            /service area/,
+            /near me/,
+            /do you install.*(in|at)/,
+        ],
+        sourceQuestion: homepageFaqItems[4]?.question || FAQ_SITE_SOURCE_LABEL,
+        reply:
+            'We mainly serve greater Cincinnati and Northern Kentucky, and we can quickly confirm fit for your exact city.\n\nShare your city and project type and I’ll confirm service routing now.',
+    },
+    {
+        id: 'timeline',
+        patterns: [
+            /how fast.*install/,
+            /turnaround/,
+            /after deposit/,
+            /how long.*install/,
+            /timeline/,
+        ],
+        sourceQuestion: homepageFaqItems[5]?.question || FAQ_SITE_SOURCE_LABEL,
+        reply:
+            'For qualifying projects, install timing is often a few days after deposit once templating readiness and slab availability are confirmed.\n\nShare your city, rough sqft, and material direction and I’ll map the realistic timeline path.',
+    },
+    {
+        id: 'slab-selection-help',
+        patterns: [
+            /help.*choose.*material/,
+            /help.*choose.*slab/,
+            /can you help.*choose/,
+            /curated.*selection/,
+        ],
+        sourceQuestion: homepageFaqItems[6]?.question || FAQ_SITE_SOURCE_LABEL,
+        reply:
+            'Yes. We guide slab direction from curated supplier options so you can choose faster without sorting every warehouse line.\n\nTell me your project type and preferred look, and I’ll shortlist the best options.',
+    },
+    {
+        id: 'estimate-inputs',
+        patterns: [
+            /what should i send.*estimate/,
+            /what do you need.*estimate/,
+            /how.*accurate.*estimate/,
+            /for a quote.*what info/,
+        ],
+        sourceQuestion: homepageFaqItems[7]?.question || FAQ_SITE_SOURCE_LABEL,
+        reply:
+            'For a strong estimate direction, share city, project type, rough measurements or sqft, material preference, photos, and timeline.\n\nIf you want, I can collect those details here and prep it for Urban Stone.',
+    },
 ];
 
 function hasAny(text, words) {
@@ -298,6 +405,52 @@ function detectRecommendationIntent(message) {
     return (hasRecommendationCue && hasCountertopCue)
         || (hasCountertopCue && hasNeedCue)
         || (hasCountertopCue && hasMaterialCue && (hasPreferenceCue || hasSizeCue));
+}
+
+function scoreFaqTemplateMatch(message, template) {
+    const normalized = normalize(message);
+    let score = 0;
+
+    template.patterns.forEach((pattern) => {
+        if (pattern.test(normalized)) {
+            score += 4;
+        }
+    });
+
+    return score;
+}
+
+function maybeBuildFaqFirstReply(message, options = {}) {
+    const history = Array.isArray(options.history) ? options.history : [];
+    const priorUserTurns = history.filter((entry) => entry?.role === 'user').length;
+    const normalized = normalize(message);
+    const policyIntent = hasPolicyIntent(message);
+    const supplierIntent = hasSupplierIntent(message);
+
+    if (policyIntent || supplierIntent || priorUserTurns > FAQ_FIRST_MAX_USER_TURNS) {
+        return null;
+    }
+
+    if (!/(what|how|which|difference|compare|good|worth|install|serve|travel|estimate|quote|material|slab|kitchen|granite|quartz|quartzite)/.test(normalized)) {
+        return null;
+    }
+
+    const matched = FAQ_INTENT_TEMPLATES
+        .map((template) => ({
+            template,
+            score: scoreFaqTemplateMatch(message, template),
+        }))
+        .filter((item) => item.score > 0)
+        .sort((a, b) => b.score - a.score)[0];
+
+    if (!matched || matched.score < 4) {
+        return null;
+    }
+
+    return {
+        reply: matched.template.reply,
+        sources: [matched.template.sourceQuestion, FAQ_SITE_SOURCE_LABEL],
+    };
 }
 
 function detectSegmentForRecommendation(message) {
@@ -576,12 +729,18 @@ export function getChatReply(message, options = {}) {
     const history = Array.isArray(options.history) ? options.history : [];
     const priorUserTurns = history.filter((entry) => entry?.role === 'user').length;
     const earlyTurn = priorUserTurns <= 1;
+    const nonLocationTurn = !hasCityInMessage(message) && !intents.serviceArea;
 
     if (detectRecommendationIntent(message)) {
         return {
             reply: buildCuratedRecommendationReply(message),
             sources: [],
         };
+    }
+
+    const faqFirst = maybeBuildFaqFirstReply(message, { history });
+    if (faqFirst) {
+        return faqFirst;
     }
 
     if (!tokens.length) {
@@ -593,7 +752,7 @@ export function getChatReply(message, options = {}) {
 
     const scored = KNOWLEDGE_BASE.map((entry) => ({
         entry,
-        score: scoreEntry(tokens, entry, normalizedMessage, { earlyTurn }),
+        score: scoreEntry(tokens, entry, normalizedMessage, { earlyTurn, nonLocationTurn }),
     }))
         .filter((item) => item.score > 0)
         .sort((a, b) => b.score - a.score)

@@ -196,6 +196,8 @@ Chatbot troubleshooting:
 - when intake asks for full name, plain replies such as `john doe` are now captured; obvious probe text (for example `echo line`) is ignored
 - generic countertop questions now stay city-agnostic unless the user includes a service-area/city context
 - recommendation follow-ups now prioritize natural prompts (`material/look` + curated selection) over location-specific SEO snippets
+- early-turn chat now uses a deterministic FAQ-first layer (from homepage/site Q&A) before broad retrieval, so common material/timeline/service questions stay concise and grounded
+- retrieval reranking now boosts FAQ entries and down-ranks location-heavy SEO material/service snippets when city/service intent is not explicit
 - chat-origin lead relays now include top-level `requestId`, `dedupeKey`, and `metadata` for Zap contract consistency
 - chat transcript area now includes a persistent in-panel scroll rail indicator so long conversations show visible scroll affordance
 - browser-level chat verification may require `npx playwright install chromium`; local validation will fail if the machine is out of disk space during browser download

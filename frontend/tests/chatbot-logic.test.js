@@ -24,9 +24,9 @@ describe('chatbot operating logic', () => {
     it('uses the timeline workflow when timeline intent is present', () => {
         const result = getChatReply('How fast can you install after deposit in Mason?');
 
-        expect(result.reply).toMatch(/shortlist slab direction/i);
-        expect(result.reply).toMatch(/schedule install|install on schedule/i);
-        expect(result.reply).toMatch(/next step:/i);
+        expect(result.reply).toMatch(/install timing is often a few days after deposit/i);
+        expect(result.reply).toMatch(/slab availability/i);
+        expect(result.reply).toMatch(/share your city, rough sqft, and material direction/i);
         expect(result.sources.length).toBeGreaterThan(0);
     });
 
@@ -127,5 +127,22 @@ describe('chatbot operating logic', () => {
 
         const explicit = getChatReply('What is Daltile address and phone?');
         expect(explicit.reply).toMatch(/Address:|Phone:/i);
+    });
+
+    it('prefers FAQ-first material compare answers with grounded sources', () => {
+        const result = getChatReply('What is the difference between quartz, granite, and quartzite?');
+
+        expect(result.reply).toMatch(/Quick breakdown:/i);
+        expect(result.reply).toMatch(/quartz is engineered/i);
+        expect(result.reply).not.toMatch(/blue ash|mason|newport|west chester/i);
+        expect(result.sources).toContain('Site FAQ knowledge base');
+    });
+
+    it('serves service-area FAQ guidance without dumping location SEO snippets', () => {
+        const result = getChatReply('How far do you travel for installation?');
+
+        expect(result.reply).toMatch(/mainly serve greater cincinnati and northern kentucky/i);
+        expect(result.reply).toMatch(/share your city and project type/i);
+        expect(result.reply).not.toMatch(/Best for:/i);
     });
 });
