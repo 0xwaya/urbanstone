@@ -93,6 +93,20 @@ export const INTENT_KEYWORDS = [
     'advice',
     'who installs',
     'who does',
+    'any recommendations',
+    'can you recommend',
+    'recommendation for',
+    'looking for someone',
+    'looking for a contractor',
+    'need a contractor',
+    'any contractors',
+    'any good contractors',
+    'who did your',
+    'who installed',
+    'suggestions for',
+    'need help finding',
+    'planning to',
+    'thinking of',
 ];
 
 export const MATERIAL_SIGNAL_KEYWORDS = [
@@ -297,9 +311,16 @@ export const CRAIGSLIST_QUERY_KEYWORDS = compactLocations([
     ...GEO_AWARE_QUERIES,
 ]).slice(0, CRAIGSLIST_QUERY_LIMIT);
 
-export const REDDIT_SEARCH_SUBREDDITS = ['cincinnati', 'homeowners', 'KitchenRemodel'];
+export const REDDIT_SEARCH_SUBREDDITS = [
+    'cincinnati',
+    'homeowners',
+    'KitchenRemodel',
+    'HomeImprovement',
+    'DIY',
+    'FirstTimeHomeBuyer',
+];
 
-const REDDIT_SEARCH_QUERY_LIMIT = Number(process.env.LEAD_SOURCER_REDDIT_SEARCH_QUERY_LIMIT || 12);
+const REDDIT_SEARCH_QUERY_LIMIT = Number(process.env.LEAD_SOURCER_REDDIT_SEARCH_QUERY_LIMIT || 20);
 
 export const REDDIT_SEARCH_QUERIES = compactLocations([
     ...BASE_LEAD_QUERIES,
