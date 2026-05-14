@@ -1,10 +1,32 @@
 #!/bin/bash
 set -e
-ROOT_DIR="/Users/pc/.openclaw/workspace/urbanstone"
-OUTPUT_DIR="$ROOT_DIR/lead-sourcer/leads"
-LOG_DIR="$ROOT_DIR/lead-sourcer/logs"
-ENTRY="node /Users/pc/.openclaw/workspace/urbanstone/lead-sourcer/src/index.js"
-cd "$ROOT_DIR" || exit 1
+PROJECT_ROOT="/Users/pc/.openclaw/workspace/urbanstone"
+SOURCER_DIR="$PROJECT_ROOT/lead-sourcer"
+OUTPUT_DIR="$SOURCER_DIR/leads"
+LOG_DIR="$SOURCER_DIR/logs"
+ENTRY="node $SOURCER_DIR/src/index.js"
+
+# Load lead-sourcer runtime env first, then local overrides, then optional
+# deployment fallback vars from .vercel if present.
+if [ -f "$SOURCER_DIR/.env" ]; then
+  set -a
+  . "$SOURCER_DIR/.env"
+  set +a
+fi
+
+if [ -f "$SOURCER_DIR/.env.local" ]; then
+  set -a
+  . "$SOURCER_DIR/.env.local"
+  set +a
+fi
+
+if [ -f "$PROJECT_ROOT/.vercel/.env.production.local" ]; then
+  set -a
+  . "$PROJECT_ROOT/.vercel/.env.production.local"
+  set +a
+fi
+
+cd "$SOURCER_DIR" || exit 1
 DATE=$(date +"%Y-%m-%d")
 OUTPUT_FILE="$OUTPUT_DIR/${DATE}.json"
 LOG_FILE="$LOG_DIR/lead_sourcer_cron.log"

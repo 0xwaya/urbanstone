@@ -9,6 +9,7 @@
  *   0 * * * * cd /path/to/lead-sourcer && LEAD_WEBHOOK_URL=... node src/index.js >> logs/poller.log 2>&1
  */
 import 'dotenv/config';
+import dotenv from 'dotenv';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -20,13 +21,23 @@ import { relay } from './relay.js';
 import { initializeTracing } from './tracing.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+// Load optional local/deployment env files for cron and ad-hoc shells where only
+// .env is auto-loaded by dotenv/config. Keep override=false so explicit process
+// env values still win.
+for (const optionalEnvPath of [
+    path.resolve(__dirname, '..', '.env.local'),
+    path.resolve(__dirname, '..', '..', '.vercel', '.env.production.local'),
+]) {
+    dotenv.config({ path: optionalEnvPath, override: false });
+}
+
 const RUN_LOG_FILE = process.env.LEAD_SOURCER_RUN_LOG_FILE || path.resolve(__dirname, '..', 'runs', 'poll-runs.jsonl');
 const INTERVAL_MINUTES = Number(process.env.LEAD_SOURCER_INTERVAL_MINUTES || 0);
 const MAX_CYCLES = Number(process.env.LEAD_SOURCER_MAX_CYCLES || 0);
 const ZERO_MATCH_ALERT_THRESHOLD = Number(process.env.LEAD_SOURCER_ZERO_MATCH_ALERT_THRESHOLD || 0);
 const SEND_RUN_REPORT = !['0', 'false', 'no', 'off'].includes(String(process.env.LEAD_SOURCER_SEND_RUN_REPORT || 'true').trim().toLowerCase());
 const RUN_REPORT_EMAIL = String(process.env.LEAD_SOURCER_RUN_REPORT_EMAIL || 'sales@urbanstone.co').trim();
-const RUN_REPORT_EMAIL_FALLBACK_ENABLED = !['0', 'false', 'no', 'off'].includes(String(process.env.LEAD_SOURCER_RUN_REPORT_EMAIL_FALLBACK_ENABLED || 'true').trim().toLowerCase());
 const RUN_REPORT_EMAIL_FROM = String(process.env.LEAD_SOURCER_RUN_REPORT_EMAIL_FROM || 'Urban Stone <sales@urbanstone.co>').trim();
 
 function envFlag(name, defaultValue = true) {
@@ -233,41 +244,6 @@ function buildRunReportHtml(summary) {
     return html;
 }
 
-async function sendRunReportEmailFallback(summary, htmlReport, textReport) {
-    if (!RUN_REPORT_EMAIL_FALLBACK_ENABLED) {
-        return { sent: false, reason: 'fallback_disabled' };
-    }
-
-    const apiKey = String(process.env.RESEND_API_KEY || '').trim();
-    if (!apiKey) {
-        return { sent: false, reason: 'missing_resend_api_key' };
-    }
-
-    const subject = `[Lead Sourcer] Run Report ${summary.startedAt}`;
-    const response = await fetch('https://api.resend.com/emails', {
-        method: 'POST',
-        headers: {
-            Authorization: `Bearer ${apiKey}`,
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            from: RUN_REPORT_EMAIL_FROM,
-            to: [RUN_REPORT_EMAIL],
-            subject,
-            html: htmlReport,
-            text: textReport,
-        }),
-    });
-
-    if (!response.ok) {
-        const detail = await response.text().catch(() => '');
-        throw new Error(`Resend fallback failed: ${response.status} ${detail}`);
-    }
-
-    const data = await response.json().catch(() => ({}));
-    return { sent: true, id: data?.id || null };
-}
-
 async function maybeSendRunReport(summary) {
     if (!SEND_RUN_REPORT || summary.mode !== 'live') return;
 
@@ -282,6 +258,10 @@ async function maybeSendRunReport(summary) {
         source: 'lead-sourcer-run-report',
         requestId: `lead-sourcer/report/${reportId}`,
         dedupeKey: reportId,
+        verdict: 'match',
+        score: 70,
+        scoreBand: 'warm',
+        hasAnchor: true,
         lead: {
             name: 'Lead Sourcer Run Report',
             // Keep non-empty contact fields so legacy Zap filters still pass run-report events.
@@ -297,26 +277,34 @@ async function maybeSendRunReport(summary) {
             routeId: 'lead-sourcer/report',
             dedupeKey: reportId,
             automated: true,
+            verdict: 'match',
+            score: 70,
+            scoreBand: 'warm',
+            hasAnchor: true,
+            signalFactors: {
+                directMatches: 1,
+                materialSignals: 1,
+                projectContext: 1,
+                intentSignals: 1,
+                excluded: 0,
+            },
             reportRecipientEmail: RUN_REPORT_EMAIL,
         },
     };
 
     try {
-        await relay(payload);
-        console.log(`[lead-sourcer] Run report relayed for ${summary.startedAt}`);
+        await relay(payload, {
+            resend: {
+                to: RUN_REPORT_EMAIL,
+                from: RUN_REPORT_EMAIL_FROM,
+                subject: `[Lead Sourcer] Run Report ${summary.startedAt}`,
+                html: htmlReport,
+                text: textReport,
+            },
+        });
+        console.log(`[lead-sourcer] Run report delivered for ${summary.startedAt}`);
     } catch (error) {
-        console.warn('[lead-sourcer] Failed to relay run report:', error?.message || error);
-
-        try {
-            const fallback = await sendRunReportEmailFallback(summary, htmlReport, textReport);
-            if (fallback.sent) {
-                console.log(`[lead-sourcer] Run report emailed directly via Resend (id=${fallback.id || 'n/a'})`);
-            } else {
-                console.warn(`[lead-sourcer] Run report email fallback skipped (${fallback.reason})`);
-            }
-        } catch (fallbackError) {
-            console.warn('[lead-sourcer] Run report email fallback failed:', fallbackError?.message || fallbackError);
-        }
+        console.warn('[lead-sourcer] Failed to deliver run report:', error?.message || error);
     }
 }
 
