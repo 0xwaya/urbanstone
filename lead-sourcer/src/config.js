@@ -193,6 +193,10 @@ function compactLocations(locations) {
             .filter(Boolean),
     )];
 }
+// Enable to relay all matching leads, including those already seen before (repeats).
+// Useful for testing or when you want fresh reports without deduplication.
+export const LEAD_SOURCER_SKIP_DEDUP = envFlag('LEAD_SOURCER_SKIP_DEDUP', false);
+
 
 function extractQuotedStrings(text) {
     return [...text.matchAll(/'([^']+)'/g)].map((match) => match[1]);

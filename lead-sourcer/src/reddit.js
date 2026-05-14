@@ -19,6 +19,7 @@ import { resolveRunMode } from './mode.js';
 import { runModeFlags } from './mode.js';
 import { logNearMissCandidate, logReviewCandidate } from './review-log.js';
 
+import { LEAD_SOURCER_SKIP_DEDUP } from './config.js';
 const REDDIT_API_BASE = 'https://www.reddit.com';
 const USER_AGENT = 'UrbanStoneLeadSourcer/1.0 (lead monitoring; contact sales@urbanstone.co)';
 const TARGET_REGIONS = ['cincinnati', ...GEO_TARGET_CITIES.map((city) => city.toLowerCase())];
@@ -222,16 +223,8 @@ export async function pollReddit({ mode = 'live' } = {}) {
                 stats.skippedStale += 1;
                 continue;
             }
-            if (isSeen(post.id)) {
+            if (!LEAD_SOURCER_SKIP_DEDUP && isSeen(post.id)) {
                 stats.skippedSeen += 1;
-                continue;
-            }
-
-            if (isRedditNonBuyingNoise(post)) {
-                stats.rejects += 1;
-                if (modeFlags.shouldPersistSeen) {
-                    markSeen(post.id);
-                }
                 continue;
             }
 

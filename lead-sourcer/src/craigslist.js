@@ -15,6 +15,7 @@ import { resolveRunMode } from './mode.js';
 import { runModeFlags } from './mode.js';
 import { logNearMissCandidate, logReviewCandidate } from './review-log.js';
 
+import { LEAD_SOURCER_SKIP_DEDUP } from './config.js';
 const BROWSER_HEADERS = {
     'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
     'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
@@ -166,11 +167,10 @@ export async function pollCraigslist({ mode = 'live' } = {}) {
                 if (seenThisRun.has(post.id)) continue;
                 seenThisRun.add(post.id);
 
-                if (isSeen(post.id)) {
+                if (!LEAD_SOURCER_SKIP_DEDUP && isSeen(post.id)) {
                     stats.skippedSeen += 1;
                     continue;
                 }
-
                 if (isCraigslistListingNoise(post)) {
                     stats.rejects += 1;
                     if (modeFlags.shouldPersistSeen) {

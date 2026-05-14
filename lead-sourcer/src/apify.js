@@ -18,6 +18,7 @@ import {
     LEAD_SOURCER_NEAR_MISS_SCORE_THRESHOLD,
     LEAD_SOURCER_RELAY_BORDERLINE,
     LEAD_SOURCER_BORDERLINE_RELAY_MIN_SCORE,
+    LEAD_SOURCER_SKIP_DEDUP,
 } from './config.js';
 import { buildLeadPayload, classifyLeadCandidate, scoreLeadCandidate } from './matcher.js';
 import { isSeen, markSeen } from './dedup.js';
@@ -377,12 +378,11 @@ export async function pollApify({ mode = 'live' } = {}) {
         const taskLabel = post.source.replace('apify-', '');
         const taskStats = getTaskStats(stats, taskLabel);
 
-        if (isSeen(post.id)) {
+        if (!LEAD_SOURCER_SKIP_DEDUP && isSeen(post.id)) {
             stats.skippedSeen += 1;
             taskStats.skippedSeen += 1;
             continue;
         }
-
         stats.evaluated += 1;
         taskStats.evaluated += 1;
 
