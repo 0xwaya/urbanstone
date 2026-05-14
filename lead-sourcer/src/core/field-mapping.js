@@ -44,12 +44,14 @@ function resolveSubmittedAt(payload) {
 export function normalizeLeadPayload(payload = {}) {
     const requestId = toStringOrEmpty(resolveRequestId(payload));
     const dedupeKey = toStringOrEmpty(resolveDedupeKey(payload));
+    const automated = toStringOrEmpty(payload?.automated ?? payload?.metadata?.automated);
 
     return {
         source: toStringOrEmpty(payload?.source),
         requestId,
         submittedAt: toStringOrEmpty(resolveSubmittedAt(payload)),
         dedupeKey,
+        automated,
         lead: {
             name: toStringOrEmpty(payload?.lead?.name),
             email: toStringOrEmpty(payload?.lead?.email),
@@ -64,7 +66,7 @@ export function normalizeLeadPayload(payload = {}) {
             score: toStringOrEmpty(payload?.metadata?.score),
             verdict: toStringOrEmpty(payload?.metadata?.verdict || payload?.verdict),
             dedupeKey,
-            automated: toStringOrEmpty(payload?.metadata?.automated),
+            automated,
             ip: toStringOrEmpty(payload?.metadata?.ip),
             userAgent: toStringOrEmpty(payload?.metadata?.userAgent),
             referer: toStringOrEmpty(payload?.metadata?.referer),
@@ -76,6 +78,7 @@ export function normalizeLeadPayload(payload = {}) {
 
 const ZAP_FIELD_MAP = Object.freeze({
     source: '__source',
+    automated: '__automated',
     'lead.name': '__lead__name',
     'lead.email': '__lead__email',
     'lead.phone': '__lead__phone',

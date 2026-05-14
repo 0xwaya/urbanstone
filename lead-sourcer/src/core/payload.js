@@ -6,6 +6,31 @@ function buildAutomatedRequestId({ routePrefix, source, id }) {
     return `${routePrefix}/${source}/${id}`.slice(0, 120);
 }
 
+function sanitizeEmailLocalPart(value) {
+    return String(value || '')
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '')
+        .slice(0, 48) || 'unknown';
+}
+
+function resolveAutomatedContactEmail(id) {
+    const explicit = String(process.env.LEAD_SOURCER_AUTOMATED_CONTACT_EMAIL || '').trim();
+    if (explicit) return explicit;
+
+    const domain = String(process.env.LEAD_SOURCER_AUTOMATED_CONTACT_EMAIL_DOMAIN || 'urbanstone.co').trim().toLowerCase();
+    const local = sanitizeEmailLocalPart(id);
+    return `auto+${local}@${domain}`;
+}
+
+function resolveAutomatedContactPhone(id) {
+    const explicit = String(process.env.LEAD_SOURCER_AUTOMATED_CONTACT_PHONE || '').trim();
+    if (explicit) return explicit;
+
+    const suffix = String(id || '').replace(/[^0-9]/g, '').slice(-4).padStart(4, '0');
+    return `+1-000-000-${suffix}`;
+}
+
 export function buildAutomatedLeadPayload({
     id,
     source,
@@ -34,6 +59,8 @@ export function buildAutomatedLeadPayload({
         : null;
 
     const requestId = buildAutomatedRequestId({ routePrefix, source, id });
+    const contactEmail = resolveAutomatedContactEmail(id);
+    const contactPhone = resolveAutomatedContactPhone(id);
 
     return {
         submittedAt: createdAt,
@@ -46,8 +73,9 @@ export function buildAutomatedLeadPayload({
         hasAnchor: normalizedAnchored,
         lead: {
             name: author || 'Anonymous',
-            email: '',
-            phone: '',
+            // Zap intake requires non-empty contact fields for automated leads.
+            email: contactEmail,
+            phone: contactPhone,
             projectDetails: formatProjectDetails({ source, title, body, url }),
             externalPostId: id,
             externalPostUrl: url || '',

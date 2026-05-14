@@ -168,8 +168,8 @@ describe('buildLeadPayload', () => {
         const payload = buildLeadPayload(sample);
         expect(payload).toHaveProperty('requestId', 'lead-sourcer/reddit/abc123');
         expect(payload).toHaveProperty('dedupeKey', 'abc123');
-        expect(payload.lead).toHaveProperty('email', '');
-        expect(payload.lead).toHaveProperty('phone', '');
+        expect(payload.lead.email).toContain('@');
+        expect(payload.lead.phone).toMatch(/^\+1-000-000-/);
     });
 
     test('includes score and verdict metadata when provided', () => {

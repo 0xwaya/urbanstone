@@ -98,21 +98,28 @@ function normalizeItem(taskLabel, item) {
 
 function defaultNextdoorInput() {
     return {
-        locations: GEO_TARGET_CITIES.slice(0, 8).map((city) => `${city}, OH`),
+        locations: GEO_TARGET_CITIES.slice(0, 20).map((city) => `${city}, OH`),
         proxyConfiguration: { useApifyProxy: true },
     };
 }
 
-function buildFacebookSearchUrls() {
-    return APIFY_FACEBOOK_NEIGHBORHOOD_QUERIES.map((query) => ({
-        url: `https://www.facebook.com/search/groups/?q=${encodeURIComponent(query)}`,
-    }));
-}
-
+// Facebook Groups scraper actors expect actual group page URLs, not search query URLs.
+// The operator MUST supply real Cincinnati-area home improvement / neighborhood group URLs
+// via APIFY_FACEBOOK_TASK_INPUT. This default is a minimal safe placeholder that
+// produces zero results but does not crash the run.
 function defaultFacebookInput() {
+    const explicitInput = String(process.env.APIFY_FACEBOOK_TASK_INPUT || '').trim();
+    if (!explicitInput && String(process.env.APIFY_OVERRIDE_TASK_INPUT || '').trim().toLowerCase() !== 'false') {
+        console.warn(
+            '[apify] facebook-groups: APIFY_FACEBOOK_TASK_INPUT is not set. '
+            + 'The Facebook Groups actor requires real group page URLs (e.g. https://www.facebook.com/groups/<ID>/). '
+            + 'Set APIFY_FACEBOOK_TASK_INPUT to a JSON object with startUrls pointing to actual Cincinnati-area groups, '
+            + 'or configure startUrls directly in the Apify task and set APIFY_OVERRIDE_TASK_INPUT=false.',
+        );
+    }
     return {
-        resultsLimit: 120,
-        startUrls: buildFacebookSearchUrls(),
+        resultsLimit: 50,
+        startUrls: [],
         proxyConfiguration: { useApifyProxy: true },
     };
 }
@@ -133,10 +140,13 @@ function hasAnyKeyword(text, keywords) {
 
 function isApifyHighIntentCandidate(post) {
     const content = `${post.title}\n${post.body}`.toLowerCase();
-    const locationHintPresent = hasAnyKeyword(content, APIFY_POST_LOCATION_HINTS);
-    const countertopIntent = hasAnyKeyword(content, [
+    // Apify tasks are already geo-targeted (Nextdoor neighborhoods, Facebook local groups)
+    // so requiring a city name in the post text would silently reject all legitimate leads.
+    // We only gate on keyword intent here; geo-filtering is handled at the task input level.
+    return hasAnyKeyword(content, [
         'countertop',
         'counter tops',
+        'countertops',
         'granite',
         'quartz',
         'quartzite',
@@ -145,11 +155,12 @@ function isApifyHighIntentCandidate(post) {
         'kitchen remodel',
         'bathroom remodel',
         'countertop installer',
+        'countertop quote',
+        'countertop estimate',
+        'stone fabricator',
         'quote',
         'estimate',
     ]);
-
-    return locationHintPresent && countertopIntent;
 }
 
 function delay(ms) {
@@ -243,19 +254,26 @@ function warnOnSuspiciousTaskInput(taskLabel, taskMeta) {
             .filter((value) => typeof value === 'string')
             .map((value) => value.toLowerCase());
 
-        if (!APIFY_OVERRIDE_TASK_INPUT && flattenedUrls.some((url) => url.includes('facebook.com/humansofnewyork'))) {
-            console.warn('[apify] facebook-groups task appears misconfigured: startUrls contains humansofnewyork. Replace with local market pages/groups.');
+        // Warn regardless of override flag — bad startUrls will silently produce zero results.
+        if (flattenedUrls.some((url) => url.includes('facebook.com/humansofnewyork'))) {
+            console.warn('[apify] facebook-groups task appears misconfigured: startUrls contains humansofnewyork. Replace with actual Cincinnati-area group URLs.');
         }
 
-        if (flattenedUrls.length === 0 && !APIFY_OVERRIDE_TASK_INPUT) {
-            console.warn('[apify] facebook-groups task has no startUrls configured in Apify task input. Configure startUrls in Apify console or set APIFY_OVERRIDE_TASK_INPUT=true with APIFY_FACEBOOK_TASK_INPUT.');
+        if (flattenedUrls.length === 0) {
+            console.warn(
+                '[apify] facebook-groups has no startUrls. '
+                + 'Supply real group page URLs via APIFY_FACEBOOK_TASK_INPUT or configure them in the Apify task console.',
+            );
         }
     }
 
     if (taskLabel === 'nextdoor') {
         const locations = Array.isArray(taskInput.locations) ? taskInput.locations : [];
-        if (locations.length === 0 && !APIFY_OVERRIDE_TASK_INPUT) {
-            console.warn('[apify] nextdoor task has no locations configured in Apify task input. Add locations in Apify console or set APIFY_OVERRIDE_TASK_INPUT=true with APIFY_NEXTDOOR_TASK_INPUT.');
+        if (locations.length === 0) {
+            console.warn(
+                '[apify] nextdoor task has no locations. '
+                + 'Set APIFY_NEXTDOOR_TASK_INPUT with a locations array, or configure them in the Apify task console.',
+            );
         }
     }
 }

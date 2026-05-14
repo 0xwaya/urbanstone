@@ -5,6 +5,18 @@ import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
 let sdk;
 let tracingInitialized = false;
 
+function isConnRefusedError(error) {
+    if (!error) return false;
+
+    if (error.code === 'ECONNREFUSED') return true;
+
+    if (Array.isArray(error.errors)) {
+        return error.errors.some((inner) => inner?.code === 'ECONNREFUSED');
+    }
+
+    return false;
+}
+
 function envFlag(name, defaultValue = true) {
     const raw = String(process.env[name] || '').trim().toLowerCase();
     if (!raw) return defaultValue;
@@ -57,6 +69,11 @@ export async function initializeTracing() {
                 await sdk.shutdown();
             }
         } catch (error) {
+            if (isConnRefusedError(error)) {
+                console.log(`[tracing] OTLP collector not reachable during shutdown (${signal}); skipping export.`);
+                return;
+            }
+
             console.warn(`[tracing] Shutdown error (${signal}):`, error?.message || error);
         }
     };

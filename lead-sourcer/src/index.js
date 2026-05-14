@@ -25,6 +25,9 @@ const INTERVAL_MINUTES = Number(process.env.LEAD_SOURCER_INTERVAL_MINUTES || 0);
 const MAX_CYCLES = Number(process.env.LEAD_SOURCER_MAX_CYCLES || 0);
 const ZERO_MATCH_ALERT_THRESHOLD = Number(process.env.LEAD_SOURCER_ZERO_MATCH_ALERT_THRESHOLD || 0);
 const SEND_RUN_REPORT = !['0', 'false', 'no', 'off'].includes(String(process.env.LEAD_SOURCER_SEND_RUN_REPORT || 'true').trim().toLowerCase());
+const RUN_REPORT_EMAIL = String(process.env.LEAD_SOURCER_RUN_REPORT_EMAIL || 'sales@urbanstone.co').trim();
+const RUN_REPORT_EMAIL_FALLBACK_ENABLED = !['0', 'false', 'no', 'off'].includes(String(process.env.LEAD_SOURCER_RUN_REPORT_EMAIL_FALLBACK_ENABLED || 'true').trim().toLowerCase());
+const RUN_REPORT_EMAIL_FROM = String(process.env.LEAD_SOURCER_RUN_REPORT_EMAIL_FROM || 'Urban Stone <sales@urbanstone.co>').trim();
 
 function envFlag(name, defaultValue = true) {
     const raw = String(process.env[name] || '').trim().toLowerCase();
@@ -230,10 +233,47 @@ function buildRunReportHtml(summary) {
     return html;
 }
 
+async function sendRunReportEmailFallback(summary, htmlReport, textReport) {
+    if (!RUN_REPORT_EMAIL_FALLBACK_ENABLED) {
+        return { sent: false, reason: 'fallback_disabled' };
+    }
+
+    const apiKey = String(process.env.RESEND_API_KEY || '').trim();
+    if (!apiKey) {
+        return { sent: false, reason: 'missing_resend_api_key' };
+    }
+
+    const subject = `[Lead Sourcer] Run Report ${summary.startedAt}`;
+    const response = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: {
+            Authorization: `Bearer ${apiKey}`,
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            from: RUN_REPORT_EMAIL_FROM,
+            to: [RUN_REPORT_EMAIL],
+            subject,
+            html: htmlReport,
+            text: textReport,
+        }),
+    });
+
+    if (!response.ok) {
+        const detail = await response.text().catch(() => '');
+        throw new Error(`Resend fallback failed: ${response.status} ${detail}`);
+    }
+
+    const data = await response.json().catch(() => ({}));
+    return { sent: true, id: data?.id || null };
+}
+
 async function maybeSendRunReport(summary) {
     if (!SEND_RUN_REPORT || summary.mode !== 'live') return;
 
     const reportId = `run-report:${summary.startedAt}`;
+    const reportEmailToken = String(Date.parse(summary.startedAt));
+    const reportContactEmail = `run-report+${reportEmailToken}@urbanstone.co`;
     const htmlReport = buildRunReportHtml(summary);
     const textReport = buildRunReportDetails(summary);
 
@@ -244,8 +284,9 @@ async function maybeSendRunReport(summary) {
         dedupeKey: reportId,
         lead: {
             name: 'Lead Sourcer Run Report',
-            email: '',
-            phone: '',
+            // Keep non-empty contact fields so legacy Zap filters still pass run-report events.
+            email: reportContactEmail,
+            phone: reportId,
             projectDetails: textReport,
             htmlReport,
             externalPostId: reportId,
@@ -256,6 +297,7 @@ async function maybeSendRunReport(summary) {
             routeId: 'lead-sourcer/report',
             dedupeKey: reportId,
             automated: true,
+            reportRecipientEmail: RUN_REPORT_EMAIL,
         },
     };
 
@@ -264,6 +306,17 @@ async function maybeSendRunReport(summary) {
         console.log(`[lead-sourcer] Run report relayed for ${summary.startedAt}`);
     } catch (error) {
         console.warn('[lead-sourcer] Failed to relay run report:', error?.message || error);
+
+        try {
+            const fallback = await sendRunReportEmailFallback(summary, htmlReport, textReport);
+            if (fallback.sent) {
+                console.log(`[lead-sourcer] Run report emailed directly via Resend (id=${fallback.id || 'n/a'})`);
+            } else {
+                console.warn(`[lead-sourcer] Run report email fallback skipped (${fallback.reason})`);
+            }
+        } catch (fallbackError) {
+            console.warn('[lead-sourcer] Run report email fallback failed:', fallbackError?.message || fallbackError);
+        }
     }
 }
 

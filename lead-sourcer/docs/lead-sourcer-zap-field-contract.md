@@ -39,6 +39,14 @@ Rules:
 - Missing optional fields are emitted as `""` (empty string), not `null` and not omitted.
 - `requestId`, `submittedAt`, and `dedupeKey` are always present at the top level.
 - `metadata.dedupeKey` mirrors top-level `dedupeKey`.
+- `metadata.automated` is always `true` for Lead Sourcer relays.
+- `lead.email` and `lead.phone` are always non-empty so Zap validation filters pass.
+  - Default email format: `auto+<dedupeKey-sanitized>@urbanstone.co`
+  - Default phone format: `+1-000-000-<last4digits>`
+  - Optional overrides via env vars:
+    - `LEAD_SOURCER_AUTOMATED_CONTACT_EMAIL`
+    - `LEAD_SOURCER_AUTOMATED_CONTACT_EMAIL_DOMAIN`
+    - `LEAD_SOURCER_AUTOMATED_CONTACT_PHONE`
 - During migration, legacy aliases are emitted for compatibility:
   - `357570886__metadata__requestId` (alias of top-level `requestId`)
   - `357570886__metadata__dedupeKey` (alias of top-level `dedupeKey`)
