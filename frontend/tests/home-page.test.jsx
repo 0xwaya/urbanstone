@@ -15,7 +15,7 @@ vi.mock('../components/ChatWidget', () => ({
 }));
 
 describe('Home page', () => {
-    const supplierNames = ['Avani Granite & Marble', 'Citi Quartz', 'Daltile Stone Center', 'MSI Surfaces', 'Quartz America'];
+    const supplierNames = ['Avani Granite & Marble', 'Citi Quartz', 'Daltile Stone Center', 'Quartz America'];
 
     beforeAll(() => {
         Object.defineProperty(window, 'matchMedia', {
@@ -43,7 +43,7 @@ describe('Home page', () => {
         expect(screen.getByRole('button', { name: /start/i })).toBeInTheDocument();
         expect(screen.queryByRole('button', { name: /send estimate request/i })).not.toBeInTheDocument();
         expect(screen.getByRole('button', { name: /switch to light mode/i })).toBeInTheDocument();
-        expect(screen.getAllByRole('button', { name: /curated slabs/i })).toHaveLength(5);
+        expect(screen.getAllByRole('button', { name: /curated slabs/i })).toHaveLength(4);
         expect(
             screen
                 .getAllByRole('heading', { level: 3 })

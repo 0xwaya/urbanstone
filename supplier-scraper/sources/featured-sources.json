@@ -1,46 +1,6 @@
 {
   "suppliers": [
     {
-      "name": "MSI Surfaces",
-      "portal": "https://www.msisurfaces.com/",
-      "logo": "/materials/msi/msi_logo.png",
-      "note": "Top-selling quartz and natural stone collections with consistent availability.",
-      "heroImage": "/materials/msi/msi_hero.png",
-      "heroBackground": "#efe6d7",
-      "stones": [
-        {
-          "name": "Calacatta Laza",
-          "pageUrl": "https://www.msisurfaces.com/quartz-countertops/calacatta-laza/",
-          "imageSelector": "meta[property='og:image']",
-          "imageAttr": "content"
-        },
-        {
-          "name": "Calacatta Miraggio Gold",
-          "pageUrl": "https://www.msisurfaces.com/quartz-countertops/calacatta-miraggio-gold/",
-          "imageSelector": "meta[property='og:image']",
-          "imageAttr": "content"
-        },
-        {
-          "name": "Carrara Morro",
-          "pageUrl": "https://www.msisurfaces.com/quartz-countertops/carrara-morro/",
-          "imageSelector": "meta[property='og:image']",
-          "imageAttr": "content"
-        },
-        {
-          "name": "Fossil Gray",
-          "pageUrl": "https://www.msisurfaces.com/quartz-countertops/fossil-gray/",
-          "imageSelector": "meta[property='og:image']",
-          "imageAttr": "content"
-        },
-        {
-          "name": "Carrara Lumos",
-          "pageUrl": "https://www.msisurfaces.com/quartz-countertops/carrara-lumos/",
-          "imageSelector": "meta[property='og:image']",
-          "imageAttr": "content"
-        }
-      ]
-    },
-    {
       "name": "Daltile Stone Center",
       "portal": "https://www.daltile.com/",
       "logo": "/materials/daltile/daltile-logo-png.png",
@@ -121,7 +81,7 @@
       ]
     },
     {
-      "name": "Avani Granite & Marble",,
+      "name": "Avani Granite & Marble",
       "logo": "/materials/avani/avani.png",
       "note": "Granite, marble, quartzite sourced from global quarries.",
       "heroImage": "/materials/avani/Avani_hero.webp",

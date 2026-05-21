@@ -2,9 +2,6 @@ export const curatedSlabOptions = [
     {
         group: 'Quartz',
         options: [
-            { value: 'msi-calacatta-laza', label: 'Calacatta Laza', supplier: 'MSI Surfaces' },
-            { value: 'msi-calacatta-miraggio', label: 'Calacatta Miraggio', supplier: 'MSI Surfaces' },
-            { value: 'msi-ivori-taj', label: 'Ivori Taj', supplier: 'MSI Surfaces' },
             { value: 'daltile-kodiak', label: 'Kodiak', supplier: 'Daltile Stone Center' },
             { value: 'quartz-america-calacatta-dolce', label: 'Calacatta Dolce', supplier: 'Quartz America' },
             { value: 'quartz-america-calacatta-nile', label: 'Calacatta Nile', supplier: 'Quartz America' },

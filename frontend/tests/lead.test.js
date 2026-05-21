@@ -14,7 +14,7 @@ describe('sanitizeLeadPayload', () => {
             sinkMaterialPreference: 'stainless-steel',
             backsplashPreference: '4-inch',
             timeframeGoal: '2-weeks',
-            materialPreferences: ['msi-calacatta-laza', 'daltile-absolute-black'],
+            materialPreferences: ['daltile-kodiak', 'daltile-absolute-black'],
             website: '',
         });
 
@@ -32,7 +32,7 @@ describe('sanitizeLeadPayload', () => {
             backsplashPreference: '4-inch',
             timeframeGoal: '2-weeks',
         });
-        expect(result.data.materialPreferences).toEqual(['msi-calacatta-laza', 'daltile-absolute-black']);
+        expect(result.data.materialPreferences).toEqual(['daltile-kodiak', 'daltile-absolute-black']);
     });
 
     it('rejects invalid or suspicious submissions', () => {

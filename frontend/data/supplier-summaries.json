@@ -1,20 +1,5 @@
 [
   {
-    "name": "MSI Surfaces",
-    "portal": "https://www.msisurfaces.com/",
-    "logo": "/materials/msi/msi_logo.png",
-    "note": "Strong for bright quartz looks, familiar builder-friendly colors, and fast shortlist decisions.",
-    "featuredCount": 3,
-    "heroImage": "/materials/msi/msi_hero.png",
-    "heroBackground": "#efe6d7",
-    "address": "8556 Trade Center Drive, Suite 300, West Chester, OH 45069",
-    "phone": "(513) 712-5300",
-    "hoursLines": [
-      "Mon, Wed-Fri 8:00 AM - 5:00 PM",
-      "Tue 8:00 AM - 6:00 PM"
-    ]
-  },
-  {
     "name": "Daltile Stone Center",
     "portal": "https://www.daltile.com/",
     "logo": "/materials/daltile/daltile-logo-png.png",

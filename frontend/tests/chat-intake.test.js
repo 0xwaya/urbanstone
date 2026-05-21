@@ -45,7 +45,7 @@ describe('chat estimate intake', () => {
 
     it('extracts major estimate fields from conversational text', () => {
         const intake = extractEstimateIntake(
-            'My name is Jamie Stone. My email is jamie@example.com and phone is (513) 555-0101. Kitchen project in Mason. About 54 sq ft. I want Calacatta Laza and timeline is next week.',
+            'My name is Jamie Stone. My email is jamie@example.com and phone is (513) 555-0101. Kitchen project in Mason. About 54 sq ft. I want Calacatta Dolce and timeline is next week.',
             []
         );
 
@@ -58,7 +58,7 @@ describe('chat estimate intake', () => {
         expect(intake.projectPhase).toBe('');
         expect(intake.projectStatus).toBe('');
         expect(intake.tentativeBudget).toBe('');
-        expect(intake.material).toBe('Calacatta Laza');
+        expect(intake.material).toBe('Calacatta Dolce');
         expect(intake.squareFootage).toBe(54);
         expect(intake.timeline).toBe('1-2 weeks');
     });

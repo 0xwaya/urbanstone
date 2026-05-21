@@ -61,9 +61,6 @@ const TIMEFRAME_OPTIONS = [
 ];
 
 const MATERIAL_OPTIONS = [
-  { value: 'msi-calacatta-laza', label: 'Calacatta Laza (MSI)' },
-  { value: 'msi-calacatta-miraggio', label: 'Calacatta Miraggio (MSI)' },
-  { value: 'msi-ivori-taj', label: 'Ivori Taj (MSI)' },
   { value: 'daltile-kodiak', label: 'Kodiak (Daltile)' },
   { value: 'quartz-america-calacatta-dolce', label: 'Calacatta Dolce' },
   { value: 'quartz-america-calacatta-nile', label: 'Calacatta Nile' },

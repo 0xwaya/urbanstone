@@ -1,39 +1,5 @@
 [
   {
-    "name": "MSI Surfaces",
-    "portal": "https://www.msisurfaces.com/",
-    "logo": "/materials/msi/msi_logo.png",
-    "note": "Reliable quartz and natural-stone programs with fast-turn inventory and familiar builder-friendly colors.",
-    "heroImage": "/materials/msi/msi_hero.png",
-    "heroBackground": "#efe6d7",
-    "tiers": [
-      {
-        "name": "Curated Slab Selection",
-        "range": "Top 3",
-        "slabs": [
-          {
-            "name": "Calacatta Laza",
-            "notes": "Bright 3cm quartz with crisp calacatta veining for clean white kitchens",
-            "image": "/materials/msi/Calacatta Laza_3cm_quartz.png",
-            "imageLarge": "/materials/msi/Calacatta Laza_3cm_quartz.png"
-          },
-          {
-            "name": "Calacatta Miraggio",
-            "notes": "Warm 3cm quartz with softer movement for an upscale marble-look finish",
-            "image": "/materials/msi/Calacatta Miraggio_3cm_quartz.png",
-            "imageLarge": "/materials/msi/Calacatta Miraggio_3cm_quartz.png"
-          },
-          {
-            "name": "Ivori Taj",
-            "notes": "Ivory-toned 3cm quartz with gentle movement that keeps warmer spaces bright",
-            "image": "/materials/msi/Ivori Taj_3cm_quartz.png",
-            "imageLarge": "/materials/msi/Ivori Taj_3cm_quartz.png"
-          }
-        ]
-      }
-    ]
-  },
-  {
     "name": "Daltile Stone Center",
     "portal": "https://www.daltile.com/",
     "logo": "/materials/daltile/daltile-logo-png.png",
