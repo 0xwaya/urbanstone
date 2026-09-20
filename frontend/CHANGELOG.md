@@ -8,8 +8,12 @@
 - Added keyboard focus trapping, dialog semantics, Escape handling, and focus restoration to chat and mobile navigation.
 - Converted the residential estimate form into a validated three-step flow.
 
-## [Unreleased]
+## [2.0.1] - 2026-09-20
 
+- Localization: Added a full Spanish customer portal at `/es` with translated hero, materials, estimate, FAQ, contractor, footer, and language-aware navigation sections.
+- SEO: Added reciprocal `hreflang` metadata, Spanish local-business and breadcrumb schema, `/es` sitemap discovery, and bilingual guidance in `/llms.txt`.
+- Contact: Added one-tap SMS links with prefilled context messages targeting `+15133075840` across navigation, estimate, chat, and contractor access surfaces.
+- Chat: Renamed the customer-facing assistant from Haven/Stone Haven to **Onyx**, with **Onyx AI Assistant** as the descriptive label.
 - SEO: Added shared `buildLocalBusinessSchema` helper (`lib/seo.js`) with `priceRange`, service-hub `geo` coordinates, `GeoCircle` service radius, and a `hasOfferCatalog` of quartz/granite/quartzite services; applied across homepage, service-area, and material pages
 - SEO: Added homepage breadcrumb JSON-LD and a new local-intent FAQ entry targeting "countertop company near me" style searches
 - AI discoverability: `robots.txt` now explicitly allows GPTBot, ChatGPT-User, OAI-SearchBot, ClaudeBot, Claude-Web, PerplexityBot, Google-Extended, Applebot-Extended, Amazonbot, Bytespider, and CCBot

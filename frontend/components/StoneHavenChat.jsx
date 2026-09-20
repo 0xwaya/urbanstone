@@ -6,7 +6,7 @@ const MAX_MESSAGE_LENGTH = 1200;
 const initialMessages = [
     {
         role: 'assistant',
-        content: "Hey, I'm Haven. What project can I help you scope today?",
+        content: "Hi, I'm Onyx. What project can I help you scope today?",
         sources: [],
         contact: null,
     },
@@ -61,7 +61,7 @@ function Composer({
     return (
         <form onSubmit={onSubmit} className="border-t border-border bg-surface/95 p-4">
             <label className="sr-only" htmlFor={embedded ? 'embedded-ai-chat-input' : 'ai-chat-input'}>
-                Message Stone Haven
+                Message Onyx AI Assistant
             </label>
             <div className="flex flex-col gap-3 sm:flex-row">
                 <textarea
@@ -199,7 +199,7 @@ export default function StoneHavenChat({ embedded = false, showHeader = true }) 
                     ))}
                     {isLoading ? (
                         <div className="rounded-2xl border border-border bg-surface px-4 py-3 text-sm text-muted" aria-live="polite">
-                            Stone Haven is thinking...
+                            Onyx is thinking...
                         </div>
                     ) : null}
                 </div>
@@ -227,7 +227,7 @@ export default function StoneHavenChat({ embedded = false, showHeader = true }) 
                                 <LogoMark className="h-full w-full" />
                             </div>
                             <div>
-                                <div className="text-[12px] font-semibold text-text">Haven</div>
+                                <div className="text-[12px] font-semibold text-text">Onyx</div>
                                 <div className="mt-0.5 text-[11px] text-muted">Urban Stone • Live now</div>
                             </div>
                         </div>
@@ -248,7 +248,7 @@ export default function StoneHavenChat({ embedded = false, showHeader = true }) 
                                 <LogoMark className="h-full w-full" />
                             </div>
                             <div>
-                                <div className="text-[12px] font-semibold text-text">Haven</div>
+                                <div className="text-[12px] font-semibold text-text">Onyx</div>
                                 <div className="mt-0.5 text-[11px] text-muted">Urban Stone • Live now</div>
                             </div>
                         </div>

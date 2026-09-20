@@ -3,18 +3,26 @@ import LogoMark from './LogoMark';
 import ThemeToggle from './ThemeToggle';
 import { useRef, useState } from 'react';
 import useFocusTrap from '../lib/use-focus-trap';
+import { getSmsHref } from '../lib/contact';
 
 function toTelHref(value) {
     return value.replace(/[^\d+]/g, '');
 }
 
-export default function TopNav() {
+export default function TopNav({ language = 'en' }) {
     const companyPhone = process.env.NEXT_PUBLIC_COMPANY_PHONE || '(513) 307-5840';
     const companyEmail = process.env.NEXT_PUBLIC_LEAD_EMAIL || 'sales@urbanstone.co';
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const menuRef = useRef(null);
     const menuButtonRef = useRef(null);
     const closeMenu = () => setIsMenuOpen(false);
+    const spanish = language === 'es';
+    const languageHref = spanish ? '/' : '/es';
+    const languageLabel = spanish ? 'EN' : 'ES';
+    const smsLabel = spanish ? 'Escríbenos' : 'Text us';
+    const smsMessage = spanish
+        ? 'Hola Urban Stone, necesito ayuda con un proyecto de cubiertas.'
+        : 'Hi Urban Stone, I would like help with a countertop project.';
     useFocusTrap(menuRef, isMenuOpen, closeMenu, menuButtonRef);
 
     return (
@@ -49,11 +57,25 @@ export default function TopNav() {
                     <div className="hidden shrink-0 items-center gap-3 lg:flex">
                         <ThemeToggle />
                         <a
+                            className="inline-flex items-center rounded-full border border-border bg-panel/70 p-1 text-xs font-semibold uppercase tracking-[0.16em] text-muted transition hover:border-accent"
+                            href={languageHref}
+                            aria-label={spanish ? 'Switch to English' : 'Cambiar a español'}
+                        >
+                            <span className="rounded-full bg-accent px-2.5 py-1 text-white">{language}</span>
+                            <span className="px-2.5 py-1 hover:text-text">{languageLabel}</span>
+                        </a>
+                        <a
                             className="brand-button-primary px-4 py-2 text-sm font-semibold"
                             href={`tel:${toTelHref(companyPhone)}`}
                             aria-label={`Call Urban Stone Collective at ${companyPhone}`}
                         >
                             Call
+                        </a>
+                        <a
+                            className="brand-button-secondary inline-flex items-center justify-center rounded-full px-4 py-2 text-sm font-semibold"
+                            href={getSmsHref(smsMessage)}
+                        >
+                            {smsLabel}
                         </a>
                     </div>
 
@@ -111,10 +133,26 @@ export default function TopNav() {
                                 >
                                     Email
                                 </a>
+                                <a
+                                    className="brand-button-secondary col-span-2 inline-flex items-center justify-center rounded-full px-4 py-3 text-base font-semibold"
+                                    href={getSmsHref(smsMessage)}
+                                >
+                                    {smsLabel}
+                                </a>
                             </div>
                         </div>
                         <div className="mt-3 border-t border-border/80 pt-3 flex justify-start">
-                            <ThemeToggle />
+                            <div className="flex items-center gap-2">
+                                <ThemeToggle />
+                                <a
+                                    className="inline-flex items-center rounded-full border border-border bg-panel/70 p-1 text-xs font-semibold uppercase tracking-[0.16em] text-muted"
+                                    href={languageHref}
+                                    aria-label={spanish ? 'Switch to English' : 'Cambiar a español'}
+                                >
+                                    <span className="rounded-full bg-accent px-2.5 py-1 text-white">{language}</span>
+                                    <span className="px-2.5 py-1">{languageLabel}</span>
+                                </a>
+                            </div>
                         </div>
                     </div>
                 ) : null}

@@ -20,6 +20,11 @@ export async function getServerSideProps({ res }) {
             priority: '1.0',
         },
         {
+            loc: getCanonicalUrl('/es'),
+            changefreq: 'weekly',
+            priority: '0.9',
+        },
+        {
             loc: getCanonicalUrl('/coverage'),
             changefreq: 'weekly',
             priority: '0.9',

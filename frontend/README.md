@@ -138,6 +138,14 @@ Lead webhook payload notes:
 - `pages/llms.txt.js` serves a plain-text business summary, contact info, service area, and full page link map at `/llms.txt` for AI assistants and answer engines to cite accurately.
 - `data/homepage-content.js` FAQ items are written as natural-language local-intent Q&A (e.g. "best countertop company near me in Cincinnati") to support both classic featured snippets and AI Overview-style extraction.
 
+## Bilingual Portal & Texting
+
+- `/` remains the English customer portal; `/es` is the neutral-Spanish version with translated hero, materials, estimate, FAQ, contractor, and footer sections.
+- The shared navigation includes an `EN | ES` switcher with reciprocal homepage links and locale-aware `hreflang` metadata.
+- `lib/contact.js` builds SMS deep links to the business line. Set `NEXT_PUBLIC_COMPANY_SMS` to override the default `+15133075840`.
+- SMS actions appear in the main navigation, quote contact panel, Onyx chat footer, and contractor access page with prefilled context prompts.
+- The customer-facing chatbot is branded **Onyx** / **Onyx AI Assistant**. Internal component filenames remain unchanged to avoid unnecessary runtime churn.
+
 Security check:
 
 - `npm audit --json`

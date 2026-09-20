@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import StoneHavenChat from './StoneHavenChat';
 import LogoMark from './LogoMark';
 import useFocusTrap from '../lib/use-focus-trap';
+import { getSmsHref } from '../lib/contact';
 
 const QUOTE_OPEN_EVENT = 'urbanstone:quote-opened';
 const DESKTOP_BREAKPOINT = 640;
@@ -50,7 +51,7 @@ function ChatPopup({
             ref={popupRef}
             role="dialog"
             aria-modal="true"
-            aria-label="Stone Haven chat"
+            aria-label="Onyx AI Assistant chat"
             className={`fixed z-[60] flex w-[min(23rem,calc(100vw-1rem))] max-h-[calc(100dvh-5.5rem)] flex-col overflow-hidden rounded-[1.6rem] border border-border/90 bg-[linear-gradient(160deg,rgba(13,21,38,0.96),rgba(10,17,31,0.92))] shadow-[0_30px_90px_rgba(6,12,26,0.55)] ring-1 ring-border/55 backdrop-blur-xl ${position ? '' : 'bottom-20 left-2 right-2 sm:bottom-24 sm:left-auto sm:right-5'}`.trim()}
             style={popupStyle}
         >
@@ -63,7 +64,7 @@ function ChatPopup({
                         <LogoMark className="h-full w-full" />
                     </div>
                     <div className="min-w-0">
-                        <div className="truncate text-sm font-semibold">Haven</div>
+                        <div className="truncate text-sm font-semibold">Onyx</div>
                         <div className="text-[11px] text-white/75">Urban Stone • Live now</div>
                     </div>
                 </div>
@@ -80,7 +81,7 @@ function ChatPopup({
             <div className="h-[min(62dvh,29rem)] min-h-0 bg-bg sm:h-[min(66dvh,31rem)]">
                 {isExternalEmbed ? (
                     <iframe
-                        title="Stone Haven AI assistant"
+                        title="Onyx AI Assistant"
                         src={chatbotUrl}
                         className="h-full w-full border-0"
                         allow="clipboard-write; microphone"
@@ -111,6 +112,12 @@ function ChatPopup({
                 >
                     Email
                 </a>
+                <a
+                    className="rounded-full border border-border bg-panel/80 px-3 py-1.5 text-xs font-semibold text-text transition hover:border-[rgba(196,173,128,0.65)] hover:text-[#dcc491]"
+                    href={getSmsHref('Hi Urban Stone, I need help with a countertop project.')}
+                >
+                    Text us
+                </a>
             </div>
         </div>
     );
@@ -129,7 +136,7 @@ export default function ChatWidget() {
     const externalChatbotUrl = (process.env.NEXT_PUBLIC_WAYALABS_CHATBOT_URL || '').trim();
     const isExternalEmbed = Boolean(externalChatbotUrl);
     const chatbotUrl = externalChatbotUrl || '/ai-chat';
-    const chatbotLabel = (process.env.NEXT_PUBLIC_WAYALABS_CHATBOT_LABEL || 'Chat with Stone Haven').trim() || 'Chat with Stone Haven';
+    const chatbotLabel = (process.env.NEXT_PUBLIC_WAYALABS_CHATBOT_LABEL || 'Chat with Onyx').trim() || 'Chat with Onyx';
 
     useEffect(() => {
         setHasHydrated(true);
@@ -255,7 +262,7 @@ export default function ChatWidget() {
                         ref={chatToggleRef}
                         className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[rgba(210,187,142,0.66)] bg-[linear-gradient(145deg,rgba(223,199,154,0.96),rgba(164,134,86,0.96))] text-lg text-[#122033] shadow-[0_10px_24px_rgba(96,72,40,0.45)] transition hover:bg-[linear-gradient(145deg,rgba(206,181,136,0.96),rgba(146,118,73,0.96))]"
                         onClick={showBot ? handleChatClose : handleChatOpen}
-                        aria-label={showBot ? 'Close Stone Haven chat' : chatbotLabel}
+                        aria-label={showBot ? 'Close Onyx chat' : chatbotLabel}
                     >
                         {showBot ? '×' : '💬'}
                     </button>
