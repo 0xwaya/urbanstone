@@ -31,6 +31,7 @@ export default function MaterialPage({ page, area }) {
         image: ogImageUrl,
         areaServed: [page.city, ...page.nearbyAreas],
         description: page.metaDescription,
+        focusMaterial: page.material.replace(/ countertops?$/i, ''),
     });
     const breadcrumbSchema = buildBreadcrumbSchema([
         { name: 'Home', url: getCanonicalUrl('/') },

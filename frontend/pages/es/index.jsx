@@ -10,6 +10,7 @@ import LeadForm from '../../components/LeadForm';
 import FAQSection from '../../components/FAQSection';
 import ChatWidget from '../../components/ChatWidget';
 import Footer from '../../components/Footer';
+import ReviewSection from '../../components/ReviewSection';
 import {
     spanishAnnouncement,
     spanishFaqContent,
@@ -110,6 +111,7 @@ export default function SpanishHome() {
                             collapsedLabel="Abrir preguntas"
                             expandedLabel="Ocultar preguntas"
                         />
+                        <ReviewSection language="es" />
                         <Footer language="es" />
                     </main>
                 </div>

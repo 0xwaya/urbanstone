@@ -33,11 +33,15 @@ const COUNTERTOP_SERVICES = [
     { name: 'Quartzite Countertop Fabrication & Installation', material: 'Quartzite' },
 ];
 
-export function buildCountertopOfferCatalog({ url, areaServed }) {
+export function buildCountertopOfferCatalog({ url, areaServed, focusMaterial }) {
+    const services = focusMaterial
+        ? COUNTERTOP_SERVICES.filter((service) => service.material.toLowerCase() === String(focusMaterial).toLowerCase())
+        : COUNTERTOP_SERVICES;
+
     return {
         '@type': 'OfferCatalog',
         name: 'Countertop Fabrication & Installation Services',
-        itemListElement: COUNTERTOP_SERVICES.map((service) => ({
+        itemListElement: services.map((service) => ({
             '@type': 'Offer',
             itemOffered: {
                 '@type': 'Service',
@@ -60,6 +64,7 @@ export function buildLocalBusinessSchema({
     description,
     sameAs = [],
     priceRange = '$$',
+    focusMaterial,
 }) {
     return {
         '@context': 'https://schema.org',
@@ -77,8 +82,10 @@ export function buildLocalBusinessSchema({
         },
         areaServed,
         serviceArea: buildServiceAreaGeoCircle(),
-        serviceType: ['Granite countertops', 'Quartz countertops', 'Quartzite countertops', 'Countertop fabrication', 'Countertop installation'],
-        hasOfferCatalog: buildCountertopOfferCatalog({ url, areaServed }),
+        serviceType: focusMaterial
+            ? [`${focusMaterial} countertops`, 'Countertop fabrication', 'Countertop installation']
+            : ['Granite countertops', 'Quartz countertops', 'Quartzite countertops', 'Countertop fabrication', 'Countertop installation'],
+        hasOfferCatalog: buildCountertopOfferCatalog({ url, areaServed, focusMaterial }),
         sameAs,
         description,
     };

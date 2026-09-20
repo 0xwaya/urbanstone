@@ -175,13 +175,21 @@ a {
 }
 
 .chat-scrollbar::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, rgba(212, 193, 152, 0.96), rgba(171, 147, 103, 0.96));
+  background: linear-gradient(
+    180deg,
+    rgba(212, 193, 152, 0.96),
+    rgba(171, 147, 103, 0.96)
+  );
   border-radius: 999px;
   border: 2px solid rgba(var(--surface), 0.55);
 }
 
 .chat-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, rgba(223, 203, 159, 0.98), rgba(184, 160, 114, 0.98));
+  background: linear-gradient(
+    180deg,
+    rgba(223, 203, 159, 0.98),
+    rgba(184, 160, 114, 0.98)
+  );
 }
 
 * {
