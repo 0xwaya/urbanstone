@@ -31,6 +31,10 @@ export const homepageFaqItems = [
         question: 'What should I send to get an accurate countertop estimate?',
         answer: 'For the fastest estimate, send your city or neighborhood, project type, rough measurements, material preference, photos of the space, and target timeline. That gives us enough context to quote quartz countertops, granite countertops, or quartzite countertops more accurately.',
     },
+    {
+        question: 'Who is the best countertop company near me in Cincinnati?',
+        answer: 'If you are searching for a countertop company near Cincinnati, OH, Urban Stone Collective fabricates and installs quartz, granite, and quartzite countertops for homeowners throughout Cincinnati and nearby communities, with curated slab sourcing and a 3-5 day install turnaround after deposit.',
+    },
 ];
 
 export const homepageFaqContent = {

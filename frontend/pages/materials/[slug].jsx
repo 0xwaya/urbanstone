@@ -9,7 +9,7 @@ import TopNav from '../../components/TopNav';
 import { getMaterialPageBySlug, materialPages } from '../../data/material-pages';
 import { getServiceAreaBySlug, serviceAreas } from '../../data/service-areas';
 import { getCanonicalUrl, getSiteUrl } from '../../lib/site';
-import { buildBreadcrumbSchema, getGeoRegion } from '../../lib/seo';
+import { buildBreadcrumbSchema, buildLocalBusinessSchema, getGeoRegion } from '../../lib/seo';
 
 export default function MaterialPage({ page, area }) {
     const canonicalUrl = getCanonicalUrl(`/materials/${page.slug}`);
@@ -25,17 +25,13 @@ export default function MaterialPage({ page, area }) {
     const siblingCityPages = area.relatedAreas
         .map((relatedArea) => serviceAreas.find((candidate) => candidate.city === relatedArea))
         .filter(Boolean);
-    const businessSchema = {
-        '@context': 'https://schema.org',
-        '@type': 'HomeAndConstructionBusiness',
-        name: 'Urban Stone Collective',
-        '@id': `${siteUrl}#business`,
+    const businessSchema = buildLocalBusinessSchema({
+        id: `${siteUrl}#business`,
         url: canonicalUrl,
         image: ogImageUrl,
         areaServed: [page.city, ...page.nearbyAreas],
-        serviceType: [page.materialLabel, 'Countertop fabrication', 'Countertop installation'],
         description: page.metaDescription,
-    };
+    });
     const breadcrumbSchema = buildBreadcrumbSchema([
         { name: 'Home', url: getCanonicalUrl('/') },
         { name: 'Coverage Hub', url: getCanonicalUrl('/coverage') },

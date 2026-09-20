@@ -10,7 +10,7 @@ import ChatWidget from '../components/ChatWidget';
 import Footer from '../components/Footer';
 import { homepageAnnouncement, homepageFaqContent, homepageFaqItems, homepageLeadFormContent } from '../data/homepage-content';
 import { getCanonicalUrl, getSiteUrl } from '../lib/site';
-import { getGeoRegion } from '../lib/seo';
+import { buildBreadcrumbSchema, buildLocalBusinessSchema, getGeoRegion } from '../lib/seo';
 
 export default function Home() {
   const siteUrl = getSiteUrl();
@@ -25,11 +25,8 @@ export default function Home() {
   const facebookUrl = (process.env.NEXT_PUBLIC_FACEBOOK_URL || '').trim();
   const tiktokUrl = (process.env.NEXT_PUBLIC_TIKTOK_URL || '').trim();
   const socialProfiles = [instagramUrl, facebookUrl, tiktokUrl].filter(Boolean);
-  const structuredData = {
-    '@context': 'https://schema.org',
-    '@type': 'HomeAndConstructionBusiness',
-    '@id': `${canonicalUrl}#business`,
-    name: 'Urban Stone Collective',
+  const structuredData = buildLocalBusinessSchema({
+    id: `${canonicalUrl}#business`,
     url: canonicalUrl,
     image: ogImageUrl,
     telephone: companyPhone,
@@ -48,16 +45,12 @@ export default function Home() {
       'Loveland, Ohio',
       'Milford, Ohio',
     ],
-    serviceType: [
-      'Granite countertops',
-      'Quartz countertops',
-      'Quartzite countertops',
-      'Countertop fabrication',
-      'Countertop installation',
-    ],
     sameAs: socialProfiles,
-    description: 'Urban Stone Collective fabricates and installs quartz countertops, granite countertops, and quartzite countertops across the Cincinnati metro with curated slab sourcing and fast turnaround.',
-  };
+    description: 'Urban Stone Collective fabricates and installs quartz countertops, granite countertops, and quartzite countertops across the Cincinnati metro with curated slab sourcing and fast turnaround. Serving homeowners searching for countertop fabricators and installers near Cincinnati, OH.',
+  });
+  const breadcrumbSchema = buildBreadcrumbSchema([
+    { name: 'Home', url: canonicalUrl },
+  ]);
   const organizationSchema = {
     '@context': 'https://schema.org',
     '@type': 'Organization',
@@ -145,6 +138,10 @@ export default function Home() {
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(faqStructuredData) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
         />
       </Head>
       <div id="top" className="min-h-screen bg-bg text-text selection:bg-accent selection:text-white">

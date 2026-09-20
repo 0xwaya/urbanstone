@@ -8,7 +8,7 @@ import ChatWidget from '../../components/ChatWidget';
 import RelatedPages from '../../components/RelatedPages';
 import { materialPages } from '../../data/material-pages';
 import { getCanonicalUrl, getSiteUrl } from '../../lib/site';
-import { buildBreadcrumbSchema, getGeoRegion } from '../../lib/seo';
+import { buildBreadcrumbSchema, buildLocalBusinessSchema, getGeoRegion } from '../../lib/seo';
 import { getServiceAreaBySlug, serviceAreas } from '../../data/service-areas';
 
 export default function ServiceAreaPage({ area }) {
@@ -34,17 +34,13 @@ export default function ServiceAreaPage({ area }) {
             href: `/materials/${page.slug}`,
             label: page.headline,
         }));
-    const localBusinessSchema = {
-        '@context': 'https://schema.org',
-        '@type': 'HomeAndConstructionBusiness',
-        name: 'Urban Stone Collective',
-        '@id': `${siteUrl}#business`,
+    const localBusinessSchema = buildLocalBusinessSchema({
+        id: `${siteUrl}#business`,
         url: canonicalUrl,
         image: ogImageUrl,
         areaServed: [area.city, ...area.nearbyAreas, ...area.relatedAreas],
-        serviceType: ['Quartz countertops', 'Granite countertops', 'Quartzite countertops', 'Countertop fabrication', 'Countertop installation'],
         description: area.metaDescription,
-    };
+    });
     const breadcrumbSchema = buildBreadcrumbSchema([
         { name: 'Home', url: getCanonicalUrl('/') },
         { name: 'Coverage Hub', url: getCanonicalUrl('/coverage') },
