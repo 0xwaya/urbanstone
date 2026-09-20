@@ -1,18 +1,18 @@
 # Phase 1 Activation Guide - Lead Sniffer Live (April 4, 2026)
 
-## Status: READY FOR PRODUCTION
+## Status: PARTIALLY READY
 
 ## What Is Live Now
 
-- Reddit and Craigslist pollers are active now.
+- Craigslist polling is available now. Reddit is paused locally until Reddit API registration/OAuth setup is complete.
 - Classifier fix is shipped (material-anchored posts classify as `match`).
-- Zapier webhook relay is configured via `LEAD_WEBHOOK_URL`.
+- Resend is the primary delivery path; the Zapier webhook is an optional secondary relay via `LEAD_WEBHOOK_URL`.
 - Test suite is green (34 passing tests).
 
 ## Source Architecture (Important)
 
 - Core Phase 1 sources: Reddit + Craigslist.
-- Apify is optional expansion only.
+- Apify is optional expansion only and requires an Apify token with permission to run the configured tasks.
 - Apify is dedicated to Facebook Groups + Nextdoor scraping.
 - If `APIFY_TOKEN` is not set, Apify is skipped and core sources still run.
 
@@ -54,16 +54,16 @@ Notes:
 
 ### Step 3: Schedule Polling
 
-Recommended cron:
+The sourcer has a daily run guard, but this repository does not install a scheduler. Use one scheduler only after source access is validated:
 
 ```bash
-*/12 * * * * cd /path/to/lead-sourcer && npm start >> logs/poller.log 2>&1
+0 9 * * * cd /path/to/lead-sourcer && npm run sourcer -- --mode=live >> logs/poller.log 2>&1
 ```
 
-### Step 4: Monitor Zapier
+### Step 4: Monitor Delivery
 
-- Confirm Zap task runs succeed.
-- Confirm Outlook receives lead emails.
+- Confirm Resend receives the primary alert/report.
+- If enabled, confirm Zap task runs succeed and Outlook receives the secondary email.
 - If no emails, check `LEAD_WEBHOOK_URL` and Zap task logs.
 
 Run report behavior:

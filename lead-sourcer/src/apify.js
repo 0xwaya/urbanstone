@@ -1,4 +1,3 @@
-import 'dotenv/config';
 import { ApifyClient } from 'apify-client';
 import {
     APIFY_AD_LIBRARY_TASK_ID,
@@ -191,6 +190,7 @@ function logTaskFailure(taskLabel, reason) {
 
 function createStats() {
     return {
+        status: 'ok',
         fetched: 0,
         evaluated: 0,
         skippedSeen: 0,
@@ -283,11 +283,13 @@ export async function pollApify({ mode = 'live' } = {}) {
     const stats = createStats();
     const token = String(process.env.APIFY_TOKEN || '').trim();
     if (!token) {
+        stats.status = 'disabled';
         console.log('[apify] APIFY_TOKEN not set; skipping Apify poll.');
         return { matches: [], stats };
     }
 
     if (!APIFY_NEXTDOOR_TASK_ID && !APIFY_FACEBOOK_TASK_ID && !APIFY_AD_LIBRARY_TASK_ID) {
+        stats.status = 'disabled';
         console.log('[apify] No Apify task IDs configured; skipping Apify poll. Expected one of: APIFY_NEXTDOOR_TASK_ID, APIFY_FACEBOOK_TASK_ID, APIFY_AD_LIBRARY_TASK_ID (or alias keys).');
         return { matches: [], stats };
     }
@@ -366,6 +368,7 @@ export async function pollApify({ mode = 'live' } = {}) {
             stats.fetched += taskItems.length;
             getTaskStats(stats, task.taskLabel).fetched += taskItems.length;
         } catch (reason) {
+            stats.status = 'degraded';
             logTaskFailure(task.taskLabel, reason);
         }
 

@@ -8,8 +8,6 @@
  * Or add to a cron job:
  *   0 * * * * cd /path/to/lead-sourcer && LEAD_WEBHOOK_URL=... node src/index.js >> logs/poller.log 2>&1
  */
-import 'dotenv/config';
-import dotenv from 'dotenv';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -19,18 +17,9 @@ import { pollApify } from './apify.js';
 import { resolveRunMode } from './mode.js';
 import { relay } from './relay.js';
 import { initializeTracing } from './tracing.js';
+import { buildPreDraft, shouldRunDaily, readDailyState, writeDailyState } from './daily-runner.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-
-// Load optional local/deployment env files for cron and ad-hoc shells where only
-// .env is auto-loaded by dotenv/config. Keep override=false so explicit process
-// env values still win.
-for (const optionalEnvPath of [
-    path.resolve(__dirname, '..', '.env.local'),
-    path.resolve(__dirname, '..', '..', '.vercel', '.env.production.local'),
-]) {
-    dotenv.config({ path: optionalEnvPath, override: false });
-}
 
 const RUN_LOG_FILE = process.env.LEAD_SOURCER_RUN_LOG_FILE || path.resolve(__dirname, '..', 'runs', 'poll-runs.jsonl');
 const INTERVAL_MINUTES = Number(process.env.LEAD_SOURCER_INTERVAL_MINUTES || 0);
@@ -39,6 +28,7 @@ const ZERO_MATCH_ALERT_THRESHOLD = Number(process.env.LEAD_SOURCER_ZERO_MATCH_AL
 const SEND_RUN_REPORT = !['0', 'false', 'no', 'off'].includes(String(process.env.LEAD_SOURCER_SEND_RUN_REPORT || 'true').trim().toLowerCase());
 const RUN_REPORT_EMAIL = String(process.env.LEAD_SOURCER_RUN_REPORT_EMAIL || 'sales@urbanstone.co').trim();
 const RUN_REPORT_EMAIL_FROM = String(process.env.LEAD_SOURCER_RUN_REPORT_EMAIL_FROM || 'Urban Stone <sales@urbanstone.co>').trim();
+const DAILY_STATE_FILE = process.env.LEAD_SOURCER_DAILY_STATE_FILE || path.resolve(__dirname, '..', 'runs', 'daily-state.json');
 
 function envFlag(name, defaultValue = true) {
     const raw = String(process.env[name] || '').trim().toLowerCase();
@@ -66,17 +56,17 @@ async function appendRunSummary(summary) {
 function normalizePollResult(result) {
     // Some pollers may return [] on skip paths; normalize to a stable shape.
     if (Array.isArray(result)) {
-        return { matches: result, stats: {} };
+        return { matches: result, stats: { status: 'ok' } };
     }
 
     if (result && Array.isArray(result.matches)) {
         return {
             matches: result.matches,
-            stats: result.stats || {},
+            stats: { status: 'ok', ...(result.stats || {}) },
         };
     }
 
-    return { matches: [], stats: {} };
+    return { matches: [], stats: { status: 'failed' } };
 }
 
 function safeStat(stats, key) {
@@ -96,6 +86,7 @@ function buildRunReportDetails(summary) {
         `Mode: ${summary.mode}`,
         '',
         `Counts: reddit=${summary.counts.reddit}, craigslist=${summary.counts.craigslist}, apify=${summary.counts.apify}, totalMatches=${summary.counts.totalMatches}`,
+        `Source status: reddit=${summary.sourceStatuses?.reddit || 'unknown'}, craigslist=${summary.sourceStatuses?.craigslist || 'unknown'}, apify=${summary.sourceStatuses?.apify || 'unknown'}`,
         '',
         `Reddit: fetched=${safeStat(reddit, 'fetched')}, evaluated=${safeStat(reddit, 'evaluated')}, matches=${safeStat(reddit, 'matches')}, borderline=${safeStat(reddit, 'borderline')}, rejects=${safeStat(reddit, 'rejects')}, relayed=${safeStat(reddit, 'relayed')}`,
         `Craigslist: fetched=${safeStat(craigslist, 'fetched')}, evaluated=${safeStat(craigslist, 'evaluated')}, bodyFetches=${safeStat(craigslist, 'bodyFetches')}, matches=${safeStat(craigslist, 'matches')}, borderline=${safeStat(craigslist, 'borderline')}, rejects=${safeStat(craigslist, 'rejects')}, relayed=${safeStat(craigslist, 'relayed')}`,
@@ -317,9 +308,9 @@ async function runOnce(mode) {
     if (!ENABLE_APIFY) console.log('[lead-sourcer] Apify poller disabled (LEAD_SOURCER_ENABLE_APIFY=false).');
 
     const [redditMatches, craigslistMatches, apifyMatches] = await Promise.allSettled([
-        ENABLE_REDDIT ? pollReddit({ mode }) : Promise.resolve({ matches: [], stats: {} }),
-        ENABLE_CRAIGSLIST ? pollCraigslist({ mode }) : Promise.resolve({ matches: [], stats: {} }),
-        ENABLE_APIFY ? pollApify({ mode }) : Promise.resolve({ matches: [], stats: {} }),
+        ENABLE_REDDIT ? pollReddit({ mode }) : Promise.resolve({ matches: [], stats: { status: 'disabled' } }),
+        ENABLE_CRAIGSLIST ? pollCraigslist({ mode }) : Promise.resolve({ matches: [], stats: { status: 'disabled' } }),
+        ENABLE_APIFY ? pollApify({ mode }) : Promise.resolve({ matches: [], stats: { status: 'disabled' } }),
     ]);
 
     const redditResult = redditMatches.status === 'fulfilled'
@@ -373,6 +364,11 @@ async function runOnce(mode) {
             craigslist: craigslistResult.stats,
             apify: apifyResult.stats,
         },
+        sourceStatuses: {
+            reddit: redditResult.stats.status || 'ok',
+            craigslist: craigslistResult.stats.status || 'ok',
+            apify: apifyResult.stats.status || 'ok',
+        },
         errors,
     };
 
@@ -381,11 +377,39 @@ async function runOnce(mode) {
     return summary;
 }
 
+async function scheduleDailyRunIfNeeded() {
+    const state = readDailyState(DAILY_STATE_FILE);
+    const now = new Date();
+    const shouldRun = shouldRunDaily(state, now);
+
+    if (!shouldRun) {
+        console.log(`[lead-sourcer] Daily run skipped; last run at ${state.lastRunAt || 'never'} is still within 24h window.`);
+        return { skipped: true, state };
+    }
+
+    const mode = resolveRunMode();
+    const summary = await runOnce(mode);
+    const nextState = {
+        lastRunAt: new Date().toISOString(),
+        lastStatus: summary.counts.totalMatches > 0 ? 'success' : 'success-empty',
+        summary,
+    };
+
+    writeDailyState(DAILY_STATE_FILE, nextState);
+    return { skipped: false, state: nextState, summary };
+}
+
 async function run() {
     const mode = resolveRunMode();
     const useInterval = Number.isFinite(INTERVAL_MINUTES) && INTERVAL_MINUTES > 0;
 
-    if (!useInterval) {
+    if (mode === 'live' && !useInterval) {
+        const result = await scheduleDailyRunIfNeeded();
+        if (result.skipped) return;
+        return;
+    }
+
+    if (!useInterval && mode !== 'live') {
         await runOnce(mode);
         return;
     }
@@ -413,6 +437,8 @@ async function run() {
         await delay(waitMs);
     }
 }
+
+export { buildPreDraft, readDailyState, writeDailyState, shouldRunDaily };
 
 run().catch((err) => {
     console.error('[lead-sourcer] Fatal error:', err);

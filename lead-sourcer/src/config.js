@@ -1,6 +1,16 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import dotenv from 'dotenv';
+
+const configDirectory = path.dirname(fileURLToPath(import.meta.url));
+for (const envPath of [
+    path.resolve(configDirectory, '..', '.env.local'),
+    path.resolve(configDirectory, '..', '.env'),
+    path.resolve(configDirectory, '..', '..', '.vercel', '.env.production.local'),
+]) {
+    dotenv.config({ path: envPath, override: false });
+}
 
 // Keywords that suggest someone needs countertop work
 export const MATCH_KEYWORDS = [
@@ -294,12 +304,9 @@ export const APIFY_FACEBOOK_NEIGHBORHOOD_QUERIES = compactLocations(
 export const APIFY_POST_LOCATION_HINTS = GEO_TARGET_CITIES.map((city) => city.toLowerCase());
 
 const GEO_QUERY_SUFFIXES = [
-    'countertop',
-    'countertops',
-    'granite countertops',
-    'quartz countertops',
-    'quartzite countertops',
     'countertop installer',
+    'countertop quote',
+    'countertop replacement',
     'kitchen remodel',
     'bathroom remodel',
 ];
@@ -308,11 +315,28 @@ export const GEO_AWARE_QUERIES = compactLocations(
     GEO_TARGET_CITIES.flatMap((city) => GEO_QUERY_SUFFIXES.map((suffix) => `${city} ${suffix}`)),
 );
 
-const CRAIGSLIST_QUERY_LIMIT = Number(process.env.LEAD_SOURCER_CRAIGSLIST_QUERY_LIMIT || 120);
+const DEFAULT_CRAIGSLIST_PRIORITY_CITIES = ['Cincinnati', 'Mason', 'West Chester', 'Blue Ash', 'Covington'];
+const CRAIGSLIST_PRIORITY_CITIES = compactLocations(
+    String(process.env.LEAD_SOURCER_CRAIGSLIST_PRIORITY_CITIES || DEFAULT_CRAIGSLIST_PRIORITY_CITIES.join(','))
+        .split(','),
+);
+const CRAIGSLIST_DIRECT_QUERIES = [
+    'countertop',
+    'granite countertop',
+    'quartz countertop',
+    'quartzite countertop',
+    'countertop installer',
+    'countertop quote',
+    'countertop replacement',
+    'stone fabricator',
+    'kitchen remodel',
+    'bathroom remodel',
+];
+const CRAIGSLIST_QUERY_LIMIT = Number(process.env.LEAD_SOURCER_CRAIGSLIST_QUERY_LIMIT || 40);
 
 export const CRAIGSLIST_QUERY_KEYWORDS = compactLocations([
-    ...BASE_LEAD_QUERIES,
-    ...GEO_AWARE_QUERIES,
+    ...CRAIGSLIST_DIRECT_QUERIES,
+    ...CRAIGSLIST_PRIORITY_CITIES.flatMap((city) => GEO_QUERY_SUFFIXES.map((suffix) => `${city} ${suffix}`)),
 ]).slice(0, CRAIGSLIST_QUERY_LIMIT);
 
 export const REDDIT_SEARCH_SUBREDDITS = [
@@ -394,10 +418,14 @@ export const CRAIGSLIST_BASE = 'https://cincinnati.craigslist.org';
 //                              ("granite countertops in kitchen") not as a service request.
 //   rea  real estate         — same as hsg; property sale listings with amenity lists.
 //
+const CRAIGSLIST_INCLUDE_HOUSEHOLD_SERVICES = envFlag('LEAD_SOURCER_CRAIGSLIST_INCLUDE_HOUSEHOLD_SERVICES', false);
+
 export const CRAIGSLIST_SECTIONS = [
     { path: '/search/ggg', label: 'gigs', buyerIntent: true },
     { path: '/search/lbg', label: 'labor gigs', buyerIntent: true },
-    { path: '/search/hss', label: 'household services', buyerIntent: false },
+    ...(CRAIGSLIST_INCLUDE_HOUSEHOLD_SERVICES
+        ? [{ path: '/search/hss', label: 'household services', buyerIntent: false }]
+        : []),
 ];
 
 // Max number of Craigslist listing bodies to fetch per run to enrich borderline titles.
