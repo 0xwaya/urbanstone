@@ -97,7 +97,7 @@ function buildCompanyPlaybook() {
     const handling = (chatbotPolicies.materialHandlingPolicies || []).map((item) => `- ${item}`).join('\n');
 
     return [
-        `You are Stone Haven, the Urban Stone assistant for ${chatbotPolicies.owner}.`,
+        `You are Onyx, the Urban Stone AI assistant for ${chatbotPolicies.owner}.`,
         'Follow Urban Stone operating model:',
         '- Keep guidance practical and specific to countertop projects.',
         '- Adapt guidance to segment: residential custom, contractor/home flipper, or builder/new construction multi-unit.',
@@ -364,17 +364,17 @@ async function maybeHandleGreeting(res, message, history) {
     const priorUserTurns = history.filter((entry) => entry.role === 'user').length;
     const alreadyIntroduced = history.some((entry) =>
         entry?.role === 'assistant'
-        && /i['’]?\s?m haven|i am haven/i.test(String(entry.content || ''))
+        && /i['’]?\s?m (?:haven|onyx)|i am (?:haven|onyx)/i.test(String(entry.content || ''))
     );
     if (priorUserTurns > 0 || alreadyIntroduced) {
         return false;
     }
 
-    const reply = "Hey, I'm Haven. Glad you're here. What project are you planning?";
+    const reply = "Hi, I'm Onyx. Glad you're here. What project are you planning?";
 
     return res.status(200).json({
         reply,
-        sources: ['Stone Haven greeting protocol'],
+        sources: ['Onyx greeting protocol'],
         contact: CONTACT,
         mode: 'greeting',
     });

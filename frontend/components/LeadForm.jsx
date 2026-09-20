@@ -10,6 +10,7 @@ import {
     timeframeOptions,
     validateLeadForm,
 } from '../../shared/lead-form.js';
+import { getSmsHref } from '../lib/contact';
 
 const QUOTE_OPEN_EVENT = 'urbanstone:quote-opened';
 
@@ -75,7 +76,7 @@ function readFileAsDataUrl(file) {
     });
 }
 
-export default function LeadForm({ content, routeId = 'homepage', collapsible = false, defaultExpanded = false, collapsedLabel = 'Start', expandedLabel = 'Cancel' }) {
+export default function LeadForm({ content, routeId = 'homepage', language = 'en', collapsible = false, defaultExpanded = false, collapsedLabel = 'Start', expandedLabel = 'Cancel' }) {
     const [form, setForm] = useState(initialForm);
     const [errors, setErrors] = useState({});
     const [status, setStatus] = useState({ type: 'idle', message: '' });
@@ -86,6 +87,7 @@ export default function LeadForm({ content, routeId = 'homepage', collapsible = 
     const companyPhone = process.env.NEXT_PUBLIC_COMPANY_PHONE || '(513) 307-5840';
     const companyEmail = process.env.NEXT_PUBLIC_LEAD_EMAIL || 'sales@urbanstone.co';
     const formContent = { ...defaultContent, ...(content || {}) };
+    const spanish = language === 'es';
     const isReusingSink = form.sinkBasinPreference === 'reuse-existing'
         && form.sinkMountPreference === 'reuse-existing'
         && form.sinkMaterialPreference === 'reuse-existing';
@@ -93,7 +95,13 @@ export default function LeadForm({ content, routeId = 'homepage', collapsible = 
     const useModal = collapsible;
     const showInlineForm = isExpanded && !useModal;
     const showModal = isExpanded && useModal;
-    const currentStep = RESIDENTIAL_STEPS[activeStep];
+    const currentStep = spanish
+        ? [
+            { eyebrow: 'Paso 1', title: 'Datos del proyecto', description: 'Comienza con tus datos de contacto y el tamaño aproximado del proyecto.' },
+            { eyebrow: 'Paso 2', title: 'Retiro y fregadero', description: 'Indica qué cambiará para planificar el retiro y la configuración del fregadero.' },
+            { eyebrow: 'Paso 3', title: 'Acabado y material', description: 'Elige el plazo, el salpicadero y una dirección de losa seleccionada.' },
+        ][activeStep]
+        : RESIDENTIAL_STEPS[activeStep];
 
     const notifyQuoteOpen = useCallback(() => {
         if (typeof document === 'undefined') {
@@ -384,7 +392,7 @@ export default function LeadForm({ content, routeId = 'homepage', collapsible = 
                     aria-hidden="true"
                 />
 
-                <div className="rounded-2xl border border-border bg-surface/50 p-4">
+                <div className="rounded-2xl border border-border bg-surface p-4">
                     <div className="flex items-center justify-between gap-3">
                         <div>
                             <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted">{currentStep.eyebrow}</div>
@@ -402,8 +410,8 @@ export default function LeadForm({ content, routeId = 'homepage', collapsible = 
 
                 {activeStep === 0 ? (
                     <>
-                <label className="block">
-                    <span className="mb-2 block text-sm font-medium text-text">Full name</span>
+                    <label className="block">
+                    <span className="mb-2 block text-sm font-medium text-text">{spanish ? 'Nombre completo' : 'Full name'}</span>
                     <input
                         className="form-input"
                         type="text"
@@ -417,8 +425,8 @@ export default function LeadForm({ content, routeId = 'homepage', collapsible = 
                     {errors.name && <span className="form-error">{errors.name}</span>}
                 </label>
 
-                <label className="block">
-                    <span className="mb-2 block text-sm font-medium text-text">Email</span>
+                    <label className="block">
+                    <span className="mb-2 block text-sm font-medium text-text">{spanish ? 'Correo electrónico' : 'Email'}</span>
                     <input
                         className="form-input"
                         type="email"
@@ -431,8 +439,8 @@ export default function LeadForm({ content, routeId = 'homepage', collapsible = 
                     {errors.email && <span className="form-error">{errors.email}</span>}
                 </label>
 
-                <label className="block">
-                    <span className="mb-2 block text-sm font-medium text-text">Phone</span>
+                    <label className="block">
+                    <span className="mb-2 block text-sm font-medium text-text">{spanish ? 'Teléfono' : 'Phone'}</span>
                     <input
                         className="form-input"
                         type="tel"
@@ -445,8 +453,8 @@ export default function LeadForm({ content, routeId = 'homepage', collapsible = 
                     {errors.phone && <span className="form-error">{errors.phone}</span>}
                 </label>
 
-                <label className="block">
-                    <span className="mb-2 block text-sm font-medium text-text">Notes</span>
+                    <label className="block">
+                    <span className="mb-2 block text-sm font-medium text-text">{spanish ? 'Notas' : 'Notes'}</span>
                     <textarea
                         className="form-input min-h-24 resize-y"
                         name="projectDetails"
@@ -458,13 +466,13 @@ export default function LeadForm({ content, routeId = 'homepage', collapsible = 
                     {errors.projectDetails && <span className="form-error">{errors.projectDetails}</span>}
                 </label>
 
-                <div className="rounded-2xl border border-border bg-surface/50 p-4">
-                    <div className="text-sm font-semibold text-text">Rough drawing with measurements</div>
-                    <p className="mt-1 text-xs leading-5 text-muted">Upload a phone photo, JPG, or PNG drawing. This is optional if you provide total square footage.</p>
+                <div className="rounded-2xl border border-border bg-surface p-4">
+                    <div className="text-sm font-semibold text-text">{spanish ? 'Dibujo con medidas' : 'Rough drawing with measurements'}</div>
+                    <p className="mt-1 text-xs leading-5 text-muted">{spanish ? 'Sube una foto del dibujo en JPG o PNG. Es opcional si indicas los pies cuadrados.' : 'Upload a phone photo, JPG, or PNG drawing. This is optional if you provide total square footage.'}</p>
 
                     <div className="mt-3 flex flex-wrap items-center gap-2">
                         <label className="inline-flex cursor-pointer items-center justify-center rounded-full border border-border bg-panel/80 px-4 py-2 text-sm font-semibold text-text transition hover:border-accent hover:text-accent">
-                            Upload drawing image
+                            {spanish ? 'Subir dibujo' : 'Upload drawing image'}
                             <input
                                 className="hidden"
                                 type="file"
@@ -481,7 +489,7 @@ export default function LeadForm({ content, routeId = 'homepage', collapsible = 
                                     className="inline-flex items-center justify-center rounded-full border border-border px-3 py-1.5 text-xs font-semibold text-text transition hover:border-accent hover:text-accent"
                                     onClick={handleClearDrawing}
                                 >
-                                    Remove
+                                    {spanish ? 'Quitar' : 'Remove'}
                                 </button>
                             </>
                         ) : null}
@@ -490,9 +498,9 @@ export default function LeadForm({ content, routeId = 'homepage', collapsible = 
                     {errors.drawingImage && <span className="form-error">{errors.drawingImage}</span>}
                 </div>
 
-                <div className="rounded-2xl border border-border bg-surface/50 p-4">
-                    <div className="text-sm font-semibold text-text">Square footage fallback</div>
-                    <p className="mt-1 text-xs leading-5 text-muted">If you are not uploading a drawing, enter the rough total area here. Final measurements are confirmed on site.</p>
+                <div className="rounded-2xl border border-border bg-surface p-4">
+                    <div className="text-sm font-semibold text-text">{spanish ? 'Pies cuadrados aproximados' : 'Square footage fallback'}</div>
+                    <p className="mt-1 text-xs leading-5 text-muted">{spanish ? 'Si no subes un dibujo, indica el área aproximada. Las medidas finales se confirman en el sitio.' : 'If you are not uploading a drawing, enter the rough total area here. Final measurements are confirmed on site.'}</p>
                     <label className="mt-3 block">
                         <span className="sr-only">Total square footage</span>
                         <div className="form-input-group">
@@ -519,7 +527,7 @@ export default function LeadForm({ content, routeId = 'homepage', collapsible = 
                 {activeStep === 1 ? (
                     <>
                 <div>
-                    <span className="mb-2 block text-sm font-medium text-text">Current tops removal?</span>
+                    <span className="mb-2 block text-sm font-medium text-text">{spanish ? '¿Retirar cubiertas actuales?' : 'Current tops removal?'}</span>
                     <div className="flex flex-wrap gap-2">
                         {removalOptions.map((option) => (
                             <button
@@ -537,7 +545,7 @@ export default function LeadForm({ content, routeId = 'homepage', collapsible = 
 
                 {isTearOutSelected ? (
                     <div>
-                        <span className="mb-2 block text-sm font-medium text-text">Current tops material</span>
+                        <span className="mb-2 block text-sm font-medium text-text">{spanish ? 'Material actual' : 'Current tops material'}</span>
                         <div className="flex flex-wrap gap-1.5">
                             {currentTopMaterialOptions.map((option) => (
                                 <button
@@ -555,15 +563,15 @@ export default function LeadForm({ content, routeId = 'homepage', collapsible = 
                 ) : null}
 
                 <div className="rounded-2xl border border-border bg-surface/50 p-4">
-                    <div className="text-sm font-semibold text-text">Sink preference</div>
+                    <div className="text-sm font-semibold text-text">{spanish ? 'Preferencia de fregadero' : 'Sink preference'}</div>
                     <div className="mt-2.5 space-y-2.5">
                         <button
                             type="button"
                             className={`form-chip form-chip--advisory${isReusingSink ? ' form-chip--active' : ''}`}
                             onClick={handleReuseExistingSinkToggle}
                         >
-                            Keep current sink
-                            <span className="form-chip-note">Not recommended</span>
+                            {spanish ? 'Conservar fregadero actual' : 'Keep current sink'}
+                            <span className="form-chip-note">{spanish ? 'No recomendado' : 'Not recommended'}</span>
                         </button>
 
                         {!isReusingSink ? (
@@ -628,7 +636,7 @@ export default function LeadForm({ content, routeId = 'homepage', collapsible = 
                 {activeStep === 2 ? (
                     <>
                 <div>
-                    <span className="mb-2 block text-sm font-medium text-text">Backsplash preference</span>
+                    <span className="mb-2 block text-sm font-medium text-text">{spanish ? 'Preferencia de salpicadero' : 'Backsplash preference'}</span>
                     <div className="flex flex-wrap gap-2">
                         {backsplashOptions.map((option) => (
                             <button
@@ -645,7 +653,7 @@ export default function LeadForm({ content, routeId = 'homepage', collapsible = 
                 </div>
 
                 <div>
-                    <span className="mb-2 block text-sm font-medium text-text">Target timeframe</span>
+                    <span className="mb-2 block text-sm font-medium text-text">{spanish ? 'Plazo deseado' : 'Target timeframe'}</span>
                     <div className="flex flex-wrap gap-2">
                         {timeframeOptions.map((option) => (
                             <button
@@ -662,8 +670,8 @@ export default function LeadForm({ content, routeId = 'homepage', collapsible = 
                 </div>
 
                 <div>
-                    <span className="mb-2 block text-sm font-medium text-text">Curated slab preference</span>
-                    <p className="mb-3 text-xs leading-5 text-muted">Selections are limited to curated slabs so pricing and quoting can be automated.</p>
+                    <span className="mb-2 block text-sm font-medium text-text">{spanish ? 'Preferencia de losa seleccionada' : 'Curated slab preference'}</span>
+                    <p className="mb-3 text-xs leading-5 text-muted">{spanish ? 'Las opciones están limitadas a losas seleccionadas para agilizar el presupuesto.' : 'Selections are limited to curated slabs so pricing and quoting can be automated.'}</p>
                     <div className="space-y-3">
                         {curatedSlabOptions.map((group) => (
                             <div key={group.group}>
@@ -697,11 +705,11 @@ export default function LeadForm({ content, routeId = 'homepage', collapsible = 
                         onClick={handlePreviousStep}
                         tabIndex={activeStep === 0 ? -1 : 0}
                     >
-                        Back
+                        {spanish ? 'Atrás' : 'Back'}
                     </button>
                     {activeStep < RESIDENTIAL_STEPS.length - 1 ? (
                         <button type="button" className="brand-button-primary px-5 py-3 text-sm font-semibold" onClick={handleNextStep}>
-                            Continue
+                            {spanish ? 'Continuar' : 'Continue'}
                         </button>
                     ) : (
                         <button className="brand-button-primary px-5 py-3 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-70" type="submit" disabled={isSubmitting}>
@@ -717,7 +725,7 @@ export default function LeadForm({ content, routeId = 'homepage', collapsible = 
                 )}
             </div>
 
-            <div id="contact" className="mt-6 rounded-2xl border border-border bg-surface/75 p-4 text-sm text-muted">
+            <div id="contact" className="mt-6 rounded-2xl border border-border bg-surface p-4 text-sm text-muted">
                 <div className="font-semibold text-text">{formContent.directResponseTitle}</div>
                 <p className="mt-2 leading-6">
                     {formContent.coverageText}
@@ -736,6 +744,12 @@ export default function LeadForm({ content, routeId = 'homepage', collapsible = 
                         aria-label={`Email Urban Stone Collective at ${companyEmail}`}
                     >
                         Email
+                    </a>
+                    <a
+                        className="brand-button-secondary inline-flex w-full items-center justify-center rounded-full px-4 py-3 font-semibold sm:w-auto sm:min-w-[11rem]"
+                        href={getSmsHref('Hi Urban Stone, I would like help with a countertop estimate.')}
+                    >
+                        Text us
                     </a>
                 </div>
             </div>

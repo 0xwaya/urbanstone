@@ -23,8 +23,8 @@ describe('TopNav', () => {
         expect(screen.getByText('Direct contact')).toBeInTheDocument();
 
         await user.keyboard('{Shift>}{Tab}{/Shift}');
-        const themeButtons = screen.getAllByRole('button', { name: /switch to light mode/i });
-        expect(themeButtons[themeButtons.length - 1]).toHaveFocus();
+        const languageLinks = screen.getAllByRole('link', { name: /cambiar a español/i });
+        expect(languageLinks[languageLinks.length - 1]).toHaveFocus();
 
         const materialLinks = screen.getAllByRole('link', { name: 'Materials' }).filter((link) => link.getAttribute('href') === '#suppliers');
         await user.click(materialLinks[materialLinks.length - 1]);

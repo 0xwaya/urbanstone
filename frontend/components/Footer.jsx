@@ -21,7 +21,8 @@ function SocialIcon({ children, href, label }) {
     );
 }
 
-export default function Footer() {
+export default function Footer({ language = 'en' }) {
+    const spanish = language === 'es';
     const currentYear = new Date().getFullYear();
     const instagramUrl = (process.env.NEXT_PUBLIC_INSTAGRAM_URL || INSTAGRAM_FALLBACK).trim();
     const facebookUrl = (process.env.NEXT_PUBLIC_FACEBOOK_URL || FACEBOOK_FALLBACK).trim();
@@ -36,22 +37,22 @@ export default function Footer() {
                         <div className="max-w-[36rem]">
                             <div className="eyebrow">Urban Stone Collective</div>
                             <div className="font-display text-[1.42rem] font-semibold leading-[0.98] sm:text-[1.78rem]">
-                                Cleaner installs, faster decisions, and curated slab sourcing across greater Cincinnati.
+                                {spanish ? 'Instalaciones más limpias, decisiones más rápidas y losas seleccionadas en todo Cincinnati.' : 'Cleaner installs, faster decisions, and curated slab sourcing across greater Cincinnati.'}
                             </div>
                             <p className="mt-2 max-w-[31rem] text-sm leading-6 text-muted">
-                                Urban Stone Collective serves homeowners, remodelers, and builders with curated slabs, fabrication, and installation across greater Cincinnati.
+                                {spanish ? 'Urban Stone Collective ayuda a propietarios, remodeladores y constructores con losas seleccionadas, fabricación e instalación en Cincinnati.' : 'Urban Stone Collective serves homeowners, remodelers, and builders with curated slabs, fabrication, and installation across greater Cincinnati.'}
                             </p>
                         </div>
 
                         <div className="flex flex-wrap gap-2.5 lg:justify-end">
                             <Link href="/coverage" className="inline-flex items-center justify-center rounded-full border border-border bg-surface/80 px-4 py-2 text-sm font-semibold text-text transition hover:border-accent hover:text-accent">
-                                Service areas
+                                {spanish ? 'Zonas de servicio' : 'Service areas'}
                             </Link>
                             <Link href="/contractors/login" className="inline-flex items-center justify-center rounded-full border border-border bg-surface/80 px-4 py-2 text-sm font-semibold text-text transition hover:border-accent hover:text-accent">
-                                Contractor portal
+                                {spanish ? 'Portal para contratistas' : 'Contractor portal'}
                             </Link>
                             <Link href="/#quote" className="brand-button-primary px-4 py-2 text-sm font-semibold">
-                                Request estimate
+                                {spanish ? 'Solicitar presupuesto' : 'Request estimate'}
                             </Link>
                         </div>
                     </div>

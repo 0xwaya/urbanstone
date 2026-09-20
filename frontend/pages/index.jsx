@@ -66,7 +66,7 @@ export default function Home() {
         email: companyEmail,
         contactType: 'sales',
         areaServed: ['Greater Cincinnati', 'Northern Kentucky'],
-        availableLanguage: ['en'],
+        availableLanguage: ['en', 'es'],
       },
     ],
   };
@@ -76,7 +76,7 @@ export default function Home() {
     '@id': `${siteUrl}#website`,
     url: siteUrl,
     name: 'Urban Stone Collective',
-    inLanguage: 'en-US',
+    inLanguage: ['en-US', 'es-US'],
   };
   const faqStructuredData = {
     '@context': 'https://schema.org',
@@ -102,6 +102,9 @@ export default function Home() {
         <meta name="geo.region" content={getGeoRegion('OH')} />
         <meta name="geo.placename" content="Cincinnati" />
         <link rel="canonical" href={canonicalUrl} />
+        <link rel="alternate" hrefLang="en" href={canonicalUrl} />
+        <link rel="alternate" hrefLang="es" href={getCanonicalUrl('/es')} />
+        <link rel="alternate" hrefLang="x-default" href={canonicalUrl} />
         <meta property="og:title" content="Urban Stone Collective | countertops specialists" />
         <meta property="og:description" content="Urban Stone Collective | countertops specialists. Quartz, granite, and quartzite countertops with expert fabrication and installation in Cincinnati and Northern Kentucky." />
         <meta property="og:type" content="website" />

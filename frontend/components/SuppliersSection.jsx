@@ -9,7 +9,8 @@ function toTelHref(value) {
     return value.replace(/[^\d+]/g, '');
 }
 
-export default function SuppliersSection() {
+export default function SuppliersSection({ language = 'en' }) {
+    const spanish = language === 'es';
     const [expandedSupplierName, setExpandedSupplierName] = useState(null);
     const [detailedSuppliers, setDetailedSuppliers] = useState({});
     const [loadErrors, setLoadErrors] = useState({});
@@ -79,12 +80,12 @@ export default function SuppliersSection() {
         <section id="suppliers" className="scroll-mt-28 py-8 sm:scroll-mt-36 sm:py-12">
             <div className="mb-7 flex flex-col gap-4 sm:mb-8 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
                 <div className="pl-1 pr-1 sm:pl-4 sm:pr-4">
-                    <div className="eyebrow mb-3 sm:mb-4">Materials Library</div>
-                    <h2 className="font-display text-4xl font-bold leading-tight sm:text-5xl sm:leading-tight mb-3">Curated Countertop Materials</h2>
-                    <p className="max-w-3xl text-lg text-muted sm:text-xl">Shortlist slab directions faster, then let Urban Stone handle final stone selection, measurements, deposit, fabrication, and installation.</p>
+                    <div className="eyebrow mb-3 sm:mb-4">{spanish ? 'Biblioteca de materiales' : 'Materials Library'}</div>
+                        <h2 className="font-display text-4xl font-bold leading-tight sm:text-5xl sm:leading-tight mb-3">{spanish ? 'Materiales seleccionados para cubiertas' : 'Curated Countertop Materials'}</h2>
+                        <p className="max-w-3xl text-lg text-muted sm:text-xl">{spanish ? 'Reduce más rápido tus opciones de losa y deja que Urban Stone coordine la selección final, las medidas, el depósito, la fabricación y la instalación.' : 'Shortlist slab directions faster, then let Urban Stone handle final stone selection, measurements, deposit, fabrication, and installation.'}</p>
                 </div>
                 <div className="flex flex-col gap-2 sm:max-w-[18rem] sm:items-end mt-4 sm:mt-0">
-                    <a className="materials-next-step-button materials-next-step-button--shine w-full sm:w-auto text-base font-bold px-8 py-4 shadow-lg" href="#quote">ESTIMATE</a>
+                    <a className="materials-next-step-button materials-next-step-button--shine w-full sm:w-auto text-base font-bold px-8 py-4 shadow-lg" href="#quote">{spanish ? 'PRESUPUESTO' : 'ESTIMATE'}</a>
                 </div>
             </div>
             {sortedSupplierSummaries.map((summary) => (
@@ -100,14 +101,14 @@ export default function SuppliersSection() {
             <div className="mt-4 rounded-[1.35rem] border border-border bg-panel/55 p-4 shadow-soft sm:mt-6 sm:p-5">
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <div className="max-w-2xl">
-                        <div className="eyebrow !mb-2">Next step</div>
-                        <h3 className="font-display text-2xl font-semibold text-text sm:text-[2rem]">Need help narrowing the shortlist?</h3>
-                        <p className="mt-2 text-sm leading-6 text-muted">Send your layout, preferred look, and any measurements you have. We will guide the slab direction and handle the next steps directly.</p>
+                        <div className="eyebrow !mb-2">{spanish ? 'Siguiente paso' : 'Next step'}</div>
+                        <h3 className="font-display text-2xl font-semibold text-text sm:text-[2rem]">{spanish ? '¿Necesitas ayuda para elegir?' : 'Need help narrowing the shortlist?'}</h3>
+                        <p className="mt-2 text-sm leading-6 text-muted">{spanish ? 'Envía tu plano, el estilo que buscas y las medidas que tengas. Te ayudaremos a elegir la losa y coordinaremos los siguientes pasos.' : 'Send your layout, preferred look, and any measurements you have. We will guide the slab direction and handle the next steps directly.'}</p>
                     </div>
                     <div className="flex flex-col gap-3 sm:w-auto sm:min-w-[14rem]">
-                        <a className="materials-next-step-button" href="#quote">Start with an estimate</a>
+                        <a className="materials-next-step-button" href="#quote">{spanish ? 'Comenzar con un presupuesto' : 'Start with an estimate'}</a>
                         <a className="inline-flex items-center justify-center rounded-full border border-border bg-surface/75 px-4 py-3 text-sm font-semibold text-text transition hover:border-accent hover:text-accent" href={`tel:${toTelHref(companyPhone)}`} aria-label={`Call Urban Stone at ${companyPhone}`}>
-                            Call Urban Stone
+                            {spanish ? 'Llamar a Urban Stone' : 'Call Urban Stone'}
                         </a>
                     </div>
                 </div>

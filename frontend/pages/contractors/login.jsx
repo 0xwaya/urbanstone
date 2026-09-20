@@ -1,13 +1,94 @@
 import Head from 'next/head';
-import Link from 'next/link';
 import LogoMark from '../../components/LogoMark';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { getContractorAdminEmails, normalizeEmail } from '../../lib/contractor-access';
+import { getSmsHref } from '../../lib/contact';
 
 const MODE = { REGISTER: 'register', LOGIN: 'login' };
 
+const COPY = {
+    en: {
+        htmlLang: 'en-US',
+        title: 'Contractor Program — Urban Stone',
+        eyebrow: 'Contractor Program',
+        heroTitle: 'Contractor pricing and project tools.',
+        heroIntro: 'Request access for commercial and multi-unit countertop work.',
+        heroNote: 'Get contractor pricing, rollout planning, and commercial estimate support.',
+        requestTab: 'Request Access',
+        registeredTab: 'Already Registered',
+        requestTitle: 'Request access',
+        requestIntro: "Share your company details and we'll follow up by email.",
+        loginTitle: 'Get your access link',
+        loginIntro: 'Enter your approved business email.',
+        email: 'Business Email',
+        company: 'Company Name',
+        website: 'Website or Social Profile',
+        emailPlaceholder: 'you@yourcompany.com',
+        companyPlaceholder: 'Apex Builders LLC',
+        websitePlaceholder: 'https://yourcompany.com',
+        submit: 'Submit Application',
+        submitting: 'Submitting...',
+        sendLink: 'Send Magic Link',
+        sending: 'Sending...',
+        registrationSuccess: 'Application submitted.',
+        registrationError: 'Something went wrong. Please try again.',
+        networkError: 'Network error. Please try again.',
+        loginSuccess: 'Check your email for a magic link.',
+        loginError: 'Magic link request failed. Please try again.',
+        adminError: 'Admin login failed.',
+    },
+    es: {
+        htmlLang: 'es',
+        title: 'Programa para contratistas — Urban Stone',
+        eyebrow: 'Programa para contratistas',
+        heroTitle: 'Precios y herramientas para contratistas.',
+        heroIntro: 'Solicita acceso para proyectos comerciales y de varias unidades.',
+        heroNote: 'Obtén precios para contratistas, planificación de obra y apoyo para presupuestos comerciales.',
+        requestTab: 'Solicitar acceso',
+        registeredTab: 'Ya estoy registrado',
+        requestTitle: 'Solicitar acceso',
+        requestIntro: 'Comparte los datos de tu empresa y te responderemos por correo.',
+        loginTitle: 'Obtener enlace de acceso',
+        loginIntro: 'Ingresa el correo empresarial aprobado.',
+        email: 'Correo empresarial',
+        company: 'Nombre de la empresa',
+        website: 'Sitio web o perfil social',
+        emailPlaceholder: 'tu@empresa.com',
+        companyPlaceholder: 'Constructora Apex LLC',
+        websitePlaceholder: 'https://tuempresa.com',
+        submit: 'Enviar solicitud',
+        submitting: 'Enviando...',
+        sendLink: 'Enviar enlace de acceso',
+        sending: 'Enviando...',
+        registrationSuccess: 'Solicitud enviada.',
+        registrationError: 'Ocurrió un problema. Inténtalo de nuevo.',
+        networkError: 'Error de conexión. Inténtalo de nuevo.',
+        loginSuccess: 'Revisa tu correo para obtener el enlace de acceso.',
+        loginError: 'No se pudo solicitar el enlace. Inténtalo de nuevo.',
+        adminError: 'No se pudo iniciar la sesión de administrador.',
+    },
+};
+
 export default function ContractorLogin() {
     const [mode, setMode] = useState(MODE.REGISTER);
+    const [language, setLanguage] = useState('en');
+    const copy = COPY[language];
+
+    useEffect(() => {
+        const savedLanguage = window.localStorage.getItem('urbanstone-contractor-language');
+        if (savedLanguage === 'en' || savedLanguage === 'es') {
+            setLanguage(savedLanguage);
+        }
+    }, []);
+
+    useEffect(() => {
+        document.documentElement.lang = copy.htmlLang;
+        window.localStorage.setItem('urbanstone-contractor-language', language);
+    }, [copy.htmlLang, language]);
+
+    const handleLanguageChange = (nextLanguage) => {
+        setLanguage(nextLanguage);
+    };
 
     // Register state
     const [regEmail, setRegEmail] = useState('');
@@ -43,17 +124,17 @@ export default function ContractorLogin() {
                 body: JSON.stringify({ email: regEmail, company_name: regCompany, website: regWebsite }),
             });
             if (res.ok) {
-                const message = await readApiResponse(res, 'Application submitted.');
+                const message = await readApiResponse(res, copy.registrationSuccess);
                 setRegStatus('success');
                 setRegMsg(message);
             } else {
-                const message = await readApiResponse(res, 'Something went wrong. Please try again.');
+                const message = await readApiResponse(res, copy.registrationError);
                 setRegStatus('error');
                 setRegMsg(message);
             }
         } catch {
             setRegStatus('error');
-            setRegMsg('Network error. Please try again.');
+            setRegMsg(copy.networkError);
         }
     }
 
@@ -77,14 +158,14 @@ export default function ContractorLogin() {
                     window.location.href = '/contractors';
                     return;
                 } else {
-                    const message = await readApiResponse(res, 'Admin login failed.');
+                    const message = await readApiResponse(res, copy.adminError);
                     setLoginStatus('error');
                     setLoginMsg(message);
                     return;
                 }
             } catch {
                 setLoginStatus('error');
-                setLoginMsg('Network error. Please try again.');
+                setLoginMsg(copy.networkError);
                 return;
             }
         }
@@ -96,48 +177,70 @@ export default function ContractorLogin() {
                 body: JSON.stringify({ email: loginEmail }),
             });
             if (res.ok) {
-                const message = await readApiResponse(res, 'Check your email for a magic link.');
+                const message = await readApiResponse(res, copy.loginSuccess);
                 setLoginStatus('success');
                 setLoginMsg(message);
             } else {
-                const message = await readApiResponse(res, 'Magic link request failed. Please try again.');
+                const message = await readApiResponse(res, copy.loginError);
                 setLoginStatus('error');
                 setLoginMsg(message);
             }
         } catch {
             setLoginStatus('error');
-            setLoginMsg('Network error. Please try again.');
+            setLoginMsg(copy.networkError);
         }
     }
 
     return (
         <>
             <Head>
-                <title>Contractor Program — Urban Stone</title>
+                <title>{copy.title}</title>
                 <meta name="robots" content="noindex,nofollow" />
             </Head>
 
             <div className="min-h-screen bg-bg px-4 py-12 text-text selection:bg-accent selection:text-white sm:px-6 sm:py-16">
-                <div className="mx-auto grid w-full max-w-6xl gap-5 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
+                <div className="mx-auto w-full max-w-6xl">
+                    <div className="mb-5 flex justify-end">
+                        <div className="inline-flex items-center rounded-full border border-border bg-panel/80 p-1 shadow-soft" role="tablist" aria-label="Language">
+                            {['en', 'es'].map((option) => (
+                                <button
+                                    key={option}
+                                    type="button"
+                                    role="tab"
+                                    aria-selected={language === option}
+                                    onClick={() => handleLanguageChange(option)}
+                                    className={`rounded-full px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] transition ${language === option
+                                        ? 'bg-accent text-white shadow-soft'
+                                        : 'text-muted hover:text-text'}`}
+                                >
+                                    {option}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                    <div className="grid gap-5 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
                     <div className="brand-section rounded-[2.3rem] p-6 sm:p-8">
                         <div className="flex items-center gap-3">
                             <LogoMark className="h-10 w-10" />
-                            <p className="eyebrow mb-0">Contractor Program</p>
+                            <p className="eyebrow mb-0">{copy.eyebrow}</p>
                         </div>
                         <h1 className="mt-6 text-3xl font-display font-semibold leading-tight text-text sm:text-[2.8rem]">
-                            Portal access for commercial and multi-unit countertop work.
+                            {copy.heroTitle}
                         </h1>
                         <p className="mt-4 text-sm leading-7 text-muted sm:text-base">
-                            Apply for access to our contractor portal and unlock exclusive pricing, project planning tools, and fast commercial estimates for multi-unit projects.
+                            {copy.heroIntro}
                         </p>
-                        <div className="mt-6 grid gap-3 sm:grid-cols-2">
-                            <div className="brand-card px-4 py-4 text-sm leading-6 text-text">
-                                Submit your business details to request access. Approved contractors receive a secure login link by email.
-                            </div>
-                            <div className="brand-card px-4 py-4 text-sm leading-6 text-text">
-                                Once approved, you can view contractor pricing and use our estimate assistant for your upcoming projects.
-                            </div>
+                        <div className="mt-6 border-l-2 border-accent/60 pl-4 text-sm leading-6 text-text">
+                            {copy.heroNote}
                         </div>
+                        <a
+                            className="brand-button-secondary mt-6 inline-flex items-center justify-center rounded-full px-4 py-3 text-sm font-semibold"
+                            href={getSmsHref(language === 'es'
+                                ? 'Hola Urban Stone, soy contratista y necesito información sobre el portal o precios para proyectos.'
+                                : 'Hi Urban Stone, I am a contractor and would like portal or project pricing information.')}
+                        >
+                            {language === 'es' ? 'Escribir al equipo de ventas' : 'Text the sales desk'}
+                        </a>
                     </div>
 
                     <div className="brand-section w-full overflow-hidden rounded-[2rem]">
@@ -150,7 +253,7 @@ export default function ContractorLogin() {
                                     : 'text-muted hover:text-text'
                                     }`}
                             >
-                                Request Access
+                                {copy.requestTab}
                             </button>
                             <button
                                 onClick={() => setMode(MODE.LOGIN)}
@@ -159,17 +262,15 @@ export default function ContractorLogin() {
                                     : 'text-muted hover:text-text'
                                     }`}
                             >
-                                Already Registered
+                                {copy.registeredTab}
                             </button>
                         </div>
 
                         <div className="p-8">
                             {mode === MODE.REGISTER ? (
                                 <>
-                                    <h1 className="text-xl font-semibold text-text mb-1">Apply for Contractor Access</h1>
-                                    <p className="text-sm text-muted mb-6">
-                                        For apartment builders, hotel developers, and office contractors only. We&apos;ll review your application and send a magic link when approved.
-                                    </p>
+                                    <h1 className="text-xl font-semibold text-text mb-1">{copy.requestTitle}</h1>
+                                    <p className="text-sm text-muted mb-6">{copy.requestIntro}</p>
 
                                     {regStatus === 'success' ? (
                                         <div className="bg-accent/10 border border-accent/30 rounded-xl p-5 text-sm text-text">
@@ -179,7 +280,7 @@ export default function ContractorLogin() {
                                         <form onSubmit={handleRegister} className="flex flex-col gap-4">
                                             <div>
                                                 <label className="block text-xs text-muted mb-1.5" htmlFor="reg-email">
-                                                    Business Email
+                                                    {copy.email}
                                                 </label>
                                                 <input
                                                     id="reg-email"
@@ -187,13 +288,13 @@ export default function ContractorLogin() {
                                                     required
                                                     value={regEmail}
                                                     onChange={e => setRegEmail(e.target.value)}
-                                                    placeholder="you@yourcompany.com"
+                                                    placeholder={copy.emailPlaceholder}
                                                     className="form-input rounded-lg py-2.5 text-sm"
                                                 />
                                             </div>
                                             <div>
                                                 <label className="block text-xs text-muted mb-1.5" htmlFor="reg-company">
-                                                    Company Name
+                                                    {copy.company}
                                                 </label>
                                                 <input
                                                     id="reg-company"
@@ -201,13 +302,13 @@ export default function ContractorLogin() {
                                                     required
                                                     value={regCompany}
                                                     onChange={e => setRegCompany(e.target.value)}
-                                                    placeholder="Apex Builders LLC"
+                                                    placeholder={copy.companyPlaceholder}
                                                     className="form-input rounded-lg py-2.5 text-sm"
                                                 />
                                             </div>
                                             <div>
                                                 <label className="block text-xs text-muted mb-1.5" htmlFor="reg-website">
-                                                    Website or Social Profile
+                                                    {copy.website}
                                                 </label>
                                                 <input
                                                     id="reg-website"
@@ -215,7 +316,7 @@ export default function ContractorLogin() {
                                                     required
                                                     value={regWebsite}
                                                     onChange={e => setRegWebsite(e.target.value)}
-                                                    placeholder="https://yourcompany.com"
+                                                    placeholder={copy.websitePlaceholder}
                                                     className="form-input rounded-lg py-2.5 text-sm"
                                                 />
                                             </div>
@@ -227,17 +328,15 @@ export default function ContractorLogin() {
                                                 disabled={regStatus === 'loading'}
                                                 className="brand-button-primary mt-2 disabled:cursor-not-allowed disabled:opacity-50"
                                             >
-                                                {regStatus === 'loading' ? 'Submitting…' : 'Submit Application'}
+                                                {regStatus === 'loading' ? copy.submitting : copy.submit}
                                             </button>
                                         </form>
                                     )}
                                 </>
                             ) : (
                                 <>
-                                    <h1 className="text-xl font-semibold text-text mb-1">Get Your Access Link</h1>
-                                    <p className="text-sm text-muted mb-6">
-                                        Already approved? Enter your email and we&apos;ll send a secure login link valid for 4 hours.
-                                    </p>
+                                    <h1 className="text-xl font-semibold text-text mb-1">{copy.loginTitle}</h1>
+                                    <p className="text-sm text-muted mb-6">{copy.loginIntro}</p>
 
                                     {loginStatus === 'success' ? (
                                         <div className="bg-accent/10 border border-accent/30 rounded-xl p-5 text-sm text-text">
@@ -247,7 +346,7 @@ export default function ContractorLogin() {
                                         <form onSubmit={handleLogin} className="flex flex-col gap-4">
                                             <div>
                                                 <label className="block text-xs text-muted mb-1.5" htmlFor="login-email">
-                                                    Business Email
+                                                    {copy.email}
                                                 </label>
                                                 <input
                                                     id="login-email"
@@ -255,7 +354,7 @@ export default function ContractorLogin() {
                                                     required
                                                     value={loginEmail}
                                                     onChange={e => setLoginEmail(e.target.value)}
-                                                    placeholder="you@yourcompany.com"
+                                                    placeholder={copy.emailPlaceholder}
                                                     className="form-input rounded-lg py-2.5 text-sm"
                                                 />
                                             </div>
@@ -267,7 +366,7 @@ export default function ContractorLogin() {
                                                 disabled={loginStatus === 'loading'}
                                                 className="brand-button-primary mt-2 disabled:cursor-not-allowed disabled:opacity-50"
                                             >
-                                                {loginStatus === 'loading' ? 'Sending…' : 'Send Magic Link'}
+                                                {loginStatus === 'loading' ? copy.sending : copy.sendLink}
                                             </button>
                                         </form>
                                     )}
@@ -276,10 +375,7 @@ export default function ContractorLogin() {
                         </div>
                     </div>
 
-                    <p className="mx-auto mt-6 max-w-xs text-center text-xs text-muted lg:mx-0">
-                        This portal is for qualified contractors only. Residential inquiries should use our{' '}
-                        <Link href="/" className="text-accent hover:underline">main site</Link>.
-                    </p>
+                </div>
                 </div>
             </div>
         </>

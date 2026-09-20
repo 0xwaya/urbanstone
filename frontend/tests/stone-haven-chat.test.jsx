@@ -23,7 +23,7 @@ describe('StoneHavenChat keyboard behavior', () => {
     it('sends message when pressing Enter without Shift', async () => {
         render(<StoneHavenChat embedded />);
 
-        const input = screen.getByLabelText(/message stone haven/i);
+        const input = screen.getByLabelText(/message onyx ai assistant/i);
         fireEvent.change(input, { target: { value: 'Need a kitchen quote in Mason' } });
         fireEvent.keyDown(input, { key: 'Enter', code: 'Enter', shiftKey: false });
 
@@ -35,7 +35,7 @@ describe('StoneHavenChat keyboard behavior', () => {
     it('does not send on Shift+Enter', async () => {
         render(<StoneHavenChat embedded />);
 
-        const input = screen.getByLabelText(/message stone haven/i);
+        const input = screen.getByLabelText(/message onyx ai assistant/i);
         fireEvent.change(input, { target: { value: 'Need a kitchen quote in Mason' } });
         fireEvent.keyDown(input, { key: 'Enter', code: 'Enter', shiftKey: true });
 
@@ -60,7 +60,7 @@ describe('StoneHavenChat keyboard behavior', () => {
 
         render(<StoneHavenChat embedded />);
 
-        const input = screen.getByLabelText(/message stone haven/i);
+        const input = screen.getByLabelText(/message onyx ai assistant/i);
         fireEvent.change(input, { target: { value: 'Need help with estimate' } });
         fireEvent.keyDown(input, { key: 'Enter', code: 'Enter', shiftKey: false });
 
