@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import StoneHavenChat from './StoneHavenChat';
 import LogoMark from './LogoMark';
+import useFocusTrap from '../lib/use-focus-trap';
 
 const QUOTE_OPEN_EVENT = 'urbanstone:quote-opened';
 const DESKTOP_BREAKPOINT = 640;
@@ -35,6 +36,8 @@ function ChatPopup({
     onOpenQuote,
     position,
 }) {
+    const popupRef = useRef(null);
+    useFocusTrap(popupRef, true, onClose);
     const popupStyle = position
         ? {
             left: `${position.x}px`,
@@ -44,6 +47,10 @@ function ChatPopup({
 
     return (
         <div
+            ref={popupRef}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Stone Haven chat"
             className={`fixed z-[60] flex w-[min(23rem,calc(100vw-1rem))] max-h-[calc(100dvh-5.5rem)] flex-col overflow-hidden rounded-[1.6rem] border border-border/90 bg-[linear-gradient(160deg,rgba(13,21,38,0.96),rgba(10,17,31,0.92))] shadow-[0_30px_90px_rgba(6,12,26,0.55)] ring-1 ring-border/55 backdrop-blur-xl ${position ? '' : 'bottom-20 left-2 right-2 sm:bottom-24 sm:left-auto sm:right-5'}`.trim()}
             style={popupStyle}
         >
@@ -115,6 +122,7 @@ export default function ChatWidget() {
     const [chatPosition, setChatPosition] = useState(null);
     const [dragging, setDragging] = useState(false);
     const dragOffsetRef = useRef({ x: 0, y: 0 });
+    const chatToggleRef = useRef(null);
 
     const companyPhone = process.env.NEXT_PUBLIC_COMPANY_PHONE || '(513) 307-5840';
     const companyEmail = process.env.NEXT_PUBLIC_LEAD_EMAIL || 'sales@urbanstone.co';
@@ -244,6 +252,7 @@ export default function ChatWidget() {
                 <div className="pointer-events-auto flex items-center rounded-full border border-border/80 bg-surface/95 p-1.5 shadow-[0_16px_34px_rgba(8,12,24,0.36)] backdrop-blur">
                     <button
                         type="button"
+                        ref={chatToggleRef}
                         className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[rgba(210,187,142,0.66)] bg-[linear-gradient(145deg,rgba(223,199,154,0.96),rgba(164,134,86,0.96))] text-lg text-[#122033] shadow-[0_10px_24px_rgba(96,72,40,0.45)] transition hover:bg-[linear-gradient(145deg,rgba(206,181,136,0.96),rgba(146,118,73,0.96))]"
                         onClick={showBot ? handleChatClose : handleChatOpen}
                         aria-label={showBot ? 'Close Stone Haven chat' : chatbotLabel}

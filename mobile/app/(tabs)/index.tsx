@@ -12,63 +12,17 @@ import Button from '@/components/ui/Button';
 import Field from '@/components/ui/Field';
 import OptionPicker from '@/components/ui/OptionPicker';
 import { submitLead } from '@/lib/api';
-import { validateEmail, validateName, validatePhone, validateSqft } from '@/lib/validation';
-
-// ---- Option sets (mirrored from frontend/data & frontend/lib/lead.js) ----
-
-const REMOVAL_OPTIONS = [
-  { value: 'yes', label: 'Yes, remove current tops' },
-  { value: 'no', label: 'No removal needed' },
-  { value: 'unsure', label: 'Not sure yet' },
-];
-
-const CURRENT_MATERIAL_OPTIONS = [
-  { value: 'laminate', label: 'Laminate' },
-  { value: 'granite', label: 'Granite' },
-  { value: 'quartz', label: 'Quartz' },
-  { value: 'tile', label: 'Tile' },
-  { value: 'other', label: 'Other' },
-];
-
-const BASIN_OPTIONS = [
-  { value: 'single', label: 'Single bowl' },
-  { value: 'double', label: 'Double bowl' },
-  { value: 'reuse-existing', label: 'Reuse existing' },
-];
-
-const MOUNT_OPTIONS = [
-  { value: 'undermount', label: 'Undermount' },
-  { value: 'topmount', label: 'Topmount' },
-  { value: 'reuse-existing', label: 'Reuse existing' },
-];
-
-const SINK_MATERIAL_OPTIONS = [
-  { value: 'stainless-steel', label: 'Stainless steel' },
-  { value: 'composite', label: 'Composite' },
-  { value: 'reuse-existing', label: 'Reuse existing' },
-];
-
-const BACKSPLASH_OPTIONS = [
-  { value: '4-inch', label: '4-inch' },
-  { value: 'full-height', label: 'Full height' },
-  { value: 'none', label: 'None' },
-];
-
-const TIMEFRAME_OPTIONS = [
-  { value: '1-week', label: '1 week' },
-  { value: '2-weeks', label: '2 weeks' },
-  { value: '1-month', label: '1 month' },
-];
-
-const MATERIAL_OPTIONS = [
-  { value: 'daltile-kodiak', label: 'Kodiak (Daltile)' },
-  { value: 'quartz-america-calacatta-dolce', label: 'Calacatta Dolce' },
-  { value: 'quartz-america-calacatta-nile', label: 'Calacatta Nile' },
-  { value: 'quartz-america-carrara-classique', label: 'Carrara Classique' },
-  { value: 'avani-calacatta-aurus-5035', label: 'Calacatta Aurus 5035' },
-  { value: 'daltile-absolute-black', label: 'Absolute Black (Granite)' },
-  { value: 'daltile-fantasy-brown', label: 'Fantasy Brown (Marble)' },
-];
+import {
+  backsplashOptions,
+  currentTopMaterialOptions,
+  materialOptions,
+  removalOptions,
+  sinkBasinOptions,
+  sinkMaterialOptions,
+  sinkMountOptions,
+  timeframeOptions,
+  validateLeadForm,
+} from '../../../shared/lead-form.js';
 
 // ---- Blank form state ----
 
@@ -119,22 +73,15 @@ export default function QuoteScreen() {
     };
 
   const validate = (): Errors => {
-    const e: Errors = {};
-    e.name = validateName(form.name) ?? undefined;
-    e.email = validateEmail(form.email) ?? undefined;
-    e.phone = validatePhone(form.phone) ?? undefined;
-    e.sqft = validateSqft(form.sqft) ?? undefined;
-    if (!form.currentTopRemoval) e.currentTopRemoval = 'Select an option.';
-    if (form.currentTopRemoval === 'yes' && form.currentTopMaterial.trim().length < 2)
-      e.currentTopMaterial = 'Enter current top material.';
-    if (!form.sinkBasinPreference) e.sinkBasinPreference = 'Select an option.';
-    if (!form.sinkMountPreference) e.sinkMountPreference = 'Select an option.';
-    if (!form.sinkMaterialPreference) e.sinkMaterialPreference = 'Select an option.';
-    if (!form.backsplashPreference) e.backsplashPreference = 'Select an option.';
-    if (!form.timeframeGoal) e.timeframeGoal = 'Select a timeframe.';
-    if (form.materialPreferences.length === 0)
-      e.materialPreferences = 'Select at least one material.';
-    return Object.fromEntries(Object.entries(e).filter(([, v]) => v));
+    const sharedErrors = validateLeadForm({
+      ...form,
+      totalSquareFootage: form.sqft,
+    });
+
+    return {
+      ...sharedErrors,
+      sqft: sharedErrors.totalSquareFootage,
+    };
   };
 
   const handleSubmit = async () => {
@@ -260,7 +207,7 @@ export default function QuoteScreen() {
         <Text className="text-accent text-xs uppercase tracking-widest mb-3 mt-2">Materials</Text>
         <OptionPicker
           label="Material Preferences (select all that interest you)"
-          options={MATERIAL_OPTIONS}
+          options={materialOptions}
           value=""
           onChange={() => {}}
           multi
@@ -273,7 +220,7 @@ export default function QuoteScreen() {
         <Text className="text-accent text-xs uppercase tracking-widest mb-3 mt-2">Current Tops</Text>
         <OptionPicker
           label="Remove Existing Tops?"
-          options={REMOVAL_OPTIONS}
+          options={removalOptions}
           value={form.currentTopRemoval}
           onChange={set('currentTopRemoval')}
           error={errors.currentTopRemoval}
@@ -281,7 +228,7 @@ export default function QuoteScreen() {
         {form.currentTopRemoval === 'yes' && (
           <OptionPicker
             label="Current Top Material"
-            options={CURRENT_MATERIAL_OPTIONS}
+            options={currentTopMaterialOptions}
             value={form.currentTopMaterial}
             onChange={set('currentTopMaterial')}
             error={errors.currentTopMaterial}
@@ -292,21 +239,21 @@ export default function QuoteScreen() {
         <Text className="text-accent text-xs uppercase tracking-widest mb-3 mt-2">Sink Configuration</Text>
         <OptionPicker
           label="Basin Type"
-          options={BASIN_OPTIONS}
+          options={sinkBasinOptions}
           value={form.sinkBasinPreference}
           onChange={set('sinkBasinPreference')}
           error={errors.sinkBasinPreference}
         />
         <OptionPicker
           label="Mount Style"
-          options={MOUNT_OPTIONS}
+          options={sinkMountOptions}
           value={form.sinkMountPreference}
           onChange={set('sinkMountPreference')}
           error={errors.sinkMountPreference}
         />
         <OptionPicker
           label="Sink Material"
-          options={SINK_MATERIAL_OPTIONS}
+          options={sinkMaterialOptions}
           value={form.sinkMaterialPreference}
           onChange={set('sinkMaterialPreference')}
           error={errors.sinkMaterialPreference}
@@ -316,14 +263,14 @@ export default function QuoteScreen() {
         <Text className="text-accent text-xs uppercase tracking-widest mb-3 mt-2">Finishing</Text>
         <OptionPicker
           label="Backsplash"
-          options={BACKSPLASH_OPTIONS}
+          options={backsplashOptions}
           value={form.backsplashPreference}
           onChange={set('backsplashPreference')}
           error={errors.backsplashPreference}
         />
         <OptionPicker
           label="Target Timeframe"
-          options={TIMEFRAME_OPTIONS}
+          options={timeframeOptions}
           value={form.timeframeGoal}
           onChange={set('timeframeGoal')}
           error={errors.timeframeGoal}

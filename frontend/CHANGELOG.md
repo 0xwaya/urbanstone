@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.0.0] - 2026-09-20
+
+- Added conversion-critical component coverage for `LeadForm`, `TopNav`, and `ChatWidget`.
+- Centralized lead-form options and validation for web, mobile, and server consumers.
+- Upgraded the frontend runtime from React 18 to React 19.1.0.
+- Added keyboard focus trapping, dialog semantics, Escape handling, and focus restoration to chat and mobile navigation.
+- Converted the residential estimate form into a validated three-step flow.
+
 ## [Unreleased]
 
 - SEO: Added shared `buildLocalBusinessSchema` helper (`lib/seo.js`) with `priceRange`, service-hub `geo` coordinates, `GeoCircle` service radius, and a `hasOfferCatalog` of quartz/granite/quartzite services; applied across homepage, service-area, and material pages
