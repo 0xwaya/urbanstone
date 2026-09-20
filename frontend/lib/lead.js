@@ -1,16 +1,16 @@
 import { createHash, randomUUID } from 'node:crypto';
-import { curatedSlabOptionValues } from '../data/curated-slab-options';
+import { leadOptionValues } from '../../shared/lead-form.js';
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PHONE_PATTERN = /^[0-9()+.\-\s]{7,24}$/;
 
-const MATERIAL_OPTIONS = curatedSlabOptionValues;
-const REMOVAL_OPTIONS = new Set(['yes', 'no', 'unsure']);
-const BASIN_OPTIONS = new Set(['single', 'double', 'reuse-existing']);
-const MOUNT_OPTIONS = new Set(['undermount', 'topmount', 'reuse-existing']);
-const SINK_MATERIAL_OPTIONS = new Set(['stainless-steel', 'composite', 'reuse-existing']);
-const BACKSPLASH_OPTIONS = new Set(['4-inch', 'full-height', 'none']);
-const TIMEFRAME_OPTIONS = new Set(['1-week', '2-weeks', '1-month']);
+const MATERIAL_OPTIONS = leadOptionValues.materials;
+const REMOVAL_OPTIONS = leadOptionValues.removal;
+const BASIN_OPTIONS = leadOptionValues.sinkBasin;
+const MOUNT_OPTIONS = leadOptionValues.sinkMount;
+const SINK_MATERIAL_OPTIONS = leadOptionValues.sinkMaterial;
+const BACKSPLASH_OPTIONS = leadOptionValues.backsplash;
+const TIMEFRAME_OPTIONS = leadOptionValues.timeframe;
 const MAX_DRAWING_BYTES = 5 * 1024 * 1024;
 const IMAGE_DATA_URL_PATTERN = /^data:image\/[a-zA-Z0-9.+-]+;base64,/;
 

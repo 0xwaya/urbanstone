@@ -1,5 +1,15 @@
 import { useCallback, useEffect, useState } from 'react';
 import { curatedSlabOptions } from '../data/curated-slab-options';
+import {
+    backsplashOptions,
+    currentTopMaterialOptions,
+    removalOptions,
+    sinkBasinOptions,
+    sinkMaterialOptions,
+    sinkMountOptions,
+    timeframeOptions,
+    validateLeadForm,
+} from '../../shared/lead-form.js';
 
 const QUOTE_OPEN_EVENT = 'urbanstone:quote-opened';
 
@@ -23,46 +33,6 @@ const initialForm = {
 
 const MAX_DRAWING_BYTES = 5 * 1024 * 1024;
 
-const removalOptions = [
-    { value: 'yes', label: 'Yes, remove current tops' },
-    { value: 'no', label: 'No removal needed' },
-    { value: 'unsure', label: 'Not sure yet' },
-];
-
-const currentTopMaterialOptions = [
-    { value: 'laminate', label: 'Laminate' },
-    { value: 'granite', label: 'Granite' },
-    { value: 'quartz', label: 'Quartz' },
-    { value: 'tile', label: 'Tile' },
-];
-
-const sinkBasinOptions = [
-    { value: 'single', label: 'Single bowl' },
-    { value: 'double', label: 'Double bowl' },
-];
-
-const sinkMountOptions = [
-    { value: 'undermount', label: 'Undermount' },
-    { value: 'topmount', label: 'Topmount' },
-];
-
-const sinkMaterialOptions = [
-    { value: 'stainless-steel', label: 'Stainless steel' },
-    { value: 'composite', label: 'Composite' },
-];
-
-const backsplashOptions = [
-    { value: '4-inch', label: '4 in backsplash' },
-    { value: 'full-height', label: 'Full-height backsplash' },
-    { value: 'none', label: 'No backsplash' },
-];
-
-const timeframeOptions = [
-    { value: '1-week', label: '1 week' },
-    { value: '2-weeks', label: '2 weeks' },
-    { value: '1-month', label: '1 month' },
-];
-
 function toTelHref(value) {
     return value.replace(/[^\d+]/g, '');
 }
@@ -77,6 +47,12 @@ const defaultContent = {
     directResponseTitle: 'Need a direct response?',
     coverageText: 'We respond to countertop estimate requests for Cincinnati, Mason, West Chester, Fairfield, Hamilton, Blue Ash, Loveland, Milford, Anderson Township, Covington, Newport, Florence, Erlanger, and nearby communities.',
 };
+
+const RESIDENTIAL_STEPS = [
+    { eyebrow: 'Step 1', title: 'Project basics', description: 'Start with your contact details and a rough sense of the project size.' },
+    { eyebrow: 'Step 2', title: 'Removal and sink', description: 'Tell us what is changing so we can plan the tear-out and sink configuration.' },
+    { eyebrow: 'Step 3', title: 'Finish and material', description: 'Choose your timing, backsplash, and a curated slab direction.' },
+];
 
 function formatFileSize(bytes) {
     if (!Number.isFinite(bytes) || bytes <= 0) {
@@ -105,6 +81,7 @@ export default function LeadForm({ content, routeId = 'homepage', collapsible = 
     const [status, setStatus] = useState({ type: 'idle', message: '' });
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isExpanded, setIsExpanded] = useState(collapsible ? defaultExpanded : true);
+    const [activeStep, setActiveStep] = useState(0);
 
     const companyPhone = process.env.NEXT_PUBLIC_COMPANY_PHONE || '(513) 307-5840';
     const companyEmail = process.env.NEXT_PUBLIC_LEAD_EMAIL || 'sales@urbanstone.co';
@@ -116,6 +93,7 @@ export default function LeadForm({ content, routeId = 'homepage', collapsible = 
     const useModal = collapsible;
     const showInlineForm = isExpanded && !useModal;
     const showModal = isExpanded && useModal;
+    const currentStep = RESIDENTIAL_STEPS[activeStep];
 
     const notifyQuoteOpen = useCallback(() => {
         if (typeof document === 'undefined') {
@@ -271,6 +249,14 @@ export default function LeadForm({ content, routeId = 'homepage', collapsible = 
 
     const handleSubmit = async (event) => {
         event.preventDefault();
+
+        const clientErrors = validateLeadForm(form, { hasDrawing: Boolean(form.drawingImage) });
+        if (Object.keys(clientErrors).length > 0) {
+            setErrors(clientErrors);
+            setStatus({ type: 'error', message: 'Please complete the highlighted fields before sending your request.' });
+            return;
+        }
+
         setIsSubmitting(true);
         setStatus({ type: 'idle', message: '' });
 
@@ -313,6 +299,31 @@ export default function LeadForm({ content, routeId = 'homepage', collapsible = 
         } finally {
             setIsSubmitting(false);
         }
+    };
+
+    const handleNextStep = () => {
+        const validationErrors = validateLeadForm(form, { hasDrawing: Boolean(form.drawingImage) });
+        const stepFields = activeStep === 0
+            ? ['name', 'email', 'phone', 'totalSquareFootage']
+            : activeStep === 1
+                ? ['currentTopRemoval', 'currentTopMaterial', 'sinkBasinPreference', 'sinkMountPreference', 'sinkMaterialPreference']
+                : ['backsplashPreference', 'timeframeGoal', 'materialPreferences'];
+        const stepErrors = Object.fromEntries(Object.entries(validationErrors).filter(([field]) => stepFields.includes(field)));
+
+        if (activeStep === 0 && form.drawingImage) {
+            delete stepErrors.totalSquareFootage;
+        }
+
+        if (Object.keys(stepErrors).length > 0) {
+            setErrors((current) => ({ ...current, ...stepErrors }));
+            return;
+        }
+
+        setActiveStep((current) => Math.min(current + 1, RESIDENTIAL_STEPS.length - 1));
+    };
+
+    const handlePreviousStep = () => {
+        setActiveStep((current) => Math.max(current - 1, 0));
     };
 
     useEffect(() => {
@@ -373,6 +384,24 @@ export default function LeadForm({ content, routeId = 'homepage', collapsible = 
                     aria-hidden="true"
                 />
 
+                <div className="rounded-2xl border border-border bg-surface/50 p-4">
+                    <div className="flex items-center justify-between gap-3">
+                        <div>
+                            <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted">{currentStep.eyebrow}</div>
+                            <div className="mt-1 text-lg font-semibold text-text">{currentStep.title}</div>
+                        </div>
+                        <div className="text-xs font-semibold uppercase tracking-[0.16em] text-muted">{activeStep + 1}/{RESIDENTIAL_STEPS.length}</div>
+                    </div>
+                    <p className="mt-2 text-sm leading-6 text-muted">{currentStep.description}</p>
+                    <div className="mt-3 grid grid-cols-3 gap-1.5" aria-label="Estimate form progress">
+                        {RESIDENTIAL_STEPS.map((step, index) => (
+                            <div key={step.title} className={`h-1 rounded-full ${index <= activeStep ? 'bg-accent' : 'bg-border'}`} />
+                        ))}
+                    </div>
+                </div>
+
+                {activeStep === 0 ? (
+                    <>
                 <label className="block">
                     <span className="mb-2 block text-sm font-medium text-text">Full name</span>
                     <input
@@ -484,7 +513,11 @@ export default function LeadForm({ content, routeId = 'homepage', collapsible = 
                     </label>
                     {errors.totalSquareFootage && <span className="form-error">{errors.totalSquareFootage}</span>}
                 </div>
+                    </>
+                ) : null}
 
+                {activeStep === 1 ? (
+                    <>
                 <div>
                     <span className="mb-2 block text-sm font-medium text-text">Current tops removal?</span>
                     <div className="flex flex-wrap gap-2">
@@ -589,7 +622,11 @@ export default function LeadForm({ content, routeId = 'homepage', collapsible = 
                         ) : null}
                     </div>
                 </div>
+                    </>
+                ) : null}
 
+                {activeStep === 2 ? (
+                    <>
                 <div>
                     <span className="mb-2 block text-sm font-medium text-text">Backsplash preference</span>
                     <div className="flex flex-wrap gap-2">
@@ -650,10 +687,28 @@ export default function LeadForm({ content, routeId = 'homepage', collapsible = 
                     </div>
                     {errors.materialPreferences && <span className="form-error">{errors.materialPreferences}</span>}
                 </div>
+                    </>
+                ) : null}
 
-                <button className="brand-button-primary w-full px-4 py-3 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-70" type="submit" disabled={isSubmitting}>
-                    {isSubmitting ? formContent.submittingLabel : formContent.submitLabel}
-                </button>
+                <div className="flex items-center justify-between gap-3">
+                    <button
+                        type="button"
+                        className={`brand-button-secondary px-4 py-3 text-sm font-semibold${activeStep === 0 ? ' invisible' : ''}`}
+                        onClick={handlePreviousStep}
+                        tabIndex={activeStep === 0 ? -1 : 0}
+                    >
+                        Back
+                    </button>
+                    {activeStep < RESIDENTIAL_STEPS.length - 1 ? (
+                        <button type="button" className="brand-button-primary px-5 py-3 text-sm font-semibold" onClick={handleNextStep}>
+                            Continue
+                        </button>
+                    ) : (
+                        <button className="brand-button-primary px-5 py-3 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-70" type="submit" disabled={isSubmitting}>
+                            {isSubmitting ? formContent.submittingLabel : formContent.submitLabel}
+                        </button>
+                    )}
+                </div>
             </form>
 
             <div className="mt-4 min-h-6 text-sm" aria-live="polite">

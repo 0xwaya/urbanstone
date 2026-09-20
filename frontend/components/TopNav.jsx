@@ -1,7 +1,8 @@
 import Link from 'next/link';
 import LogoMark from './LogoMark';
 import ThemeToggle from './ThemeToggle';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
+import useFocusTrap from '../lib/use-focus-trap';
 
 function toTelHref(value) {
     return value.replace(/[^\d+]/g, '');
@@ -11,6 +12,10 @@ export default function TopNav() {
     const companyPhone = process.env.NEXT_PUBLIC_COMPANY_PHONE || '(513) 307-5840';
     const companyEmail = process.env.NEXT_PUBLIC_LEAD_EMAIL || 'sales@urbanstone.co';
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const menuRef = useRef(null);
+    const menuButtonRef = useRef(null);
+    const closeMenu = () => setIsMenuOpen(false);
+    useFocusTrap(menuRef, isMenuOpen, closeMenu, menuButtonRef);
 
     return (
         <header className="sticky top-0 z-40 -mx-2 overflow-x-clip border-b border-transparent bg-bg/80 px-2 py-2 backdrop-blur sm:py-3">
@@ -54,6 +59,7 @@ export default function TopNav() {
 
                     <button
                         type="button"
+                        ref={menuButtonRef}
                         className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-border bg-panel/70 text-text transition hover:border-accent hover:text-accent lg:hidden"
                         aria-label={isMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
                         aria-expanded={isMenuOpen}
@@ -66,7 +72,7 @@ export default function TopNav() {
                 </div>
 
                 {isMenuOpen ? (
-                    <div className="mt-3 rounded-2xl border border-border bg-panel/70 p-3 lg:hidden">
+                    <div ref={menuRef} role="dialog" aria-modal="true" aria-label="Mobile navigation" className="mt-3 rounded-2xl border border-border bg-panel/70 p-3 lg:hidden">
                         <div className="rounded-[1.5rem] border border-border/80 bg-surface/75 p-3 shadow-soft">
                             <div className="text-[11px] font-semibold uppercase tracking-[0.22em] text-muted">Menu</div>
                             <a className="brand-button-primary mt-3 w-full px-4 py-3 text-base font-semibold" href="#quote" onClick={() => setIsMenuOpen(false)}>
