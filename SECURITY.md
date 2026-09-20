@@ -2,7 +2,7 @@
 
 ## Supported Scope
 
-This repository is a public source snapshot of the Amazon Granite project.
+This repository is the public Urban Stone project repository.
 
 Security expectations for contributors:
 

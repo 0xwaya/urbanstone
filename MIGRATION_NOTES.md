@@ -2,11 +2,11 @@
 
 ## Migration Goal
 
-Create a clean public repository for Amazon Granite without leaking unrelated workspace history or local-only artifacts.
+Maintain a clean public repository for Urban Stone without leaking unrelated workspace history or local-only artifacts.
 
 ## What Was Migrated
 
-The repository was populated from the committed `AmazonGranite-Rebranding` subtree of the source workspace.
+The repository was populated from the committed Urban Stone project subtree of the source workspace.
 
 Included:
 
@@ -18,7 +18,7 @@ Included:
 Excluded or cleaned up:
 
 - unrelated monorepo history
-- workspace-level files outside the Amazon Granite subtree
+- workspace-level files outside the Urban Stone project subtree
 - generated scraper output (`supplier-scraper/featured-stones.output.json`)
 - local build caches, logs, and environment files via `.gitignore`
 
