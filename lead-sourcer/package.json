@@ -6,6 +6,8 @@
   "main": "src/index.js",
   "scripts": {
     "run": "bash ./run.sh",
+    "sourcer": "node src/index.js",
+    "sourcer:check": "node scripts/check-config.mjs",
     "start": "node src/index.js",
     "poll:reddit": "node src/reddit.js",
     "poll:craigslist": "node src/craigslist.js",

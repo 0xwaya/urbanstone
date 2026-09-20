@@ -3,7 +3,14 @@ const RUN_MODES = ['live', 'dry-run', 'review-only'];
 export function resolveRunMode(argv = process.argv.slice(2), env = process.env) {
     const modeArg = argv.find((value) => value.startsWith('--mode='));
     const cliMode = modeArg ? modeArg.split('=')[1] : null;
-    const mode = cliMode || env.LEAD_SOURCER_MODE || 'live';
+    const rawMode = cliMode || env.LEAD_SOURCER_MODE || 'live';
+    const aliasMap = {
+        dry: 'dry-run',
+        dryrun: 'dry-run',
+        review: 'review-only',
+        reviewonly: 'review-only',
+    };
+    const mode = aliasMap[String(rawMode).trim().toLowerCase()] || String(rawMode).trim().toLowerCase();
 
     if (!RUN_MODES.includes(mode)) {
         throw new Error(`Invalid run mode: ${mode}. Expected one of: ${RUN_MODES.join(', ')}`);

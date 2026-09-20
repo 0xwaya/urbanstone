@@ -5,7 +5,6 @@
 import { REDDIT_SUBREDDITS, MAX_POST_AGE_HOURS } from './config.js';
 import { buildLeadPayload, classifyLeadCandidate, isRecent, scoreLeadCandidate } from './matcher.js';
 import { isSeen, markSeen } from './dedup.js';
-import 'dotenv/config';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -20,8 +19,60 @@ import { runModeFlags } from './mode.js';
 import { logNearMissCandidate, logReviewCandidate } from './review-log.js';
 
 import { LEAD_SOURCER_SKIP_DEDUP } from './config.js';
-const REDDIT_API_BASE = 'https://www.reddit.com';
-const USER_AGENT = 'UrbanStoneLeadSourcer/1.0 (lead monitoring; contact sales@urbanstone.co)';
+const REDDIT_PUBLIC_API_BASE = String(process.env.LEAD_SOURCER_REDDIT_API_BASE || 'https://www.reddit.com').replace(/\/$/, '');
+const REDDIT_OAUTH_API_BASE = 'https://oauth.reddit.com';
+const REDDIT_CLIENT_ID = String(process.env.REDDIT_CLIENT_ID || '').trim();
+const REDDIT_CLIENT_SECRET = String(process.env.REDDIT_CLIENT_SECRET || '').trim();
+let redditAccessToken = null;
+let redditAccessTokenExpiresAt = 0;
+const USER_AGENT = String(
+    process.env.LEAD_SOURCER_REDDIT_USER_AGENT
+    || 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 Chrome/128 Safari/537.36 UrbanStoneLeadSourcer/1.0',
+);
+
+async function getRedditRequestOptions() {
+    if (!REDDIT_CLIENT_ID || !REDDIT_CLIENT_SECRET) {
+        return {
+            baseUrl: REDDIT_PUBLIC_API_BASE,
+            headers: {
+                'User-Agent': USER_AGENT,
+                Accept: 'application/json',
+            },
+        };
+    }
+
+    if (!redditAccessToken || Date.now() >= redditAccessTokenExpiresAt) {
+        const credentials = Buffer.from(`${REDDIT_CLIENT_ID}:${REDDIT_CLIENT_SECRET}`).toString('base64');
+        const tokenResponse = await fetch('https://www.reddit.com/api/v1/access_token', {
+            method: 'POST',
+            headers: {
+                Authorization: `Basic ${credentials}`,
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'User-Agent': USER_AGENT,
+            },
+            body: 'grant_type=client_credentials',
+        });
+
+        if (!tokenResponse.ok) {
+            const detail = await tokenResponse.text().catch(() => '');
+            throw new Error(`Reddit OAuth token request failed: ${tokenResponse.status} ${detail}`);
+        }
+
+        const token = await tokenResponse.json();
+        redditAccessToken = String(token?.access_token || '').trim();
+        redditAccessTokenExpiresAt = Date.now() + Math.max(60, Number(token?.expires_in || 3600) - 60) * 1000;
+        if (!redditAccessToken) throw new Error('Reddit OAuth token response did not include access_token');
+    }
+
+    return {
+        baseUrl: REDDIT_OAUTH_API_BASE,
+        headers: {
+            Authorization: `Bearer ${redditAccessToken}`,
+            'User-Agent': USER_AGENT,
+            Accept: 'application/json',
+        },
+    };
+}
 const TARGET_REGIONS = ['cincinnati', ...GEO_TARGET_CITIES.map((city) => city.toLowerCase())];
 const LOCAL_SUBREDDITS = new Set([
     'cincinnati',
@@ -112,16 +163,13 @@ function isRedditNonBuyingNoise(post) {
 }
 
 async function fetchSubredditNew(subreddit) {
-    const url = `${REDDIT_API_BASE}/r/${subreddit}/new.json?limit=25`;
-    const response = await fetch(url, {
-        headers: {
-            'User-Agent': USER_AGENT,
-            Accept: 'application/json',
-        },
-    });
+    const request = await getRedditRequestOptions();
+    const url = `${request.baseUrl}/r/${subreddit}/new.json?limit=25`;
+    const response = await fetch(url, { headers: request.headers });
 
     if (!response.ok) {
-        throw new Error(`Reddit fetch failed for r/${subreddit}: ${response.status}`);
+        const detail = !REDDIT_CLIENT_ID ? ' (configure REDDIT_CLIENT_ID and REDDIT_CLIENT_SECRET for OAuth)' : '';
+        throw new Error(`Reddit fetch failed for r/${subreddit}: ${response.status}${detail}`);
     }
 
     const data = await response.json();
@@ -137,16 +185,13 @@ async function fetchSubredditSearch(subreddit, query) {
         limit: '25',
     });
 
-    const url = `${REDDIT_API_BASE}/r/${subreddit}/search.json?${params.toString()}`;
-    const response = await fetch(url, {
-        headers: {
-            'User-Agent': USER_AGENT,
-            Accept: 'application/json',
-        },
-    });
+    const request = await getRedditRequestOptions();
+    const url = `${request.baseUrl}/r/${subreddit}/search.json?${params.toString()}`;
+    const response = await fetch(url, { headers: request.headers });
 
     if (!response.ok) {
-        throw new Error(`Reddit search failed for r/${subreddit} (${query}): ${response.status}`);
+        const detail = !REDDIT_CLIENT_ID ? ' (configure REDDIT_CLIENT_ID and REDDIT_CLIENT_SECRET for OAuth)' : '';
+        throw new Error(`Reddit search failed for r/${subreddit} (${query}): ${response.status}${detail}`);
     }
 
     const data = await response.json();
@@ -169,6 +214,7 @@ function extractPost(post) {
 
 function createStats() {
     return {
+        status: 'ok',
         fetched: 0,
         evaluated: 0,
         skippedSeen: 0,
@@ -192,6 +238,7 @@ export async function pollReddit({ mode = 'live' } = {}) {
         try {
             posts = await fetchSubredditNew(subreddit);
         } catch (err) {
+            stats.status = 'degraded';
             console.warn(`[reddit] Skipping r/${subreddit}: ${err.message}`);
             continue;
         }

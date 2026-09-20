@@ -6,7 +6,6 @@
 import { CRAIGSLIST_BASE, CRAIGSLIST_SECTIONS, CRAIGSLIST_BODY_FETCH_LIMIT, CRAIGSLIST_REQUEST_DELAY_MS } from './config.js';
 import { buildLeadPayload, classifyLeadCandidate, scoreLeadCandidate } from './matcher.js';
 import { isSeen, markSeen } from './dedup.js';
-import 'dotenv/config';
 import { relay } from './relay.js';
 import { CRAIGSLIST_QUERY_KEYWORDS } from './config.js';
 import { CRAIGSLIST_LISTING_NOISE_KEYWORDS, LEAD_SOURCER_NEAR_MISS_SCORE_THRESHOLD } from './config.js';
@@ -125,6 +124,7 @@ function extractPost({ title, url, postId }) {
 
 function createStats() {
     return {
+        status: 'ok',
         fetched: 0,
         evaluated: 0,
         skippedSeen: 0,
@@ -149,6 +149,7 @@ export async function pollCraigslist({ mode = 'live' } = {}) {
             try {
                 html = await fetchSearchPage(section, keyword);
             } catch (err) {
+                stats.status = 'degraded';
                 if (err.status === 403) {
                     console.warn(`[craigslist] 403 on ${section.label}/${keyword} — skipping section.`);
                     break;

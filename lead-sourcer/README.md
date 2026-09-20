@@ -5,9 +5,12 @@ Automated lead sourcing and delivery pipeline for Urban Stone. Scrapes Reddit, C
 ## Architecture
 
 ### Polling
-- **Reddit:** r/Renovation, r/Remodeling, r/Homeimprovement (configurable via env)
-- **Craigslist:** Multi-region searches for contractor and countertop keywords
-- **Apify:** Facebook Groups scraper (configurable task)
+- **Reddit:** OAuth-backed subreddit polling; currently paused locally until API registration is complete
+- **Craigslist:** Multi-region HTML searches for contractor and countertop keywords
+- **Apify:** Direct task execution for Nextdoor/Facebook sources; optional and requires task permissions
+
+The Node runner calls these sources directly. Zapier does not manage Reddit or Apify;
+it receives completed lead payloads as an optional downstream relay.
 
 ### Scoring
 - Material signals (granite, quartz, marble, etc.)
@@ -35,6 +38,18 @@ RESEND_API_KEY=...                 # Direct email delivery
 LEAD_WEBHOOK_URL=https://hooks.zapier.com/hooks/catch/27076432/4ypc0n3/  # Zap webhook
 ```
 
+**Reddit access:**
+```
+REDDIT_CLIENT_ID=...                # Reddit script application client ID
+REDDIT_CLIENT_SECRET=...            # Reddit script application secret
+LEAD_SOURCER_REDDIT_USER_AGENT=...  # Optional descriptive user agent
+```
+
+Reddit now requires authenticated API access for the JSON endpoints used by the
+poller. When both OAuth variables are present, the poller requests an app-only
+token and uses `oauth.reddit.com`. Without them, Reddit requests are attempted
+against the public endpoint and may be rejected with `403` or redirected to login.
+
 **Optional (defaults shown):**
 ```
 LEAD_SOURCER_ENABLE_REDDIT=true
@@ -45,6 +60,10 @@ LEAD_SOURCER_ALERT_EMAIL=sales@urbanstone.co  # Lead alert recipient
 LEAD_SOURCER_RUN_REPORT_EMAIL=sales@urbanstone.co  # Run report recipient
 LEAD_SOURCER_SEND_RUN_REPORT=true  # Always send report, even with 0 matches
 LEAD_SOURCER_ZAP_FIELD_NAMESPACE=357570886  # Zap field prefix
+LEAD_SOURCER_REDDIT_SEARCH_QUERY_LIMIT=10
+LEAD_SOURCER_CRAIGSLIST_PRIORITY_CITIES=Cincinnati,Mason,West Chester,Blue Ash,Covington
+LEAD_SOURCER_CRAIGSLIST_QUERY_LIMIT=40
+LEAD_SOURCER_CRAIGSLIST_INCLUDE_HOUSEHOLD_SERVICES=false
 ```
 
 Files: `.env`, `.env.local`, `.vercel/.env.production.local`
@@ -78,9 +97,15 @@ LEAD_SOURCER_MODE=live LEAD_SOURCER_SKIP_DEDUP=true node src/index.js
 LEAD_SOURCER_INTERVAL_MINUTES=60 node src/index.js  # Run every 60 min
 ```
 
-### Cron Integration
+### Scheduling
 
-See [scripts/run_lead_sourcer_cron.sh](scripts/run_lead_sourcer_cron.sh) for wrapper script that sources env files and handles working directory context.
+The canonical command is `npm run sourcer`. A live one-shot run is guarded by the
+daily state file at `runs/daily-state.json`, so repeated scheduler invocations do
+not duplicate the daily run. No scheduler is enabled by this repository.
+
+Vercel has a trigger route at `frontend/pages/api/cron/lead-sourcer.js`, but it is
+not scheduled because it requires a public authenticated `LEAD_SOURCER_TRIGGER_URL`
+for an external runner. Do not enable a Vercel cron until that runner exists.
 
 ## Payload Format
 
@@ -151,16 +176,17 @@ Details:
 /Users/pc/.openclaw/workspace/urbanstone/lead-sourcer/runs/poll-runs.jsonl
 ```
 
-Each line is a JSON summary: `{ startedAt, completedAt, mode, counts, verdicts, errors }`
+Each line is a JSON summary: `{ startedAt, completedAt, mode, counts, verdicts, sourceStatuses, errors }`
 
 **Live run output:**
 ```bash
-LEAD_SOURCER_MODE=live node src/index.js 2>&1 | tee /tmp/lead-sourcer-run-$(date +%Y%m%d-%H%M%S).log
+npm run sourcer -- --mode=live 2>&1 | tee /tmp/lead-sourcer-run-$(date +%Y%m%d-%H%M%S).log
 ```
 
 ## Testing
 
 ```bash
+npm run sourcer:check
 npm test -- --runInBand
 ```
 
