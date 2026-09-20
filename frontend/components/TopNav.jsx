@@ -52,6 +52,9 @@ export default function TopNav({ language = 'en' }) {
                         <a className="transition hover:text-accent" href="#contact">
                             Contact
                         </a>
+                        <a className="transition hover:text-accent" href="#reviews">
+                            {spanish ? 'Opiniones' : 'Reviews'}
+                        </a>
                     </div>
 
                     <div className="hidden shrink-0 items-center gap-3 lg:flex">
@@ -109,6 +112,9 @@ export default function TopNav({ language = 'en' }) {
                                 </Link>
                                 <a className="brand-menu-tile rounded-xl px-3 py-2.5 text-center" href="#faq" onClick={() => setIsMenuOpen(false)}>
                                     Q&amp;A
+                                </a>
+                                <a className="brand-menu-tile rounded-xl px-3 py-2.5 text-center" href="#reviews" onClick={() => setIsMenuOpen(false)}>
+                                    {spanish ? 'Opiniones' : 'Reviews'}
                                 </a>
                                 <Link className="brand-menu-tile rounded-xl px-3 py-2.5 text-center" href="/contractors/login" onClick={() => setIsMenuOpen(false)}>
                                     Contractor Portal

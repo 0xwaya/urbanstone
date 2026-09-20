@@ -1,6 +1,6 @@
 {
   "name": "urban-stone-frontend",
-  "version": "2.0.1",
+  "version": "2.0.3",
   "private": true,
   "description": "Production baseline for the Urban Stone Collective marketing site.",
   "engines": {

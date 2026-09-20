@@ -137,6 +137,7 @@ Lead webhook payload notes:
 - `pages/robots.txt.js` explicitly allows major AI/answer-engine crawlers (`GPTBot`, `ChatGPT-User`, `OAI-SearchBot`, `ClaudeBot`, `Claude-Web`, `PerplexityBot`, `Google-Extended`, `Applebot-Extended`, `Amazonbot`, `Bytespider`, `CCBot`) alongside the default `Allow: /` rule.
 - `pages/llms.txt.js` serves a plain-text business summary, contact info, service area, and full page link map at `/llms.txt` for AI assistants and answer engines to cite accurately.
 - `data/homepage-content.js` FAQ items are written as natural-language local-intent Q&A (e.g. "best countertop company near me in Cincinnati") to support both classic featured snippets and AI Overview-style extraction.
+- The high-intent Cincinnati quartz query has a dedicated material page at `/materials/cincinnati-quartz-countertops`; city-wide and material-specific pages should remain distinct so each page answers one search intent clearly.
 
 ## Bilingual Portal & Texting
 
@@ -145,6 +146,8 @@ Lead webhook payload notes:
 - `lib/contact.js` builds SMS deep links to the business line. Set `NEXT_PUBLIC_COMPANY_SMS` to override the default `+15133075840`.
 - SMS actions appear in the main navigation, quote contact panel, Onyx chat footer, and contractor access page with prefilled context prompts.
 - The customer-facing chatbot is branded **Onyx** / **Onyx AI Assistant**. Internal component filenames remain unchanged to avoid unnecessary runtime churn.
+- `NEXT_PUBLIC_REVIEW_DEMO_MODE=true` enables clearly labeled staging-only review card placeholders. Leave it unset or `false` in production; production review cards must come from approved customer feedback or the Google review handoff.
+- `NEXT_PUBLIC_GOOGLE_REVIEW_URL` can point the review CTA to the verified Urban Stone Google Business Profile review URL.
 
 Security check:
 

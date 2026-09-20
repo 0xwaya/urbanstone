@@ -14,6 +14,13 @@
 - SEO: Added reciprocal `hreflang` metadata, Spanish local-business and breadcrumb schema, `/es` sitemap discovery, and bilingual guidance in `/llms.txt`.
 - Contact: Added one-tap SMS links with prefilled context messages targeting `+15133075840` across navigation, estimate, chat, and contractor access surfaces.
 - Chat: Renamed the customer-facing assistant from Haven/Stone Haven to **Onyx**, with **Onyx AI Assistant** as the descriptive label.
+
+## [2.0.2] - 2026-09-20
+
+- SEO: Added a dedicated `/materials/cincinnati-quartz-countertops` landing page targeting Cincinnati quartz countertop intent with localized FAQs, pricing guidance, slab selection content, and estimate conversion paths.
+- SEO: Added separate Cincinnati quartzite and granite landing pages and focused material schema so quartz, quartzite, and granite intent is targeted on individual pages.
+- UX: Added a premium positioning and reviews section emphasizing curated materials, fast target installs, and personalized support.
+- Reviews: Added opt-in, clearly labeled staging-only demo cards controlled by `NEXT_PUBLIC_REVIEW_DEMO_MODE`; production defaults to authentic Google review collection.
 - SEO: Added shared `buildLocalBusinessSchema` helper (`lib/seo.js`) with `priceRange`, service-hub `geo` coordinates, `GeoCircle` service radius, and a `hasOfferCatalog` of quartz/granite/quartzite services; applied across homepage, service-area, and material pages
 - SEO: Added homepage breadcrumb JSON-LD and a new local-intent FAQ entry targeting "countertop company near me" style searches
 - AI discoverability: `robots.txt` now explicitly allows GPTBot, ChatGPT-User, OAI-SearchBot, ClaudeBot, Claude-Web, PerplexityBot, Google-Extended, Applebot-Extended, Amazonbot, Bytespider, and CCBot

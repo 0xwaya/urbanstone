@@ -47,7 +47,7 @@ export const homepageFaqContent = {
 export const homepageLeadFormContent = {
     eyebrow: 'Request a quote',
     title: 'Start with a Fast Estimate',
-    description: 'Send your layout, measurements, and material preference. We will help confirm slab direction, final selection, measurements, deposit, fabrication, and install timing.',
+    description: 'Send your layout, measurements, and material preference. We will guide the premium slab selection, confirm the details personally, and plan fabrication and fast installation timing.',
     placeholder: 'Anything unusual to note: appliance changes, access constraints, edge requests, demo concerns, or scheduling notes.',
     submitLabel: 'Send estimate request',
     submittingLabel: 'Sending request...',
