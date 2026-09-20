@@ -1,4 +1,4 @@
-# Amazon Granite
+# Urban Stone
 
 [![License: Apache-2.0](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 [![Status: Source Snapshot](https://img.shields.io/badge/status-source%20snapshot-orange.svg)](#current-status)
@@ -6,15 +6,15 @@
 [![Stack: Next.js](https://img.shields.io/badge/stack-Next.js-black.svg)](#project-layout)
 [![Scraper: Node.js](https://img.shields.io/badge/scraper-Node.js-339933.svg)](#project-layout)
 
-Public source repository for the Amazon Granite rebrand and supplier-content prototype.
+Public source repository for the Urban Stone Collective website, supplier content, and lead-sourcing automation.
 
 ## Overview
 
-This repository preserves a clean, public-safe snapshot of the Amazon Granite project extracted from a larger private workspace. The migration intentionally keeps only Amazon Granite source artifacts and excludes unrelated repository history.
+This repository contains the Urban Stone Collective project and its lead-sourcing automation. It keeps the deployable site, supplier tooling, and operational documentation together without unrelated workspace history.
 
 The recovered project includes:
 
-- a marketing site prototype for Amazon Granite LLC
+- the Urban Stone Collective marketing site
 - a supplier scraper prototype for featured stone data
 - a lead-sourcer utility for polling public sources and relaying matched leads through the existing webhook flow
 - brand assets and countertop material imagery that were already committed in the source tree
@@ -24,7 +24,7 @@ The recovered project includes:
 
 This public repository was migrated with a safety-first protocol:
 
-- only the committed Amazon Granite subtree was exported
+- only the committed Urban Stone project subtree was retained
 - unrelated monorepo history was not pushed
 - generated scraper output was removed from tracked source
 - obvious secret patterns were scanned before publish

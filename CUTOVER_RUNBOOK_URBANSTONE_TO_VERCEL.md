@@ -1,11 +1,11 @@
 # Urbanstone Cutover Runbook (Near-Zero Downtime)
 
-This runbook replaces the live Amazon Granite Vercel deployment with the upgraded Urban Stone implementation from this repo.
+This runbook deploys the Urban Stone implementation from this repository to Vercel.
 
 ## Scope
 
 - Source code to launch: /Users/pc/.openclaw/workspace/urbanstone/frontend
-- Current live deployment repo: /Users/pc/.openclaw/workspace/amazon-granite/frontend
+- Current live deployment repo: /Users/pc/.openclaw/workspace/urbanstone/frontend
 - Goal: near-zero interruption cutover with explicit rollback path.
 
 ## Hard Gates (Do Not Cut Over Until Green)
@@ -89,7 +89,7 @@ Rollback immediately if any of the following occurs for more than 5 minutes:
 
 ## Rollback Steps
 
-1. Repoint production source back to prior amazon-granite branch/commit.
+1. Repoint production source back to the prior urbanstone branch/commit.
 2. Trigger redeploy.
 3. Confirm homepage and lead API recover.
 4. Re-run one production lead test.
