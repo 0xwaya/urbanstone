@@ -797,13 +797,7 @@ html[data-theme="light"] .form-chip-note {
   display: flex;
   justify-content: center;
   overflow-y: auto;
-  background:
-    radial-gradient(
-      circle at 20% 15%,
-      rgba(var(--accent), 0.2),
-      transparent 32%
-    ),
-    rgba(6, 10, 18, 0.72);
+  background: rgba(6, 10, 18, 0.88);
   padding: 1.5rem 1rem;
   backdrop-filter: blur(4px);
 }
@@ -814,13 +808,7 @@ html[data-theme="light"] .form-chip-note {
   overflow-y: auto;
   border-radius: 1.5rem;
   border: 1px solid rgba(var(--border), 0.99);
-  background:
-    linear-gradient(180deg, rgba(var(--panel), 1), rgba(var(--surface), 1)),
-    radial-gradient(
-      circle at 85% 0%,
-      rgba(var(--accent), 0.04),
-      transparent 28%
-    );
+  background: rgb(var(--surface));
   padding: 1.25rem 1.1rem 1.5rem;
   box-shadow:
     0 32px 80px rgba(4, 10, 22, 0.44),
@@ -857,13 +845,7 @@ html[data-theme="light"] .form-chip-note {
 }
 
 html[data-theme="light"] .lead-modal-backdrop {
-  background:
-    radial-gradient(
-      circle at 20% 15%,
-      rgba(54, 105, 187, 0.16),
-      transparent 32%
-    ),
-    rgba(232, 238, 249, 0.76);
+  background: rgba(232, 238, 249, 0.9);
 }
 
 .supplier-card {
