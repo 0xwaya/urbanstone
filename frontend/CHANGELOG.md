@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+- SEO: Added shared `buildLocalBusinessSchema` helper (`lib/seo.js`) with `priceRange`, service-hub `geo` coordinates, `GeoCircle` service radius, and a `hasOfferCatalog` of quartz/granite/quartzite services; applied across homepage, service-area, and material pages
+- SEO: Added homepage breadcrumb JSON-LD and a new local-intent FAQ entry targeting "countertop company near me" style searches
+- AI discoverability: `robots.txt` now explicitly allows GPTBot, ChatGPT-User, OAI-SearchBot, ClaudeBot, Claude-Web, PerplexityBot, Google-Extended, Applebot-Extended, Amazonbot, Bytespider, and CCBot
+- AI discoverability: Added `/llms.txt` route with a business summary, contact info, service area, and full page link map for AI assistants and answer engines
 - SEO: Hardened canonical origin resolution so production metadata cannot fall back to localhost-style origins
 - SEO: Upgraded dynamic sitemap output with `lastmod` timestamps and XML escaping for safer indexing
 - SEO: Tightened robots directives (`/contractors/login` and querystring crawl suppression) and kept sitemap/host hints explicit

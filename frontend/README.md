@@ -131,6 +131,13 @@ Lead webhook payload notes:
 - `npm run test:smoke`
 - `npm run snapshots:mobile`
 
+## SEO & AI Discoverability
+
+- `lib/seo.js` centralizes local-business structured data (`buildLocalBusinessSchema`) used by the homepage, `service-areas/[slug]`, and `materials/[slug]` pages: `priceRange`, service-hub `geo` coordinates, a `GeoCircle` service radius, and a `hasOfferCatalog` listing quartz/granite/quartzite fabrication and installation as distinct `Service` entities.
+- `pages/robots.txt.js` explicitly allows major AI/answer-engine crawlers (`GPTBot`, `ChatGPT-User`, `OAI-SearchBot`, `ClaudeBot`, `Claude-Web`, `PerplexityBot`, `Google-Extended`, `Applebot-Extended`, `Amazonbot`, `Bytespider`, `CCBot`) alongside the default `Allow: /` rule.
+- `pages/llms.txt.js` serves a plain-text business summary, contact info, service area, and full page link map at `/llms.txt` for AI assistants and answer engines to cite accurately.
+- `data/homepage-content.js` FAQ items are written as natural-language local-intent Q&A (e.g. "best countertop company near me in Cincinnati") to support both classic featured snippets and AI Overview-style extraction.
+
 Security check:
 
 - `npm audit --json`
