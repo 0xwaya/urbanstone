@@ -36,6 +36,10 @@ describe('Home page', () => {
     it('renders the restored marketing surface', { timeout: 20000 }, () => {
         render(<Home />);
 
+        expect(screen.getByText('Fall offer')).toBeInTheDocument();
+        expect(screen.getByText('Offer good October 15 - December 15, 2026.')).toBeInTheDocument();
+        expect(screen.getByRole('link', { name: 'Free Sinks' })).toHaveAttribute('href', '#quote');
+        expect(screen.queryByText(/spring special|May 30, 2026/i)).not.toBeInTheDocument();
         expect(screen.getByRole('heading', { name: /premium countertops\. fast install\. built for cincinnati\./i })).toBeInTheDocument();
         expect(screen.getByRole('heading', { name: /curated countertop materials/i })).toBeInTheDocument();
         expect(screen.getByRole('heading', { name: /start with a fast estimate/i })).toBeInTheDocument();

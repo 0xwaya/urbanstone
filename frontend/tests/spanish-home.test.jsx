@@ -18,6 +18,9 @@ describe('Spanish home portal', () => {
     it('renders the Spanish customer experience and English switcher', { timeout: 15000 }, () => {
         render(<SpanishHome />);
 
+        expect(screen.getByText('Oferta de otoño')).toBeInTheDocument();
+        expect(screen.getByText('Oferta válida del 15 de octubre al 15 de diciembre de 2026.')).toBeInTheDocument();
+        expect(screen.getByRole('link', { name: 'Fregaderos gratis' })).toHaveAttribute('href', '#quote');
         expect(screen.getByRole('heading', { name: /cubiertas premium/i })).toBeInTheDocument();
         expect(screen.getByRole('heading', { name: /materiales seleccionados/i })).toBeInTheDocument();
         expect(screen.getByRole('heading', { name: /preguntas frecuentes/i })).toBeInTheDocument();
