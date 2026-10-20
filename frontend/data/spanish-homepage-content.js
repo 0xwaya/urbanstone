@@ -36,11 +36,11 @@ export const spanishLeadFormContent = {
 };
 
 export const spanishAnnouncement = {
-    eyebrow: 'Oferta de temporada',
+    eyebrow: 'Oferta de otoño',
     title: 'Fregadero de acero inoxidable gratis en proyectos seleccionados.',
     detail: 'Para cocinas de 50 pies cuadrados o más, recibe un fregadero de acero inoxidable de calibre 18. Elige montaje inferior o superior, con una o dos cubetas.',
     ctaLabel: 'Fregaderos gratis',
     ctaHref: '#quote',
-    disclaimer: 'Oferta válida hasta el 30 de mayo de 2026.',
+    disclaimer: 'Oferta válida del 15 de octubre al 15 de diciembre de 2026.',
     tags: ['Cocinas de 50+ pies cuadrados', 'Acero inoxidable calibre 18', 'Una o dos cubetas'],
 };

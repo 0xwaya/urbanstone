@@ -23,6 +23,12 @@ export default function FeaturesBar({ announcement = homepageAnnouncement }) {
                                 {announcement.disclaimer}
                             </p>
                         ) : null}
+                        <a
+                            href={announcement.ctaHref}
+                            className="mt-4 inline-flex rounded-full bg-accent px-5 py-3 text-sm font-semibold text-black transition-opacity hover:opacity-80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
+                        >
+                            {announcement.ctaLabel}
+                        </a>
                     </div>
                     <div className="flex flex-row flex-wrap gap-2 items-center justify-end min-w-[220px]">
                         {announcement.tags.map((tag) => (

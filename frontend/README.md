@@ -4,6 +4,8 @@ Standalone Next.js pages application for the Urban Stone Collective marketing si
 
 This frontend includes the current live layout pass for navigation, homepage hierarchy, curated material browsing, contractor intake, and quote capture.
 
+The English and Spanish landing pages promote the fall complimentary stainless sink offer for qualifying kitchen projects of 50 sq ft or more, valid October 15 through December 15, 2026, with a direct link to the estimate form.
+
 The supplier section now follows the current slab-first funnel:
 
 - each supplier card stays compact and shows logo, company name, location, and hours only
