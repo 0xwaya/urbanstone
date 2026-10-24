@@ -12,7 +12,6 @@ function escapeXml(value) {
 }
 
 export async function getServerSideProps({ res }) {
-    const lastmod = process.env.SITEMAP_LASTMOD || new Date().toISOString();
     const urls = [
         {
             loc: getCanonicalUrl('/'),
@@ -45,7 +44,6 @@ export async function getServerSideProps({ res }) {
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${urls.map((entry) => `  <url>
     <loc>${escapeXml(entry.loc)}</loc>
-    <lastmod>${lastmod}</lastmod>
     <changefreq>${entry.changefreq}</changefreq>
     <priority>${entry.priority}</priority>
   </url>`).join('\n')}

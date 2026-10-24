@@ -77,6 +77,11 @@ npm install
 
 ### Running
 
+Unspecified runs default to `review-only`: matches are logged locally without
+Resend or webhook delivery. Set `LEAD_SOURCER_MODE=live` explicitly only when
+internal lead notifications are intended. The sourcer does not contact authors
+of public posts; direct prospect outreach is not implemented.
+
 **One-shot live run:**
 ```bash
 LEAD_SOURCER_MODE=live node src/index.js
@@ -99,9 +104,11 @@ LEAD_SOURCER_INTERVAL_MINUTES=60 node src/index.js  # Run every 60 min
 
 ### Scheduling
 
-The canonical command is `npm run sourcer`. A live one-shot run is guarded by the
-daily state file at `runs/daily-state.json`, so repeated scheduler invocations do
-not duplicate the daily run. No scheduler is enabled by this repository.
+The canonical command is `npm run sourcer`. An explicitly live one-shot run is
+guarded by the daily state file at `runs/daily-state.json`, so repeated scheduler
+invocations do not duplicate the daily run. No scheduler is enabled by this
+repository. The cron helper resolves paths relative to this checkout and defaults
+to review-only; it does not contact prospects.
 
 Vercel has a trigger route at `frontend/pages/api/cron/lead-sourcer.js`, but it is
 not scheduled because it requires a public authenticated `LEAD_SOURCER_TRIGGER_URL`
