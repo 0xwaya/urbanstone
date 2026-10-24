@@ -43,7 +43,7 @@ Cincinnati, OH and nearby communities including Mason, West Chester, Liberty Tow
 
 ## Language Support
 
-The customer portal is available in English and neutral Spanish. Use [the Spanish homepage](${getCanonicalUrl('/es')}) for Spanish-language customers; both versions share the same estimate form, service area, materials catalog, and contact routes.
+The public website and estimate-request flow are available in English and Spanish. Use [the Spanish homepage](${getCanonicalUrl('/es')}) for Spanish-language customers; both versions share the same service area, materials catalog, and contact routes. The contractor portal is a separate business-facing service.
 
 ### City Service Pages
 

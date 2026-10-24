@@ -62,10 +62,32 @@ Recommended local run command (avoids port conflicts):
 - `CONTRACTOR_ESTIMATE_WEBHOOK_URL`: optional dedicated webhook for contractor commercial estimate requests. Falls back to `LEAD_WEBHOOK_URL`.
 - `CONTRACTOR_REGISTRATION_WEBHOOK_URL`: optional dedicated webhook for contractor registration events. Falls back to `LEAD_WEBHOOK_URL`.
 - `RESEND_API_KEY`: required for contractor magic-link email delivery.
+- `NEXT_PUBLIC_SUPABASE_URL`: Supabase project URL used by browser-based Google OAuth for review invitations. Set before building so the CSP allowlists only this origin.
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`: browser-safe Supabase anon/publishable key; never expose a service-role key in a `NEXT_PUBLIC_` variable.
+- `REVIEW_INVITE_ADMIN_SECRET`: server-only bearer secret (at least 32 bytes) required to issue invites and moderate reviews.
+- `REVIEW_INVITE_EMAIL_HMAC_KEY`: independent server-only key (at least 32 bytes) used to HMAC-normalize invited customer email addresses. Keep it stable while invites are outstanding.
 
 If `LEAD_WEBHOOK_URL` is not set during local development, `/api/lead` falls back to the local route `/api/lead-dev-webhook` so form submissions still complete while you are building.
 
 In production, `LEAD_WEBHOOK_URL` is still required and missing configuration returns the expected 503 warning.
+
+## Invite-only first-party customer reviews
+
+This flow collects reviews on Urban Stone's own site. Google OAuth verifies the identity of an invited customer; submissions are saved as `pending` for moderation and are never posted or forwarded to Google or Google Maps. No Google Maps Business account is needed. Invitations are issued manually; there is no bulk-send or automated email path.
+
+### Owner-side setup
+
+1. Configure the Supabase project and set `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `NEXT_PUBLIC_SUPABASE_URL`, and `NEXT_PUBLIC_SUPABASE_ANON_KEY` in the frontend environment. Keep the service-role key server-side, and set the public URL before the frontend build so CSP allows the project origin.
+2. Enable Google as a Supabase Auth provider. Set the Supabase Auth Site URL to the canonical site origin and add `https://www.urbanstone.co/reviews/invite` to the allowed redirect URLs. The Google OAuth callback is the Supabase Auth callback, not a Google Maps review endpoint.
+3. Apply `supabase/migrations/20261017_invited_customer_reviews.sql` to the intended Supabase project. It creates invite/review tables, enables RLS, denies direct browser table access, and limits the security-definer RPCs to `service_role`.
+4. Set `NEXT_PUBLIC_SITE_URL` to the canonical HTTPS origin and configure independent random server-only values of at least 32 bytes for `REVIEW_INVITE_ADMIN_SECRET` and `REVIEW_INVITE_EMAIL_HMAC_KEY`. Keep the HMAC key stable while invitations exist; rotating it invalidates outstanding email hashes.
+5. Rebuild/redeploy after setting the variables and verify OAuth, invite matching, and submission in a staging Supabase project before inviting real customers. Live OAuth/database behavior must be tested against the owner's configured project.
+
+### Manual invitations and moderation
+
+- After verifying a previous-customer relationship and a non-sensitive job reference, an authorized operator calls `POST /api/reviews/invites` with the admin bearer secret, customer email, and reference. The API stores only a token digest and HMAC of the normalized email, then returns a manual, one-time link expiring in 14 days. Deliver the link privately; never log or commit the token, email, or admin secret. Reissuing for a reference revokes its older unused invitation.
+- The customer signs in with the same verified Google email named in the invitation. Reviews enter `pending`; rating and sentiment do not determine eligibility.
+- An admin uses `GET /api/reviews/moderate` to inspect pending submissions and `PATCH /api/reviews/moderate` with a review ID and `published` or `rejected` status to moderate. Only published rows are returned by `/api/reviews/published` and shown publicly.
 
 ## Contractor Portal
 
@@ -148,8 +170,7 @@ Lead webhook payload notes:
 - `lib/contact.js` builds SMS deep links to the business line. Set `NEXT_PUBLIC_COMPANY_SMS` to override the default `+15133075840`.
 - SMS actions appear in the main navigation, quote contact panel, Onyx chat footer, and contractor access page with prefilled context prompts.
 - The customer-facing chatbot is branded **Onyx** / **Onyx AI Assistant**. Internal component filenames remain unchanged to avoid unnecessary runtime churn.
-- `NEXT_PUBLIC_REVIEW_DEMO_MODE=true` enables clearly labeled staging-only review card placeholders. Leave it unset or `false` in production; production review cards must come from approved customer feedback or the Google review handoff.
-- `NEXT_PUBLIC_GOOGLE_REVIEW_URL` can point the review CTA to the verified Urban Stone Google Business Profile review URL.
+- The homepage review wall fetches only rows marked `published` by `/api/reviews/published`; no demo/placeholder testimonials or Google review handoff are rendered.
 
 Security check:
 
@@ -315,7 +336,7 @@ Before a real production launch, add external monitoring, persistent rate limiti
 - Updated chat visual palette to the Urban Stone gold lane (launcher, popup header gradients, in-chat accents, and scrollbar thumb), removing remaining off-brand blue highlights.
 - Current state: chat window uses native overflow scrollbar behavior (Opera/Chromium friendly), with branded gold accents and consistent contrast in popup footer actions.
 - SEO hardening: canonical URL resolution now protects production metadata from localhost fallback origins.
-- SEO indexing: `sitemap.xml` now includes escaped URLs plus `lastmod`, and `robots.txt` disallows non-canonical query crawls and contractor login indexing.
+- SEO indexing: `sitemap.xml` emits escaped canonical URLs without fabricated request-time `lastmod` values; `robots.txt` disallows non-canonical query crawls and contractor login indexing.
 - SEO crawl controls: API and contractor-login responses include `X-Robots-Tag: noindex, nofollow, noarchive`.
 - Added `.gitignore` to prevent chatbot source/config from being pushed until fully trained.
 - Documented troubleshooting steps for port conflicts and static asset errors.

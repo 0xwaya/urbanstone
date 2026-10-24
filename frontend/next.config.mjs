@@ -4,13 +4,30 @@ import { fileURLToPath } from 'node:url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
+function supabaseConnectSources() {
+    const configured = String(process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL || '').trim();
+    if (!configured) return [];
+
+    try {
+        const url = new URL(configured);
+        const localHttp = isDevelopment && url.protocol === 'http:'
+            && ['localhost', '127.0.0.1'].includes(url.hostname);
+        if ((!localHttp && url.protocol !== 'https:') || url.username || url.password) return [];
+        return [url.origin, `${url.protocol === 'https:' ? 'wss:' : 'ws:'}//${url.host}`];
+    } catch {
+        return [];
+    }
+}
+
+const supabaseConnect = supabaseConnectSources();
+
 const securityHeaders = [
     {
         key: 'Content-Security-Policy',
         value: [
             "default-src 'self'",
             "base-uri 'self'",
-            "connect-src 'self'",
+            `connect-src 'self' ${supabaseConnect.join(' ')}`.trim(),
             "font-src 'self' https://fonts.gstatic.com",
             "form-action 'self'",
             "frame-ancestors 'none'",
@@ -112,6 +129,23 @@ const nextConfig = {
             {
                 source: '/contractors/login',
                 headers: [
+                    {
+                        key: 'X-Robots-Tag',
+                        value: 'noindex, nofollow, noarchive',
+                    },
+                ],
+            },
+            {
+                source: '/reviews/invite',
+                headers: [
+                    {
+                        key: 'Cache-Control',
+                        value: 'no-store',
+                    },
+                    {
+                        key: 'Referrer-Policy',
+                        value: 'no-referrer',
+                    },
                     {
                         key: 'X-Robots-Tag',
                         value: 'noindex, nofollow, noarchive',

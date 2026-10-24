@@ -3,7 +3,9 @@ const RUN_MODES = ['live', 'dry-run', 'review-only'];
 export function resolveRunMode(argv = process.argv.slice(2), env = process.env) {
     const modeArg = argv.find((value) => value.startsWith('--mode='));
     const cliMode = modeArg ? modeArg.split('=')[1] : null;
-    const rawMode = cliMode || env.LEAD_SOURCER_MODE || 'live';
+    // Scans must never deliver automatically unless an operator explicitly
+    // opts into live mode. This keeps bare scripts/cron invocations review-only.
+    const rawMode = cliMode || env.LEAD_SOURCER_MODE || 'review-only';
     const aliasMap = {
         dry: 'dry-run',
         dryrun: 'dry-run',

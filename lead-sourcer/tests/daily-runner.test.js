@@ -1,9 +1,15 @@
-import { resolveRunMode } from '../src/mode.js';
+import { resolveRunMode, runModeFlags } from '../src/mode.js';
 import { buildPreDraft, shouldRunDaily } from '../src/daily-runner.js';
 
 describe('daily automation helpers', () => {
     test('accepts dry alias for dry-run mode', () => {
         expect(resolveRunMode(['--mode=dry'])).toBe('dry-run');
+    });
+
+    test('defaults to review-only so an unspecific run cannot relay externally', () => {
+        const mode = resolveRunMode([], { LEAD_SOURCER_MODE: '' });
+        expect(mode).toBe('review-only');
+        expect(runModeFlags(mode).shouldRelay).toBe(false);
     });
 
     test('creates a usable pre-draft from a lead payload', () => {
