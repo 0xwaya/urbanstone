@@ -1,12 +1,15 @@
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
+
 const COPY = {
     en: {
         eyebrow: 'Customer feedback',
         title: 'Your experience helps the next homeowner choose well.',
-        description: 'Read current feedback on Google or share your own experience. Google handles sign-in and publishing securely.',
-        rating: 'See our latest Google reviews',
-        leave: 'Leave a Google review',
+        description: 'Verified previous customers can share honest feedback after signing in with Google.',
+        rating: 'Customer reviews',
+        leave: 'Have an invitation? Write a review',
         share: 'Share your experience',
-        note: 'We are building this review wall from verified customer feedback. Your project story belongs here.',
+        note: 'Reviews are collected on this site and moderated by Urban Stone. Google sign-in verifies identity; nothing is forwarded to Google or Google Maps.',
         material: 'Premium material guidance',
         speed: '3-5 day target installs',
         service: 'Personal project support',
@@ -15,11 +18,11 @@ const COPY = {
     es: {
         eyebrow: 'Opiniones de clientes',
         title: 'Tu experiencia ayuda a otros propietarios a elegir mejor.',
-        description: 'Lee las opiniones actuales en Google o comparte tu experiencia. Google gestiona el inicio de sesión y la publicación de forma segura.',
-        rating: 'Ver opiniones recientes en Google',
-        leave: 'Dejar una opinión en Google',
+        description: 'Los clientes anteriores verificados pueden compartir comentarios sinceros después de iniciar sesión con Google.',
+        rating: 'Opiniones de clientes',
+        leave: '¿Tienes una invitación? Escribe una opinión',
         share: 'Comparte tu experiencia',
-        note: 'Estamos creando este espacio con comentarios verificados de clientes. Tu proyecto puede ayudar a la próxima familia.',
+        note: 'Las opiniones se recopilan en este sitio y Urban Stone las modera. Google verifica la identidad; nada se envía a Google ni a Google Maps.',
         text: 'Escribir al equipo de ventas',
         material: 'Guía de materiales premium',
         speed: 'Instalaciones objetivo en 3-5 días',
@@ -27,40 +30,28 @@ const COPY = {
     },
 };
 
-const DEFAULT_REVIEW_URL = 'https://www.google.com/search?q=Urban+Stone+Collective+Cincinnati+reviews';
-
-const DEMO_REVIEWS = [
-    {
-        name: 'Demo homeowner',
-        location: 'Staging placeholder',
-        quote: 'Replace this clearly labeled placeholder with an approved customer review before production.',
-    },
-    {
-        name: 'Demo remodel client',
-        location: 'Staging placeholder',
-        quote: 'Use this space to preview the review card layout. Do not publish as a customer testimonial.',
-    },
-];
-
-function StarRow() {
-    return (
-        <div className="flex gap-1 text-lg leading-none text-[#d8b978]" aria-label="Google reviews">
-            <span aria-hidden="true">★</span>
-            <span aria-hidden="true">★</span>
-            <span aria-hidden="true">★</span>
-            <span aria-hidden="true">★</span>
-            <span aria-hidden="true">★</span>
-        </div>
-    );
-}
-
 export default function ReviewSection({ language = 'en' }) {
+    const [reviews, setReviews] = useState([]);
     const copy = COPY[language] || COPY.en;
-    const reviewUrl = process.env.NEXT_PUBLIC_GOOGLE_REVIEW_URL || DEFAULT_REVIEW_URL;
-    const showDemoReviews = process.env.NEXT_PUBLIC_REVIEW_DEMO_MODE === 'true';
     const smsHref = `sms:+15133075840?body=${encodeURIComponent(language === 'es'
         ? 'Hola Urban Stone, quiero compartir mi experiencia con mi proyecto.'
         : 'Hi Urban Stone, I would like to share my experience with my project.')}`;
+
+    useEffect(() => {
+        let active = true;
+        if (typeof fetch !== 'function') return undefined;
+
+        fetch('/api/reviews/published')
+            .then((response) => (response.ok ? response.json() : null))
+            .then((result) => {
+                if (active && Array.isArray(result?.reviews)) setReviews(result.reviews);
+            })
+            .catch(() => {});
+
+        return () => {
+            active = false;
+        };
+    }, []);
 
     return (
         <section id="reviews" className="mt-12 rounded-[2rem] border border-border bg-surface p-5 shadow-soft sm:mt-14 sm:p-7">
@@ -81,36 +72,32 @@ export default function ReviewSection({ language = 'en' }) {
                     <div className="mt-6 rounded-[1.5rem] border border-border bg-panel p-5 sm:p-6">
                         <div className="flex flex-wrap items-center justify-between gap-4">
                             <div>
-                                <StarRow />
                                 <div className="mt-2 text-sm font-semibold text-text">{copy.rating}</div>
                             </div>
-                            <a
+                            <Link
                                 className="brand-button-primary px-4 py-3 text-sm font-semibold"
-                                href={reviewUrl}
-                                target="_blank"
-                                rel="noreferrer"
+                                href="/reviews/invite"
                             >
                                 {copy.leave}
-                            </a>
+                            </Link>
                         </div>
                         <p className="mt-4 border-t border-border/70 pt-4 text-sm leading-6 text-muted">{copy.note}</p>
                     </div>
 
-                    {showDemoReviews ? (
-                        <div className="mt-4 rounded-[1.5rem] border border-dashed border-accent/60 bg-accent/5 p-4">
-                            <div className="text-[11px] font-semibold uppercase tracking-[0.2em] text-accent">Demo content - staging only</div>
-                            <div className="mt-3 grid gap-3 sm:grid-cols-2">
-                                {DEMO_REVIEWS.map((review) => (
-                                    <article key={review.name} className="rounded-xl border border-border bg-panel p-4">
-                                        <StarRow />
-                                        <p className="mt-3 text-sm leading-6 text-muted">{review.quote}</p>
-                                        <div className="mt-3 text-xs font-semibold text-text">{review.name}</div>
-                                        <div className="text-xs text-muted">{review.location}</div>
-                                    </article>
-                                ))}
-                            </div>
+                    {reviews.length > 0 ? (
+                        <div className="mt-4 grid gap-3 sm:grid-cols-2" aria-label="Published customer reviews">
+                            {reviews.map((review) => (
+                                <article key={review.id} className="rounded-[1.5rem] border border-border bg-panel p-4">
+                                    <div className="text-sm font-semibold text-accent" aria-label={`${review.rating} out of 5 stars`}>
+                                        {'★'.repeat(Math.max(0, Math.min(5, Number(review.rating))))}
+                                    </div>
+                                    <p className="mt-3 whitespace-pre-wrap text-sm leading-6 text-muted">{review.review_text}</p>
+                                    <div className="mt-3 text-xs font-semibold text-text">{review.display_name}</div>
+                                </article>
+                            ))}
                         </div>
                     ) : null}
+
                 </div>
 
                 <div className="flex flex-col justify-between rounded-[1.5rem] border border-border bg-panel p-5 sm:p-6">
