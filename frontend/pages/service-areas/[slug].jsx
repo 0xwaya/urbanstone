@@ -8,7 +8,7 @@ import ChatWidget from '../../components/ChatWidget';
 import RelatedPages from '../../components/RelatedPages';
 import { materialPages } from '../../data/material-pages';
 import { getCanonicalUrl, getSiteUrl } from '../../lib/site';
-import { buildBreadcrumbSchema, buildLocalBusinessSchema, getGeoRegion } from '../../lib/seo';
+import { buildBreadcrumbSchema, buildBusinessSchema, buildServiceSchema, getGeoRegion } from '../../lib/seo';
 import { getServiceAreaBySlug, serviceAreas } from '../../data/service-areas';
 
 export default function ServiceAreaPage({ area }) {
@@ -34,10 +34,11 @@ export default function ServiceAreaPage({ area }) {
             href: `/materials/${page.slug}`,
             label: page.headline,
         }));
-    const localBusinessSchema = buildLocalBusinessSchema({
-        id: `${siteUrl}#business`,
+    const businessSchema = buildBusinessSchema({ siteUrl, image: ogImageUrl });
+    const localBusinessSchema = buildServiceSchema({
+        siteUrl,
         url: canonicalUrl,
-        image: ogImageUrl,
+        name: area.headline,
         areaServed: [area.city, ...area.nearbyAreas, ...area.relatedAreas],
         description: area.metaDescription,
     });
@@ -87,6 +88,7 @@ export default function ServiceAreaPage({ area }) {
                 <meta name="twitter:image" content={ogImageUrl} />
                 <meta name="twitter:image:alt" content="Urban Stone Collective social preview with brand wordmark on a dark stone-inspired background" />
                 <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
+                <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(businessSchema) }} />
                 <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessSchema) }} />
                 <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
             </Head>

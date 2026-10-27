@@ -17,7 +17,7 @@ import {
     spanishLeadFormContent,
 } from '../../data/spanish-homepage-content';
 import { getCanonicalUrl, getSiteUrl } from '../../lib/site';
-import { buildBreadcrumbSchema, buildLocalBusinessSchema } from '../../lib/seo';
+import { buildBreadcrumbSchema, buildBusinessSchema } from '../../lib/seo';
 
 export default function SpanishHome() {
     const siteUrl = getSiteUrl();
@@ -25,21 +25,16 @@ export default function SpanishHome() {
     const ogImageUrl = `${siteUrl}/api/og-image`;
 
     useEffect(() => {
-        document.documentElement.lang = 'es';
+        document.documentElement.lang = 'es-US';
 
         return () => {
             document.documentElement.lang = 'en-US';
         };
     }, []);
 
-    const structuredData = buildLocalBusinessSchema({
-        id: `${canonicalUrl}#business`,
-        url: canonicalUrl,
+    const structuredData = buildBusinessSchema({
+        siteUrl,
         image: ogImageUrl,
-        telephone: process.env.NEXT_PUBLIC_COMPANY_PHONE || '(513) 307-5840',
-        email: process.env.NEXT_PUBLIC_LEAD_EMAIL || 'sales@urbanstone.co',
-        areaServed: ['Cincinnati, Ohio', 'Northern Kentucky', 'Mason, Ohio', 'West Chester, Ohio'],
-        description: 'Urban Stone Collective fabrica e instala cubiertas de cuarzo, granito y cuarcita en Cincinnati y el norte de Kentucky.',
     });
 
     return (
@@ -50,8 +45,8 @@ export default function SpanishHome() {
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
                 <link rel="canonical" href={canonicalUrl} />
-                <link rel="alternate" hrefLang="en" href={getCanonicalUrl('/')} />
-                <link rel="alternate" hrefLang="es" href={canonicalUrl} />
+                <link rel="alternate" hrefLang="en-US" href={getCanonicalUrl('/')} />
+                <link rel="alternate" hrefLang="es-US" href={canonicalUrl} />
                 <link rel="alternate" hrefLang="x-default" href={getCanonicalUrl('/')} />
                 <meta property="og:title" content="Urban Stone Collective | Cubiertas en Cincinnati" />
                 <meta property="og:description" content="Fabricación e instalación de cubiertas de cuarzo, granito y cuarcita en Cincinnati." />
@@ -61,6 +56,11 @@ export default function SpanishHome() {
                 <meta property="og:locale:alternate" content="en_US" />
                 <meta property="og:image" content={ogImageUrl} />
                 <meta property="og:image:alt" content="Urban Stone Collective" />
+                <meta name="twitter:card" content="summary_large_image" />
+                <meta name="twitter:title" content="Urban Stone Collective | Cubiertas en Cincinnati" />
+                <meta name="twitter:description" content="Fabricación e instalación de cubiertas de cuarzo, granito y cuarcita en Cincinnati." />
+                <meta name="twitter:image" content={ogImageUrl} />
+                <meta name="twitter:image:alt" content="Urban Stone Collective" />
                 <script
                     type="application/ld+json"
                     dangerouslySetInnerHTML={{

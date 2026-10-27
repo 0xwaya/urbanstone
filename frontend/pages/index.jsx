@@ -11,7 +11,7 @@ import Footer from '../components/Footer';
 import ReviewSection from '../components/ReviewSection';
 import { homepageAnnouncement, homepageFaqContent, homepageFaqItems, homepageLeadFormContent } from '../data/homepage-content';
 import { getCanonicalUrl, getSiteUrl } from '../lib/site';
-import { buildBreadcrumbSchema, buildLocalBusinessSchema, getGeoRegion } from '../lib/seo';
+import { BUSINESS_TELEPHONE, buildBreadcrumbSchema, buildBusinessSchema, getGeoRegion } from '../lib/seo';
 
 export default function Home() {
   const siteUrl = getSiteUrl();
@@ -26,28 +26,10 @@ export default function Home() {
   const facebookUrl = (process.env.NEXT_PUBLIC_FACEBOOK_URL || '').trim();
   const tiktokUrl = (process.env.NEXT_PUBLIC_TIKTOK_URL || '').trim();
   const socialProfiles = [instagramUrl, facebookUrl, tiktokUrl].filter(Boolean);
-  const structuredData = buildLocalBusinessSchema({
-    id: `${canonicalUrl}#business`,
-    url: canonicalUrl,
+  const structuredData = buildBusinessSchema({
+    siteUrl,
     image: ogImageUrl,
-    telephone: companyPhone,
-    email: companyEmail,
-    areaServed: [
-      'Cincinnati, Ohio',
-      'Covington, Kentucky',
-      'Newport, Kentucky',
-      'Florence, Kentucky',
-      'Mason, Ohio',
-      'West Chester, Ohio',
-      'Liberty Township, Ohio',
-      'Fairfield, Ohio',
-      'Hamilton, Ohio',
-      'Blue Ash, Ohio',
-      'Loveland, Ohio',
-      'Milford, Ohio',
-    ],
     sameAs: socialProfiles,
-    description: 'Urban Stone Collective fabricates and installs quartz countertops, granite countertops, and quartzite countertops across the Cincinnati metro with curated slab sourcing and fast turnaround. Serving homeowners searching for countertop fabricators and installers near Cincinnati, OH.',
   });
   const breadcrumbSchema = buildBreadcrumbSchema([
     { name: 'Home', url: canonicalUrl },
@@ -55,7 +37,7 @@ export default function Home() {
   const organizationSchema = {
     '@context': 'https://schema.org',
     '@type': 'Organization',
-    '@id': `${siteUrl}#organization`,
+    '@id': `${siteUrl}/#organization`,
     name: 'Urban Stone Collective',
     url: siteUrl,
     logo: ogImageUrl,
@@ -63,7 +45,7 @@ export default function Home() {
     contactPoint: [
       {
         '@type': 'ContactPoint',
-        telephone: companyPhone,
+        telephone: BUSINESS_TELEPHONE,
         email: companyEmail,
         contactType: 'sales',
         areaServed: ['Greater Cincinnati', 'Northern Kentucky'],
@@ -74,7 +56,7 @@ export default function Home() {
   const websiteSchema = {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
-    '@id': `${siteUrl}#website`,
+    '@id': `${siteUrl}/#website`,
     url: siteUrl,
     name: 'Urban Stone Collective',
     inLanguage: ['en-US', 'es-US'],
@@ -103,8 +85,8 @@ export default function Home() {
         <meta name="geo.region" content={getGeoRegion('OH')} />
         <meta name="geo.placename" content="Cincinnati" />
         <link rel="canonical" href={canonicalUrl} />
-        <link rel="alternate" hrefLang="en" href={canonicalUrl} />
-        <link rel="alternate" hrefLang="es" href={getCanonicalUrl('/es')} />
+        <link rel="alternate" hrefLang="en-US" href={canonicalUrl} />
+        <link rel="alternate" hrefLang="es-US" href={getCanonicalUrl('/es')} />
         <link rel="alternate" hrefLang="x-default" href={canonicalUrl} />
         <meta property="og:title" content="Premium Countertops &amp; Fast Installation in Cincinnati | Urban Stone" />
         <meta property="og:description" content="Premium countertop materials, fast installation, and personal project support in Cincinnati and Northern Kentucky." />

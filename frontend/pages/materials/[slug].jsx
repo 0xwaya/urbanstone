@@ -9,7 +9,7 @@ import TopNav from '../../components/TopNav';
 import { getMaterialPageBySlug, materialPages } from '../../data/material-pages';
 import { getServiceAreaBySlug, serviceAreas } from '../../data/service-areas';
 import { getCanonicalUrl, getSiteUrl } from '../../lib/site';
-import { buildBreadcrumbSchema, buildLocalBusinessSchema, getGeoRegion } from '../../lib/seo';
+import { buildBreadcrumbSchema, buildBusinessSchema, buildServiceSchema, getGeoRegion } from '../../lib/seo';
 
 export default function MaterialPage({ page, area }) {
     const canonicalUrl = getCanonicalUrl(`/materials/${page.slug}`);
@@ -25,10 +25,11 @@ export default function MaterialPage({ page, area }) {
     const siblingCityPages = area.relatedAreas
         .map((relatedArea) => serviceAreas.find((candidate) => candidate.city === relatedArea))
         .filter(Boolean);
-    const businessSchema = buildLocalBusinessSchema({
-        id: `${siteUrl}#business`,
+    const businessSchema = buildBusinessSchema({ siteUrl, image: ogImageUrl });
+    const serviceSchema = buildServiceSchema({
+        siteUrl,
         url: canonicalUrl,
-        image: ogImageUrl,
+        name: page.headline,
         areaServed: [page.city, ...page.nearbyAreas],
         description: page.metaDescription,
         focusMaterial: page.material.replace(/ countertops?$/i, ''),
@@ -81,6 +82,7 @@ export default function MaterialPage({ page, area }) {
                 <meta name="twitter:image:alt" content="Urban Stone Collective social preview with brand wordmark on a dark stone-inspired background" />
                 <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
                 <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(businessSchema) }} />
+                <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceSchema) }} />
                 <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
             </Head>
 

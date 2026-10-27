@@ -10,7 +10,10 @@ const CHAT_WINDOW_WIDTH = 368;
 const CHAT_WINDOW_HEIGHT = 560;
 
 function toTelHref(value) {
-    return value.replace(/[^\d+]/g, '');
+    const digits = String(value).replace(/\D/g, '');
+    if (digits.length === 10) return `+1${digits}`;
+    if (digits.length === 11 && digits.startsWith('1')) return `+${digits}`;
+    return String(value).replace(/[^\d+]/g, '');
 }
 
 function clampChatPosition(position) {

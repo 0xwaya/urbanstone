@@ -48,45 +48,83 @@ export function buildCountertopOfferCatalog({ url, areaServed, focusMaterial }) 
                 name: service.name,
                 serviceType: `${service.material} countertops`,
                 url,
-                areaServed,
+                areaServed: dedupeAreas(areaServed),
             },
         })),
     };
 }
 
-export function buildLocalBusinessSchema({
-    id,
-    url,
-    image,
-    telephone,
-    email,
-    areaServed,
-    description,
-    sameAs = [],
-    priceRange = '$$',
-    focusMaterial,
-}) {
+export const BUSINESS_TELEPHONE = '+1-513-307-5840';
+export const BUSINESS_EMAIL = 'sales@urbanstone.co';
+
+// Canonical list of cities served, used by the single business node.
+const BUSINESS_AREA_SERVED = [
+    'Cincinnati, Ohio',
+    'Covington, Kentucky',
+    'Newport, Kentucky',
+    'Florence, Kentucky',
+    'Erlanger, Kentucky',
+    'Mason, Ohio',
+    'West Chester, Ohio',
+    'Liberty Township, Ohio',
+    'Fairfield, Ohio',
+    'Hamilton, Ohio',
+    'Blue Ash, Ohio',
+    'Loveland, Ohio',
+    'Milford, Ohio',
+    'Anderson Township, Ohio',
+];
+
+export function dedupeAreas(areas = []) {
+    const seen = new Set();
+    return areas.filter((area) => {
+        const key = String(area).trim().toLowerCase();
+        if (!key || seen.has(key)) return false;
+        seen.add(key);
+        return true;
+    });
+}
+
+export function getBusinessId(siteUrl) {
+    return `${siteUrl}/#business`;
+}
+
+// One canonical service-area business node, identical on every page.
+// No street address or opening hours are published on purpose.
+export function buildBusinessSchema({ siteUrl, image, sameAs = [] }) {
     return {
         '@context': 'https://schema.org',
         '@type': 'HomeAndConstructionBusiness',
-        '@id': id,
+        '@id': getBusinessId(siteUrl),
         name: 'Urban Stone Collective',
-        url,
+        legalName: 'Amazon Granite LLC',
+        url: siteUrl,
         image,
-        telephone,
-        email,
-        priceRange,
-        geo: {
-            '@type': 'GeoCoordinates',
-            ...SERVICE_HUB_GEO,
-        },
-        areaServed,
-        serviceArea: buildServiceAreaGeoCircle(),
-        serviceType: focusMaterial
-            ? [`${focusMaterial} countertops`, 'Countertop fabrication', 'Countertop installation']
-            : ['Granite countertops', 'Quartz countertops', 'Quartzite countertops', 'Countertop fabrication', 'Countertop installation'],
-        hasOfferCatalog: buildCountertopOfferCatalog({ url, areaServed, focusMaterial }),
+        logo: image,
+        telephone: BUSINESS_TELEPHONE,
+        email: BUSINESS_EMAIL,
+        priceRange: '$$',
+        areaServed: [...BUSINESS_AREA_SERVED, buildServiceAreaGeoCircle()],
+        knowsLanguage: ['en', 'es'],
+        hasOfferCatalog: buildCountertopOfferCatalog({ url: siteUrl, areaServed: BUSINESS_AREA_SERVED }),
         sameAs,
+        description: 'Urban Stone Collective fabricates and installs quartz countertops, granite countertops, and quartzite countertops across the Cincinnati metro and Northern Kentucky with curated slab sourcing and fast turnaround.',
+    };
+}
+
+// Page-level Service node that points at the canonical business via provider/@id.
+export function buildServiceSchema({ siteUrl, url, name, areaServed, description, focusMaterial }) {
+    return {
+        '@context': 'https://schema.org',
+        '@type': 'Service',
+        '@id': `${url}#service`,
+        name,
+        url,
+        serviceType: focusMaterial
+            ? `${String(focusMaterial).charAt(0).toUpperCase()}${String(focusMaterial).slice(1)} countertop fabrication and installation`
+            : 'Countertop fabrication and installation',
+        provider: { '@id': getBusinessId(siteUrl) },
+        areaServed: dedupeAreas(areaServed),
         description,
     };
 }

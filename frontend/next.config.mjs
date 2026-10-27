@@ -87,8 +87,16 @@ const nextConfig = {
     poweredByHeader: false,
     reactStrictMode: true,
     compress: true,
+    env: {
+        SITE_BUILD_DATE: new Date().toISOString().slice(0, 10),
+    },
     async redirects() {
         return [
+            // Bare folder paths otherwise show Vercel's public "Index of" listing.
+            { source: '/materials', destination: '/', permanent: true },
+            { source: '/service-areas', destination: '/', permanent: true },
+            { source: '/reviews', destination: '/', permanent: true },
+            { source: '/materials/:vendor(avani|citiquartz|daltile|msi|quartamerica)', destination: '/', permanent: true },
             {
                 source: '/:path*',
                 has: [{ type: 'host', value: 'urbanstone.co' }],
@@ -123,6 +131,15 @@ const nextConfig = {
                     {
                         key: 'Cache-Control',
                         value: 'public, max-age=86400, s-maxage=86400, stale-while-revalidate=604800',
+                    },
+                ],
+            },
+            {
+                source: '/ai-chat',
+                headers: [
+                    {
+                        key: 'X-Robots-Tag',
+                        value: 'noindex, follow',
                     },
                 ],
             },

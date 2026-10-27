@@ -7,7 +7,7 @@ import TopNav from '../../components/TopNav';
 import { materialPages } from '../../data/material-pages';
 import { serviceAreas } from '../../data/service-areas';
 import { getCanonicalUrl, getSiteUrl } from '../../lib/site';
-import { buildBreadcrumbSchema, getGeoRegion } from '../../lib/seo';
+import { buildBreadcrumbSchema, buildBusinessSchema, getGeoRegion } from '../../lib/seo';
 
 export default function CoverageHubPage() {
     const canonicalUrl = getCanonicalUrl('/coverage');
@@ -55,7 +55,7 @@ export default function CoverageHubPage() {
                 <meta property="og:title" content="Cincinnati Coverage Hub | Urban Stone Collective" />
                 <meta
                     property="og:description"
-                    content="Internal hub for Cincinnati-area countertop city pages and material-specific landing pages."
+                    content="Browse Urban Stone Collective city and material pages for quartz, granite, and quartzite countertops across Greater Cincinnati and Northern Kentucky."
                 />
                 <meta property="og:type" content="website" />
                 <meta property="og:url" content={canonicalUrl} />
@@ -77,6 +77,7 @@ export default function CoverageHubPage() {
                 <meta name="twitter:image:alt" content="Urban Stone Collective social preview with brand wordmark on a dark stone-inspired background" />
                 <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
                 <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(coverageSchema) }} />
+                <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(buildBusinessSchema({ siteUrl: getSiteUrl(), image: ogImageUrl })) }} />
             </Head>
 
             <div id="top" className="min-h-screen bg-bg text-text selection:bg-accent selection:text-white">

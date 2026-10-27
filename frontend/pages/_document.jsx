@@ -12,9 +12,12 @@ const themeInitScript = `(function () {
     }
 })();`;
 
-export default function Document() {
+export default function Document(props) {
+    const page = props?.__NEXT_DATA__?.page || '';
+    const lang = page === '/es' || page.startsWith('/es/') ? 'es-US' : 'en-US';
+
     return (
-        <Html lang="en-US">
+        <Html lang={lang}>
             <Head>
                 <link rel="preconnect" href="https://fonts.googleapis.com" />
                 <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
