@@ -40,7 +40,7 @@ export const CONTRACTOR_SPECS = [
     { label: 'Includes', value: 'Fabrication + Installation' },
     { label: 'Lead Time', value: '2–3 weeks per unit block' },
     { label: 'Min. Project', value: '3+ units' },
-    { label: 'Warranty', value: 'Lifetime limited' },
+    { label: 'Warranty', value: '1-year workmanship' },
 ];
 
 export const CONTRACTOR_PROGRAM_NOTES = [
