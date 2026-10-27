@@ -55,7 +55,7 @@ export default function MaterialPage({ page, area }) {
     return (
         <>
             <Head>
-                <title>{page.headline} | Urban Stone Collective</title>
+                <title>{`${page.headline} | Urban Stone Collective`}</title>
                 <meta name="description" content={page.metaDescription} />
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />

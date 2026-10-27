@@ -62,7 +62,7 @@ export default function ServiceAreaPage({ area }) {
     return (
         <>
             <Head>
-                <title>{area.headline} | Urban Stone Collective</title>
+                <title>{`${area.headline} | Urban Stone Collective`}</title>
                 <meta name="description" content={area.metaDescription} />
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
