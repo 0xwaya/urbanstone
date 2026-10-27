@@ -1,3 +1,5 @@
+import supplierSummaries from '../data/supplier-summaries.json';
+
 const HERO_COPY = {
   en: {
     eyebrow: 'Cincinnati fabrication and install',
@@ -54,7 +56,7 @@ export default function Hero({ language = 'en' }) {
                   <div className="mt-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-muted">{copy.days}</div>
                 </div>
                 <div className="rounded-[1.35rem] border border-border bg-surface/70 px-3 py-4 text-center">
-                  <div className="text-2xl font-display font-semibold text-text sm:text-3xl">5</div>
+                  <div className="text-2xl font-display font-semibold text-text sm:text-3xl">{supplierSummaries.length}</div>
                   <div className="mt-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-muted">{copy.curated}</div>
                 </div>
                 <div className="rounded-[1.35rem] border border-border bg-surface/70 px-3 py-4 text-center">

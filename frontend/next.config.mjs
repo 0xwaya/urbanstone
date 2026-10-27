@@ -66,10 +66,6 @@ const nextConfig = {
         remotePatterns: [
             {
                 protocol: 'https',
-                hostname: 'cdn.msisurfaces.com',
-            },
-            {
-                protocol: 'https',
                 hostname: 'www.daltile.com',
             },
             {
@@ -96,7 +92,7 @@ const nextConfig = {
             { source: '/materials', destination: '/', permanent: true },
             { source: '/service-areas', destination: '/', permanent: true },
             { source: '/reviews', destination: '/', permanent: true },
-            { source: '/materials/:vendor(avani|citiquartz|daltile|msi|quartamerica)', destination: '/', permanent: true },
+            { source: '/materials/:vendor(avani|citiquartz|daltile|quartamerica)', destination: '/', permanent: true },
             {
                 source: '/:path*',
                 has: [{ type: 'host', value: 'urbanstone.co' }],

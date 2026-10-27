@@ -57,7 +57,7 @@ const FIELD_PROMPT_PATTERNS = {
     projectPhase: /(what phase are you in right now)/i,
     projectStatus: /(is the property occupied, vacant, tenant-occupied, or owner-occupied)/i,
     tentativeBudget: /(tentative countertop budget range)/i,
-    material: /(material\/slab direction|calacatta laza|kodiak|taj mahal|quartzite)/i,
+    material: /(material\/slab direction|calacatta dolce|kodiak|taj mahal|quartzite)/i,
     squareFootage: /(rough square footage \(sq ft\))/i,
     timeline: /(target timeline \(asap, 1-2 weeks, around a month, or a target date\))/i,
 };
@@ -481,7 +481,7 @@ export function getNextEstimateQuestion(missingFields) {
     case 'tentativeBudget':
         return 'What is your tentative countertop budget range?';
     case 'material':
-        return 'Do you already have a material/slab direction (for example Calacatta Laza, Kodiak, Taj Mahal, quartz, granite, or quartzite)?';
+        return 'Do you already have a material/slab direction (for example Calacatta Dolce, Kodiak, Taj Mahal, quartz, granite, or quartzite)?';
     case 'squareFootage':
         return 'What is your rough square footage (sq ft)?';
     case 'timeline':
@@ -515,7 +515,7 @@ function countFieldAskAttempts(field, history = []) {
 
 const SMART_REASK_QUESTION = {
     city: 'To confirm service routing, what city is the project in? For example: Mason, West Chester, or Cincinnati.',
-    material: 'To narrow the right slab lane, what material/look do you want (quartz, granite, quartzite, or a specific slab like Calacatta Laza)?',
+    material: 'To narrow the right slab lane, what material/look do you want (quartz, granite, quartzite, or a specific slab like Calacatta Dolce)?',
     squareFootage: 'What rough square footage should I use for scoping? Even an approximate `XX sq ft` is enough.',
     timeline: 'What timeline should we plan around: ASAP, 1-2 weeks, around a month, or a target date?',
     name: 'What full name should I place on this request so the team addresses you correctly?',
