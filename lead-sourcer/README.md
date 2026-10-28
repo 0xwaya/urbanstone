@@ -35,7 +35,7 @@ it receives completed lead payloads as an optional downstream relay.
 **Required:**
 ```
 RESEND_API_KEY=...                 # Direct email delivery
-LEAD_WEBHOOK_URL=https://hooks.zapier.com/hooks/catch/REDACTED/  # Zap webhook
+LEAD_WEBHOOK_URL=<your Zapier catch-hook URL>  # Zap webhook (keep secret; never commit the real URL)
 ```
 
 **Reddit access:**
@@ -106,9 +106,24 @@ LEAD_SOURCER_INTERVAL_MINUTES=60 node src/index.js  # Run every 60 min
 
 The canonical command is `npm run sourcer`. An explicitly live one-shot run is
 guarded by the daily state file at `runs/daily-state.json`, so repeated scheduler
-invocations do not duplicate the daily run. No scheduler is enabled by this
-repository. The cron helper resolves paths relative to this checkout and defaults
-to review-only; it does not contact prospects.
+invocations do not duplicate the daily run. The cron helper resolves paths
+relative to this checkout and defaults to review-only; it does not contact prospects.
+
+**GitHub Actions (recommended runner):** `.github/workflows/lead-sourcer.yml` runs
+daily at 13:00 UTC (9 AM EDT / 8 AM EST) and on manual dispatch. It runs the tests,
+`scripts/check-config.mjs`, then `node src/index.js`, and carries `seen-ids.json` and
+`runs/` between runs with the Actions cache. Controls (repo variables):
+
+- `LEAD_SOURCER_MODE` — `review-only` (default, no delivery) or `live` (email + webhook)
+- `LEAD_SOURCER_ENABLE_REDDIT` / `LEAD_SOURCER_ENABLE_APIFY` — default `false`;
+  set `true` once `REDDIT_CLIENT_ID`/`REDDIT_CLIENT_SECRET` or `APIFY_TOKEN` +
+  `APIFY_NEXTDOOR_TASK_ID`/`APIFY_FACEBOOK_TASK_ID` exist
+- Secrets used: `RESEND_API_KEY`, `LEAD_WEBHOOK_URL`, `REDDIT_CLIENT_ID`,
+  `REDDIT_CLIENT_SECRET`, `APIFY_TOKEN`
+
+A run exits non-zero when any enabled source is unhealthy (blocked, parse error,
+failed delivery), so a broken run shows up as a failed workflow instead of a quiet
+"0 leads".
 
 Vercel has a trigger route at `frontend/pages/api/cron/lead-sourcer.js`, but it is
 not scheduled because it requires a public authenticated `LEAD_SOURCER_TRIGGER_URL`
@@ -180,7 +195,7 @@ Details:
 
 **Poll run summary:**
 ```
-/Users/pc/.openclaw/workspace/urbanstone/lead-sourcer/runs/poll-runs.jsonl
+lead-sourcer/runs/poll-runs.jsonl
 ```
 
 Each line is a JSON summary: `{ startedAt, completedAt, mode, counts, verdicts, sourceStatuses, errors }`
@@ -225,7 +240,7 @@ Report is always sent, even if zero matches found (configurable via `LEAD_SOURCE
 ## Troubleshooting
 
 ### "Webhook relay failed: 404 please unsubscribe me!"
-- Old Zap webhook was 404. New URL is `REDACTED/`. Check `LEAD_WEBHOOK_URL` in env.
+- The Zap catch-hook URL lives only in the `LEAD_WEBHOOK_URL` env var / secret. If Zapier returns 404, the hook was regenerated: update the env var.
 - Resend primary still succeeds; Zap failure is non-blocking.
 
 ### "missing_resend_api_key"

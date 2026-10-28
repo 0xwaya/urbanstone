@@ -6,7 +6,7 @@
 import { CRAIGSLIST_BASE, CRAIGSLIST_SECTIONS, CRAIGSLIST_BODY_FETCH_LIMIT, CRAIGSLIST_REQUEST_DELAY_MS } from './config.js';
 import { buildLeadPayload, classifyLeadCandidate, scoreLeadCandidate } from './matcher.js';
 import { isSeen, markSeen } from './dedup.js';
-import { relay } from './relay.js';
+import { deliverLead } from './relay.js';
 import { CRAIGSLIST_QUERY_KEYWORDS } from './config.js';
 import { CRAIGSLIST_LISTING_NOISE_KEYWORDS, LEAD_SOURCER_NEAR_MISS_SCORE_THRESHOLD } from './config.js';
 import { LEAD_SOURCER_RELAY_BORDERLINE, LEAD_SOURCER_BORDERLINE_RELAY_MIN_SCORE } from './config.js';
@@ -53,11 +53,16 @@ function isPropertyListingBody(text) {
  * Fetch the full body text from an individual Craigslist listing page.
  * Returns empty string on any failure — the caller falls back to title-only classification.
  */
+let lastListingPostedAt = null;
+
 async function fetchListingBody(url) {
+    lastListingPostedAt = null;
     try {
         const response = await fetch(url, { headers: BROWSER_HEADERS, signal: AbortSignal.timeout(8000) });
         if (!response.ok) return '';
         const html = await response.text();
+        const postedMatch = html.match(/<time[^>]*class="[^"]*date[^"]*"[^>]*datetime="([^"]+)"/i);
+        lastListingPostedAt = postedMatch ? postedMatch[1] : null;
         // Primary container used by Craigslist posting pages.
         const bodyMatch = html.match(/<section[^>]*class="[^"]*userbody[^"]*"[^>]*>([\s\S]*?)<\/section>/i)
             || html.match(/<div[^>]*id="postingbody"[^>]*>([\s\S]*?)<\/div>/i);
@@ -93,18 +98,34 @@ async function fetchSearchPage(section, keyword) {
     return response.text();
 }
 
-function parseResultsFromHtml(html) {
+// Craigslist moved search results to www.craigslist.org/search/area/<city> and
+// listing URLs from `/<area>/<cat>/d/<slug>/<numericId>.html` to
+// `/view/d/<slug>/<opaqueId>`. Accept both so a format change can't silently
+// zero out the source again.
+const RESULT_ITEM_RE = /<li\s+class="cl-static-search-result"\s+title="([^"]*)"[^>]*>[\s\S]*?<a\s+href="(https:\/\/[^"]+)"[\s\S]*?<\/li>/g;
+const RESULT_ITEM_MARKER_RE = /<li\s+class="cl-static-search-result"/g;
+
+export function extractCraigslistPostId(url) {
+    const legacy = url.match(/\/(\d+)\.html(?:[?#].*)?$/);
+    if (legacy) return legacy[1];
+    const view = url.match(/\/view\/d\/[^/]+\/([A-Za-z0-9_-]+)\/?(?:[?#].*)?$/);
+    if (view) return view[1];
+    return Buffer.from(url).toString('base64').slice(0, 20);
+}
+
+export function countResultMarkers(html) {
+    return (String(html || '').match(RESULT_ITEM_MARKER_RE) || []).length;
+}
+
+export function parseResultsFromHtml(html) {
     const results = [];
-    // Match actual result items (have title attribute, distinct from hub-links)
-    const itemRe = /<li\s+class="cl-static-search-result"\s+title="([^"]+)"[^>]*>[\s\S]*?<a\s+href="(https:\/\/[^"]+\.html)"[\s\S]*?<\/li>/g;
+    const itemRe = new RegExp(RESULT_ITEM_RE.source, 'g');
     let match;
     while ((match = itemRe.exec(html)) !== null) {
-        const rawTitle = match[1].replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').trim();
+        const rawTitle = match[1].replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').trim();
         const url = match[2];
-        // Extract Craigslist post ID from URL path (numeric segment before .html)
-        const idMatch = url.match(/\/(\d+)\.html$/);
-        const postId = idMatch ? idMatch[1] : Buffer.from(url).toString('base64').slice(0, 20);
-        results.push({ title: rawTitle, url, postId });
+        if (!/craigslist\.org\//.test(url)) continue;
+        results.push({ title: rawTitle, url, postId: extractCraigslistPostId(url) });
     }
     return results;
 }
@@ -159,6 +180,12 @@ export async function pollCraigslist({ mode = 'live' } = {}) {
             }
 
             const results = parseResultsFromHtml(html);
+            const markers = countResultMarkers(html);
+            if (markers > 0 && results.length === 0) {
+                stats.status = 'parse-error';
+                stats.parseErrors = (stats.parseErrors || 0) + 1;
+                console.warn(`[craigslist] ${section.label}/${keyword}: page has ${markers} result item(s) but parser extracted 0 — Craigslist markup changed?`);
+            }
             stats.fetched += results.length;
             console.log(`[craigslist] ${section.label}/${keyword}: found ${results.length} listing(s)`);
 
@@ -202,6 +229,11 @@ export async function pollCraigslist({ mode = 'live' } = {}) {
                             continue;
                         }
                         post.body = body;
+                        const postedAt = lastListingPostedAt ? new Date(lastListingPostedAt) : null;
+                        if (postedAt && !Number.isNaN(postedAt.getTime())) {
+                            post.createdAt = postedAt.toISOString();
+                            post.createdUtc = Math.floor(postedAt.getTime() / 1000);
+                        }
                         titleClassification = classifyLeadCandidate({ title: post.title, body });
                     }
                     bodyFetchesThisRun += 1;
@@ -237,12 +269,11 @@ export async function pollCraigslist({ mode = 'live' } = {}) {
                         && softScore.score >= LEAD_SOURCER_BORDERLINE_RELAY_MIN_SCORE;
 
                     if (shouldRelayBorderline) {
-                        markSeen(post.id);
                         const borderlinePayload = buildLeadPayload(
                             post,
                             { verdict: 'borderline', scoreResult: softScore },
                         );
-                        await relay(borderlinePayload);
+                        if (!(await deliverLead(borderlinePayload, { postId: post.id, markSeen, stats }))) continue;
                         stats.relayed += 1;
                         matches.push(post);
                         continue;
@@ -286,13 +317,11 @@ export async function pollCraigslist({ mode = 'live' } = {}) {
                     continue;
                 }
 
-                markSeen(post.id);
-
                 const payload = buildLeadPayload(
                     post,
                     { verdict: 'match', scoreResult: softScore },
                 );
-                await relay(payload);
+                if (!(await deliverLead(payload, { postId: post.id, markSeen, stats }))) continue;
                 stats.relayed += 1;
                 matches.push(post);
             }

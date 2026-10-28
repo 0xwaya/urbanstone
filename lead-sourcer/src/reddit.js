@@ -8,7 +8,7 @@ import { isSeen, markSeen } from './dedup.js';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { relay } from './relay.js';
+import { deliverLead } from './relay.js';
 import { REDDIT_SEARCH_DELAY_MS, REDDIT_SEARCH_QUERIES, REDDIT_SEARCH_SUBREDDITS } from './config.js';
 import { GEO_TARGET_CITIES } from './config.js';
 import { LEAD_SOURCER_REQUIRE_REGIONAL_SIGNAL } from './config.js';
@@ -303,12 +303,11 @@ export async function pollReddit({ mode = 'live' } = {}) {
                     && softScore.score >= LEAD_SOURCER_BORDERLINE_RELAY_MIN_SCORE;
 
                 if (shouldRelayBorderline) {
-                    markSeen(post.id);
                     const borderlinePayload = buildLeadPayload(
                         post,
                         { verdict: 'borderline', scoreResult: softScore },
                     );
-                    await relay(borderlinePayload);
+                    if (!(await deliverLead(borderlinePayload, { postId: post.id, markSeen, stats }))) continue;
                     stats.relayed += 1;
                     matches.push(post);
                     continue;
@@ -364,13 +363,11 @@ export async function pollReddit({ mode = 'live' } = {}) {
                 continue;
             }
 
-            markSeen(post.id);
-
             const payload = buildLeadPayload(
                 post,
                 { verdict: 'match', scoreResult: softScore },
             );
-            await relay(payload);
+            if (!(await deliverLead(payload, { postId: post.id, markSeen, stats }))) continue;
             stats.relayed += 1;
             matches.push(post);
         }

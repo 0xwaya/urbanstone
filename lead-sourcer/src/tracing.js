@@ -38,7 +38,10 @@ function resolveOtlpTracesEndpoint() {
 export async function initializeTracing() {
     if (tracingInitialized) return;
 
-    const enabled = envFlag('LEAD_SOURCER_TRACING_ENABLED', true);
+    // Default on only when an OTLP endpoint is configured; otherwise every
+    // scheduled run tried to export to localhost:4318 and logged noise.
+    const hasEndpoint = Boolean(String(process.env.OTEL_EXPORTER_OTLP_TRACES_ENDPOINT || process.env.OTEL_EXPORTER_OTLP_ENDPOINT || '').trim());
+    const enabled = envFlag('LEAD_SOURCER_TRACING_ENABLED', hasEndpoint);
     if (!enabled) return;
 
     const endpoint = resolveOtlpTracesEndpoint();

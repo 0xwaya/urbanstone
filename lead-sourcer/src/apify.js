@@ -21,7 +21,7 @@ import {
 } from './config.js';
 import { buildLeadPayload, classifyLeadCandidate, scoreLeadCandidate } from './matcher.js';
 import { isSeen, markSeen } from './dedup.js';
-import { relay } from './relay.js';
+import { deliverLead } from './relay.js';
 import { resolveRunMode } from './mode.js';
 import { runModeFlags } from './mode.js';
 import { logNearMissCandidate, logReviewCandidate } from './review-log.js';
@@ -429,12 +429,11 @@ export async function pollApify({ mode = 'live' } = {}) {
                 && softScore.score >= LEAD_SOURCER_BORDERLINE_RELAY_MIN_SCORE;
 
             if (shouldRelayBorderline) {
-                markSeen(post.id);
                 const borderlinePayload = buildLeadPayload(
                     post,
                     { verdict: 'borderline', scoreResult: softScore },
                 );
-                await relay(borderlinePayload);
+                if (!(await deliverLead(borderlinePayload, { postId: post.id, markSeen, stats }))) continue;
                 stats.relayed += 1;
                 taskStats.relayed += 1;
                 matches.push(post);
@@ -480,13 +479,11 @@ export async function pollApify({ mode = 'live' } = {}) {
             matches.push(post);
             continue;
         }
-
-        markSeen(post.id);
         const payload = buildLeadPayload(
             post,
             { verdict: 'match', scoreResult: softScore },
         );
-        await relay(payload);
+        if (!(await deliverLead(payload, { postId: post.id, markSeen, stats }))) continue;
         stats.relayed += 1;
         taskStats.relayed += 1;
         matches.push(post);

@@ -17,6 +17,7 @@ import { pollApify } from './apify.js';
 import { resolveRunMode } from './mode.js';
 import { relay } from './relay.js';
 import { initializeTracing } from './tracing.js';
+import { assessRunHealth } from './run-health.js';
 import { buildPreDraft, shouldRunDaily, readDailyState, writeDailyState } from './daily-runner.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -372,6 +373,15 @@ async function runOnce(mode) {
         errors,
     };
 
+    summary.health = assessRunHealth(summary, {
+        reddit: ENABLE_REDDIT,
+        craigslist: ENABLE_CRAIGSLIST,
+        apify: ENABLE_APIFY,
+    });
+    if (summary.health.unhealthySources.length > 0) {
+        console.warn(`[lead-sourcer] Unhealthy sources: ${summary.health.unhealthySources.join(', ')}${summary.health.allFailed ? ' (every enabled source failed)' : ''}`);
+    }
+
     await appendRunSummary(summary);
     await maybeSendRunReport(summary);
     return summary;
@@ -391,12 +401,22 @@ async function scheduleDailyRunIfNeeded() {
     const summary = await runOnce(mode);
     const nextState = {
         lastRunAt: new Date().toISOString(),
-        lastStatus: summary.counts.totalMatches > 0 ? 'success' : 'success-empty',
+        // A run where every enabled source failed is recorded as failed so the
+        // next scheduled invocation retries instead of waiting 24h.
+        lastStatus: summary.health?.allFailed
+            ? 'failed'
+            : summary.counts.totalMatches > 0 ? 'success' : 'success-empty',
         summary,
     };
 
     writeDailyState(DAILY_STATE_FILE, nextState);
     return { skipped: false, state: nextState, summary };
+}
+
+// Non-zero exit lets a scheduler (GitHub Actions, cron) surface a broken
+// source instead of reporting green on a run that fetched nothing.
+function markExitCode(summary) {
+    if (summary?.health?.unhealthySources?.length > 0) process.exitCode = 1;
 }
 
 async function run() {
@@ -405,12 +425,12 @@ async function run() {
 
     if (mode === 'live' && !useInterval) {
         const result = await scheduleDailyRunIfNeeded();
-        if (result.skipped) return;
+        if (!result.skipped) markExitCode(result.summary);
         return;
     }
 
     if (!useInterval && mode !== 'live') {
-        await runOnce(mode);
+        markExitCode(await runOnce(mode));
         return;
     }
 

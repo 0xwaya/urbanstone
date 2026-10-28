@@ -156,3 +156,24 @@ export async function relay(payload, options = {}) {
         webhookSent,
     };
 }
+
+/**
+ * Relay one sourced lead and only mark it seen after a channel accepted it.
+ * A failed relay no longer aborts the whole poller (which previously dropped
+ * every remaining candidate) and no longer burns the dedup entry, so the lead
+ * is retried on the next scheduled run.
+ */
+export async function deliverLead(payload, { postId, markSeen, stats, relayFn = relay }) {
+    try {
+        await relayFn(payload);
+        if (postId && typeof markSeen === 'function') markSeen(postId);
+        return true;
+    } catch (error) {
+        if (stats) {
+            stats.relayFailures = (stats.relayFailures || 0) + 1;
+            stats.status = 'degraded';
+        }
+        console.warn(`[relay] Lead ${postId || payload?.dedupeKey || 'unknown'} not delivered; will retry next run: ${error?.message || error}`);
+        return false;
+    }
+}
