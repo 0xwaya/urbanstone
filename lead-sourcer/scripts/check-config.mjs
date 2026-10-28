@@ -15,7 +15,8 @@ const anyDelivery = has('RESEND_API_KEY') || has('LEAD_WEBHOOK_URL');
 
 // [name, enabled, configured]
 const checks = [
-    ['LEAD_SOURCER_ENABLE_REDDIT (REDDIT_CLIENT_ID + REDDIT_CLIENT_SECRET)', flag('LEAD_SOURCER_ENABLE_REDDIT'), has('REDDIT_CLIENT_ID') && has('REDDIT_CLIENT_SECRET')],
+    // Reddit falls back to unauthenticated public JSON when API credentials are absent (src/reddit.js).
+    ['LEAD_SOURCER_ENABLE_REDDIT', flag('LEAD_SOURCER_ENABLE_REDDIT'), true],
     ['LEAD_SOURCER_ENABLE_CRAIGSLIST', flag('LEAD_SOURCER_ENABLE_CRAIGSLIST'), true],
     ['LEAD_SOURCER_ENABLE_APIFY (APIFY_TOKEN)', apifyEnabled, has('APIFY_TOKEN')],
     ['apify task id (nextdoor, facebook or ad-library)', apifyEnabled, Boolean(APIFY_NEXTDOOR_TASK_ID || APIFY_FACEBOOK_TASK_ID || APIFY_AD_LIBRARY_TASK_ID)],
@@ -24,6 +25,9 @@ const checks = [
 ];
 
 console.log(`[sourcer:check] mode=${mode}`);
+if (flag('LEAD_SOURCER_ENABLE_REDDIT') && !(has('REDDIT_CLIENT_ID') && has('REDDIT_CLIENT_SECRET'))) {
+    console.warn('[sourcer:check] Reddit: REDDIT_CLIENT_ID/SECRET not set; using unauthenticated public access (may be rate-limited or blocked).');
+}
 let failures = 0;
 for (const [name, enabled, configured] of checks) {
     const status = !enabled ? 'disabled' : configured ? 'ready' : 'missing';

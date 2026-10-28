@@ -416,7 +416,9 @@ async function scheduleDailyRunIfNeeded() {
 // Non-zero exit lets a scheduler (GitHub Actions, cron) surface a broken
 // source instead of reporting green on a run that fetched nothing.
 function markExitCode(summary) {
-    if (summary?.health?.unhealthySources?.length > 0) process.exitCode = 1;
+    const unhealthy = summary?.health?.unhealthySources || [];
+    if (unhealthy.includes('reddit')) console.warn('[lead-sourcer] Reddit degraded (public access may be blocked); not failing the run for Reddit alone.');
+    if (summary?.health?.allFailed || unhealthy.some((s) => s !== 'reddit')) process.exitCode = 1;
 }
 
 async function run() {
