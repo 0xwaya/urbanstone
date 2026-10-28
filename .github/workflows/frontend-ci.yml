@@ -58,38 +58,7 @@ jobs:
       - name: Build
         run: npm run build
 
-  deploy-production:
-    if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
-    needs: frontend
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out repository
-        uses: actions/checkout@v4
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-
-      - name: Install Vercel CLI
-        run: npm i -g vercel@latest
-
-      - name: Validate required deployment secrets
-        env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-        run: |
-          missing=()
-          [[ -z "$VERCEL_TOKEN" ]] && missing+=("VERCEL_TOKEN")
-
-          if (( ${#missing[@]} > 0 )); then
-            echo "Missing required GitHub secrets: ${missing[*]}"
-            exit 1
-          fi
-
-      - name: Deploy to Vercel (production)
-        env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-          VERCEL_ORG_ID: team_1kzXJnG8hT3T3zkXXhaWuWgL
-          VERCEL_PROJECT_ID: prj_RA55KfqImv5WyPIbxyvrM78tirkR
-        run: |
-          vercel deploy --prod --yes --token "$VERCEL_TOKEN"
+  # Production deploys are handled by Vercel's Git integration on every push to
+  # main. The old `vercel deploy` job here was redundant and failed with
+  # "Project not found" because the VERCEL_TOKEN secret had lost access to the
+  # 0xwaya-projects team, so it was removed.

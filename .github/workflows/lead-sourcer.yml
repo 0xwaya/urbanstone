@@ -1,0 +1,115 @@
+name: Lead Sourcer
+
+# Scheduled runner for lead-sourcer/. Replaces the removed Vercel cron (which
+# had no runner to call) and the old laptop cron.
+#
+# Safe by default: runs in review-only mode (scan + log, no email/webhook)
+# until the repo variable LEAD_SOURCER_MODE is set to "live".
+# The sourcer never contacts the authors of posts.
+
+on:
+  schedule:
+    - cron: '0 13 * * *'   # 13:00 UTC = 9:00 AM ET (EDT) / 8:00 AM ET (EST)
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'Run mode (review-only | dry-run | live). Blank = repo variable or review-only.'
+        required: false
+        default: ''
+  pull_request:
+    paths:
+      - 'lead-sourcer/**'
+      - '.github/workflows/lead-sourcer.yml'
+
+concurrency:
+  group: lead-sourcer
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: lead-sourcer
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: lead-sourcer/package-lock.json
+      - run: npm ci
+      - run: npm test -- --runInBand
+
+  run:
+    needs: test
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: lead-sourcer
+    env:
+      LEAD_SOURCER_MODE: ${{ inputs.mode || vars.LEAD_SOURCER_MODE || 'review-only' }}
+      # Sources stay off until their credentials exist (set the repo variable to "true").
+      LEAD_SOURCER_ENABLE_REDDIT: ${{ vars.LEAD_SOURCER_ENABLE_REDDIT || 'false' }}
+      LEAD_SOURCER_ENABLE_CRAIGSLIST: ${{ vars.LEAD_SOURCER_ENABLE_CRAIGSLIST || 'true' }}
+      LEAD_SOURCER_ENABLE_APIFY: ${{ vars.LEAD_SOURCER_ENABLE_APIFY || 'false' }}
+      LEAD_SOURCER_TRACING_ENABLED: 'false'
+      LEAD_SOURCER_ALERT_EMAIL: ${{ vars.LEAD_SOURCER_ALERT_EMAIL || 'sales@urbanstone.co' }}
+      LEAD_SOURCER_RUN_REPORT_EMAIL: ${{ vars.LEAD_SOURCER_ALERT_EMAIL || 'sales@urbanstone.co' }}
+      LEAD_SOURCER_EMAIL_FROM: ${{ vars.LEAD_SOURCER_EMAIL_FROM || 'Urban Stone <sales@urbanstone.co>' }}
+      LEAD_SOURCER_RUN_REPORT_EMAIL_FROM: ${{ vars.LEAD_SOURCER_EMAIL_FROM || 'Urban Stone <sales@urbanstone.co>' }}
+      RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+      LEAD_WEBHOOK_URL: ${{ secrets.LEAD_WEBHOOK_URL }}
+      REDDIT_CLIENT_ID: ${{ secrets.REDDIT_CLIENT_ID }}
+      REDDIT_CLIENT_SECRET: ${{ secrets.REDDIT_CLIENT_SECRET }}
+      LEAD_SOURCER_REDDIT_USER_AGENT: ${{ vars.LEAD_SOURCER_REDDIT_USER_AGENT }}
+      APIFY_TOKEN: ${{ secrets.APIFY_TOKEN }}
+      APIFY_NEXTDOOR_TASK_ID: ${{ vars.APIFY_NEXTDOOR_TASK_ID }}
+      APIFY_FACEBOOK_TASK_ID: ${{ vars.APIFY_FACEBOOK_TASK_ID }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: lead-sourcer/package-lock.json
+      - run: npm ci
+
+      # Dedup + daily state live on disk; carry them between runs.
+      - name: Restore sourcer state
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            lead-sourcer/seen-ids.json
+            lead-sourcer/runs
+          key: lead-sourcer-state-${{ github.run_id }}
+          restore-keys: lead-sourcer-state-
+
+      - name: Check configuration
+        run: node scripts/check-config.mjs
+
+      - name: Run lead sourcer
+        run: node src/index.js
+
+      - name: Save sourcer state
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            lead-sourcer/seen-ids.json
+            lead-sourcer/runs
+          key: lead-sourcer-state-${{ github.run_id }}
+
+      - name: Upload run logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lead-sourcer-run-${{ github.run_id }}
+          path: lead-sourcer/runs/*.jsonl
+          if-no-files-found: ignore
+          retention-days: 30
