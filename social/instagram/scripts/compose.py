@@ -221,6 +221,57 @@ def compose(scene_path, out_dir, focus_y=None):
     return results
 
 
+def _label(img, x, y, text, cfg):
+    """Small letterspaced pill label (BEFORE / AFTER) in brand navy + gold, semi-translucent."""
+    brand = cfg["brand"]
+    base = img.convert("RGBA")
+    layer = Image.new("RGBA", base.size, (0, 0, 0, 0))
+    dr = ImageDraw.Draw(layer)
+    f = _font("fonts/Manrope-VF.ttf", 30, 700)
+    tw = sum(dr.textlength(ch, font=f) for ch in text) + 6 * (len(text) - 1)
+    pad_x, h = 24, 54
+    dr.rounded_rectangle((x, y, x + tw + 2 * pad_x, y + h), radius=h // 2,
+                         fill=_hex(brand["navy"]) + (200,), outline=_hex(brand["gold"]) + (230,), width=2)
+    _spaced(dr, x + pad_x + tw / 2, y + 10, text, f, 6, _hex(brand["gold"]) + (255,))
+    base.alpha_composite(layer)
+    return base.convert("RGB")
+
+
+def compose_pair(before_path, after_path, out_dir, focus_y=None):
+    """Before-and-after (outdoor posts, Edward Oct 29 2026): BEFORE on top, AFTER below, full-bleed,
+    split by a thin gold hairline; small BEFORE/AFTER pills; seal in the AFTER half's calmest corner."""
+    cfg = config()
+    focus_y = cfg["default_focus_y"] if focus_y is None else focus_y
+    tcfg = cfg.get("scene_tone")
+    before = tone(Image.open(before_path).convert("RGB"), tcfg)
+    after = tone(Image.open(after_path).convert("RGB"), tcfg)
+    os.makedirs(out_dir, exist_ok=True)
+    results = {}
+    for name, f in cfg["formats"].items():
+        W, H = f["width"], f["height"]
+        l, t, r, b = f["margin"]
+        top_h = H // 2
+        bimg, _ = crop_to(before, W, top_h, focus_y)
+        aimg, counter_y = crop_to(after, W, H - top_h, focus_y)
+        img = Image.new("RGB", (W, H))
+        img.paste(bimg, (0, 0))
+        img.paste(aimg, (0, top_h))
+        img = img.filter(ImageFilter.UnsharpMask(radius=1.4, percent=70, threshold=2))
+        ImageDraw.Draw(img).line((0, top_h, W, top_h), fill=_hex(cfg["brand"]["gold"]), width=4)
+        img = _label(img, l, max(t, 36), "BEFORE", cfg)
+        img = _label(img, l, top_h + 28, "AFTER", cfg)
+        sw = round(W * cfg["logo_stamp"]["width_frac"] * 0.85)
+        x = W - r - sw
+        y = H - b - sw  # bottom-right of the AFTER half, below the pill row
+        img = stamp(img, (x, y, x + sw, y + sw), cfg["logo_stamp"], cfg["brand"])
+        out = os.path.join(out_dir, f"post_{name}.png")
+        img.save(out, "PNG", optimize=True)
+        img.save(out[:-4] + ".jpg", "JPEG", quality=92, subsampling=0, optimize=True)
+        results[name] = {"png": out, "jpg": out[:-4] + ".jpg", "size": [W, H], "logo_corner": "bottom-right",
+                         "format": "before_after"}
+    return results
+
+
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--scene", required=True)

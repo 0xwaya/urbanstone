@@ -29,6 +29,7 @@ def main(argv=None):
     ap = argparse.ArgumentParser()
     ap.add_argument("--scene", required=True, help="scene image generated from the pending prompt")
     ap.add_argument("--slot", help='local time "YYYY-MM-DD HH:MM" (default: next configured slot)')
+    ap.add_argument("--before", help="BEFORE image (required for outdoor/vanity/fireplace before-and-after posts)")
     ap.add_argument("--focus-y", type=float, help="countertop vertical position in the scene, 0..1")
     ap.add_argument("--post-type", default="kitchen", help="kitchen | remnant | before-after | promo | ...")
     ap.add_argument("--replace", action="store_true", help="overwrite an existing queue folder for this slot")
@@ -50,7 +51,21 @@ def main(argv=None):
         shutil.rmtree(folder)
     os.makedirs(folder)
 
-    renders = compose.compose(a.scene, folder, a.focus_y)
+    import rules
+    application = scene.get("application", "kitchen island")
+    fmt = scene.get("format", "single")
+    problems = rules.violations(scene["material"], scene.get("finish", "polished"), application)
+    if problems:
+        shutil.rmtree(folder)
+        sys.exit("refusing to queue: " + "; ".join(problems))
+    if fmt == "before_after":
+        if not a.before:
+            shutil.rmtree(folder)
+            sys.exit(f"{application} posts are before-and-after: pass --before <image from scene before_prompt>")
+        renders = compose.compose_pair(a.before, a.scene, folder, a.focus_y)
+        shutil.copyfile(a.before, os.path.join(folder, "before" + os.path.splitext(a.before)[1].lower()))
+    else:
+        renders = compose.compose(a.scene, folder, a.focus_y)
     shutil.copyfile(a.scene, os.path.join(folder, "scene" + os.path.splitext(a.scene)[1].lower()))
     tags, set_id = hashtags.pick(scene["material"], history, seed=scene["id"], stone=scene["stone"])
     caption, cap_meta = captions.build(scene, history, when, hashtags.render(tags), seed=scene["id"])
@@ -77,10 +92,12 @@ def main(argv=None):
         "files": {k: {"png": os.path.basename(v["png"]), "jpg": os.path.basename(v["jpg"]),
                       "logo_corner": v["logo_corner"]} for k, v in renders.items()},
         "dimensions": {
-            "post_type": a.post_type, "material": scene["material"], "stone": scene["stone"],
+            "post_type": a.post_type if a.post_type != "kitchen" else
+                ("before-after" if fmt == "before_after" else application),
+            "application": application, "finish": scene.get("finish"), "format": fmt, "material": scene["material"], "stone": scene["stone"],
             "catalog_stone": scene["catalog"], "style": scene["style"], "cabinets": scene["cabinets"],
             "lighting": scene["lighting"], "layout": scene["layout"], "hardware": scene["hardware"],
-            "cta": cap_meta["cta"], "brand_point": cap_meta["brand_point"], "promo": cap_meta["promo"],
+            "cta": cap_meta["cta"], "brand_point": cap_meta["brand_point"], "promo": cap_meta["promo"], "caption_style": cap_meta["caption_style"],
             "hashtag_set_id": set_id, "slot": slot_label(when),
         },
         "hashtags": tags,
@@ -90,7 +107,8 @@ def main(argv=None):
     }
     save_json(os.path.join(folder, "meta.json"), meta)
     history.append({"queue_id": queue_id, "key": scene["key"], "stone": scene["stone"],
-                    "material": scene["material"], "cta": cap_meta["cta"],
+                    "material": scene["material"], "finish": scene.get("finish"),
+                    "application": application, "format": fmt, "cta": cap_meta["cta"],
                     "brand_point": cap_meta["brand_point"], "hashtags": tags, "hashtag_set_id": set_id})
     save_json("state/history.json", history)
     pending = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "state", "pending_scene.json")

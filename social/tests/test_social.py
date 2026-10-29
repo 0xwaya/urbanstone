@@ -81,10 +81,37 @@ class Sandbox(unittest.TestCase):
 
     def make(self, slot="2026-10-29 16:00", focus=0.6):
         prompt_builder.choose(seed=1)
-        common.save_json("state/pending_scene.json", prompt_builder.choose(seed=hash(slot) % 1000))
+        scene = prompt_builder.choose(seed=hash(slot) % 1000)
+        common.save_json("state/pending_scene.json", scene)
+        extra = ["--before", self.scene_img] if scene.get("format") == "before_after" else []
         with mock.patch("sys.stdout"):
-            make_post.main(["--scene", self.scene_img, "--slot", slot, "--focus-y", str(focus)])
+            make_post.main(["--scene", self.scene_img, "--slot", slot, "--focus-y", str(focus)] + extra)
         return common.load_json(os.path.join(self.tmp, "queue", slot.replace("-", "-").replace(" ", "-").replace(":", ""), "meta.json"))
+
+
+class RulesTests(Sandbox):
+    def test_finish_and_outdoor_rules(self):
+        import rules
+        self.assertTrue(rules.violations("marble", "live edge", "kitchen island"))
+        self.assertTrue(rules.violations("quartzite", "live edge", "vanity"))
+        self.assertTrue(rules.violations("quartz", "leathered", "kitchen island"))
+        for m in ("marble", "quartzite", "quartz"):
+            self.assertTrue(rules.violations(m, "polished", rules.OUTDOOR))
+        self.assertFalse(rules.violations("granite", "live edge", rules.OUTDOOR))
+        self.assertFalse(rules.violations("marble", "leathered", "fireplace"))
+
+    def test_generated_scenes_obey_rules(self):
+        hist = []
+        for i in range(60):
+            sc = prompt_builder.choose(seed=i)
+            import rules
+            self.assertEqual(rules.violations(sc["material"], sc["finish"], sc["application"]), [])
+            self.assertEqual(sc["format"] == "before_after", sc["application"] in rules.BEFORE_AFTER_APPS)
+            if sc["format"] == "before_after":
+                self.assertIn("BEFORE the remodel", sc["before_prompt"])
+            hist.append({"key": sc["key"], "stone": sc["stone"], "material": sc["material"],
+                         "finish": sc["finish"], "application": sc["application"]})
+            common.save_json("state/history.json", hist)
 
 
 class GeneratorTests(Sandbox):

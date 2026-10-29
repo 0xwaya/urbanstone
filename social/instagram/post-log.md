@@ -7,7 +7,7 @@ One entry is appended per published post. Entries are never edited or removed.
 
 **Analytics note:** Meta Insights (reach, impressions, engagement per post) will be compared against this log later, matching posts by date/time and post URL/ID, to see which topics, materials and promos perform best.
 
-## Tags (required on every entry)
+## Tags (required on every entry: Material, Finish, Application)
 
 - **Material:** one of
   - `quartzite` (e.g. Taj Mahal)
@@ -23,6 +23,26 @@ One entry is appended per published post. Entries are never edited or removed.
 - **Polished** is valid on all materials; quartz is always tagged `polished`.
 - Tag the finish actually shown and described in the post. If a post's image or caption shows an invalid combination, don't publish it; fix the post first.
 
+- **Application:** what the post shows — `kitchen island`, `backsplash`, `outdoor kitchen/grill area`, `vanity`, `fireplace` (more can be added).
+
+**Application rules:**
+- **Outdoor kitchen / grill area is granite only.** Never marble, quartzite or quartz outdoors; outdoor posts use leathered or live-edge granite (weather, heat and grease resistance). The routine will not publish an outdoor post that breaks this.
+
+## Formats
+
+- `single` — one full-bleed image (kitchen island, backsplash).
+- `before_after` — **outdoor kitchen/grill area, vanity and fireplace posts use a before-and-after pair**: BEFORE (bare patio / dated surface) on top, AFTER (new granite grill area, or intricate design with inlays) below, each half full-bleed with small BEFORE/AFTER labels and the seal on the AFTER half. The caption tells the transformation story.
+
+## Caption styles
+
+Captions keep the same base content and tone, varying length and emphasis by tags:
+- `punchy` — leathered or live-edge granite: short and direct.
+- `design` — quartzite and Calacatta / Taj Mahal / Carrara-style quartz: longer, design-focused.
+- `exotic` — marble (e.g. Nero Marquina): statement-piece, slab-by-slab character.
+- `before_after_outdoor` — outdoor grill areas: transformation story, granite only, weather/heat/grease-resistant finish.
+- `before_after_feature` — vanities and fireplaces: transformation story, intricate designs and inlays.
+- `classic` — everything else.
+
 Each entry has this format:
 
 ```
@@ -30,6 +50,9 @@ Each entry has this format:
 - Posted at: <actual publish time, ET>
 - Material: <quartzite | quartz | marble | granite> (<stone name>)
 - Finish: <polished | leathered | live edge>
+- Application: <kitchen island | backsplash | outdoor kitchen/grill area | vanity | fireplace>
+- Format: <single | before_after>
+- Caption style: <punchy | design | exotic | before_after_outdoor | before_after_feature | classic>
 - About: <topic — stone/material, kitchen style, promo>
 - Queue folder: social/instagram/queue/<queue_id>/
 - Image: https://www.urbanstone.co/social/<queue_id>/post_4x5.jpg

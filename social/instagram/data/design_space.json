@@ -65,7 +65,7 @@
       "name": "Absolute Black",
       "material": "granite",
       "catalog": true,
-      "look": "deep solid black honed granite"
+      "look": "deep solid black granite"
     },
     {
       "name": "Fantasy Brown",
@@ -131,7 +131,7 @@
       "name": "Carrara Marble",
       "material": "marble",
       "catalog": false,
-      "look": "soft white marble with fine grey veining, honed finish"
+      "look": "soft white marble with fine grey veining"
     },
     {
       "name": "Statuario Marble",
