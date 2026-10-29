@@ -1,0 +1,38 @@
+\documentclass{article}
+\usepackage{tikz}
+\pagestyle{empty}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+% Colors sourced from urbanstone.co (favicon SVG + site CSS)
+\definecolor{brandnavy}{HTML}{0C1628}
+\definecolor{brandgold}{HTML}{8B7B57}
+\definecolor{goldmid}{HTML}{C4AD80}
+\definecolor{goldlight}{HTML}{DDCDA5}
+\begin{document}
+\newsavebox\logobox
+\sbox\logobox{%
+\begin{tikzpicture}[yscale=-1]
+  % navy header bar from the letterhead omitted -> transparent logo
+  \begin{scope}[shift={(-9.1, 0.65)}]
+    \begin{scope}[scale=0.6]
+      \begin{scope}[scale=0.035, shift={(0, -25)}]
+        \begin{scope}[shift={(-2.9, 0)}]
+          \draw[goldlight, line width=2.1pt] (23.7, 35.6) -- (23.7, 26.1) -- (31.1, 20.6) -- (31.1, 40.2);
+          \draw[goldmid, line width=2.1pt] (31.8, 41.2) -- (31.8, 16.3) -- (39.2, 10.9) -- (39.2, 34.8);
+          \draw[brandgold, line width=2.1pt] (41.1, 35.5) -- (41.1, 25.8) -- (45.2, 22.8) -- (45.2, 32.7);
+        \end{scope}
+        \fill[brandgold] (14, 37.2) -- (21, 39.8) -- (34.7, 45.1) -- (34.8, 45.4) -- (27.2, 48.5) -- (14.1, 43.7) -- cycle;
+        \fill[goldmid] (28.4, 41.1) -- (49.6, 33.2) -- (50, 33.3) -- (50, 38.6) -- (44.3, 41.2) -- (32.7, 43.1) -- cycle;
+        \fill[goldlight] (27.3, 49.9) -- (48.8, 40.4) -- (49.9, 40.1) -- (50, 42.9) -- (32.7, 52.4) -- (27.3, 50.1) -- cycle;
+      \end{scope}
+    \end{scope}
+    \node[anchor=west, white] (title) at (1.2, 0.1) {\fontsize{22}{22}\selectfont \textbf{Urban Stone}};
+    % COLLECTIVE: centered under "Urban Stone" (anchor=north at title.south = same x-center), ~15% larger (6.5pt -> 7.5pt)
+    \node[anchor=north, align=center, goldmid] at (title.south) [yshift=5pt] {\fontsize{7.5}{7.5}\selectfont \sffamily \textbf{C \ O \ L \ L \ E \ C \ T \ I \ V \ E}};
+  \end{scope}
+\end{tikzpicture}
+}%
+\pdfpagewidth=\dimexpr\wd\logobox+6pt\relax \pdfpageheight=\dimexpr\ht\logobox+\dp\logobox+6pt\relax
+\hoffset=-1in \voffset=-1in \oddsidemargin=3pt \topmargin=3pt \headheight=0pt \headsep=0pt
+\noindent\usebox\logobox
+\end{document}

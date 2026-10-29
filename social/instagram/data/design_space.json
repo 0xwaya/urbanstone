@@ -1,0 +1,195 @@
+{
+  "_note": "catalog=true stones are named in frontend/data/curated-slab-options.js. catalog=false stones are generic industry looks used as design inspiration only; captions must not claim Urban Stone stocks them.",
+  "stones": [
+    {
+      "name": "Calacatta Gelato",
+      "material": "quartz",
+      "catalog": true,
+      "look": "bright white quartz with soft warm-grey and gold veining"
+    },
+    {
+      "name": "Calacatta Aurus",
+      "material": "quartz",
+      "catalog": true,
+      "look": "white quartz with bold gold and grey veins"
+    },
+    {
+      "name": "Calacatta Andromeda",
+      "material": "quartz",
+      "catalog": true,
+      "look": "white quartz with dramatic charcoal veining"
+    },
+    {
+      "name": "Calacatta Dolce",
+      "material": "quartz",
+      "catalog": true,
+      "look": "creamy white quartz with delicate taupe veins"
+    },
+    {
+      "name": "Calacatta Nile",
+      "material": "quartz",
+      "catalog": true,
+      "look": "white quartz with flowing grey-brown veins"
+    },
+    {
+      "name": "Carrara Classique",
+      "material": "quartz",
+      "catalog": true,
+      "look": "soft white quartz with fine feathery grey Carrara-style veining"
+    },
+    {
+      "name": "Calacatta Royale",
+      "material": "quartz",
+      "catalog": true,
+      "look": "crisp white quartz with thick grey and gold veins"
+    },
+    {
+      "name": "Calacatta Nova",
+      "material": "quartz",
+      "catalog": true,
+      "look": "white quartz with sweeping soft-grey veins"
+    },
+    {
+      "name": "Taj Mahal",
+      "material": "quartz",
+      "catalog": true,
+      "look": "warm cream quartz with Taj Mahal-style golden movement"
+    },
+    {
+      "name": "Kodiak",
+      "material": "quartz",
+      "catalog": true,
+      "look": "warm greige quartz with subtle speckle"
+    },
+    {
+      "name": "Absolute Black",
+      "material": "granite",
+      "catalog": true,
+      "look": "deep solid black honed granite"
+    },
+    {
+      "name": "Fantasy Brown",
+      "material": "marble",
+      "catalog": true,
+      "look": "natural stone with flowing brown, cream and grey bands"
+    },
+    {
+      "name": "Black Pearl",
+      "material": "granite",
+      "catalog": false,
+      "look": "black granite with silver-blue shimmer"
+    },
+    {
+      "name": "Colonial White",
+      "material": "granite",
+      "catalog": false,
+      "look": "white-grey granite with burgundy and black flecks"
+    },
+    {
+      "name": "Steel Grey",
+      "material": "granite",
+      "catalog": false,
+      "look": "uniform dark grey granite with silver speckle"
+    },
+    {
+      "name": "Leathered Black Granite",
+      "material": "granite",
+      "catalog": false,
+      "look": "black granite with a textured leathered finish"
+    },
+    {
+      "name": "Taj Mahal Quartzite",
+      "material": "quartzite",
+      "catalog": false,
+      "look": "warm ivory quartzite with soft golden translucent veining"
+    },
+    {
+      "name": "Mont Blanc Quartzite",
+      "material": "quartzite",
+      "catalog": false,
+      "look": "white quartzite with soft grey linear veining"
+    },
+    {
+      "name": "Cristallo Quartzite",
+      "material": "quartzite",
+      "catalog": false,
+      "look": "crystalline white quartzite with translucent milky veins"
+    },
+    {
+      "name": "Sea Pearl Quartzite",
+      "material": "quartzite",
+      "catalog": false,
+      "look": "grey-green quartzite with silvery wave patterns"
+    },
+    {
+      "name": "Calacatta Gold Marble",
+      "material": "marble",
+      "catalog": false,
+      "look": "white marble with bold gold and grey veining"
+    },
+    {
+      "name": "Carrara Marble",
+      "material": "marble",
+      "catalog": false,
+      "look": "soft white marble with fine grey veining, honed finish"
+    },
+    {
+      "name": "Statuario Marble",
+      "material": "marble",
+      "catalog": false,
+      "look": "bright white marble with dramatic dark-grey veins"
+    },
+    {
+      "name": "Nero Marquina Marble",
+      "material": "marble",
+      "catalog": false,
+      "look": "black marble with crisp white veins"
+    }
+  ],
+  "cabinets": [
+    "deep navy shaker cabinets",
+    "warm white oak slab-front cabinets",
+    "sage green shaker cabinets",
+    "matte black flat-panel cabinets",
+    "soft white inset cabinets",
+    "charcoal grey shaker cabinets",
+    "walnut flat-panel cabinets",
+    "greige painted shaker cabinets",
+    "forest green inset cabinets",
+    "two-tone cabinets: white uppers, navy lower and island"
+  ],
+  "styles": [
+    "modern transitional",
+    "warm minimalist",
+    "modern farmhouse",
+    "classic Cincinnati Victorian with tall windows",
+    "Scandinavian",
+    "contemporary luxury",
+    "mid-century modern",
+    "European modern",
+    "organic modern",
+    "updated traditional"
+  ],
+  "lighting": [
+    "bright soft morning daylight from large windows",
+    "airy bright overcast daylight",
+    "sunny late-morning light with soft shadows",
+    "bright natural light from a skylight and tall windows",
+    "clean bright daylight with recessed lights on"
+  ],
+  "layouts": [
+    "large waterfall island with bar stools",
+    "L-shaped kitchen with island",
+    "U-shaped kitchen with peninsula",
+    "galley kitchen",
+    "open-plan kitchen with long island and full-height slab backsplash",
+    "kitchen with island and matching slab backsplash behind the range"
+  ],
+  "hardware": [
+    "brushed brass",
+    "matte black",
+    "polished nickel",
+    "unlacquered brass",
+    "brushed stainless"
+  ]
+}

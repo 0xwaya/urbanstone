@@ -53,3 +53,9 @@ supplier-scraper/featured-stones.output.json
 tmp/
 /test-results/
 .vercel
+
+# Social automation: analytics DB is local runtime data (not committed); TikTok MP4s are rebuilt on demand
+social/instagram/data/analytics.db
+social/instagram/queue/*/tiktok.mp4
+social/**/__pycache__/
+social/instagram/scenes/

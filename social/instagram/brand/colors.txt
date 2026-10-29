@@ -1,0 +1,15 @@
+Urban Stone Collective — logo colors (used for brand/logo.png and logo.svg)
+Source: urbanstone.co (favicon SVG /brand/urban-stone-favicon.svg and site CSS d91d0a1187728c31.css), retrieved 2026-10-20.
+The TikZ letterhead names these colors but doesn't define them. Mapping:
+
+brandnavy  #0C1628  site favicon background tile (CSS dark --bg is rgb(8,12,24) = #080C18)
+goldlight  #DDCDA5  site logo gradient stop 0% (light gold)
+goldmid    #C4AD80  site CSS gold accent rgba(196,173,128) (gold borders); sits between the site gradient's light and dark golds
+brandgold  #8B7B57  site logo gradient stop 100% (deep gold)
+white      #FFFFFF  "Urban Stone" wordmark in the TikZ (on navy/dark backgrounds)
+
+Notes:
+- The site icon fills every piece with one diagonal gradient (#DDCDA5 -> #B8B8B4 silver at 60% -> #8B7B57). The TikZ letterhead uses three flat golds, and these files follow the TikZ.
+- The site header wordmark is styled differently: uppercase "URBAN STONE" in silver rgb(184,184,180) = #B8B8B4, with "COLLECTIVE" in Manrope 700 at 0.52em tracking. The site display font is Cormorant Garamond.
+- The TikZ wordmark renders in Latin Modern Roman Bold ("Urban Stone") and Latin Modern Sans Bold (spaced COLLECTIVE), i.e. LaTeX defaults.
+- Icon geometry in the TikZ matches the site's favicon SVG path coordinates exactly.

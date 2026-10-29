@@ -1,0 +1,75 @@
+{
+  "timezone": "America/New_York",
+  "schedule_slots": [
+    "06:00",
+    "16:00"
+  ],
+  "brand": {
+    "navy": "#0B1220",
+    "gold": "#C4A35A",
+    "ivory": "#F4EFE4",
+    "tagline": "Premium Countertops. Fast Install. Built for Cincinnati",
+    "phone": "(513) 307-5840",
+    "email": "sales@urbanstone.co",
+    "site": "urbanstone.co",
+    "instagram_handle": "@urbanstonec"
+  },
+  "label_ai_images": true,
+  "hashtags_per_post": {
+    "high": 3,
+    "mid": 6,
+    "niche": 5,
+    "local": 4
+  },
+  "hashtag_set_min_difference": 6,
+  "require_approval": true,
+  "image_base_url": "",
+  "graph_api": {
+    "host": "https://graph.facebook.com",
+    "version": "v23.0"
+  },
+  "formats": {
+    "1x1": {
+      "width": 1080,
+      "height": 1080,
+      "margin": [
+        44,
+        44,
+        44,
+        44
+      ]
+    },
+    "4x5": {
+      "width": 1080,
+      "height": 1350,
+      "margin": [
+        44,
+        44,
+        44,
+        44
+      ]
+    },
+    "9x16": {
+      "width": 1080,
+      "height": 1920,
+      "margin": [
+        130,
+        260,
+        130,
+        360
+      ]
+    }
+  },
+  "_formats_note": "margin = [left, top, right, bottom] px kept clear around the logo stamp; 9x16 follows the Story/Reel safe zones in brand/social-media-standard.md.",
+  "feed_format": "4x5",
+  "logo_stamp": {
+    "width_frac": 0.12,
+    "opacity": 0.65,
+    "shadow": true,
+    "prefer": "top",
+    "bottom_penalty": 1.6,
+    "counter_band": 0.13
+  },
+  "default_focus_y": 0.6,
+  "_label_note": "AI-generated scenes are labeled in the caption (no text on the image)."
+}

@@ -1,0 +1,31 @@
+{
+  "_note": "Every fact below is copied from the urbanstone repo (frontend/). Do not add claims that are not in the site copy. Re-verify when the site copy changes.",
+  "tagline": { "text": "Premium Countertops. Fast Install. Built for Cincinnati.", "source": "frontend/components/Hero.jsx:6" },
+  "points": [
+    { "id": "curated", "text": "We source premium slabs from curated suppliers and fabricate custom countertops.", "source": "frontend/components/Hero.jsx:7" },
+    { "id": "fast_install", "text": "Our target: a 3-5 day turnaround from deposit to install on qualifying projects.", "source": "frontend/data/homepage-content.js FAQ 'How fast can you install'" },
+    { "id": "warranty", "text": "Every install is backed by our 1-Year Workmanship Warranty.", "source": "frontend/components/Hero.jsx:8 ('1-Year Workmanship Warranty')" },
+    { "id": "local", "text": "Fabrication and install across greater Cincinnati and Northern Kentucky.", "source": "frontend/components/Footer.jsx:43, frontend/pages/index.jsx:81" },
+    { "id": "full_service", "text": "We handle field measure, fabrication and install, start to finish.", "source": "frontend/components/Hero.jsx:10 (step 3)" },
+    { "id": "start_easy", "text": "Photos, rough measurements, or a cabinet drawing is enough to start.", "source": "frontend/components/Hero.jsx:10 (step 1)" },
+    { "id": "guided", "text": "We narrow the slab options with you, so you don't have to sort through every warehouse alone.", "source": "frontend/data/homepage-content.js FAQ 'Do you help clients choose materials'" }
+  ],
+  "material_facts": {
+    "quartz": { "text": "Quartz: consistent color, lower maintenance and no sealing requirement.", "source": "frontend/data/homepage-content.js FAQ 1-2" },
+    "granite": { "text": "Granite: natural stone with one-of-a-kind slab variation and a high-heat-friendly surface.", "source": "frontend/data/homepage-content.js FAQ 3" },
+    "quartzite": { "text": "Quartzite: natural stone with a premium look and strong heat resistance.", "source": "frontend/data/homepage-content.js FAQ 1, 4" },
+    "marble": { "text": "Marble: natural stone where every slab's veining is one of a kind.", "source": "frontend/data/chatbot-knowledge.js:12 (natural stone veining varies by slab)" }
+  },
+  "promo": {
+    "text": "Fall offer: a complimentary 18-gauge stainless steel sink with kitchen projects of 50 sq ft and above. Undermount or top-mount, single or double basin.",
+    "short": "Free 18-gauge stainless sink on kitchens 50+ sq ft · through Dec 15",
+    "start": "2026-10-15",
+    "end": "2026-12-15",
+    "source": "frontend/data/homepage-content.js homepageAnnouncement ('Offer good October 15 - December 15, 2026.')"
+  },
+  "ctas": [
+    { "id": "dm", "text": "DM us a photo of your kitchen and we'll help you pick the slab." },
+    { "id": "link", "text": "Request your fast estimate at the link in bio." },
+    { "id": "call", "text": "Call or text (513) 307-5840 for an estimate." }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "_note": "TikTok uses the same schedule as Instagram (social/instagram/config.json schedule_slots: 06:00 and 16:00 America/New_York) and the same queue folders.",
+  "enabled": true,
+  "mode": "photo",
+  "_mode_note": "photo = PHOTO post (PULL_FROM_URL) of post_9x16.jpg; video = a short Ken Burns MP4 built with ffmpeg from post_9x16.jpg, posted with PULL_FROM_URL.",
+  "video": { "seconds": 7, "zoom_to": 1.08, "fps": 30 },
+  "privacy_level": "SELF_ONLY",
+  "_privacy_note": "Unaudited TikTok apps can only post SELF_ONLY (private). After TikTok approves the app audit, set PUBLIC_TO_EVERYONE (must be one of the creator's privacy_level_options from creator_info).",
+  "disable_comment": false,
+  "auto_add_music": true,
+  "max_hashtags": 5,
+  "api_base": "https://open.tiktokapis.com/v2",
+  "image_base_url": "",
+  "_image_note": "Public base URL on a domain/URL prefix verified in the TikTok developer app (e.g. https://urbanstone.co/social). Queue files are appended as <base>/<queue_id>/<file>."
+}
