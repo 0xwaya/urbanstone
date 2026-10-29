@@ -34,7 +34,11 @@ See MIGRATION_NOTES.md for the migration boundary and follow-up guidance.
 
 ## Current Status
 
-This repository now includes a runnable standalone frontend baseline, but it still needs a real lead-delivery destination and fuller operational rollout before it should be treated as a finished production property.
+The production site is [urbanstone.co](https://urbanstone.co). Secrets for that deployment, including `LEAD_WEBHOOK_URL`, live in the host environment and are not in this tree. The list below still describes the public snapshot. Treat a gap as closed only when the deployment actually has it.
+
+Lead-sourcer sources added in October 2026, including county permit feeds and Facebook Marketplace through Apify, stay off unless a repository variable turns that source on. Social images committed for 29 October are assets only. This repository does not post them.
+
+This repository now includes a runnable standalone frontend baseline, but the snapshot itself still needs a configured lead-delivery destination and operational ownership before a fresh clone should be treated as production.
 
 What is present:
 
