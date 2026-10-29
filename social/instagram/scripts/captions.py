@@ -44,7 +44,9 @@ def build(scene, history, when, hashtags_line, seed=None):
     choices = [p for p in BRAND_POINT_IDS if p not in used] or BRAND_POINT_IDS
     brand_point = rng.choice(choices)
     lines.append(points[brand_point])
-    if not scene.get("catalog", False):
+    if scene.get("catalog", False):
+        lines.append("Available through our suppliers. Ask us about this slab for your project.")
+    else:
         lines.append("Love this look? Ask us which slabs we can source to match it.")
     promo = promo_active(when)
     if promo:

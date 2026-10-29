@@ -15,7 +15,7 @@ import json
 import random
 from collections import Counter
 
-from common import load_json, save_json, now
+from common import config, load_json, save_json, now
 
 RECENT_STONE_WINDOW = 6
 
@@ -51,6 +51,9 @@ def build_prompt(c, stone):
 
 def choose(seed=None):
     space = load_json("data/design_space.json")
+    if config().get("supplier_stones_only", False):
+        # only slabs the site's suppliers carry (frontend/data/curated-slab-options.js), Edward Oct 29 2026
+        space["stones"] = [s for s in space["stones"] if s.get("catalog")]
     history = load_json("state/history.json", [])
     used = {h["key"] for h in history}
     recent_stones = {h["stone"] for h in history[-RECENT_STONE_WINDOW:]}

@@ -98,5 +98,6 @@
     "warmth": 0.0,
     "highlight_knee": 0.92,
     "_note": "Applied to the scene before the seal. brightness = midtone lift (0/255 stay fixed), gamma<1 lifts shadows, warmth 0 = neutral."
-  }
+  },
+  "supplier_stones_only": true
 }

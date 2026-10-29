@@ -1,0 +1,91 @@
+{
+  "queue_id": "2026-10-30-0600",
+  "status": "approved",
+  "approved": true,
+  "scheduled_at_local": "2026-10-30T06:00:00-04:00",
+  "scheduled_at_utc": "2026-10-30T10:00:00+00:00",
+  "created_at_utc": "2026-10-29T18:16:19.074340+00:00",
+  "feed_format": "4x5",
+  "files": {
+    "1x1": {
+      "png": "post_1x1.png",
+      "jpg": "post_1x1.jpg",
+      "logo_corner": "bottom-right"
+    },
+    "4x5": {
+      "png": "post_4x5.png",
+      "jpg": "post_4x5.jpg",
+      "logo_corner": "top-right"
+    },
+    "9x16": {
+      "png": "post_9x16.png",
+      "jpg": "post_9x16.jpg",
+      "logo_corner": "top-right"
+    }
+  },
+  "dimensions": {
+    "post_type": "kitchen",
+    "material": "quartz",
+    "stone": "Calacatta Andromeda",
+    "catalog_stone": true,
+    "style": "classic Cincinnati Victorian with tall windows",
+    "cabinets": "greige painted shaker cabinets",
+    "lighting": "bright natural light from a skylight and tall windows",
+    "layout": "open-plan kitchen with long island and full-height slab backsplash",
+    "hardware": "brushed brass",
+    "cta": "link",
+    "brand_point": "warranty",
+    "promo": true,
+    "hashtag_set_id": "d4335b3f",
+    "slot": "6 AM"
+  },
+  "hashtags": [
+    "kitchen",
+    "kitchendesign",
+    "renovation",
+    "remodel",
+    "kitchenisland",
+    "kitchendecor",
+    "newkitchen",
+    "homerenovation",
+    "countertops",
+    "quartz",
+    "calacattaquartz",
+    "dreamkitchen",
+    "kitchenrenovation",
+    "countertop",
+    "cincinnati",
+    "cincinnatirealestate",
+    "cincygram",
+    "cincinnatiohio"
+  ],
+  "scene_full": {
+    "stone": "Calacatta Andromeda",
+    "material": "quartz",
+    "catalog": true,
+    "cabinets": "greige painted shaker cabinets",
+    "style": "classic Cincinnati Victorian with tall windows",
+    "lighting": "bright natural light from a skylight and tall windows",
+    "layout": "open-plan kitchen with long island and full-height slab backsplash",
+    "hardware": "brushed brass",
+    "key": "Calacatta Andromeda|greige painted shaker cabinets|classic Cincinnati Victorian with tall windows|bright natural light from a skylight and tall windows|open-plan kitchen with long island and full-height slab backsplash",
+    "prompt": "Bright, airy, light-filled photorealistic interior photograph of a kitchen in a classic Cincinnati Victorian home with tall windows, open-plan kitchen with long island and full-height slab backsplash. The hero is the countertop: Calacatta Andromeda quartz (bright white quartz with soft light-grey branching veins, matching the reference slab photo), 3cm thick with a clean eased edge, shown in full with no cropped ends or corners. Greige painted shaker cabinets with brushed brass hardware, bright natural light from a skylight and tall windows. Light walls, clean bright exposure, fresh and stunning, styled minimally (a bowl of lemons, a small vase of greenery, a cutting board), uncluttered, real materials and true-to-life reflections, eye-level architectural photography, 24-35mm lens, magazine quality. Tall vertical 9:16 composition: the countertop sits in the vertical middle of the frame and spans no more than 85% of the width, with generous ceiling/upper cabinets above and floor below, so the image can also be cropped to 4:5 and 1:1 around the countertop. Quiet, low-detail upper corners (plain wall or ceiling). No people, no text, no logos, no watermarks.",
+    "id": "d4c20536ae",
+    "created_at": "2026-10-29T14:15:23.343272-04:00"
+  },
+  "scene": {
+    "id": "d4c20536ae",
+    "key": "Calacatta Andromeda|greige painted shaker cabinets|classic Cincinnati Victorian with tall windows|bright natural light from a skylight and tall windows|open-plan kitchen with long island and full-height slab backsplash",
+    "prompt": "Bright, airy, light-filled photorealistic interior photograph of a kitchen in a classic Cincinnati Victorian home with tall windows, open-plan kitchen with long island and full-height slab backsplash. The hero is the countertop: Calacatta Andromeda quartz (bright white quartz with soft light-grey branching veins, matching the reference slab photo), 3cm thick with a clean eased edge, shown in full with no cropped ends or corners. Greige painted shaker cabinets with brushed brass hardware, bright natural light from a skylight and tall windows. Light walls, clean bright exposure, fresh and stunning, styled minimally (a bowl of lemons, a small vase of greenery, a cutting board), uncluttered, real materials and true-to-life reflections, eye-level architectural photography, 24-35mm lens, magazine quality. Tall vertical 9:16 composition: the countertop sits in the vertical middle of the frame and spans no more than 85% of the width, with generous ceiling/upper cabinets above and floor below, so the image can also be cropped to 4:5 and 1:1 around the countertop. Quiet, low-detail upper corners (plain wall or ceiling). No people, no text, no logos, no watermarks.",
+    "ai_generated": true
+  },
+  "platforms": {
+    "instagram": {
+      "status": "queued"
+    },
+    "tiktok": {
+      "status": "queued"
+    }
+  },
+  "approved_by": "Edward (automated posting approved, Oct 29 2026)"
+}

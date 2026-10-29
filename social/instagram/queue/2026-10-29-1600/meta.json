@@ -1,7 +1,7 @@
 {
   "queue_id": "2026-10-29-1600",
-  "status": "held",
-  "approved": false,
+  "status": "approved",
+  "approved": true,
   "scheduled_at_local": "2026-10-29T16:00:00-04:00",
   "scheduled_at_utc": "2026-10-29T20:00:00+00:00",
   "created_at_utc": "2026-10-29T17:49:28.379285+00:00",
@@ -87,6 +87,6 @@
       "status": "queued"
     }
   },
-  "hold_reason": "Nero Marquina not offered by website suppliers (Edward, Oct 29)",
-  "branding": "seal v2 (2026-10-29): 22% width, navy disc 70%, gold ring/icon/name 97%; scene_tone brightness 1.09 gamma 0.95 warmth 0"
+  "branding": "seal v2 (2026-10-29): 22% width, navy disc 70%, gold ring/icon/name 97%; scene_tone brightness 1.09 gamma 0.95 warmth 0",
+  "approved_by": "Edward (Oct 29, 2:14 PM ET)"
 }
