@@ -68,3 +68,33 @@ Each entry has this format:
 
 ---
 
+
+## 2026-10-29 — 4:00 PM ET
+- Posted at: 3:29:50 PM ET (posted by hand, early)
+- Material: marble (Nero Marquina Marble)
+- Finish: polished
+- Application: kitchen island
+- Format: single
+- Caption style: exotic
+- Location: Cincinnati, Ohio (added right after sharing, via Edit)
+- About: Nero Marquina Marble, organic modern kitchen, fall sink promo (AI-rendered concept, AI label on)
+- Queue folder: social/instagram/queue/2026-10-29-1600/
+- Image: https://www.urbanstone.co/social/2026-10-29-1600/post_4x5.jpg
+- Instagram post: https://www.instagram.com/p/DfFwuF7hMI-/
+- Caption:
+  > Statement stone alert: Nero Marquina Marble.
+  >
+  > Marble: natural stone where every slab's veining is one of a kind.
+  > We handle field measure, fabrication and install, start to finish.
+  > Love this look? Ask us which slabs we can source to match it.
+  >
+  > 🎁 Fall offer: a complimentary 18-gauge stainless steel sink with kitchen projects of 50 sq ft and above. Undermount or top-mount, single or double basin. Through Dec 15.
+  >
+  > 👉 DM us a photo of your kitchen and we'll help you pick the slab.
+  >
+  > Image: AI-rendered design concept.
+  >
+  > Premium Countertops. Fast Install. Built for Cincinnati.
+  > 📞 (513) 307-5840 · ✉️ sales@urbanstone.co · 🌐 urbanstone.co
+  >
+  > #interiordesign #kitchendesign #homedesign #kitcheninspo #kitchensofinstagram #naturalstone #kitchenisland #kitchenideas #newkitchen #marble #stonefabrication #dreamkitchen #kitchencountertops #countertop #cincinnati #readingohio #cincinnatirealestate #cincy
