@@ -26,6 +26,8 @@ import { buildChatLeadEmail, sendLeadEmail } from '../../lib/lead-email';
 
 const OLLAMA_MODEL_NAME = process.env.OLLAMA_MODEL_NAME || 'llama3.1:8b';
 const OLLAMA_BASE_URL = process.env.OLLAMA_BASE_URL || 'http://localhost:11434';
+const OPENAI_API_KEY = process.env.OPENAI_API_KEY || '';
+const OPENAI_MODEL = process.env.OPENAI_MODEL || 'gpt-4o-mini';
 const MAX_MESSAGE_LENGTH = 1200;
 const ENABLE_CHAT_PRICE_PREVIEW = ['1', 'true', 'yes', 'on'].includes(
     String(process.env.ENABLE_CHAT_PRICE_PREVIEW || 'false').toLowerCase()
@@ -559,6 +561,29 @@ function checkOllamaAvailability() {
     return ollamaAvailablePromise;
 }
 
+async function callOpenAIChat(message) {
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+            Authorization: `Bearer ${OPENAI_API_KEY}`,
+            'Content-Type': 'application/json',
+        },
+        signal: AbortSignal.timeout(12000),
+        body: JSON.stringify({
+            model: OPENAI_MODEL,
+            temperature: 0.4,
+            messages: [{ role: 'user', content: message }],
+        }),
+    });
+
+    if (!response.ok) {
+        throw new Error(`OpenAI request failed (${response.status})`);
+    }
+
+    const data = await response.json();
+    return data.choices?.[0]?.message?.content || '';
+}
+
 function callOllamaChat(message) {
     return new Promise((resolve, reject) => {
         const args = [
@@ -638,14 +663,35 @@ export default async function handler(req, res) {
         console.warn('MemPalace search unavailable:', error);
     }
 
+    const fullMessage = mempalaceContext && mempalaceContext.trim().length > 0
+        ? buildPrompt(message, mempalaceContext)
+        : buildPrompt(message, '');
+
+    if (OPENAI_API_KEY) {
+        try {
+            const openAiReply = normalizeModelReply(await callOpenAIChat(fullMessage));
+            if (openAiReply) {
+                emitChatTelemetry('openai_reply', {
+                    messageHash: hashForTelemetry(message),
+                    hasContext: Boolean(mempalaceContext),
+                });
+                return res.status(200).json({
+                    reply: trimReplyToBudget(openAiReply),
+                    sources: mempalaceContext ? ['MemPalace workspace context'] : [],
+                    contact: CONTACT,
+                    mode: 'openai',
+                });
+            }
+        } catch (error) {
+            console.error('OpenAI chat failed:', error);
+            emitChatTelemetry('openai_error_fallback', { messageHash: hashForTelemetry(message) });
+        }
+    }
+
     const hasOllama = await checkOllamaAvailability();
     if (!hasOllama) {
         return respondWithKnowledge(res, message, history);
     }
-
-    const fullMessage = mempalaceContext && mempalaceContext.trim().length > 0
-        ? buildPrompt(message, mempalaceContext)
-        : buildPrompt(message, '');
 
     try {
         const ollamaReply = normalizeModelReply(await callOllamaChat(fullMessage));

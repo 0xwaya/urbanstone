@@ -34,9 +34,9 @@ See MIGRATION_NOTES.md for the migration boundary and follow-up guidance.
 
 ## Current Status
 
-The production site is [urbanstone.co](https://urbanstone.co). Secrets for that deployment, including `LEAD_WEBHOOK_URL`, live in the host environment and are not in this tree. The list below still describes the public snapshot. Treat a gap as closed only when the deployment actually has it.
+The production site is [urbanstone.co](https://urbanstone.co). Secrets for that deployment, including `LEAD_WEBHOOK_URL` and `OPENAI_API_KEY`, live in the host environment and are not in this tree. The list below still describes the public snapshot. Treat a gap as closed only when the deployment actually has it.
 
-Lead-sourcer sources added in October 2026, including county permit feeds and Facebook Marketplace through Apify, stay off unless a repository variable turns that source on. Social images committed for 29 October are assets only. This repository does not post them.
+The lead-sourcer runs unattended at 8:00, 12:00, and 5:00 ET. The scheduled job is in live mode and delivers matched leads to the sales inbox. It does not contact the people who posted. Onyx, the site chat, calls the OpenAI API when `OPENAI_API_KEY` is set and falls back to the on-site knowledge base if that call fails. Social images committed in this repo are assets only. This repository does not post them.
 
 This repository now includes a runnable standalone frontend baseline, but the snapshot itself still needs a configured lead-delivery destination and operational ownership before a fresh clone should be treated as production.
 
