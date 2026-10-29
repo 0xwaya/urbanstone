@@ -36,17 +36,25 @@ export function buildPreDraft(payload) {
     return { subject, text, html };
 }
 
+export const DEFAULT_COOLDOWN_HOURS = 3;
+
+export function resolveCooldownHours(value) {
+    const hours = Number(value);
+    return Number.isFinite(hours) && hours >= 0 ? hours : DEFAULT_COOLDOWN_HOURS;
+}
+
 /**
- * Whether a live run may proceed under the 24h cooldown. `force` is a one-off
- * operator override (workflow_dispatch input), never set by the schedule.
+ * Whether a live run may proceed under the cooldown (default 3h, so the 8 AM,
+ * 12 PM and 5 PM ET slots all run). `force` is a one-off operator override
+ * (workflow_dispatch input), never set by the schedule.
  */
-export function shouldRunDaily(state = {}, now = new Date(), { force = false } = {}) {
+export function shouldRunDaily(state = {}, now = new Date(), { force = false, cooldownHours = DEFAULT_COOLDOWN_HOURS } = {}) {
     if (force) return true;
     const lastRunAt = state?.lastRunAt ? new Date(state.lastRunAt) : null;
     if (!lastRunAt || Number.isNaN(lastRunAt.getTime())) return true;
 
     const lastStatus = String(state.lastStatus || '').toLowerCase();
-    const minimumIntervalMs = 24 * 60 * 60 * 1000;
+    const minimumIntervalMs = resolveCooldownHours(cooldownHours) * 60 * 60 * 1000;
     const elapsedMs = now.getTime() - lastRunAt.getTime();
     const isRecentEnough = elapsedMs < minimumIntervalMs;
 

@@ -19,7 +19,8 @@ import { resolveRunMode } from './mode.js';
 import { relay } from './relay.js';
 import { initializeTracing } from './tracing.js';
 import { assessRunHealth } from './run-health.js';
-import { buildPreDraft, shouldRunDaily, readDailyState, writeDailyState } from './daily-runner.js';
+import { buildPreDraft, shouldRunDaily, readDailyState, writeDailyState, resolveCooldownHours } from './daily-runner.js';
+import { checkScheduledSlot, parseAllowedHours } from './schedule-guard.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -426,11 +427,12 @@ async function scheduleDailyRunIfNeeded() {
     const state = readDailyState(DAILY_STATE_FILE);
     const now = new Date();
     const force = envFlag('LEAD_SOURCER_FORCE_RUN', false);
-    const shouldRun = shouldRunDaily(state, now, { force });
+    const cooldownHours = resolveCooldownHours(process.env.LEAD_SOURCER_COOLDOWN_HOURS);
+    const shouldRun = shouldRunDaily(state, now, { force, cooldownHours });
     if (force) console.log(`[lead-sourcer] Cooldown override (LEAD_SOURCER_FORCE_RUN); last run at ${state.lastRunAt || 'never'}.`);
 
     if (!shouldRun) {
-        console.log(`[lead-sourcer] Daily run skipped; last run at ${state.lastRunAt || 'never'} is still within 24h window.`);
+        console.log(`[lead-sourcer] Daily run skipped; last run at ${state.lastRunAt || 'never'} is still within the ${cooldownHours}h cooldown.`);
         return { skipped: true, state };
     }
 
@@ -463,6 +465,16 @@ function markExitCode(summary) {
 async function run() {
     const mode = resolveRunMode();
     const useInterval = Number.isFinite(INTERVAL_MINUTES) && INTERVAL_MINUTES > 0;
+
+    const slot = checkScheduledSlot({
+        eventName: process.env.GITHUB_EVENT_NAME,
+        cron: process.env.LEAD_SOURCER_SCHEDULE_CRON,
+        allowedHours: parseAllowedHours(process.env.LEAD_SOURCER_SCHEDULE_HOURS_ET),
+    });
+    if (!slot.run) {
+        console.log(`[lead-sourcer] Scheduled slot skipped: cron '${process.env.LEAD_SOURCER_SCHEDULE_CRON}' is ${slot.localHour}:00 ET today (${slot.reason}).`);
+        return;
+    }
 
     if (mode === 'live' && !useInterval) {
         const result = await scheduleDailyRunIfNeeded();

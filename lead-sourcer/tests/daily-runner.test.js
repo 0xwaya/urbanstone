@@ -1,5 +1,5 @@
 import { resolveRunMode, runModeFlags } from '../src/mode.js';
-import { buildPreDraft, shouldRunDaily } from '../src/daily-runner.js';
+import { buildPreDraft, shouldRunDaily, resolveCooldownHours } from '../src/daily-runner.js';
 
 describe('daily automation helpers', () => {
     test('accepts dry alias for dry-run mode', () => {
@@ -50,5 +50,15 @@ describe('daily automation helpers', () => {
         expect(shouldRunDaily(state, now, { force: true })).toBe(true);
         expect(shouldRunDaily(state, now, { force: false })).toBe(false);
         expect(shouldRunDaily(state, now, {})).toBe(false);
+    });
+
+    test('default 3h cooldown lets the 8 AM / 12 PM / 5 PM slots all run', () => {
+        const state = { lastRunAt: '2026-10-29T12:10:00Z', lastStatus: 'success' };
+        expect(shouldRunDaily(state, new Date('2026-10-29T16:00:00Z'))).toBe(true);
+        expect(shouldRunDaily(state, new Date('2026-10-29T14:00:00Z'))).toBe(false);
+        expect(shouldRunDaily(state, new Date('2026-10-29T16:00:00Z'), { cooldownHours: 24 })).toBe(false);
+        expect(resolveCooldownHours(undefined)).toBe(3);
+        expect(resolveCooldownHours('6')).toBe(6);
+        expect(resolveCooldownHours('abc')).toBe(3);
     });
 });
