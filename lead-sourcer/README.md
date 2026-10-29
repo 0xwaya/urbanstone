@@ -8,6 +8,13 @@ Automated lead sourcing and delivery pipeline for Urban Stone. Scrapes Reddit, C
 - **Reddit:** OAuth-backed subreddit polling; currently paused locally until API registration is complete
 - **Craigslist:** Multi-region HTML searches for contractor and countertop keywords
 - **Apify:** Direct task execution for Nextdoor/Facebook sources; optional and requires task permissions
+- **Facebook Marketplace (Apify, opt-in):** logged-out `curious_coder/facebook-marketplace` tasks (never cookies; a task
+  whose input has cookies is refused). A canary task runs first (cap `APIFY_FB_MARKETPLACE_CANARY_MAX_CHARGE_USD`, $0.05,
+  20 items); the main task (cap `APIFY_FB_MARKETPLACE_MAX_CHARGE_USD`, $0.50, 210 items) is skipped when the canary is
+  unhealthy. Caps are passed as Apify run options on every call. Only Cincinnati-area "wanted/ISO" posts become leads;
+  remodel sellers are logged for review. Leads are internal-only (sales@ via Resend, never the webhook or the seller) when
+  `LEAD_SOURCER_MODE=live` and `APIFY_FB_MARKETPLACE_REVIEW_ONLY=false`. Switches: `LEAD_SOURCER_ENABLE_APIFY` +
+  `APIFY_ENABLE_FB_MARKETPLACE`; task IDs `APIFY_FB_MARKETPLACE_TASK_ID`, `APIFY_FB_MARKETPLACE_CANARY_TASK_ID`.
 - **County permits (B2B, opt-in):** Hamilton County ezTrak and Butler County Accela Citizen Access
   (`src/accela.js` shared scraper, `src/permits-accela.js` county configs). Anonymous date-range General
   Search only (never the reCAPTCHA pages), 1 request/sec, timeouts + retries, capped detail fetches.

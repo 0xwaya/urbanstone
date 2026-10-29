@@ -106,6 +106,14 @@ function buildRunReportDetails(summary) {
         `Permits (Butler County): fetched=${safeStat(butler, 'fetched')}, typeCandidates=${safeStat(butler, 'typeCandidates')}, details=${safeStat(butler, 'detailFetches')}, matches=${safeStat(butler, 'matches')}, registryMatched=${safeStat(butler, 'registryMatched')}, rejects=${safeStat(butler, 'rejects')}, relayed=${safeStat(butler, 'relayed')}`,
     ];
 
+    const fbm = apify.byTask?.['facebook-marketplace'];
+    if (apify.canary || fbm) {
+        lines.push(`FB Marketplace: canary=${apify.canary ? `${apify.canary.status}/${apify.canary.items} items/${apify.canary.healthy ? 'healthy' : 'UNHEALTHY'}` : 'n/a'}, fetched=${safeStat(fbm || {}, 'fetched')}, outOfArea=${safeStat(fbm || {}, 'droppedOutOfArea')}, noLocation=${safeStat(fbm || {}, 'droppedNoLocation')}, wanted=${safeStat(fbm || {}, 'kind_wanted')}, remodel=${safeStat(fbm || {}, 'kind_remodel')}, inventory=${safeStat(fbm || {}, 'kind_inventory')}, dealer=${safeStat(fbm || {}, 'kind_dealer')}`);
+    }
+    if (Array.isArray(apify.unhealthyReasons) && apify.unhealthyReasons.length > 0) {
+        lines.push('', `Apify unhealthy: ${apify.unhealthyReasons.join(' | ')}`);
+    }
+
     if (Array.isArray(summary.errors) && summary.errors.length > 0) {
         lines.push('', `Errors: ${summary.errors.map((error) => `${error.source}:${error.message}`).join(' | ')}`);
     }

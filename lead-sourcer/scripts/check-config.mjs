@@ -1,4 +1,13 @@
-import { APIFY_AD_LIBRARY_TASK_ID, APIFY_FACEBOOK_TASK_ID, APIFY_NEXTDOOR_TASK_ID } from '../src/config.js';
+import {
+    APIFY_AD_LIBRARY_TASK_ID,
+    APIFY_ENABLE_FB_MARKETPLACE,
+    APIFY_FACEBOOK_TASK_ID,
+    APIFY_FB_MARKETPLACE_CANARY_TASK_ID,
+    APIFY_FB_MARKETPLACE_MAX_CHARGE_USD,
+    APIFY_FB_MARKETPLACE_REVIEW_ONLY,
+    APIFY_FB_MARKETPLACE_TASK_ID,
+    APIFY_NEXTDOOR_TASK_ID,
+} from '../src/config.js';
 import { resolveRunMode } from '../src/mode.js';
 import { isPermitsEnabled } from '../src/permits.js';
 import { isHamiltonPermitsEnabled, isButlerPermitsEnabled } from '../src/permits-accela.js';
@@ -26,7 +35,10 @@ const checks = [
     ['LEAD_SOURCER_ENABLE_PERMITS_HAMILTON', isHamiltonPermitsEnabled(), true],
     ['LEAD_SOURCER_ENABLE_PERMITS_BUTLER', isButlerPermitsEnabled(), true],
     ['LEAD_SOURCER_ENABLE_APIFY (APIFY_TOKEN)', apifyEnabled, has('APIFY_TOKEN')],
-    ['apify task id (nextdoor, facebook or ad-library)', apifyEnabled, Boolean(APIFY_NEXTDOOR_TASK_ID || APIFY_FACEBOOK_TASK_ID || APIFY_AD_LIBRARY_TASK_ID)],
+    ['apify task id (nextdoor, facebook, ad-library or fb-marketplace)', apifyEnabled, Boolean(APIFY_NEXTDOOR_TASK_ID || APIFY_FACEBOOK_TASK_ID || APIFY_AD_LIBRARY_TASK_ID || APIFY_FB_MARKETPLACE_TASK_ID)],
+    ['APIFY_ENABLE_FB_MARKETPLACE (APIFY_FB_MARKETPLACE_TASK_ID + APIFY_FB_MARKETPLACE_CANARY_TASK_ID)', apifyEnabled && APIFY_ENABLE_FB_MARKETPLACE, Boolean(APIFY_FB_MARKETPLACE_TASK_ID && APIFY_FB_MARKETPLACE_CANARY_TASK_ID)],
+    // A spend cap is mandatory for the pay-per-event Marketplace actor.
+    ['APIFY_FB_MARKETPLACE_MAX_CHARGE_USD (0 < cap <= 2)', apifyEnabled && APIFY_ENABLE_FB_MARKETPLACE, APIFY_FB_MARKETPLACE_MAX_CHARGE_USD > 0 && APIFY_FB_MARKETPLACE_MAX_CHARGE_USD <= 2],
     // Live mode must have at least one channel; previously a missing key was reported as "disabled" and passed.
     ['delivery channel (RESEND_API_KEY or LEAD_WEBHOOK_URL)', mode === 'live', anyDelivery],
 ];
@@ -42,6 +54,9 @@ for (const [name, enabled, configured] of checks) {
     if (enabled && !configured) failures += 1;
 }
 if (isPermitsEnabled()) console.log(`[sourcer:check] permits: SOCRATA_APP_TOKEN ${has('SOCRATA_APP_TOKEN') ? 'set' : 'not set (optional; anonymous rate limits apply)'}`);
+if (apifyEnabled && APIFY_ENABLE_FB_MARKETPLACE) {
+    console.log(`[sourcer:check] fb-marketplace: cap=$${APIFY_FB_MARKETPLACE_MAX_CHARGE_USD}/run, reviewOnly=${APIFY_FB_MARKETPLACE_REVIEW_ONLY}`);
+}
 console.log(`[sourcer:check] resend: ${has('RESEND_API_KEY') ? 'set' : 'not set'}, webhook: ${has('LEAD_WEBHOOK_URL') ? 'set' : 'not set'}`);
 
 if (failures > 0) {

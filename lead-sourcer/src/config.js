@@ -396,6 +396,99 @@ export const APIFY_ENABLE_AD_LIBRARY = envFlag('APIFY_ENABLE_AD_LIBRARY', false)
 export const APIFY_OVERRIDE_TASK_INPUT = envFlag('APIFY_OVERRIDE_TASK_INPUT', false);
 export const APIFY_TASK_TIMEOUT_MS = Number(process.env.APIFY_TASK_TIMEOUT_MS || 120000);
 export const APIFY_TASK_DELAY_MS = Number(process.env.APIFY_TASK_DELAY_MS || 1200);
+
+// --- Facebook Marketplace (curious_coder/facebook-marketplace, logged out) ---
+// Off by default. Two Apify tasks: the main search task and a separate canary task
+// ("kitchen cabinets") whose only job is to prove that logged-out search still returns
+// results. Cookies are never configured; the poller refuses to run a task that has them.
+export const APIFY_FB_MARKETPLACE_TASK_ID = firstNonEmptyEnv(
+    'APIFY_FB_MARKETPLACE_TASK_ID',
+    'APIFY_FACEBOOK_MARKETPLACE_TASK_ID',
+);
+export const APIFY_FB_MARKETPLACE_CANARY_TASK_ID = firstNonEmptyEnv(
+    'APIFY_FB_MARKETPLACE_CANARY_TASK_ID',
+    'APIFY_FACEBOOK_MARKETPLACE_CANARY_TASK_ID',
+);
+export const APIFY_ENABLE_FB_MARKETPLACE = envFlag('APIFY_ENABLE_FB_MARKETPLACE', false);
+// Per-run spend caps (Apify run option maxTotalChargeUsd for pay-per-event actors).
+// Main: 7 searches x 30 listings x $0.0015 (basic $0.0005 + details $0.001) = $0.315 -> cap $0.50.
+// Canary: 1 search x 20 listings x $0.0005 (no details) = $0.01 -> cap $0.05.
+export const APIFY_FB_MARKETPLACE_MAX_CHARGE_USD = Number(process.env.APIFY_FB_MARKETPLACE_MAX_CHARGE_USD || 0.5);
+export const APIFY_FB_MARKETPLACE_CANARY_MAX_CHARGE_USD = Number(process.env.APIFY_FB_MARKETPLACE_CANARY_MAX_CHARGE_USD || 0.05);
+// Run option maxItems (dataset items) — belt and braces next to the USD cap.
+export const APIFY_FB_MARKETPLACE_MAX_ITEMS = Number(process.env.APIFY_FB_MARKETPLACE_MAX_ITEMS || 210);
+export const APIFY_FB_MARKETPLACE_CANARY_MAX_ITEMS = Number(process.env.APIFY_FB_MARKETPLACE_CANARY_MAX_ITEMS || 20);
+export const APIFY_FB_MARKETPLACE_CANARY_MIN_RESULTS = Number(process.env.APIFY_FB_MARKETPLACE_CANARY_MIN_RESULTS || 5);
+// Detail scraping is slower than the 120s default used for the other Apify tasks.
+export const APIFY_FB_MARKETPLACE_TIMEOUT_MS = Number(process.env.APIFY_FB_MARKETPLACE_TIMEOUT_MS || 600000);
+// Marketplace leads are never relayed (email/webhook) while this is true, even in live mode.
+export const APIFY_FB_MARKETPLACE_REVIEW_ONLY = envFlag('APIFY_FB_MARKETPLACE_REVIEW_ONLY', true);
+
+// Logged-out Marketplace search ignores radius, so listings are kept only when the
+// listing's reverse-geocoded city/state is in this list. Override with
+// LEAD_SOURCER_FB_MARKETPLACE_ALLOWED_CITIES="Cincinnati, OH; Mason, OH; ...".
+const DEFAULT_FB_MARKETPLACE_ALLOWED_CITIES = [
+    // Ohio — Hamilton County
+    'Cincinnati, OH', 'Norwood, OH', 'Reading, OH', 'Blue Ash, OH', 'Montgomery, OH', 'Sharonville, OH',
+    'Springdale, OH', 'Forest Park, OH', 'Cheviot, OH', 'Kenwood, OH', 'Madeira, OH', 'Mariemont, OH',
+    'Anderson Township, OH', 'Deer Park, OH', 'Wyoming, OH', 'Evendale, OH', 'Indian Hill, OH',
+    'Terrace Park, OH', 'Silverton, OH', 'Amberley, OH', 'Golf Manor, OH', 'St. Bernard, OH',
+    'Elmwood Place, OH', 'Lockland, OH', 'Arlington Heights, OH', 'Glendale, OH', 'Woodlawn, OH',
+    'Lincoln Heights, OH', 'Mount Healthy, OH', 'North College Hill, OH', 'Greenhills, OH', 'Fairfax, OH',
+    'Newtown, OH', 'Harrison, OH', 'North Bend, OH', 'Cleves, OH', 'Addyston, OH', 'Colerain Township, OH',
+    'Green Township, OH', 'Delhi Township, OH', 'Springfield Township, OH', 'Sycamore Township, OH',
+    'Symmes Township, OH', 'White Oak, OH', 'Monfort Heights, OH', 'Dent, OH', 'Mack, OH', 'Bridgetown, OH',
+    // Ohio — Butler / Warren / Clermont
+    'Mason, OH', 'West Chester, OH', 'West Chester Township, OH', 'Liberty Township, OH', 'Fairfield, OH',
+    'Hamilton, OH', 'Monroe, OH', 'Middletown, OH', 'Trenton, OH', 'Lebanon, OH', 'Loveland, OH',
+    'Maineville, OH', 'South Lebanon, OH', 'Morrow, OH', 'Springboro, OH', 'Milford, OH', 'Miami Township, OH',
+    'Batavia, OH', 'Amelia, OH', 'Union Township, OH', 'Goshen, OH', 'Owensville, OH', 'Bethel, OH',
+    'New Richmond, OH', 'Mount Orab, OH',
+    // Northern Kentucky
+    'Florence, KY', 'Covington, KY', 'Newport, KY', 'Fort Thomas, KY', 'Fort Mitchell, KY', 'Fort Wright, KY',
+    'Erlanger, KY', 'Elsmere, KY', 'Independence, KY', 'Union, KY', 'Burlington, KY', 'Hebron, KY',
+    'Alexandria, KY', 'Highland Heights, KY', 'Cold Spring, KY', 'Bellevue, KY', 'Dayton, KY', 'Edgewood, KY',
+    'Villa Hills, KY', 'Crestview Hills, KY', 'Lakeside Park, KY', 'Taylor Mill, KY', 'Park Hills, KY',
+    'Ludlow, KY', 'Wilder, KY', 'Southgate, KY', 'Walton, KY',
+    // Southeast Indiana
+    'Lawrenceburg, IN', 'Greendale, IN', 'Aurora, IN', 'Bright, IN',
+];
+export const FB_MARKETPLACE_ALLOWED_CITIES = compactLocations(
+    String(process.env.LEAD_SOURCER_FB_MARKETPLACE_ALLOWED_CITIES || DEFAULT_FB_MARKETPLACE_ALLOWED_CITIES.join(';'))
+        .split(';'),
+);
+
+// Marketplace selling-vs-buying rules (used by classifyMarketplaceListing).
+// Matching is whole-word on normalized text (lowercase, punctuation -> spaces).
+export const FB_MARKETPLACE_WANTED_KEYWORDS = [
+    'iso', 'in search of', 'wtb', 'want to buy', 'wanted', 'looking for', 'seeking',
+    'need someone', 'need somebody', 'need installed', 'needs installed', 'need installation',
+    'need countertops', 'need countertop', 'need new countertops', 'need a countertop',
+    'who can install', 'anyone install', 'anyone know someone', 'recommendations for', 'recommend a',
+];
+export const FB_MARKETPLACE_REMODEL_KEYWORDS = [
+    'old countertops', 'old countertop', 'old counters', 'old cabinets',
+    'removed during remodel', 'removed during kitchen remodel', 'removed from kitchen', 'removed from our kitchen',
+    'countertops removed', 'counters removed', 'cabinets removed',
+    'tearing out', 'tear out', 'tore out', 'ripped out', 'ripping out', 'pulled out of', 'came out of',
+    'kitchen demo', 'demoed', 'remodeling our kitchen', 'remodeling kitchen', 'redoing our kitchen',
+    'redoing kitchen', 'updating our kitchen', 'getting new countertops', 'new countertops going in',
+    'replacing our countertops', 'replacing countertops', 'kitchen remodel', 'bathroom remodel',
+];
+export const FB_MARKETPLACE_SELLING_KEYWORDS = [
+    'for sale', 'obo', 'or best offer', 'best offer', 'pickup only', 'pick up only', 'must pick up',
+    'local pickup', 'brand new', 'new in box', 'in box', 'never used', 'never installed', 'unopened',
+    'asking', 'firm', 'cash only', 'price is firm', 'like new', 'retail', 'msrp', 'sold as is', 'as is',
+    'still available', 'first come', 'make an offer', 'paid',
+];
+export const FB_MARKETPLACE_DEALER_KEYWORDS = [
+    'we install', 'we fabricate', 'we offer', 'free estimate', 'free estimates', 'free quote', 'free quotes',
+    'fabrication shop', 'fabricator', 'fabrication', 'showroom', 'licensed and insured', 'fully insured',
+    'remnant yard', 'remnants available', 'remnant sale', 'slabs available', 'slab yard', 'wholesale',
+    'warehouse', 'in stock now', 'financing available', 'starting at', 'per square foot', 'per sq ft',
+    'sq ft installed', 'installation included', 'installed price', 'visit our', 'call or text', 'our company',
+    'llc', 'serving cincinnati', 'serving the', 'years of experience', 'contractor pricing',
+];
 export const LEAD_SOURCER_REQUIRE_REGIONAL_SIGNAL = envFlag('LEAD_SOURCER_REQUIRE_REGIONAL_SIGNAL', true);
 export const LEAD_SOURCER_NEAR_MISS_SCORE_THRESHOLD = Number(process.env.LEAD_SOURCER_NEAR_MISS_SCORE_THRESHOLD || 45);
 export const LEAD_SOURCER_RELAY_BORDERLINE = envFlag('LEAD_SOURCER_RELAY_BORDERLINE', true);

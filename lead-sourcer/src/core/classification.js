@@ -1,5 +1,9 @@
 import {
     EXCLUDE_KEYWORDS,
+    FB_MARKETPLACE_DEALER_KEYWORDS,
+    FB_MARKETPLACE_REMODEL_KEYWORDS,
+    FB_MARKETPLACE_SELLING_KEYWORDS,
+    FB_MARKETPLACE_WANTED_KEYWORDS,
     INTENT_KEYWORDS,
     MATCH_KEYWORDS,
     MATERIAL_SIGNAL_KEYWORDS,
@@ -165,4 +169,85 @@ export function scoreLeadCandidate(classification) {
 
 export function matchesKeywords(text) {
     return classifyLeadText(text).verdict === 'match';
+}
+// ---------------------------------------------------------------------------
+// Facebook Marketplace: selling vs. buying.
+//
+// Marketplace is almost entirely sellers, so the generic "material anchor alone is a
+// match" rule above would turn every "granite countertop for sale" into a lead.
+// Marketplace listings go through this function instead:
+//   dealer   -> reject (fabricators, remnant yards, competitor ads)
+//   wanted   -> match  (ISO / wanted / looking for / need installed) — needs a
+//               countertop anchor or project context
+//   remodel  -> review (homeowner selling old counters/cabinets mid-remodel);
+//               logged for manual review only, never relayed, never auto-drafted
+//   inventory-> reject (priced listing or selling language, no wanted/remodel signal)
+//   other    -> reject
+// ---------------------------------------------------------------------------
+
+const MARKETPLACE_REMODEL_OBJECT_TERMS = [
+    'countertop', 'countertops', 'counter top', 'counter tops', 'counters', 'granite', 'quartz',
+    'quartzite', 'marble', 'cabinet', 'cabinets', 'vanity', 'vanity top', 'sink', 'backsplash', 'slab',
+];
+
+function findWholePhrases(normalized, phrases) {
+    const padded = ` ${normalized} `;
+    return phrases.filter((phrase) => {
+        const needle = normalizeText(phrase);
+        return needle && padded.includes(` ${needle} `);
+    });
+}
+
+function hasRealPrice(price) {
+    const amount = Number(price);
+    // $0 / $1 / $2 are the conventional "price" on ISO and free-to-claim posts.
+    return Number.isFinite(amount) && amount > 2;
+}
+
+export function classifyMarketplaceListing({ title = '', body = '', price = null } = {}) {
+    const base = classifyLeadCandidate({ title, body });
+    const titleNorm = normalizeText(title);
+    const allNorm = normalizeText(`${title}\n${body}`);
+
+    const dealer = findWholePhrases(allNorm, FB_MARKETPLACE_DEALER_KEYWORDS);
+    const wantedInTitle = findWholePhrases(titleNorm, FB_MARKETPLACE_WANTED_KEYWORDS);
+    const wantedAnywhere = findWholePhrases(allNorm, FB_MARKETPLACE_WANTED_KEYWORDS);
+    const remodel = findWholePhrases(allNorm, FB_MARKETPLACE_REMODEL_KEYWORDS);
+    const remodelObjects = findWholePhrases(allNorm, MARKETPLACE_REMODEL_OBJECT_TERMS);
+    const selling = findWholePhrases(allNorm, FB_MARKETPLACE_SELLING_KEYWORDS);
+    const priced = hasRealPrice(price);
+
+    const combinedSignals = base.combined?.signals || {};
+    const anchored = hasCountertopAnchor([
+        ...(combinedSignals.directMatches || []),
+        ...(combinedSignals.materialSignals || []),
+    ]) || remodelObjects.some((term) => COUNTERTOP_ANCHOR_TERMS.has(term) || term === 'counters');
+    const hasProjectContext = (combinedSignals.projectContext || []).length > 0;
+
+    // "Looking for" inside a seller's description ("great for anyone looking for...") is
+    // not demand, so body-only wanted phrases count only on unpriced posts.
+    const wanted = wantedInTitle.length > 0 ? wantedInTitle : (priced ? [] : wantedAnywhere);
+
+    let kind = 'other';
+    if (dealer.length > 0) {
+        kind = 'dealer';
+    } else if (wanted.length > 0 && (anchored || hasProjectContext)) {
+        kind = 'wanted';
+    } else if (remodel.length > 0 && remodelObjects.length > 0) {
+        kind = 'remodel';
+    } else if (priced || selling.length > 0) {
+        kind = 'inventory';
+    }
+
+    const verdict = kind === 'wanted' ? 'match' : kind === 'remodel' ? 'review' : 'reject';
+
+    return {
+        ...base,
+        verdict,
+        marketplace: {
+            kind,
+            priced,
+            signals: { dealer, wanted, remodel, remodelObjects, selling },
+        },
+    };
 }
