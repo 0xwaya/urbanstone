@@ -10,10 +10,11 @@ import {
     isSameOriginRequest,
     sanitizeLeadPayload,
 } from '../../lib/lead';
+import { sendWebsiteLeadEmail } from '../../lib/lead-email';
 
-// Code-side replacement for Zapier Post-Storage filter (Step 5).
-// Prevents the same lead from being relayed to the webhook more than once
-// within the deduplication window. Note: this store is in-memory and resets
+// Website leads are emailed directly to the sales inbox via Resend
+// (no Zapier webhook in the path). The dedupe store prevents the same lead
+// from being emailed more than once within the deduplication window. Note: this store is in-memory and resets
 // on serverless cold starts; it covers the within-session duplicate case.
 
 export const config = {
@@ -24,46 +25,12 @@ export const config = {
     },
 };
 
-async function relayLead(payload) {
-    const response = await fetch(payload.webhookUrl, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload.body),
-        signal: AbortSignal.timeout(5000),
-    });
-
-    if (!response.ok) {
-        throw new Error(`Lead relay failed with status ${response.status}`);
-    }
-}
-
 function getErrorMessage(error) {
     if (error && typeof error.message === 'string') {
         return error.message;
     }
 
-    return 'Unknown relay error';
-}
-
-function resolveWebhookUrl(request) {
-    if (process.env.LEAD_WEBHOOK_URL) {
-        return process.env.LEAD_WEBHOOK_URL;
-    }
-
-    if (process.env.NODE_ENV === 'production') {
-        return '';
-    }
-
-    const host = request.headers['x-forwarded-host'] || request.headers.host;
-    const proto = request.headers['x-forwarded-proto'] || 'http';
-
-    if (host) {
-        return `${proto}://${host}/api/lead-dev-webhook`;
-    }
-
-    return 'http://127.0.0.1:3001/api/lead-dev-webhook';
+    return 'Unknown delivery error';
 }
 
 export default async function handler(request, response) {
@@ -116,6 +83,12 @@ export default async function handler(request, response) {
         });
     }
 
+    if (!String(process.env.RESEND_API_KEY || '').trim()) {
+        return response.status(503).json({
+            message: 'Lead delivery is not configured. Set RESEND_API_KEY before production deployment.',
+        });
+    }
+
     const dedupeKey = buildLeadDedupeKey(result.data);
     const dedupeStore = getLeadDedupeStore();
 
@@ -124,24 +97,23 @@ export default async function handler(request, response) {
         return response.status(202).json({ message: 'Thanks. Your request is in the queue and we will follow up shortly.' });
     }
 
-    const webhookUrl = resolveWebhookUrl(request);
-
-    if (!webhookUrl) {
-        return response.status(503).json({
-            message: 'Lead delivery is not configured. Set LEAD_WEBHOOK_URL before production deployment.',
-        });
-    }
-
     const payload = buildLeadForwardPayload(result.data, request);
 
     try {
-        await relayLead({
-            webhookUrl,
-            body: payload,
+        const delivery = await sendWebsiteLeadEmail(payload);
+        console.info('lead_email_sent', {
+            requestId: payload.metadata.requestId,
+            routeId: payload.metadata.routeId,
+            emailId: delivery.id,
         });
-        return response.status(202).json({ message: 'Thanks. Your request is in the queue and we will follow up shortly.' });
+        return response.status(202).json({
+            message: 'Thanks. Your request is in the queue and we will follow up shortly.',
+            id: delivery.id,
+        });
     } catch (error) {
-        console.error('lead_relay_failed', {
+        // Release the dedupe key so the visitor can retry after a failed send.
+        dedupeStore.delete(dedupeKey);
+        console.error('lead_email_failed', {
             requestId: payload.metadata.requestId,
             dedupeKey: payload.metadata.dedupeKey,
             routeId: payload.metadata.routeId,
