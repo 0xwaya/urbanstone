@@ -1,6 +1,7 @@
 import { APIFY_AD_LIBRARY_TASK_ID, APIFY_FACEBOOK_TASK_ID, APIFY_NEXTDOOR_TASK_ID } from '../src/config.js';
 import { resolveRunMode } from '../src/mode.js';
 import { isPermitsEnabled } from '../src/permits.js';
+import { isHamiltonPermitsEnabled, isButlerPermitsEnabled } from '../src/permits-accela.js';
 
 // Prints names and ready/missing status only; never prints secret values.
 const flag = (name) => {
@@ -21,6 +22,9 @@ const checks = [
     ['LEAD_SOURCER_ENABLE_CRAIGSLIST', flag('LEAD_SOURCER_ENABLE_CRAIGSLIST'), true],
     // Permits use public city open data (no key); default off. SOCRATA_APP_TOKEN is optional.
     ['LEAD_SOURCER_ENABLE_PERMITS', isPermitsEnabled(), true],
+    // County permit portals (Accela Citizen Access, anonymous search; no key); default off.
+    ['LEAD_SOURCER_ENABLE_PERMITS_HAMILTON', isHamiltonPermitsEnabled(), true],
+    ['LEAD_SOURCER_ENABLE_PERMITS_BUTLER', isButlerPermitsEnabled(), true],
     ['LEAD_SOURCER_ENABLE_APIFY (APIFY_TOKEN)', apifyEnabled, has('APIFY_TOKEN')],
     ['apify task id (nextdoor, facebook or ad-library)', apifyEnabled, Boolean(APIFY_NEXTDOOR_TASK_ID || APIFY_FACEBOOK_TASK_ID || APIFY_AD_LIBRARY_TASK_ID)],
     // Live mode must have at least one channel; previously a missing key was reported as "disabled" and passed.

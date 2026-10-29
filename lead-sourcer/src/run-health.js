@@ -2,12 +2,12 @@
  * Decide whether a poll cycle was healthy. A source counts as unhealthy when it
  * is enabled and either threw or reported a non-ok status (degraded, parse-error).
  */
-const OPT_IN_SOURCES = new Set(['permits']);
+const OPT_IN_SOURCES = new Set(['permits', 'permits-hamilton', 'permits-butler']);
 
 export function assessRunHealth(summary, enabled = {}) {
     const unhealthySources = [];
     let enabledCount = 0;
-    for (const source of ['reddit', 'craigslist', 'apify', 'permits']) {
+    for (const source of ['reddit', 'craigslist', 'apify', 'permits', 'permits-hamilton', 'permits-butler']) {
         const status = summary.sourceStatuses?.[source] || 'unknown';
         if (enabled[source] === false || status === 'disabled') continue;
         // Opt-in sources only count when explicitly enabled.

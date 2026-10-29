@@ -15,6 +15,7 @@ import { pollReddit } from './reddit.js';
 import { pollCraigslist } from './craigslist.js';
 import { pollApify } from './apify.js';
 import { pollPermits, isPermitsEnabled } from './permits.js';
+import { pollHamiltonPermits, pollButlerPermits, isHamiltonPermitsEnabled, isButlerPermitsEnabled } from './permits-accela.js';
 import { resolveRunMode } from './mode.js';
 import { relay } from './relay.js';
 import { initializeTracing } from './tracing.js';
@@ -43,6 +44,8 @@ const ENABLE_REDDIT = envFlag('LEAD_SOURCER_ENABLE_REDDIT', true);
 const ENABLE_CRAIGSLIST = envFlag('LEAD_SOURCER_ENABLE_CRAIGSLIST', true);
 const ENABLE_APIFY = envFlag('LEAD_SOURCER_ENABLE_APIFY', true);
 const ENABLE_PERMITS = isPermitsEnabled();
+const ENABLE_PERMITS_HAMILTON = isHamiltonPermitsEnabled();
+const ENABLE_PERMITS_BUTLER = isButlerPermitsEnabled();
 
 await initializeTracing();
 
@@ -83,6 +86,8 @@ function buildRunReportDetails(summary) {
     const craigslist = summary.verdicts?.craigslist || {};
     const apify = summary.verdicts?.apify || {};
     const permits = summary.verdicts?.permits || {};
+    const hamilton = summary.verdicts?.['permits-hamilton'] || {};
+    const butler = summary.verdicts?.['permits-butler'] || {};
 
     const lines = [
         '[LEAD SOURCER RUN REPORT]',
@@ -90,13 +95,15 @@ function buildRunReportDetails(summary) {
         `Run window: ${summary.startedAt} -> ${summary.completedAt}`,
         `Mode: ${summary.mode}`,
         '',
-        `Counts: reddit=${summary.counts.reddit}, craigslist=${summary.counts.craigslist}, apify=${summary.counts.apify}, permits=${summary.counts.permits || 0}, totalMatches=${summary.counts.totalMatches}`,
-        `Source status: reddit=${summary.sourceStatuses?.reddit || 'unknown'}, craigslist=${summary.sourceStatuses?.craigslist || 'unknown'}, apify=${summary.sourceStatuses?.apify || 'unknown'}, permits=${summary.sourceStatuses?.permits || 'unknown'}`,
+        `Counts: reddit=${summary.counts.reddit}, craigslist=${summary.counts.craigslist}, apify=${summary.counts.apify}, permits=${summary.counts.permits || 0}, permitsHamilton=${summary.counts['permits-hamilton'] || 0}, permitsButler=${summary.counts['permits-butler'] || 0}, totalMatches=${summary.counts.totalMatches}`,
+        `Source status: reddit=${summary.sourceStatuses?.reddit || 'unknown'}, craigslist=${summary.sourceStatuses?.craigslist || 'unknown'}, apify=${summary.sourceStatuses?.apify || 'unknown'}, permits=${summary.sourceStatuses?.permits || 'unknown'}, permitsHamilton=${summary.sourceStatuses?.['permits-hamilton'] || 'unknown'}, permitsButler=${summary.sourceStatuses?.['permits-butler'] || 'unknown'}`,
         '',
         `Reddit: fetched=${safeStat(reddit, 'fetched')}, evaluated=${safeStat(reddit, 'evaluated')}, matches=${safeStat(reddit, 'matches')}, borderline=${safeStat(reddit, 'borderline')}, rejects=${safeStat(reddit, 'rejects')}, relayed=${safeStat(reddit, 'relayed')}`,
         `Craigslist: fetched=${safeStat(craigslist, 'fetched')}, evaluated=${safeStat(craigslist, 'evaluated')}, bodyFetches=${safeStat(craigslist, 'bodyFetches')}, matches=${safeStat(craigslist, 'matches')}, borderline=${safeStat(craigslist, 'borderline')}, rejects=${safeStat(craigslist, 'rejects')}, relayed=${safeStat(craigslist, 'relayed')}`,
         `Apify: fetched=${safeStat(apify, 'fetched')}, evaluated=${safeStat(apify, 'evaluated')}, matches=${safeStat(apify, 'matches')}, borderline=${safeStat(apify, 'borderline')}, rejects=${safeStat(apify, 'rejects')}, relayed=${safeStat(apify, 'relayed')}`,
         `Permits: fetched=${safeStat(permits, 'fetched')}, evaluated=${safeStat(permits, 'evaluated')}, matches=${safeStat(permits, 'matches')}, registryMatched=${safeStat(permits, 'registryMatched')}, rejects=${safeStat(permits, 'rejects')}, relayed=${safeStat(permits, 'relayed')}`,
+        `Permits (Hamilton County ezTrak): fetched=${safeStat(hamilton, 'fetched')}, typeCandidates=${safeStat(hamilton, 'typeCandidates')}, details=${safeStat(hamilton, 'detailFetches')}, matches=${safeStat(hamilton, 'matches')}, registryMatched=${safeStat(hamilton, 'registryMatched')}, rejects=${safeStat(hamilton, 'rejects')}, relayed=${safeStat(hamilton, 'relayed')}`,
+        `Permits (Butler County): fetched=${safeStat(butler, 'fetched')}, typeCandidates=${safeStat(butler, 'typeCandidates')}, details=${safeStat(butler, 'detailFetches')}, matches=${safeStat(butler, 'matches')}, registryMatched=${safeStat(butler, 'registryMatched')}, rejects=${safeStat(butler, 'rejects')}, relayed=${safeStat(butler, 'relayed')}`,
     ];
 
     if (Array.isArray(summary.errors) && summary.errors.length > 0) {
@@ -112,18 +119,24 @@ function buildRunReportHtml(summary) {
     const craigslist = summary.verdicts?.craigslist || {};
     const apify = summary.verdicts?.apify || {};
     const permits = summary.verdicts?.permits || {};
+    const hamilton = summary.verdicts?.['permits-hamilton'] || {};
+    const butler = summary.verdicts?.['permits-butler'] || {};
 
     const redditMatches = safeStat(reddit, 'matches');
     const clMatches = safeStat(craigslist, 'matches');
     const apifyMatches = safeStat(apify, 'matches');
     const permitMatches = safeStat(permits, 'matches');
-    const totalMatches = redditMatches + clMatches + apifyMatches + permitMatches;
+    const hamiltonMatches = safeStat(hamilton, 'matches');
+    const butlerMatches = safeStat(butler, 'matches');
+    const totalMatches = redditMatches + clMatches + apifyMatches + permitMatches + hamiltonMatches + butlerMatches;
 
     const redditFetched = safeStat(reddit, 'fetched');
     const clFetched = safeStat(craigslist, 'fetched');
     const apifyFetched = safeStat(apify, 'fetched');
     const permitFetched = safeStat(permits, 'fetched');
-    const totalFetched = redditFetched + clFetched + apifyFetched + permitFetched;
+    const hamiltonFetched = safeStat(hamilton, 'fetched');
+    const butlerFetched = safeStat(butler, 'fetched');
+    const totalFetched = redditFetched + clFetched + apifyFetched + permitFetched + hamiltonFetched + butlerFetched;
 
     // Helper to create a bar chart
     function renderBar(label, value, max) {
@@ -236,7 +249,19 @@ function buildRunReportHtml(summary) {
                     <div class="stat"><strong>Registry matched:</strong> ${safeStat(permits, 'registryMatched')}</div>
                 </div>
             </div>
-
+${[['🏗️ Hamilton County Permits (ezTrak, B2B)', hamilton, hamiltonFetched, hamiltonMatches], ['🏗️ Butler County Permits (B2B)', butler, butlerFetched, butlerMatches]].map(([title, stats, fetched, matched]) => `
+            <div class="source-section">
+                <h2>${title}</h2>
+                <div class="stats-row">
+                    <div class="stat"><strong>Fetched:</strong> ${fetched}</div>
+                    <div class="stat"><strong>Matches:</strong> ${matched}</div>
+                </div>
+                <div class="stats-row">
+                    <div class="stat"><strong>Relayed:</strong> ${safeStat(stats, 'relayed')}</div>
+                    <div class="stat"><strong>Registry matched:</strong> ${safeStat(stats, 'registryMatched')}</div>
+                </div>
+            </div>
+`).join('')}
             ${Array.isArray(summary.errors) && summary.errors.length > 0 ? `
             <div class="source-section" style="background: #ffebee; border-left: 4px solid #f44336; padding: 15px; border-radius: 4px;">
                 <h3 style="margin: 0 0 10px 0; color: #f44336;">⚠️ Errors</h3>
@@ -328,12 +353,16 @@ async function runOnce(mode) {
     if (!ENABLE_CRAIGSLIST) console.log('[lead-sourcer] Craigslist poller disabled (LEAD_SOURCER_ENABLE_CRAIGSLIST=false).');
     if (!ENABLE_APIFY) console.log('[lead-sourcer] Apify poller disabled (LEAD_SOURCER_ENABLE_APIFY=false).');
     if (!ENABLE_PERMITS) console.log('[lead-sourcer] Permits poller disabled (LEAD_SOURCER_ENABLE_PERMITS is not true).');
+    if (!ENABLE_PERMITS_HAMILTON) console.log('[lead-sourcer] Hamilton County permits disabled (LEAD_SOURCER_ENABLE_PERMITS_HAMILTON is not true).');
+    if (!ENABLE_PERMITS_BUTLER) console.log('[lead-sourcer] Butler County permits disabled (LEAD_SOURCER_ENABLE_PERMITS_BUTLER is not true).');
 
-    const [redditMatches, craigslistMatches, apifyMatches, permitsMatches] = await Promise.allSettled([
+    const [redditMatches, craigslistMatches, apifyMatches, permitsMatches, hamiltonMatches, butlerMatches] = await Promise.allSettled([
         ENABLE_REDDIT ? pollReddit({ mode }) : Promise.resolve({ matches: [], stats: { status: 'disabled' } }),
         ENABLE_CRAIGSLIST ? pollCraigslist({ mode }) : Promise.resolve({ matches: [], stats: { status: 'disabled' } }),
         ENABLE_APIFY ? pollApify({ mode }) : Promise.resolve({ matches: [], stats: { status: 'disabled' } }),
         ENABLE_PERMITS ? pollPermits({ mode }) : Promise.resolve({ matches: [], stats: { status: 'disabled' } }),
+        ENABLE_PERMITS_HAMILTON ? pollHamiltonPermits({ mode }) : Promise.resolve({ matches: [], stats: { status: 'disabled' } }),
+        ENABLE_PERMITS_BUTLER ? pollButlerPermits({ mode }) : Promise.resolve({ matches: [], stats: { status: 'disabled' } }),
     ]);
 
     const redditResult = redditMatches.status === 'fulfilled'
@@ -350,10 +379,19 @@ async function runOnce(mode) {
         ? normalizePollResult(permitsMatches.value)
         : { matches: [], stats: {} };
 
+    const hamiltonResult = hamiltonMatches.status === 'fulfilled'
+        ? normalizePollResult(hamiltonMatches.value)
+        : { matches: [], stats: {} };
+    const butlerResult = butlerMatches.status === 'fulfilled'
+        ? normalizePollResult(butlerMatches.value)
+        : { matches: [], stats: {} };
+
     const redditCount = redditResult.matches.length;
     const clCount = craigslistResult.matches.length;
     const apifyCount = apifyResult.matches.length;
     const permitsCount = permitsResult.matches.length;
+    const hamiltonCount = hamiltonResult.matches.length;
+    const butlerCount = butlerResult.matches.length;
 
     const errors = [];
     if (redditMatches.status === 'rejected') {
@@ -373,13 +411,21 @@ async function runOnce(mode) {
         errors.push({ source: 'permits', message: String(permitsMatches.reason?.message || permitsMatches.reason) });
     }
 
-    const totalMatches = redditCount + clCount + apifyCount + permitsCount;
-    console.log(`[lead-sourcer] Poll complete — Reddit: ${redditCount} match(es), Craigslist: ${clCount} match(es), Apify: ${apifyCount} match(es), Permits: ${permitsCount} match(es), mode=${mode}`);
+    for (const [source, settled] of [['permits-hamilton', hamiltonMatches], ['permits-butler', butlerMatches]]) {
+        if (settled.status !== 'rejected') continue;
+        console.error(`[lead-sourcer] ${source} poller error:`, settled.reason);
+        errors.push({ source, message: String(settled.reason?.message || settled.reason) });
+    }
+
+    const totalMatches = redditCount + clCount + apifyCount + permitsCount + hamiltonCount + butlerCount;
+    console.log(`[lead-sourcer] Poll complete — Reddit: ${redditCount} match(es), Craigslist: ${clCount} match(es), Apify: ${apifyCount} match(es), Permits: ${permitsCount} match(es), Hamilton permits: ${hamiltonCount} match(es), Butler permits: ${butlerCount} match(es), mode=${mode}`);
     console.log('[lead-sourcer] Verdict stats', {
         reddit: redditResult.stats,
         craigslist: craigslistResult.stats,
         apify: apifyResult.stats,
         permits: permitsResult.stats,
+        'permits-hamilton': hamiltonResult.stats,
+        'permits-butler': butlerResult.stats,
     });
 
     const summary = {
@@ -391,6 +437,8 @@ async function runOnce(mode) {
             craigslist: clCount,
             apify: apifyCount,
             permits: permitsCount,
+            'permits-hamilton': hamiltonCount,
+            'permits-butler': butlerCount,
             totalMatches,
         },
         verdicts: {
@@ -398,12 +446,16 @@ async function runOnce(mode) {
             craigslist: craigslistResult.stats,
             apify: apifyResult.stats,
             permits: permitsResult.stats,
+            'permits-hamilton': hamiltonResult.stats,
+            'permits-butler': butlerResult.stats,
         },
         sourceStatuses: {
             reddit: redditResult.stats.status || 'ok',
             craigslist: craigslistResult.stats.status || 'ok',
             apify: apifyResult.stats.status || 'ok',
             permits: permitsResult.stats.status || 'ok',
+            'permits-hamilton': hamiltonResult.stats.status || 'ok',
+            'permits-butler': butlerResult.stats.status || 'ok',
         },
         errors,
     };
@@ -413,6 +465,8 @@ async function runOnce(mode) {
         craigslist: ENABLE_CRAIGSLIST,
         apify: ENABLE_APIFY,
         permits: ENABLE_PERMITS,
+        'permits-hamilton': ENABLE_PERMITS_HAMILTON,
+        'permits-butler': ENABLE_PERMITS_BUTLER,
     });
     if (summary.health.unhealthySources.length > 0) {
         console.warn(`[lead-sourcer] Unhealthy sources: ${summary.health.unhealthySources.join(', ')}${summary.health.allFailed ? ' (every enabled source failed)' : ''}`);
@@ -458,7 +512,10 @@ function markExitCode(summary) {
     const unhealthy = summary?.health?.unhealthySources || [];
     if (unhealthy.includes('reddit')) console.warn('[lead-sourcer] Reddit degraded (public access may be blocked); not failing the run for Reddit alone.');
     if (unhealthy.includes('permits')) console.warn('[lead-sourcer] Permits degraded (city data or registry unavailable); warn-only.');
-    const WARN_ONLY_SOURCES = ['reddit', 'permits'];
+    for (const source of ['permits-hamilton', 'permits-butler']) {
+        if (unhealthy.includes(source)) console.warn(`[lead-sourcer] ${source} degraded (county portal unavailable or changed); warn-only.`);
+    }
+    const WARN_ONLY_SOURCES = ['reddit', 'permits', 'permits-hamilton', 'permits-butler'];
     if (summary?.health?.allFailed || unhealthy.some((s) => !WARN_ONLY_SOURCES.includes(s))) process.exitCode = 1;
 }
 

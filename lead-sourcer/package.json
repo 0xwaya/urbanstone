@@ -13,6 +13,8 @@
     "poll:craigslist": "node src/craigslist.js",
     "poll:apify": "node src/apify.js",
     "poll:permits": "node src/permits.js",
+    "poll:permits-hamilton": "node src/permits-accela.js hamilton-county",
+    "poll:permits-butler": "node src/permits-accela.js butler-county",
     "summary:daily": "node scripts/daily-summary.mjs",
     "summary:weekly-tuning": "node scripts/weekly-tuning-summary.mjs",
     "test": "node --experimental-vm-modules node_modules/.bin/jest --testEnvironment node"
