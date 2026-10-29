@@ -33,6 +33,10 @@ One entry is appended per published post. Entries are never edited or removed.
 - `single` — one full-bleed image (kitchen island, backsplash).
 - `before_after` — **outdoor kitchen/grill area, vanity and fireplace posts use a before-and-after pair**: BEFORE (bare patio / dated surface) on top, AFTER (new granite grill area, or intricate design with inlays) below, each half full-bleed with small BEFORE/AFTER labels and the seal on the AFTER half. The caption tells the transformation story.
 
+## Location
+
+Every post carries a location tag (Edward, Oct 29, 2026): "Cincinnati, Ohio" by default, "Downtown Cincinnati" only for downtown Cincinnati projects. Same rule for Facebook if added.
+
 ## Caption styles
 
 Captions keep the same base content and tone, varying length and emphasis by tags:
@@ -53,6 +57,7 @@ Each entry has this format:
 - Application: <kitchen island | backsplash | outdoor kitchen/grill area | vanity | fireplace>
 - Format: <single | before_after>
 - Caption style: <punchy | design | exotic | before_after_outdoor | before_after_feature | classic>
+- Location: <Cincinnati, Ohio (default) | Downtown Cincinnati (downtown projects only)>
 - About: <topic — stone/material, kitchen style, promo>
 - Queue folder: social/instagram/queue/<queue_id>/
 - Image: https://www.urbanstone.co/social/<queue_id>/post_4x5.jpg
