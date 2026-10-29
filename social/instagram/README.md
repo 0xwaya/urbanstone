@@ -59,6 +59,14 @@ outside this repo (Grok Bot routine).
   letterspaced Cormorant Garamond Bold caps beneath it (gold, 97%), plus a soft navy shadow. Text auto-fits
   inside the ring. Measured gold-text contrast on the Oct 29 scene: 4.5-6.2:1. All values in
   `config.json -> logo_stamp` (`style: "icon"` restores the old 12% icon-only stamp).
+- Scene tone (`config.json -> scene_tone`, applied before the seal so seal colours never change): brightness
+  1.09 as a midtone lift that keeps pure black/white fixed, gamma 0.95 (gentle shadow lift), warmth 0
+  (neutral), highlights above 92% protected. On the Oct 29 scene: mean luminance 161->172, clipped pixels
+  unchanged (0.12%), darkest 1% 15->20.
+- Profile-picture seal: `python3 social/instagram/scripts/export_seal.py --out DIR` exports, from the same seal
+  code, urban-stone-seal.png (transparent) and urban-stone-seal-solid.png (navy square, no alpha), each at 1080
+  plus -512, with a fully opaque disc and the seal at 88% of the canvas so circular profile crops keep it whole.
+  Copies live in `brand/` and on the site at `frontend/public/brand/`.
 - Corner is chosen automatically: each corner's busyness (pixel std + mean gradient) is measured, bottom
   corners are penalised (top preferred), and any corner overlapping the countertop band
   (`focus_y ± counter_band`) is rejected. 9:16 keeps the stamp inside Story/Reel safe zones (130 px sides,

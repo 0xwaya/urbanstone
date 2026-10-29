@@ -37,6 +37,29 @@ def crop_to(img, W, H, focus_y):
     return out, (focus_y * img.height - top) / H
 
 
+def tone(img, cfg):
+    """Gentle scene lift applied BEFORE the seal is composited (seal colours unchanged).
+    gamma < 1 lifts shadows/mids; brightness adds a midtone lift x + a*x*(1-x) that keeps
+    0 and 1 fixed, so white walls/skylight don't clip and true blacks stay black;
+    warmth > 0 warms, < 0 cools, 0 = neutral. Highlights above highlight_knee are
+    blended back toward the original to protect them further."""
+    if not cfg or not cfg.get("enabled", True):
+        return img
+    x = np.asarray(img, dtype=np.float32) / 255.0
+    g = cfg.get("gamma", 1.0)
+    y = np.power(x, g)
+    a = 2.0 * (cfg.get("brightness", 1.0) - 1.0)
+    y = y + a * y * (1.0 - y)
+    knee = cfg.get("highlight_knee", 0.92)
+    w = np.clip((x - knee) / max(1e-6, 1.0 - knee), 0, 1)
+    y = y * (1 - w) + np.maximum(x, y * (1 - w) + x * w) * w
+    warm = cfg.get("warmth", 0.0)
+    if warm:
+        y[..., 0] *= 1 + warm
+        y[..., 2] *= 1 - warm
+    return Image.fromarray(np.clip(y * 255.0 + 0.5, 0, 255).astype(np.uint8))
+
+
 def busyness(gray, box):
     x0, y0, x1, y1 = box
     region = gray[y0:y1, x0:x1]
@@ -173,7 +196,7 @@ def stamp(img, box, cfg, brand=None):
 def compose(scene_path, out_dir, focus_y=None):
     cfg = config()
     focus_y = cfg["default_focus_y"] if focus_y is None else focus_y
-    scene = Image.open(scene_path).convert("RGB")
+    scene = tone(Image.open(scene_path).convert("RGB"), cfg.get("scene_tone"))
     os.makedirs(out_dir, exist_ok=True)
     results = {}
     for name, f in cfg["formats"].items():

@@ -90,5 +90,13 @@
     "max_text_width": 0.76
   },
   "default_focus_y": 0.6,
-  "_label_note": "AI-generated scenes are labeled in the caption (no text on the image)."
+  "_label_note": "AI-generated scenes are labeled in the caption (no text on the image).",
+  "scene_tone": {
+    "enabled": true,
+    "brightness": 1.09,
+    "gamma": 0.95,
+    "warmth": 0.0,
+    "highlight_knee": 0.92,
+    "_note": "Applied to the scene before the seal. brightness = midtone lift (0/255 stay fixed), gamma<1 lifts shadows, warmth 0 = neutral."
+  }
 }
