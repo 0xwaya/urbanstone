@@ -366,6 +366,7 @@ async function runTask(client, {
     normalize,
     requireSucceeded = false,
     raw = false,
+    onUsage = null,
 }) {
     if (!taskId) return [];
 
@@ -378,6 +379,7 @@ async function runTask(client, {
     }
     if (run?.usageTotalUsd != null) {
         console.log(`[apify] ${taskLabel}: run usage $${Number(run.usageTotalUsd).toFixed(4)}`);
+        if (typeof onUsage === 'function') onUsage(Number(run.usageTotalUsd));
     }
     const datasetId = run?.defaultDatasetId;
     if (!datasetId) {
@@ -563,6 +565,7 @@ export async function pollApify({ mode = 'live' } = {}) {
                 );
                 const verdict = assessMarketplaceCanary({ runStatus: run?.status, itemCount: canaryItems.length });
                 stats.canary = { status: run?.status || 'unknown', items: canaryItems.length, healthy: verdict.healthy };
+                if (run?.usageTotalUsd != null && Number.isFinite(Number(run.usageTotalUsd))) stats.canary.costUsd = Number(run.usageTotalUsd);
                 if (verdict.healthy) {
                     console.log(`[apify] facebook-marketplace canary ok: ${verdict.reason}`);
                 } else {
@@ -599,8 +602,13 @@ export async function pollApify({ mode = 'live' } = {}) {
                 continue;
             }
 
+            const onUsage = (usageUsd) => {
+                if (!Number.isFinite(usageUsd)) return;
+                const usageStats = getTaskStats(stats, task.taskLabel);
+                usageStats.costUsd = (usageStats.costUsd || 0) + usageUsd;
+            };
             let taskItems = await withTimeout(
-                runTask(client, { ...task, input: taskInput }),
+                runTask(client, { ...task, input: taskInput, onUsage }),
                 task.timeoutMs || APIFY_TASK_TIMEOUT_MS,
                 task.taskLabel,
             );

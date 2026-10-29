@@ -154,6 +154,10 @@ export function buildCountyPermitLead(county, permit, contact = null, scoreResul
     payload.metadata.internalOnly = true;
     payload.metadata.permitNumber = permit.permitNumber;
     payload.metadata.jurisdiction = county.jurisdiction;
+    // Contact-free fields for the run report's top-leads list.
+    payload.metadata.city = city || '';
+    payload.metadata.estimatedCost = permit.cost > 0 ? permit.cost : null;
+    payload.metadata.workSummary = String(permit.description || permit.recordType || '').slice(0, 120);
     if (payload.metadata.routeId !== `lead-sourcer/${county.source}`) throw new Error(`unexpected routeId ${payload.metadata.routeId}`);
     return payload;
 }

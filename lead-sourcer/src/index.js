@@ -20,6 +20,13 @@ import { resolveRunMode } from './mode.js';
 import { relay } from './relay.js';
 import { initializeTracing } from './tracing.js';
 import { assessRunHealth } from './run-health.js';
+import { buildRunReportText, buildRunReportHtml, summarizeLeadForReport, rankTopLeads } from './run-report.js';
+import {
+    APIFY_ENABLE_FB_MARKETPLACE,
+    APIFY_FB_MARKETPLACE_TASK_ID,
+    APIFY_FB_MARKETPLACE_MAX_CHARGE_USD,
+    APIFY_FB_MARKETPLACE_CANARY_MAX_CHARGE_USD,
+} from './config.js';
 import { buildPreDraft, shouldRunDaily, readDailyState, writeDailyState, resolveCooldownHours } from './daily-runner.js';
 import { checkScheduledSlot, parseAllowedHours } from './schedule-guard.js';
 
@@ -46,6 +53,7 @@ const ENABLE_APIFY = envFlag('LEAD_SOURCER_ENABLE_APIFY', true);
 const ENABLE_PERMITS = isPermitsEnabled();
 const ENABLE_PERMITS_HAMILTON = isHamiltonPermitsEnabled();
 const ENABLE_PERMITS_BUTLER = isButlerPermitsEnabled();
+const ENABLE_FB_MARKETPLACE = ENABLE_APIFY && APIFY_ENABLE_FB_MARKETPLACE && Boolean(APIFY_FB_MARKETPLACE_TASK_ID);
 
 await initializeTracing();
 
@@ -76,219 +84,6 @@ function normalizePollResult(result) {
     return { matches: [], stats: { status: 'failed' } };
 }
 
-function safeStat(stats, key) {
-    const value = stats?.[key];
-    return Number.isFinite(value) ? value : 0;
-}
-
-function buildRunReportDetails(summary) {
-    const reddit = summary.verdicts?.reddit || {};
-    const craigslist = summary.verdicts?.craigslist || {};
-    const apify = summary.verdicts?.apify || {};
-    const permits = summary.verdicts?.permits || {};
-    const hamilton = summary.verdicts?.['permits-hamilton'] || {};
-    const butler = summary.verdicts?.['permits-butler'] || {};
-
-    const lines = [
-        '[LEAD SOURCER RUN REPORT]',
-        '',
-        `Run window: ${summary.startedAt} -> ${summary.completedAt}`,
-        `Mode: ${summary.mode}`,
-        '',
-        `Counts: reddit=${summary.counts.reddit}, craigslist=${summary.counts.craigslist}, apify=${summary.counts.apify}, permits=${summary.counts.permits || 0}, permitsHamilton=${summary.counts['permits-hamilton'] || 0}, permitsButler=${summary.counts['permits-butler'] || 0}, totalMatches=${summary.counts.totalMatches}`,
-        `Source status: reddit=${summary.sourceStatuses?.reddit || 'unknown'}, craigslist=${summary.sourceStatuses?.craigslist || 'unknown'}, apify=${summary.sourceStatuses?.apify || 'unknown'}, permits=${summary.sourceStatuses?.permits || 'unknown'}, permitsHamilton=${summary.sourceStatuses?.['permits-hamilton'] || 'unknown'}, permitsButler=${summary.sourceStatuses?.['permits-butler'] || 'unknown'}`,
-        '',
-        `Reddit: fetched=${safeStat(reddit, 'fetched')}, evaluated=${safeStat(reddit, 'evaluated')}, matches=${safeStat(reddit, 'matches')}, borderline=${safeStat(reddit, 'borderline')}, rejects=${safeStat(reddit, 'rejects')}, relayed=${safeStat(reddit, 'relayed')}`,
-        `Craigslist: fetched=${safeStat(craigslist, 'fetched')}, evaluated=${safeStat(craigslist, 'evaluated')}, bodyFetches=${safeStat(craigslist, 'bodyFetches')}, matches=${safeStat(craigslist, 'matches')}, borderline=${safeStat(craigslist, 'borderline')}, rejects=${safeStat(craigslist, 'rejects')}, relayed=${safeStat(craigslist, 'relayed')}`,
-        `Apify: fetched=${safeStat(apify, 'fetched')}, evaluated=${safeStat(apify, 'evaluated')}, matches=${safeStat(apify, 'matches')}, borderline=${safeStat(apify, 'borderline')}, rejects=${safeStat(apify, 'rejects')}, relayed=${safeStat(apify, 'relayed')}`,
-        `Permits: fetched=${safeStat(permits, 'fetched')}, evaluated=${safeStat(permits, 'evaluated')}, matches=${safeStat(permits, 'matches')}, registryMatched=${safeStat(permits, 'registryMatched')}, rejects=${safeStat(permits, 'rejects')}, relayed=${safeStat(permits, 'relayed')}`,
-        `Permits (Hamilton County ezTrak): fetched=${safeStat(hamilton, 'fetched')}, typeCandidates=${safeStat(hamilton, 'typeCandidates')}, details=${safeStat(hamilton, 'detailFetches')}, matches=${safeStat(hamilton, 'matches')}, registryMatched=${safeStat(hamilton, 'registryMatched')}, rejects=${safeStat(hamilton, 'rejects')}, relayed=${safeStat(hamilton, 'relayed')}`,
-        `Permits (Butler County): fetched=${safeStat(butler, 'fetched')}, typeCandidates=${safeStat(butler, 'typeCandidates')}, details=${safeStat(butler, 'detailFetches')}, matches=${safeStat(butler, 'matches')}, registryMatched=${safeStat(butler, 'registryMatched')}, rejects=${safeStat(butler, 'rejects')}, relayed=${safeStat(butler, 'relayed')}`,
-    ];
-
-    const fbm = apify.byTask?.['facebook-marketplace'];
-    if (apify.canary || fbm) {
-        lines.push(`FB Marketplace: canary=${apify.canary ? `${apify.canary.status}/${apify.canary.items} items/${apify.canary.healthy ? 'healthy' : 'UNHEALTHY'}` : 'n/a'}, fetched=${safeStat(fbm || {}, 'fetched')}, outOfArea=${safeStat(fbm || {}, 'droppedOutOfArea')}, noLocation=${safeStat(fbm || {}, 'droppedNoLocation')}, wanted=${safeStat(fbm || {}, 'kind_wanted')}, remodel=${safeStat(fbm || {}, 'kind_remodel')}, inventory=${safeStat(fbm || {}, 'kind_inventory')}, dealer=${safeStat(fbm || {}, 'kind_dealer')}`);
-    }
-    if (Array.isArray(apify.unhealthyReasons) && apify.unhealthyReasons.length > 0) {
-        lines.push('', `Apify unhealthy: ${apify.unhealthyReasons.join(' | ')}`);
-    }
-
-    if (Array.isArray(summary.errors) && summary.errors.length > 0) {
-        lines.push('', `Errors: ${summary.errors.map((error) => `${error.source}:${error.message}`).join(' | ')}`);
-    }
-
-    lines.push('', `Run log file: ${RUN_LOG_FILE}`);
-    return lines.join('\n');
-}
-
-function buildRunReportHtml(summary) {
-    const reddit = summary.verdicts?.reddit || {};
-    const craigslist = summary.verdicts?.craigslist || {};
-    const apify = summary.verdicts?.apify || {};
-    const permits = summary.verdicts?.permits || {};
-    const hamilton = summary.verdicts?.['permits-hamilton'] || {};
-    const butler = summary.verdicts?.['permits-butler'] || {};
-
-    const redditMatches = safeStat(reddit, 'matches');
-    const clMatches = safeStat(craigslist, 'matches');
-    const apifyMatches = safeStat(apify, 'matches');
-    const permitMatches = safeStat(permits, 'matches');
-    const hamiltonMatches = safeStat(hamilton, 'matches');
-    const butlerMatches = safeStat(butler, 'matches');
-    const totalMatches = redditMatches + clMatches + apifyMatches + permitMatches + hamiltonMatches + butlerMatches;
-
-    const redditFetched = safeStat(reddit, 'fetched');
-    const clFetched = safeStat(craigslist, 'fetched');
-    const apifyFetched = safeStat(apify, 'fetched');
-    const permitFetched = safeStat(permits, 'fetched');
-    const hamiltonFetched = safeStat(hamilton, 'fetched');
-    const butlerFetched = safeStat(butler, 'fetched');
-    const totalFetched = redditFetched + clFetched + apifyFetched + permitFetched + hamiltonFetched + butlerFetched;
-
-    // Helper to create a bar chart
-    function renderBar(label, value, max) {
-        if (max === 0) return `<div style="margin: 8px 0; font-size: 13px;"><strong>${label}:</strong> ${value}</div>`;
-        const percentage = Math.round((value / max) * 100);
-        const barWidth = Math.max(1, Math.round(percentage * 2));
-        return `<div style="margin: 8px 0;"><strong>${label}:</strong> ${value}<div style="background: #e0e0e0; height: 20px; margin-top: 4px; border-radius: 3px; overflow: hidden;"><div style="background: #2196F3; height: 100%; width: ${percentage}%; transition: width 0.3s;"></div></div></div>`;
-    }
-
-    const durationMs = new Date(summary.completedAt) - new Date(summary.startedAt);
-    const durationSec = (durationMs / 1000).toFixed(1);
-
-    const html = `<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Lead Sourcer Run Report</title>
-    <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; background: #f5f5f5; margin: 0; padding: 20px; }
-        .container { max-width: 800px; margin: 0 auto; background: white; padding: 0; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; border-radius: 8px 8px 0 0; }
-        .header h1 { margin: 0; font-size: 28px; }
-        .header p { margin: 8px 0 0 0; opacity: 0.9; font-size: 14px; }
-        .content { padding: 30px; }
-        .summary-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 30px; }
-        .metric-card { background: #f9f9f9; padding: 20px; border-radius: 8px; border-left: 4px solid #667eea; }
-        .metric-value { font-size: 32px; font-weight: bold; color: #333; }
-        .metric-label { font-size: 12px; color: #999; text-transform: uppercase; margin-top: 8px; }
-        .source-section { margin-bottom: 30px; }
-        .source-section h2 { font-size: 18px; color: #333; margin: 0 0 15px 0; border-bottom: 2px solid #f0f0f0; padding-bottom: 10px; }
-        .stats-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; font-size: 13px; }
-        .stat { background: #f5f5f5; padding: 10px; border-radius: 4px; }
-        .stat strong { color: #667eea; }
-        .footer { background: #f9f9f9; padding: 20px 30px; border-radius: 0 0 8px 8px; font-size: 12px; color: #999; border-top: 1px solid #e0e0e0; }
-        .match-highlight { padding: 15px; background: ${totalMatches > 0 ? '#e8f5e9' : '#fff3e0'}; border-left: 4px solid ${totalMatches > 0 ? '#4caf50' : '#ff9800'}; border-radius: 4px; margin-bottom: 20px; }
-        .match-highlight p { margin: 0; font-size: 14px; }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1>Lead Sourcer Run Report</h1>
-            <p>Automated lead sourcing from Reddit, Craigslist, and Apify</p>
-        </div>
-        <div class="content">
-            <div class="match-highlight">
-                <p><strong>🎯 Total Matches Found: ${totalMatches}</strong> (${durationSec}s)</p>
-            </div>
-
-            <div class="summary-grid">
-                <div class="metric-card">
-                    <div class="metric-label">Total Items Fetched</div>
-                    <div class="metric-value">${totalFetched}</div>
-                </div>
-                <div class="metric-card">
-                    <div class="metric-label">Total Matches</div>
-                    <div class="metric-value" style="color: ${totalMatches > 0 ? '#4caf50' : '#999'};">${totalMatches}</div>
-                </div>
-                <div class="metric-card">
-                    <div class="metric-label">Total Relayed</div>
-                    <div class="metric-value" style="color: ${summary.counts.totalMatches > 0 ? '#2196f3' : '#999'};">${summary.counts.totalMatches}</div>
-                </div>
-            </div>
-
-            <div class="source-section">
-                <h2>📱 Reddit</h2>
-                <div class="stats-row">
-                    <div class="stat"><strong>Fetched:</strong> ${redditFetched}</div>
-                    <div class="stat"><strong>Matches:</strong> ${redditMatches}</div>
-                </div>
-                <div class="stats-row">
-                    <div class="stat"><strong>Relayed:</strong> ${safeStat(reddit, 'relayed')}</div>
-                    <div class="stat"><strong>Rejects:</strong> ${safeStat(reddit, 'rejects')}</div>
-                </div>
-            </div>
-
-            <div class="source-section">
-                <h2>🏷️ Craigslist</h2>
-                <div class="stats-row">
-                    <div class="stat"><strong>Fetched:</strong> ${clFetched}</div>
-                    <div class="stat"><strong>Matches:</strong> ${clMatches}</div>
-                </div>
-                <div class="stats-row">
-                    <div class="stat"><strong>Relayed:</strong> ${safeStat(craigslist, 'relayed')}</div>
-                    <div class="stat"><strong>Rejects:</strong> ${safeStat(craigslist, 'rejects')}</div>
-                </div>
-            </div>
-
-            <div class="source-section">
-                <h2>🤖 Apify</h2>
-                <div class="stats-row">
-                    <div class="stat"><strong>Fetched:</strong> ${apifyFetched}</div>
-                    <div class="stat"><strong>Matches:</strong> ${apifyMatches}</div>
-                </div>
-                <div class="stats-row">
-                    <div class="stat"><strong>Relayed:</strong> ${safeStat(apify, 'relayed')}</div>
-                    <div class="stat"><strong>Rejects:</strong> ${safeStat(apify, 'rejects')}</div>
-                </div>
-            </div>
-
-            <div class="source-section">
-                <h2>🏗️ Cincinnati Permits (B2B)</h2>
-                <div class="stats-row">
-                    <div class="stat"><strong>Fetched:</strong> ${permitFetched}</div>
-                    <div class="stat"><strong>Matches:</strong> ${permitMatches}</div>
-                </div>
-                <div class="stats-row">
-                    <div class="stat"><strong>Relayed:</strong> ${safeStat(permits, 'relayed')}</div>
-                    <div class="stat"><strong>Registry matched:</strong> ${safeStat(permits, 'registryMatched')}</div>
-                </div>
-            </div>
-${[['🏗️ Hamilton County Permits (ezTrak, B2B)', hamilton, hamiltonFetched, hamiltonMatches], ['🏗️ Butler County Permits (B2B)', butler, butlerFetched, butlerMatches]].map(([title, stats, fetched, matched]) => `
-            <div class="source-section">
-                <h2>${title}</h2>
-                <div class="stats-row">
-                    <div class="stat"><strong>Fetched:</strong> ${fetched}</div>
-                    <div class="stat"><strong>Matches:</strong> ${matched}</div>
-                </div>
-                <div class="stats-row">
-                    <div class="stat"><strong>Relayed:</strong> ${safeStat(stats, 'relayed')}</div>
-                    <div class="stat"><strong>Registry matched:</strong> ${safeStat(stats, 'registryMatched')}</div>
-                </div>
-            </div>
-`).join('')}
-            ${Array.isArray(summary.errors) && summary.errors.length > 0 ? `
-            <div class="source-section" style="background: #ffebee; border-left: 4px solid #f44336; padding: 15px; border-radius: 4px;">
-                <h3 style="margin: 0 0 10px 0; color: #f44336;">⚠️ Errors</h3>
-                ${summary.errors.map(err => `<p style="margin: 5px 0; font-size: 13px;"><strong>${err.source}:</strong> ${err.message}</p>`).join('')}
-            </div>
-            ` : ''}
-        </div>
-        <div class="footer">
-            <p><strong>Run Window:</strong> ${new Date(summary.startedAt).toLocaleString()} → ${new Date(summary.completedAt).toLocaleString()}</p>
-            <p><strong>Mode:</strong> ${summary.mode} | <strong>Duration:</strong> ${durationSec}s</p>
-            <p>Lead Sourcer v1.0</p>
-        </div>
-    </div>
-</body>
-</html>`;
-
-    return html;
-}
-
 async function maybeSendRunReport(summary) {
     if (!SEND_RUN_REPORT || summary.mode !== 'live') return;
 
@@ -296,7 +91,7 @@ async function maybeSendRunReport(summary) {
     const reportEmailToken = String(Date.parse(summary.startedAt));
     const reportContactEmail = `run-report+${reportEmailToken}@urbanstone.co`;
     const htmlReport = buildRunReportHtml(summary);
-    const textReport = buildRunReportDetails(summary);
+    const textReport = buildRunReportText(summary, { runLogFile: RUN_LOG_FILE });
 
     const payload = {
         submittedAt: summary.completedAt,
@@ -466,16 +261,31 @@ async function runOnce(mode) {
             'permits-butler': butlerResult.stats.status || 'ok',
         },
         errors,
+        // Drives which rows the run report shows; disabled sources are omitted.
+        enabledSources: {
+            reddit: ENABLE_REDDIT,
+            craigslist: ENABLE_CRAIGSLIST,
+            apify: ENABLE_APIFY,
+            'fb-marketplace': ENABLE_FB_MARKETPLACE,
+            permits: ENABLE_PERMITS,
+            'permits-hamilton': ENABLE_PERMITS_HAMILTON,
+            'permits-butler': ENABLE_PERMITS_BUTLER,
+        },
+        apifyCaps: ENABLE_FB_MARKETPLACE
+            ? { mainUsd: APIFY_FB_MARKETPLACE_MAX_CHARGE_USD, canaryUsd: APIFY_FB_MARKETPLACE_CANARY_MAX_CHARGE_USD }
+            : undefined,
+        // Contact-free summaries (no email/phone) for the report's top-leads list.
+        topLeads: rankTopLeads([
+            ...redditResult.matches.map((m) => summarizeLeadForReport(m, 'reddit')),
+            ...craigslistResult.matches.map((m) => summarizeLeadForReport(m, 'craigslist')),
+            ...apifyResult.matches.map((m) => summarizeLeadForReport(m, m?.source === 'apify-facebook-marketplace' ? 'fb-marketplace' : 'apify-other')),
+            ...permitsResult.matches.map((m) => summarizeLeadForReport(m, 'permits')),
+            ...hamiltonResult.matches.map((m) => summarizeLeadForReport(m, 'permits-hamilton')),
+            ...butlerResult.matches.map((m) => summarizeLeadForReport(m, 'permits-butler')),
+        ]),
     };
 
-    summary.health = assessRunHealth(summary, {
-        reddit: ENABLE_REDDIT,
-        craigslist: ENABLE_CRAIGSLIST,
-        apify: ENABLE_APIFY,
-        permits: ENABLE_PERMITS,
-        'permits-hamilton': ENABLE_PERMITS_HAMILTON,
-        'permits-butler': ENABLE_PERMITS_BUTLER,
-    });
+    summary.health = assessRunHealth(summary, summary.enabledSources);
     if (summary.health.unhealthySources.length > 0) {
         console.warn(`[lead-sourcer] Unhealthy sources: ${summary.health.unhealthySources.join(', ')}${summary.health.allFailed ? ' (every enabled source failed)' : ''}`);
     }
@@ -576,7 +386,7 @@ async function run() {
     }
 }
 
-export { buildPreDraft, readDailyState, writeDailyState, shouldRunDaily };
+export { buildPreDraft, readDailyState, writeDailyState, shouldRunDaily, buildRunReportText, buildRunReportHtml };
 
 run().catch((err) => {
     console.error('[lead-sourcer] Fatal error:', err);

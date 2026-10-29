@@ -236,6 +236,10 @@ export function buildPermitLead(permit, contact = null, scoreResult = scorePermi
     payload.lead.phone = contact?.phone || '';
     payload.metadata.internalOnly = true;
     payload.metadata.permitNumber = permit.permitNumber;
+    // Contact-free fields for the run report's top-leads list.
+    payload.metadata.city = `Cincinnati${permit.zip ? ` ${permit.zip}` : ''}`;
+    payload.metadata.estimatedCost = permit.cost > 0 ? permit.cost : null;
+    payload.metadata.workSummary = String(permit.description || permit.subType || '').slice(0, 120);
     return payload;
 }
 

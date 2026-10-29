@@ -1,0 +1,30 @@
+{
+  "startedAt": "2026-10-29T21:00:04.000Z",
+  "completedAt": "2026-10-29T21:04:31.000Z",
+  "mode": "live",
+  "counts": { "reddit": 0, "craigslist": 0, "apify": 1, "permits": 2, "permits-hamilton": 2, "permits-butler": 1, "totalMatches": 6 },
+  "verdicts": {
+    "reddit": { "status": "disabled" },
+    "craigslist": { "status": "disabled" },
+    "apify": {
+      "status": "ok", "fetched": 37, "evaluated": 37, "matches": 1, "rejects": 30, "relayed": 1,
+      "canary": { "status": "SUCCEEDED", "items": 18, "healthy": true, "costUsd": 0.0091 },
+      "byTask": { "facebook-marketplace": { "fetched": 37, "evaluated": 37, "matches": 1, "relayed": 1, "rejects": 30, "droppedOutOfArea": 121, "droppedNoLocation": 4, "kind_wanted": 1, "kind_remodel": 6, "kind_inventory": 30, "costUsd": 0.0832 } }
+    },
+    "permits": { "status": "ok", "fetched": 58, "evaluated": 58, "matches": 2, "rejects": 56, "relayed": 2, "registryMatched": 2 },
+    "permits-hamilton": { "status": "ok", "fetched": 31, "typeCandidates": 6, "detailFetches": 6, "matches": 2, "rejects": 29, "relayed": 2, "registryMatched": 1 },
+    "permits-butler": { "status": "degraded", "fetched": 12, "typeCandidates": 3, "detailFetches": 2, "matches": 1, "rejects": 11, "relayed": 1, "registryMatched": 0 }
+  },
+  "sourceStatuses": { "reddit": "disabled", "craigslist": "disabled", "apify": "ok", "permits": "ok", "permits-hamilton": "ok", "permits-butler": "degraded" },
+  "errors": [],
+  "enabledSources": { "reddit": false, "craigslist": false, "apify": true, "fb-marketplace": true, "permits": true, "permits-hamilton": true, "permits-butler": true },
+  "apifyCaps": { "mainUsd": 0.5, "canaryUsd": 0.05 },
+  "topLeads": [
+    { "source": "permits-hamilton", "headline": "Example Builders LLC — First floor remodel: kitchen, primary bath and powder room", "city": "Anderson Township 45230", "estimatedCost": 190000, "score": 80 },
+    { "source": "permits", "headline": "Sample Remodeling Co — Kitchen and bath renovation", "city": "Cincinnati 45208", "estimatedCost": 85000, "score": 75 },
+    { "source": "permits-hamilton", "headline": "Demo Contracting Inc — Kitchen renovation, remove load-bearing wall", "city": "Anderson Township 45255", "estimatedCost": 80000, "score": 75 },
+    { "source": "permits-butler", "headline": "Placeholder Contractors — Partial basement finish with bathroom", "city": "Hamilton 45013", "estimatedCost": 60000, "score": 60 },
+    { "source": "permits", "headline": "Test Homes Inc — Interior alteration, new kitchen", "city": "Cincinnati 45227", "estimatedCost": 40000, "score": 55 },
+    { "source": "fb-marketplace", "headline": "ISO quartz countertop installer for kitchen island", "city": "Mason", "estimatedCost": null, "score": null }
+  ]
+}

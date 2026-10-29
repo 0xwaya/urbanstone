@@ -17,7 +17,8 @@
     "poll:permits-butler": "node src/permits-accela.js butler-county",
     "summary:daily": "node scripts/daily-summary.mjs",
     "summary:weekly-tuning": "node scripts/weekly-tuning-summary.mjs",
-    "test": "node --experimental-vm-modules node_modules/.bin/jest --testEnvironment node"
+    "test": "node --experimental-vm-modules node_modules/.bin/jest --testEnvironment node",
+    "report:sample": "node scripts/render-sample-report.mjs"
   },
   "engines": {
     "node": "24.x"
