@@ -92,6 +92,17 @@ jobs:
       SOCRATA_APP_TOKEN: ${{ secrets.SOCRATA_APP_TOKEN }}
       APIFY_NEXTDOOR_TASK_ID: ${{ vars.APIFY_NEXTDOOR_TASK_ID }}
       APIFY_FACEBOOK_TASK_ID: ${{ vars.APIFY_FACEBOOK_TASK_ID }}
+      # Facebook Marketplace (logged out; no cookies anywhere). Off until the repo
+      # variables APIFY_ENABLE_FB_MARKETPLACE and LEAD_SOURCER_ENABLE_APIFY are "true".
+      # Per-run spend caps are passed to Apify on every call (main $0.50, canary $0.05).
+      APIFY_ENABLE_FB_MARKETPLACE: ${{ vars.APIFY_ENABLE_FB_MARKETPLACE || 'false' }}
+      APIFY_FB_MARKETPLACE_TASK_ID: ${{ vars.APIFY_FB_MARKETPLACE_TASK_ID }}
+      APIFY_FB_MARKETPLACE_CANARY_TASK_ID: ${{ vars.APIFY_FB_MARKETPLACE_CANARY_TASK_ID }}
+      APIFY_FB_MARKETPLACE_MAX_CHARGE_USD: ${{ vars.APIFY_FB_MARKETPLACE_MAX_CHARGE_USD || '0.50' }}
+      APIFY_FB_MARKETPLACE_CANARY_MAX_CHARGE_USD: ${{ vars.APIFY_FB_MARKETPLACE_CANARY_MAX_CHARGE_USD || '0.05' }}
+      APIFY_FB_MARKETPLACE_CANARY_MIN_RESULTS: ${{ vars.APIFY_FB_MARKETPLACE_CANARY_MIN_RESULTS || '5' }}
+      # Wanted posts relay to sales@ only in live mode (internal-only; relay guard applies).
+      APIFY_FB_MARKETPLACE_REVIEW_ONLY: ${{ vars.APIFY_FB_MARKETPLACE_REVIEW_ONLY || 'false' }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
