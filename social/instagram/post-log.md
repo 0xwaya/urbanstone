@@ -62,6 +62,8 @@ Each entry has this format:
 - Queue folder: social/instagram/queue/<queue_id>/
 - Image: https://www.urbanstone.co/social/<queue_id>/post_4x5.jpg
 - Instagram post: <URL or ID, or "not available">
+- TikTok post: <URL, "under review", or what failed> (from 2026-10-30; 9:16 image, tiktok_caption.txt)
+- Facebook post: <URL, or what failed / "not signed in"> (from 2026-10-30; same 4:5 image, facebook_caption.txt)
 - Caption:
   > <full caption text exactly as posted>
 ```
