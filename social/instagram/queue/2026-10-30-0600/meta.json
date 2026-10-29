@@ -91,7 +91,7 @@
     "facebook": {
       "status": "queued",
       "image": "post_4x5.jpg",
-      "caption": "facebook_caption.txt"
+      "caption": "caption.txt"
     }
   },
   "approved_by": "Edward (automated posting approved, Oct 29 2026)"
