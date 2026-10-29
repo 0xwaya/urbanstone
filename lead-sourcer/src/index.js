@@ -425,7 +425,9 @@ async function runOnce(mode) {
 async function scheduleDailyRunIfNeeded() {
     const state = readDailyState(DAILY_STATE_FILE);
     const now = new Date();
-    const shouldRun = shouldRunDaily(state, now);
+    const force = envFlag('LEAD_SOURCER_FORCE_RUN', false);
+    const shouldRun = shouldRunDaily(state, now, { force });
+    if (force) console.log(`[lead-sourcer] Cooldown override (LEAD_SOURCER_FORCE_RUN); last run at ${state.lastRunAt || 'never'}.`);
 
     if (!shouldRun) {
         console.log(`[lead-sourcer] Daily run skipped; last run at ${state.lastRunAt || 'never'} is still within 24h window.`);

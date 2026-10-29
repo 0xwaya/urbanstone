@@ -42,4 +42,13 @@ describe('daily automation helpers', () => {
 
         expect(shouldRunDaily(state, now)).toBe(false);
     });
+
+    test('force overrides the cooldown only when explicitly set', () => {
+        const now = new Date('2026-09-20T12:00:00Z');
+        const state = { lastRunAt: new Date('2026-09-20T11:50:00Z').toISOString(), lastStatus: 'success' };
+
+        expect(shouldRunDaily(state, now, { force: true })).toBe(true);
+        expect(shouldRunDaily(state, now, { force: false })).toBe(false);
+        expect(shouldRunDaily(state, now, {})).toBe(false);
+    });
 });

@@ -36,7 +36,12 @@ export function buildPreDraft(payload) {
     return { subject, text, html };
 }
 
-export function shouldRunDaily(state = {}, now = new Date()) {
+/**
+ * Whether a live run may proceed under the 24h cooldown. `force` is a one-off
+ * operator override (workflow_dispatch input), never set by the schedule.
+ */
+export function shouldRunDaily(state = {}, now = new Date(), { force = false } = {}) {
+    if (force) return true;
     const lastRunAt = state?.lastRunAt ? new Date(state.lastRunAt) : null;
     if (!lastRunAt || Number.isNaN(lastRunAt.getTime())) return true;
 
