@@ -9,7 +9,14 @@ name: Lead Sourcer
 
 on:
   schedule:
-    - cron: '0 13 * * *'   # 13:00 UTC = 9:00 AM ET (EDT) / 8:00 AM ET (EST)
+    # 8 AM, 12 PM, 5 PM America/New_York. Cron is UTC, so both DST variants are
+    # listed; src/schedule-guard.js runs only the line that matches ET today.
+    - cron: '0 12 * * *'   # 8 AM EDT
+    - cron: '0 13 * * *'   # 8 AM EST
+    - cron: '0 16 * * *'   # 12 PM EDT
+    - cron: '0 17 * * *'   # 12 PM EST
+    - cron: '0 21 * * *'   # 5 PM EDT
+    - cron: '0 22 * * *'   # 5 PM EST
   workflow_dispatch:
     inputs:
       mode:
@@ -17,7 +24,7 @@ on:
         required: false
         default: ''
       force:
-        description: 'One-off: skip the 24h live cooldown for this manual run.'
+        description: 'One-off: skip the live cooldown for this manual run.'
         type: boolean
         required: false
         default: false
@@ -64,6 +71,9 @@ jobs:
       LEAD_SOURCER_ENABLE_CRAIGSLIST: ${{ vars.LEAD_SOURCER_ENABLE_CRAIGSLIST || 'true' }}
       LEAD_SOURCER_ENABLE_APIFY: ${{ vars.LEAD_SOURCER_ENABLE_APIFY || 'false' }}
       LEAD_SOURCER_ENABLE_PERMITS: ${{ vars.LEAD_SOURCER_ENABLE_PERMITS || 'false' }}
+      LEAD_SOURCER_SCHEDULE_CRON: ${{ github.event.schedule }}
+      LEAD_SOURCER_SCHEDULE_HOURS_ET: ${{ vars.LEAD_SOURCER_SCHEDULE_HOURS_ET || '8,12,17' }}
+      LEAD_SOURCER_COOLDOWN_HOURS: ${{ vars.LEAD_SOURCER_COOLDOWN_HOURS || '3' }}
       LEAD_SOURCER_FORCE_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.force && 'true' || 'false' }}
       LEAD_SOURCER_TRACING_ENABLED: 'false'
       LEAD_SOURCER_WEBHOOK_SECONDARY: 'false'
