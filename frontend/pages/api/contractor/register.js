@@ -97,7 +97,7 @@ export default async function handler(req, res) {
             approved: autoApprove,
         }, req);
 
-        const webhookUrl = process.env.CONTRACTOR_REGISTRATION_WEBHOOK_URL || process.env.LEAD_WEBHOOK_URL;
+        const webhookUrl = process.env.CONTRACTOR_REGISTRATION_WEBHOOK_URL;
         const notificationJobs = [];
 
         if (webhookUrl) {

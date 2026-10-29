@@ -22,6 +22,7 @@ import {
     shouldStartEstimateIntake,
     shouldSubmitIntake,
 } from '../../lib/chat-intake';
+import { buildChatLeadEmail, sendLeadEmail } from '../../lib/lead-email';
 
 const OLLAMA_MODEL_NAME = process.env.OLLAMA_MODEL_NAME || 'llama3.1:8b';
 const OLLAMA_BASE_URL = process.env.OLLAMA_BASE_URL || 'http://localhost:11434';
@@ -223,25 +224,6 @@ function normalizeModelReply(rawReply) {
     return withoutAiPreface;
 }
 
-function resolveWebhookUrl(request) {
-    if (process.env.LEAD_WEBHOOK_URL) {
-        return process.env.LEAD_WEBHOOK_URL;
-    }
-
-    if (process.env.NODE_ENV === 'production') {
-        return '';
-    }
-
-    const host = request.headers['x-forwarded-host'] || request.headers.host;
-    const proto = request.headers['x-forwarded-proto'] || 'http';
-
-    if (host) {
-        return `${proto}://${host}/api/lead-dev-webhook`;
-    }
-
-    return 'http://127.0.0.1:3001/api/lead-dev-webhook';
-}
-
 function persistIntakeMemoryCardAsync({ request, message, intake, memoryCard, stage, requestId, dedupeKey }) {
     const payload = {
         source: 'urban-stone-chat',
@@ -267,9 +249,8 @@ function persistIntakeMemoryCardAsync({ request, message, intake, memoryCard, st
 }
 
 async function relayChatIntake(request, intake, conversation) {
-    const webhookUrl = resolveWebhookUrl(request);
-    if (!webhookUrl) {
-        return { ok: false, reason: 'missing_webhook' };
+    if (!String(process.env.RESEND_API_KEY || '').trim()) {
+        return { ok: false, reason: 'missing_resend_api_key' };
     }
 
     const requestId = String(request.headers['x-request-id'] || randomUUID()).slice(0, 64);
@@ -330,15 +311,14 @@ async function relayChatIntake(request, intake, conversation) {
     };
 
     try {
-        const response = await fetch(webhookUrl, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload),
-            signal: AbortSignal.timeout(5000),
+        const delivery = await sendLeadEmail(buildChatLeadEmail(payload), {
+            idempotencyKey: `chat-lead-${dedupeKey}-${requestId}`,
         });
-        return { ok: response.ok, requestId, dedupeKey };
-    } catch {
-        return { ok: false, reason: 'relay_failed' };
+        console.info('chat_lead_email_sent', { requestId, emailId: delivery.id });
+        return { ok: true, requestId, dedupeKey, emailId: delivery.id };
+    } catch (error) {
+        console.error('chat_lead_email_failed', { requestId, error: error?.message || 'unknown' });
+        return { ok: false, reason: 'relay_failed', requestId, dedupeKey };
     }
 }
 

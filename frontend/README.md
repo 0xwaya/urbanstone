@@ -33,7 +33,7 @@ The active homepage funnel is:
 1. `npm install`
 2. `npx playwright install chromium`
 3. `cp .env.example .env.local`
-4. Set `LEAD_WEBHOOK_URL` to the HTTPS endpoint that should receive quote requests.
+4. Set `RESEND_API_KEY` so quote requests, chat intakes, and contractor estimates email `sales@urbanstone.co`.
 5. `npm run dev`
 
 Recommended local run command (avoids port conflicts):
@@ -47,7 +47,7 @@ Recommended local run command (avoids port conflicts):
 - `NEXT_PUBLIC_SITE_URL`: canonical production origin used for metadata, robots, and sitemap output.
 - `NEXT_PUBLIC_WAYALABS_CHATBOT_URL`: optional external chatbot embed URL. If unset, the floating widget falls back to the local Stone Haven client that also powers `/ai-chat`.
 - `NEXT_PUBLIC_WAYALABS_CHATBOT_LABEL`: optional CTA label for the chatbot button (defaults to "Chat with Stone Haven").
-- `LEAD_WEBHOOK_URL`: required for successful lead delivery from `/api/lead`.
+- `LEAD_EMAIL_TO` / `LEAD_EMAIL_FROM`: optional overrides for lead emails from `/api/lead`, `/api/chat` intake, and `/api/contractor-estimate` (defaults `sales@urbanstone.co` / `Urban Stone <sales@urbanstone.co>`). Leads are sent directly via Resend; no webhook is involved.
 - `ENABLE_CHAT_PRICE_PREVIEW`: optional chat-only flag. Keep unset/`false` to suppress price ranges in chat intake (recommended); set to `true` only for controlled internal testing.
 - `SUPABASE_URL`: Supabase project URL used by the contractor portal API routes.
 - `SUPABASE_SERVICE_ROLE_KEY`: server-side Supabase key for contractor records and magic-link state.
@@ -59,17 +59,14 @@ Recommended local run command (avoids port conflicts):
 - `CONTRACTOR_NOTIFICATION_EMAILS`: optional comma-separated recipients for direct contractor registration alert emails. Defaults to `sales@urbanstone.co`.
 - `CONTRACTOR_NOTIFICATION_BACKUP_EMAILS`: optional comma-separated backup recipients always appended to contractor registration alerts (for example a personal Gmail failover during DNS incidents).
 - `CONTRACTOR_APPROVAL_DASHBOARD_URL`: optional URL inserted into contractor registration alert emails for quick approval review.
-- `CONTRACTOR_ESTIMATE_WEBHOOK_URL`: optional dedicated webhook for contractor commercial estimate requests. Falls back to `LEAD_WEBHOOK_URL`.
-- `CONTRACTOR_REGISTRATION_WEBHOOK_URL`: optional dedicated webhook for contractor registration events. Falls back to `LEAD_WEBHOOK_URL`.
-- `RESEND_API_KEY`: required for contractor magic-link email delivery.
+- `CONTRACTOR_REGISTRATION_WEBHOOK_URL`: optional webhook for contractor registration events (the Resend alert email is always sent).
+- `RESEND_API_KEY`: required for lead delivery (website form, chat intake, contractor estimates) and contractor magic-link emails.
 - `NEXT_PUBLIC_SUPABASE_URL`: Supabase project URL used by browser-based Google OAuth for review invitations. Set before building so the CSP allowlists only this origin.
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY`: browser-safe Supabase anon/publishable key; never expose a service-role key in a `NEXT_PUBLIC_` variable.
 - `REVIEW_INVITE_ADMIN_SECRET`: server-only bearer secret (at least 32 bytes) required to issue invites and moderate reviews.
 - `REVIEW_INVITE_EMAIL_HMAC_KEY`: independent server-only key (at least 32 bytes) used to HMAC-normalize invited customer email addresses. Keep it stable while invites are outstanding.
 
-If `LEAD_WEBHOOK_URL` is not set during local development, `/api/lead` falls back to the local route `/api/lead-dev-webhook` so form submissions still complete while you are building.
-
-In production, `LEAD_WEBHOOK_URL` is still required and missing configuration returns the expected 503 warning.
+If `RESEND_API_KEY` is not set, `/api/lead` and `/api/contractor-estimate` return a 503 and chat intake reports a submission error. Delivery succeeds only after Resend accepts the email.
 
 ## Invite-only first-party customer reviews
 
@@ -291,7 +288,7 @@ The production server requires `sharp` to be installed because the site uses Nex
 Recommended release sequence:
 
 1. install dependencies in `frontend`
-2. set `LEAD_WEBHOOK_URL` and any public contact environment values
+2. set `RESEND_API_KEY` and any public contact environment values
 3. run lint, test, and build
 4. start the production server from `frontend` or deploy the `frontend` directory through your host
 

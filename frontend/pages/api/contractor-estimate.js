@@ -11,51 +11,14 @@ import {
     buildContractorEstimateForwardPayload,
     sanitizeContractorEstimatePayload,
 } from '../../lib/contractor-estimate';
-
-function resolveWebhookUrl(request) {
-    if (process.env.CONTRACTOR_ESTIMATE_WEBHOOK_URL) {
-        return process.env.CONTRACTOR_ESTIMATE_WEBHOOK_URL;
-    }
-
-    if (process.env.LEAD_WEBHOOK_URL) {
-        return process.env.LEAD_WEBHOOK_URL;
-    }
-
-    if (process.env.NODE_ENV === 'production') {
-        return '';
-    }
-
-    const host = request.headers['x-forwarded-host'] || request.headers.host;
-    const proto = request.headers['x-forwarded-proto'] || 'http';
-
-    if (host) {
-        return `${proto}://${host}/api/lead-dev-webhook`;
-    }
-
-    return 'http://127.0.0.1:3001/api/lead-dev-webhook';
-}
-
-async function relayEstimate(webhookUrl, payload) {
-    const response = await fetch(webhookUrl, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
-        signal: AbortSignal.timeout(5000),
-    });
-
-    if (!response.ok) {
-        throw new Error(`Contractor estimate relay failed with status ${response.status}`);
-    }
-}
+import { buildContractorEstimateEmail, sendLeadEmail } from '../../lib/lead-email';
 
 function getErrorMessage(error) {
     if (error && typeof error.message === 'string') {
         return error.message;
     }
 
-    return 'Unknown relay error';
+    return 'Unknown delivery error';
 }
 
 export default async function handler(request, response) {
@@ -101,25 +64,34 @@ export default async function handler(request, response) {
         });
     }
 
-    const payload = buildContractorEstimateForwardPayload(result.data, request);
-    const dedupeStore = getLeadDedupeStore();
-
-    if (isLeadDuplicate(dedupeStore, `contractor:${payload.dedupeKey}`, runtimeConfig.leadDedupeWindowMs)) {
-        return response.status(202).json({ message: 'Thanks. Your commercial estimate request is already in the queue and we will follow up shortly.' });
-    }
-
-    const webhookUrl = resolveWebhookUrl(request);
-    if (!webhookUrl) {
+    if (!String(process.env.RESEND_API_KEY || '').trim()) {
         return response.status(503).json({
-            message: 'Contractor estimate delivery is not configured. Set CONTRACTOR_ESTIMATE_WEBHOOK_URL or LEAD_WEBHOOK_URL before production deployment.',
+            message: 'Contractor estimate delivery is not configured. Set RESEND_API_KEY before production deployment.',
         });
     }
 
+    const payload = buildContractorEstimateForwardPayload(result.data, request);
+    const dedupeStore = getLeadDedupeStore();
+    const dedupeKey = `contractor:${payload.dedupeKey}`;
+
+    if (isLeadDuplicate(dedupeStore, dedupeKey, runtimeConfig.leadDedupeWindowMs)) {
+        return response.status(202).json({ message: 'Thanks. Your commercial estimate request is already in the queue and we will follow up shortly.' });
+    }
+
     try {
-        await relayEstimate(webhookUrl, payload);
+        const delivery = await sendLeadEmail(buildContractorEstimateEmail(payload), {
+            idempotencyKey: `contractor-estimate-${payload.dedupeKey}-${payload.requestId}`,
+        });
+        console.info('contractor_estimate_email_sent', {
+            requestId: payload.metadata.requestId,
+            routeId: payload.metadata.routeId,
+            emailId: delivery.id,
+        });
         return response.status(202).json({ message: 'Commercial estimate request received. Urban Stone will review the rollout details and follow up shortly.' });
     } catch (error) {
-        console.error('contractor_estimate_relay_failed', {
+        // Release the dedupe key so the contractor can retry after a failed send.
+        dedupeStore.delete(dedupeKey);
+        console.error('contractor_estimate_email_failed', {
             requestId: payload.metadata.requestId,
             dedupeKey: payload.metadata.dedupeKey,
             routeId: payload.metadata.routeId,
