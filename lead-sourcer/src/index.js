@@ -14,6 +14,7 @@ import { fileURLToPath } from 'node:url';
 import { pollReddit } from './reddit.js';
 import { pollCraigslist } from './craigslist.js';
 import { pollApify } from './apify.js';
+import { pollPermits, isPermitsEnabled } from './permits.js';
 import { resolveRunMode } from './mode.js';
 import { relay } from './relay.js';
 import { initializeTracing } from './tracing.js';
@@ -40,6 +41,7 @@ function envFlag(name, defaultValue = true) {
 const ENABLE_REDDIT = envFlag('LEAD_SOURCER_ENABLE_REDDIT', true);
 const ENABLE_CRAIGSLIST = envFlag('LEAD_SOURCER_ENABLE_CRAIGSLIST', true);
 const ENABLE_APIFY = envFlag('LEAD_SOURCER_ENABLE_APIFY', true);
+const ENABLE_PERMITS = isPermitsEnabled();
 
 await initializeTracing();
 
@@ -79,6 +81,7 @@ function buildRunReportDetails(summary) {
     const reddit = summary.verdicts?.reddit || {};
     const craigslist = summary.verdicts?.craigslist || {};
     const apify = summary.verdicts?.apify || {};
+    const permits = summary.verdicts?.permits || {};
 
     const lines = [
         '[LEAD SOURCER RUN REPORT]',
@@ -86,12 +89,13 @@ function buildRunReportDetails(summary) {
         `Run window: ${summary.startedAt} -> ${summary.completedAt}`,
         `Mode: ${summary.mode}`,
         '',
-        `Counts: reddit=${summary.counts.reddit}, craigslist=${summary.counts.craigslist}, apify=${summary.counts.apify}, totalMatches=${summary.counts.totalMatches}`,
-        `Source status: reddit=${summary.sourceStatuses?.reddit || 'unknown'}, craigslist=${summary.sourceStatuses?.craigslist || 'unknown'}, apify=${summary.sourceStatuses?.apify || 'unknown'}`,
+        `Counts: reddit=${summary.counts.reddit}, craigslist=${summary.counts.craigslist}, apify=${summary.counts.apify}, permits=${summary.counts.permits || 0}, totalMatches=${summary.counts.totalMatches}`,
+        `Source status: reddit=${summary.sourceStatuses?.reddit || 'unknown'}, craigslist=${summary.sourceStatuses?.craigslist || 'unknown'}, apify=${summary.sourceStatuses?.apify || 'unknown'}, permits=${summary.sourceStatuses?.permits || 'unknown'}`,
         '',
         `Reddit: fetched=${safeStat(reddit, 'fetched')}, evaluated=${safeStat(reddit, 'evaluated')}, matches=${safeStat(reddit, 'matches')}, borderline=${safeStat(reddit, 'borderline')}, rejects=${safeStat(reddit, 'rejects')}, relayed=${safeStat(reddit, 'relayed')}`,
         `Craigslist: fetched=${safeStat(craigslist, 'fetched')}, evaluated=${safeStat(craigslist, 'evaluated')}, bodyFetches=${safeStat(craigslist, 'bodyFetches')}, matches=${safeStat(craigslist, 'matches')}, borderline=${safeStat(craigslist, 'borderline')}, rejects=${safeStat(craigslist, 'rejects')}, relayed=${safeStat(craigslist, 'relayed')}`,
         `Apify: fetched=${safeStat(apify, 'fetched')}, evaluated=${safeStat(apify, 'evaluated')}, matches=${safeStat(apify, 'matches')}, borderline=${safeStat(apify, 'borderline')}, rejects=${safeStat(apify, 'rejects')}, relayed=${safeStat(apify, 'relayed')}`,
+        `Permits: fetched=${safeStat(permits, 'fetched')}, evaluated=${safeStat(permits, 'evaluated')}, matches=${safeStat(permits, 'matches')}, registryMatched=${safeStat(permits, 'registryMatched')}, rejects=${safeStat(permits, 'rejects')}, relayed=${safeStat(permits, 'relayed')}`,
     ];
 
     if (Array.isArray(summary.errors) && summary.errors.length > 0) {
@@ -106,16 +110,19 @@ function buildRunReportHtml(summary) {
     const reddit = summary.verdicts?.reddit || {};
     const craigslist = summary.verdicts?.craigslist || {};
     const apify = summary.verdicts?.apify || {};
+    const permits = summary.verdicts?.permits || {};
 
     const redditMatches = safeStat(reddit, 'matches');
     const clMatches = safeStat(craigslist, 'matches');
     const apifyMatches = safeStat(apify, 'matches');
-    const totalMatches = redditMatches + clMatches + apifyMatches;
+    const permitMatches = safeStat(permits, 'matches');
+    const totalMatches = redditMatches + clMatches + apifyMatches + permitMatches;
 
     const redditFetched = safeStat(reddit, 'fetched');
     const clFetched = safeStat(craigslist, 'fetched');
     const apifyFetched = safeStat(apify, 'fetched');
-    const totalFetched = redditFetched + clFetched + apifyFetched;
+    const permitFetched = safeStat(permits, 'fetched');
+    const totalFetched = redditFetched + clFetched + apifyFetched + permitFetched;
 
     // Helper to create a bar chart
     function renderBar(label, value, max) {
@@ -217,6 +224,18 @@ function buildRunReportHtml(summary) {
                 </div>
             </div>
 
+            <div class="source-section">
+                <h2>🏗️ Cincinnati Permits (B2B)</h2>
+                <div class="stats-row">
+                    <div class="stat"><strong>Fetched:</strong> ${permitFetched}</div>
+                    <div class="stat"><strong>Matches:</strong> ${permitMatches}</div>
+                </div>
+                <div class="stats-row">
+                    <div class="stat"><strong>Relayed:</strong> ${safeStat(permits, 'relayed')}</div>
+                    <div class="stat"><strong>Registry matched:</strong> ${safeStat(permits, 'registryMatched')}</div>
+                </div>
+            </div>
+
             ${Array.isArray(summary.errors) && summary.errors.length > 0 ? `
             <div class="source-section" style="background: #ffebee; border-left: 4px solid #f44336; padding: 15px; border-radius: 4px;">
                 <h3 style="margin: 0 0 10px 0; color: #f44336;">⚠️ Errors</h3>
@@ -307,11 +326,13 @@ async function runOnce(mode) {
     if (!ENABLE_REDDIT) console.log('[lead-sourcer] Reddit poller disabled (LEAD_SOURCER_ENABLE_REDDIT=false).');
     if (!ENABLE_CRAIGSLIST) console.log('[lead-sourcer] Craigslist poller disabled (LEAD_SOURCER_ENABLE_CRAIGSLIST=false).');
     if (!ENABLE_APIFY) console.log('[lead-sourcer] Apify poller disabled (LEAD_SOURCER_ENABLE_APIFY=false).');
+    if (!ENABLE_PERMITS) console.log('[lead-sourcer] Permits poller disabled (LEAD_SOURCER_ENABLE_PERMITS is not true).');
 
-    const [redditMatches, craigslistMatches, apifyMatches] = await Promise.allSettled([
+    const [redditMatches, craigslistMatches, apifyMatches, permitsMatches] = await Promise.allSettled([
         ENABLE_REDDIT ? pollReddit({ mode }) : Promise.resolve({ matches: [], stats: { status: 'disabled' } }),
         ENABLE_CRAIGSLIST ? pollCraigslist({ mode }) : Promise.resolve({ matches: [], stats: { status: 'disabled' } }),
         ENABLE_APIFY ? pollApify({ mode }) : Promise.resolve({ matches: [], stats: { status: 'disabled' } }),
+        ENABLE_PERMITS ? pollPermits({ mode }) : Promise.resolve({ matches: [], stats: { status: 'disabled' } }),
     ]);
 
     const redditResult = redditMatches.status === 'fulfilled'
@@ -324,9 +345,14 @@ async function runOnce(mode) {
         ? normalizePollResult(apifyMatches.value)
         : { matches: [], stats: {} };
 
+    const permitsResult = permitsMatches.status === 'fulfilled'
+        ? normalizePollResult(permitsMatches.value)
+        : { matches: [], stats: {} };
+
     const redditCount = redditResult.matches.length;
     const clCount = craigslistResult.matches.length;
     const apifyCount = apifyResult.matches.length;
+    const permitsCount = permitsResult.matches.length;
 
     const errors = [];
     if (redditMatches.status === 'rejected') {
@@ -341,13 +367,18 @@ async function runOnce(mode) {
         console.error('[lead-sourcer] Apify poller error:', apifyMatches.reason);
         errors.push({ source: 'apify', message: String(apifyMatches.reason?.message || apifyMatches.reason) });
     }
+    if (permitsMatches.status === 'rejected') {
+        console.error('[lead-sourcer] Permits poller error:', permitsMatches.reason);
+        errors.push({ source: 'permits', message: String(permitsMatches.reason?.message || permitsMatches.reason) });
+    }
 
-    const totalMatches = redditCount + clCount + apifyCount;
-    console.log(`[lead-sourcer] Poll complete — Reddit: ${redditCount} match(es), Craigslist: ${clCount} match(es), Apify: ${apifyCount} match(es), mode=${mode}`);
+    const totalMatches = redditCount + clCount + apifyCount + permitsCount;
+    console.log(`[lead-sourcer] Poll complete — Reddit: ${redditCount} match(es), Craigslist: ${clCount} match(es), Apify: ${apifyCount} match(es), Permits: ${permitsCount} match(es), mode=${mode}`);
     console.log('[lead-sourcer] Verdict stats', {
         reddit: redditResult.stats,
         craigslist: craigslistResult.stats,
         apify: apifyResult.stats,
+        permits: permitsResult.stats,
     });
 
     const summary = {
@@ -358,17 +389,20 @@ async function runOnce(mode) {
             reddit: redditCount,
             craigslist: clCount,
             apify: apifyCount,
+            permits: permitsCount,
             totalMatches,
         },
         verdicts: {
             reddit: redditResult.stats,
             craigslist: craigslistResult.stats,
             apify: apifyResult.stats,
+            permits: permitsResult.stats,
         },
         sourceStatuses: {
             reddit: redditResult.stats.status || 'ok',
             craigslist: craigslistResult.stats.status || 'ok',
             apify: apifyResult.stats.status || 'ok',
+            permits: permitsResult.stats.status || 'ok',
         },
         errors,
     };
@@ -377,6 +411,7 @@ async function runOnce(mode) {
         reddit: ENABLE_REDDIT,
         craigslist: ENABLE_CRAIGSLIST,
         apify: ENABLE_APIFY,
+        permits: ENABLE_PERMITS,
     });
     if (summary.health.unhealthySources.length > 0) {
         console.warn(`[lead-sourcer] Unhealthy sources: ${summary.health.unhealthySources.join(', ')}${summary.health.allFailed ? ' (every enabled source failed)' : ''}`);
@@ -418,7 +453,9 @@ async function scheduleDailyRunIfNeeded() {
 function markExitCode(summary) {
     const unhealthy = summary?.health?.unhealthySources || [];
     if (unhealthy.includes('reddit')) console.warn('[lead-sourcer] Reddit degraded (public access may be blocked); not failing the run for Reddit alone.');
-    if (summary?.health?.allFailed || unhealthy.some((s) => s !== 'reddit')) process.exitCode = 1;
+    if (unhealthy.includes('permits')) console.warn('[lead-sourcer] Permits degraded (city data or registry unavailable); warn-only.');
+    const WARN_ONLY_SOURCES = ['reddit', 'permits'];
+    if (summary?.health?.allFailed || unhealthy.some((s) => !WARN_ONLY_SOURCES.includes(s))) process.exitCode = 1;
 }
 
 async function run() {

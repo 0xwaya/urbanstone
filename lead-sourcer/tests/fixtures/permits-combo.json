@@ -1,0 +1,10 @@
+[
+  {"number_key":"2026P08754","sub_type_desc":"Alter Residential","code_book":"Residential","dwelling_units":"1","date_issued":"2026-10-19T00:00:00.000","location":"3648  SOLAR VISTA PL","desc_of_work":"COMPLETE RENOVATION, UPDATE BATHROOMS AND KITCHEN, REMOVE ONE WALL","data_status":"ISSUED"},
+  {"number_key":"2026P08754","sub_type_desc":"Alter Residential","code_book":"Residential","dwelling_units":"1","date_issued":"2026-10-19T00:00:00.000","location":"3648  SOLAR VISTA PL","desc_of_work":"COMPLETE RENOVATION, UPDATE BATHROOMS AND KITCHEN, REMOVE ONE WALL","data_status":"ISSUED"},
+  {"number_key":"2026P08746","sub_type_desc":"Alter Residential","code_book":"Residential","dwelling_units":"3","date_issued":"2026-10-19T00:00:00.000","location":"826  YORK ST","desc_of_work":"INTERIOR RENOVATION, KITCHENS, BATHROOMS, DRYWALL, PAINT, FLOORING","data_status":"ISSUED"},
+  {"number_key":"2026P09485","sub_type_desc":"Alter Residential","code_book":"Residential","dwelling_units":"1","date_issued":"2026-10-12T00:00:00.000","location":"4836  PLAINVILLE RD","desc_of_work":"NEW REAR DECK / DRYWALL IN KITCHEN","data_status":"ISSUED"},
+  {"number_key":"2026P09001","sub_type_desc":"Alter Residential","code_book":"Residential","dwelling_units":"1","date_issued":"2026-10-15T00:00:00.000","location":"100  MAIN ST","desc_of_work":"BASEMENT WATERPROOFING AND BATHROOM REMODEL","data_status":"ISSUED"},
+  {"number_key":"2026P09002","sub_type_desc":"Alter Residential","code_book":"Residential","dwelling_units":"1","date_issued":"2026-10-16T00:00:00.000","location":"200  ELM ST","desc_of_work":"OWNER REMODEL OF KITCHEN","data_status":"ISSUED"},
+  {"number_key":"2026P09003","sub_type_desc":"Alter Residential","code_book":"Residential","dwelling_units":"1","date_issued":"2026-10-17T00:00:00.000","location":"300  OAK ST","desc_of_work":"BATHROOM REMODEL","data_status":"VOID"},
+  {"number_key":"2026P09004","sub_type_desc":"Alter Residential","code_book":"Residential","dwelling_units":"1","date_issued":"2026-10-18T00:00:00.000","location":"400  PINE ST","desc_of_work":"BATH REMODEL","data_status":"ISSUED"}
+]

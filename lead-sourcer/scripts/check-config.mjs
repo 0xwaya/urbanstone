@@ -1,5 +1,6 @@
 import { APIFY_AD_LIBRARY_TASK_ID, APIFY_FACEBOOK_TASK_ID, APIFY_NEXTDOOR_TASK_ID } from '../src/config.js';
 import { resolveRunMode } from '../src/mode.js';
+import { isPermitsEnabled } from '../src/permits.js';
 
 // Prints names and ready/missing status only; never prints secret values.
 const flag = (name) => {
@@ -18,6 +19,8 @@ const checks = [
     // Reddit falls back to unauthenticated public JSON when API credentials are absent (src/reddit.js).
     ['LEAD_SOURCER_ENABLE_REDDIT', flag('LEAD_SOURCER_ENABLE_REDDIT'), true],
     ['LEAD_SOURCER_ENABLE_CRAIGSLIST', flag('LEAD_SOURCER_ENABLE_CRAIGSLIST'), true],
+    // Permits use public city open data (no key); default off. SOCRATA_APP_TOKEN is optional.
+    ['LEAD_SOURCER_ENABLE_PERMITS', isPermitsEnabled(), true],
     ['LEAD_SOURCER_ENABLE_APIFY (APIFY_TOKEN)', apifyEnabled, has('APIFY_TOKEN')],
     ['apify task id (nextdoor, facebook or ad-library)', apifyEnabled, Boolean(APIFY_NEXTDOOR_TASK_ID || APIFY_FACEBOOK_TASK_ID || APIFY_AD_LIBRARY_TASK_ID)],
     // Live mode must have at least one channel; previously a missing key was reported as "disabled" and passed.
@@ -34,6 +37,7 @@ for (const [name, enabled, configured] of checks) {
     console.log(`[sourcer:check] ${name}: ${status}`);
     if (enabled && !configured) failures += 1;
 }
+if (isPermitsEnabled()) console.log(`[sourcer:check] permits: SOCRATA_APP_TOKEN ${has('SOCRATA_APP_TOKEN') ? 'set' : 'not set (optional; anonymous rate limits apply)'}`);
 console.log(`[sourcer:check] resend: ${has('RESEND_API_KEY') ? 'set' : 'not set'}, webhook: ${has('LEAD_WEBHOOK_URL') ? 'set' : 'not set'}`);
 
 if (failures > 0) {

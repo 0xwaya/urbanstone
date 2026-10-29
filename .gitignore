@@ -34,6 +34,7 @@ frontend/playwright-report/
 lead-sourcer/.env
 lead-sourcer/seen-ids.json
 lead-sourcer/runs/*.jsonl
+lead-sourcer/runs/contractor-registry.json
 
 # Environment and secrets — never commit real env files
 .env

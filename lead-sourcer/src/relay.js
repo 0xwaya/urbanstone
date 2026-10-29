@@ -86,6 +86,14 @@ async function sendViaResend(payload, resendOverride = {}) {
         || 'Urban Stone <sales@urbanstone.co>',
     ).trim();
 
+    // Leads are internal notifications only. Never deliver to the lead's own
+    // address (e.g. a contractor email from the permits registry enrichment).
+    const leadEmail = String(payload?.lead?.email || '').trim().toLowerCase();
+    const recipients = defaultTo.toLowerCase().split(/[,;]/).map((value) => value.replace(/^.*</, '').replace(/>.*$/, '').trim());
+    if (leadEmail && recipients.includes(leadEmail)) {
+        throw new Error('refusing to email the lead contact; recipient must be the internal sales inbox');
+    }
+
     const defaults = buildDefaultResendContent(payload);
     const subject = String(resendOverride.subject || defaults.subject).trim();
     const text = String(resendOverride.text || defaults.text);
@@ -137,7 +145,8 @@ export async function relay(payload, options = {}) {
         }
     }
 
-    if (webhookSecondary) {
+    // internalOnly payloads (permit prospects with third-party contact data) stay off the webhook.
+    if (webhookSecondary && !payload?.metadata?.internalOnly) {
         try {
             const webhookResult = await sendViaWebhook(zapPayload);
             webhookSent = Boolean(webhookResult?.sent);
