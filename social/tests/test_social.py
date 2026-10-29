@@ -95,10 +95,20 @@ class GeneratorTests(Sandbox):
             self.assertNotIn(sc["key"], {h["key"] for h in hist})
             self.assertNotIn(sc["stone"], {h["stone"] for h in hist[-6:]})
             if hist:
-                self.assertNotEqual(sc["material"], hist[-1]["material"])
+                # alternate material whenever another material still has a stone outside the last 6
+                space = common.load_json("data/design_space.json")["stones"]
+                if common.config().get("supplier_stones_only"):
+                    space = [s for s in space if s.get("catalog")]
+                recent = {h["stone"] for h in hist[-6:]}
+                if any(s["material"] != hist[-1]["material"] and s["name"] not in recent for s in space):
+                    self.assertNotEqual(sc["material"], hist[-1]["material"])
             hist.append(sc)
             common.save_json("state/history.json", hist)
-        self.assertEqual({"quartz", "granite", "quartzite", "marble"}, {h["material"] for h in hist})
+        space = common.load_json("data/design_space.json")["stones"]
+        if common.config().get("supplier_stones_only"):
+            space = [s for s in space if s.get("catalog")]
+            self.assertTrue(all(h["catalog"] for h in hist))
+        self.assertEqual({s["material"] for s in space}, {h["material"] for h in hist})
 
     def test_hashtags_tiered_rotating_and_stone_aware(self):
         hist = []

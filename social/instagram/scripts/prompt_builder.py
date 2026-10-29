@@ -63,10 +63,11 @@ def choose(seed=None):
     mat_counts = Counter(h["material"] for h in history)
     materials = sorted({s["material"] for s in space["stones"]},
                        key=lambda m: (m == last_material, mat_counts[m], rng.random()))
+    fresh = [s for s in space["stones"] if s["name"] not in recent_stones]
+    pool = fresh or space["stones"]  # only repeat a recent stone if every stone is recent
+    materials = [m for m in materials if any(s["material"] == m for s in pool)]
     for material in materials:
-        stones = [s for s in space["stones"] if s["material"] == material and s["name"] not in recent_stones]
-        if not stones:
-            stones = [s for s in space["stones"] if s["material"] == material]
+        stones = [s for s in pool if s["material"] == material]
         rng.shuffle(stones)
         for stone in stones:
             for _ in range(200):
