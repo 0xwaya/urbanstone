@@ -63,12 +63,31 @@
   "_formats_note": "margin = [left, top, right, bottom] px kept clear around the logo stamp; 9x16 follows the Story/Reel safe zones in brand/social-media-standard.md.",
   "feed_format": "4x5",
   "logo_stamp": {
-    "width_frac": 0.12,
-    "opacity": 0.65,
+    "style": "seal",
+    "width_frac": 0.22,
+    "disc_opacity": 0.7,
+    "fg_opacity": 0.97,
+    "ring_width": 0.012,
+    "icon_height": 0.31,
+    "icon_top": 0.14,
+    "name_lines": [
+      "URBAN STONE",
+      "COLLECTIVE"
+    ],
+    "font": "fonts/CormorantGaramond-VF.ttf",
+    "font_weight": 700,
+    "name_size": 0.135,
+    "sub_size": 0.1,
+    "name_top": 0.52,
+    "text_color": "#C4A35A",
     "shadow": true,
+    "shadow_opacity": 0.45,
+    "shadow_blur": 10,
     "prefer": "top",
     "bottom_penalty": 1.6,
-    "counter_band": 0.13
+    "counter_band": 0.13,
+    "_note": "Seal = company branding. Legacy icon-only stamp: style 'icon' + opacity.",
+    "max_text_width": 0.76
   },
   "default_focus_y": 0.6,
   "_label_note": "AI-generated scenes are labeled in the caption (no text on the image)."

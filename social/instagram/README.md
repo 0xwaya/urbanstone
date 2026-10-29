@@ -53,9 +53,12 @@ outside this repo (Grok Bot routine).
 ## Design standard (Edward, Oct 29 2026)
 - Bright, airy, full-bleed photo edge to edge. No bands, panels or text on the image. Tagline and
   contact live in the caption.
-- Branding = a small translucent stamp of the chevron + three towers (`brand/logo-icon.png`, cut from the
-  logo rendered from `brand/logo.tex`): 12% of width, 65% opacity, very soft navy shadow
-  (`config.json -> logo_stamp`).
+- Branding = the **company seal** (revised Oct 29 2026, matching brand/profile-wordmark-1080.png): a circle
+  22% of the image width with a semi-translucent navy #0B1220 disc (70%), a thin gold #C4A35A ring, the gold
+  chevron + three towers icon (`brand/logo-icon.png`, from `brand/logo.tex`) and URBAN STONE / COLLECTIVE in
+  letterspaced Cormorant Garamond Bold caps beneath it (gold, 97%), plus a soft navy shadow. Text auto-fits
+  inside the ring. Measured gold-text contrast on the Oct 29 scene: 4.5-6.2:1. All values in
+  `config.json -> logo_stamp` (`style: "icon"` restores the old 12% icon-only stamp).
 - Corner is chosen automatically: each corner's busyness (pixel std + mean gradient) is measured, bottom
   corners are penalised (top preferred), and any corner overlapping the countertop band
   (`focus_y ± counter_band`) is rejected. 9:16 keeps the stamp inside Story/Reel safe zones (130 px sides,
