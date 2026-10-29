@@ -16,6 +16,11 @@ on:
         description: 'Run mode (review-only | dry-run | live). Blank = repo variable or review-only.'
         required: false
         default: ''
+      force:
+        description: 'One-off: skip the 24h live cooldown for this manual run.'
+        type: boolean
+        required: false
+        default: false
   pull_request:
     paths:
       - 'lead-sourcer/**'
@@ -59,6 +64,7 @@ jobs:
       LEAD_SOURCER_ENABLE_CRAIGSLIST: ${{ vars.LEAD_SOURCER_ENABLE_CRAIGSLIST || 'true' }}
       LEAD_SOURCER_ENABLE_APIFY: ${{ vars.LEAD_SOURCER_ENABLE_APIFY || 'false' }}
       LEAD_SOURCER_ENABLE_PERMITS: ${{ vars.LEAD_SOURCER_ENABLE_PERMITS || 'false' }}
+      LEAD_SOURCER_FORCE_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.force && 'true' || 'false' }}
       LEAD_SOURCER_TRACING_ENABLED: 'false'
       LEAD_SOURCER_WEBHOOK_SECONDARY: 'false'
       LEAD_SOURCER_ALERT_EMAIL: ${{ vars.LEAD_SOURCER_ALERT_EMAIL || 'sales@urbanstone.co' }}
