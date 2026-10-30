@@ -26,8 +26,8 @@ Automated lead sourcing and delivery pipeline for Urban Stone. Scrapes Reddit, C
   `_MIN_INTERVAL_MS` (1000), `_TIMEOUT_MS` (30000), `_RETRIES` (2), `_TYPE_KEYWORDS`, `_TYPE_EXCLUDE`.
   Warn-only in run health. Run one county: `npm run poll:permits-hamilton` / `npm run poll:permits-butler`.
 
-The Node runner calls these sources directly. Zapier does not manage Reddit or Apify;
-it receives completed lead payloads as an optional downstream relay.
+The Node runner calls these sources directly and emails matches to sales@.
+Zapier is retired. See `docs/RETIRED-zapier.md`.
 
 ### Scoring
 - Material signals (granite, quartz, marble, etc.)
@@ -36,24 +36,21 @@ it receives completed lead payloads as an optional downstream relay.
 - Intent signals (planning, looking, considering)
 - Exclusion filters (spam, scams, unqualified)
 
-### Delivery (Dual Channel)
-1. **Primary:** Direct email via Resend API → `sales@urbanstone.co`
-   - Reliable, no plan limits, independent of external services
-   - No Zap dependencies or cost constraints
-2. **Secondary:** Webhook to Zap → Email via Microsoft Outlook
-   - Optional integration for redundancy
-   - Non-blocking; primary delivery succeeds even if webhook fails
-   - Simple 2-step Zap: Catch Hook → Send Email
+### Delivery
+Direct email via Resend API → `sales@urbanstone.co`.
+
+The Zapier catch-hook was retired on 2026-10-30. `LEAD_WEBHOOK_URL` is not read.
 
 ## Setup
 
 ### Environment Variables
 
-**Required:**
+**Required for live delivery:**
 ```
-RESEND_API_KEY=...                 # Direct email delivery
-LEAD_WEBHOOK_URL=<your Zapier catch-hook URL>  # Zap webhook (keep secret; never commit the real URL)
+RESEND_API_KEY=...                 # Direct email to sales@
 ```
+
+`LEAD_WEBHOOK_URL` is retired. Do not set it.
 
 **Reddit access:**
 ```
@@ -95,7 +92,7 @@ npm install
 ### Running
 
 Unspecified runs default to `review-only`: matches are logged locally without
-Resend or webhook delivery. Set `LEAD_SOURCER_MODE=live` explicitly only when
+Resend delivery. Set `LEAD_SOURCER_MODE=live` explicitly only when
 internal lead notifications are intended. The sourcer does not contact authors
 of public posts; direct prospect outreach is not implemented.
 
@@ -134,12 +131,12 @@ dispatch input `force` skips it once. It runs the tests,
 `scripts/check-config.mjs`, then `node src/index.js`, and carries `seen-ids.json` and
 `runs/` between runs with the Actions cache. Controls (repo variables):
 
-- `LEAD_SOURCER_MODE` — `review-only` (default, no delivery) or `live` (email + webhook)
+- `LEAD_SOURCER_MODE` — `review-only` (default, no delivery) or `live` (email to sales@)
 - `LEAD_SOURCER_ENABLE_REDDIT` / `LEAD_SOURCER_ENABLE_APIFY` — default `false`;
   set `true` once `REDDIT_CLIENT_ID`/`REDDIT_CLIENT_SECRET` or `APIFY_TOKEN` +
   `APIFY_NEXTDOOR_TASK_ID`/`APIFY_FACEBOOK_TASK_ID` exist
-- Secrets used: `RESEND_API_KEY`, `LEAD_WEBHOOK_URL`, `REDDIT_CLIENT_ID`,
-  `REDDIT_CLIENT_SECRET`, `APIFY_TOKEN`
+- Secrets used: `RESEND_API_KEY`, `REDDIT_CLIENT_ID`,
+  `REDDIT_CLIENT_SECRET`, `APIFY_TOKEN`. `LEAD_WEBHOOK_URL` is retired and must not be set.
 
 A run exits non-zero when any enabled source is unhealthy (blocked, parse error,
 failed delivery), so a broken run shows up as a failed workflow instead of a quiet
@@ -151,7 +148,7 @@ for an external runner. Do not enable a Vercel cron until that runner exists.
 
 ## Payload Format
 
-Leads are sent as JSON to both Resend and the Zap webhook:
+Leads are emailed to sales@. The alert body is built from this payload shape:
 
 ```json
 {
@@ -189,9 +186,11 @@ Leads are sent as JSON to both Resend and the Zap webhook:
 }
 ```
 
-### Zap Email Template
+### Retired Zap template
 
-The 2-step Zap uses namespace `357570886` for field extraction:
+Kept only so old emails are recognizable. Zapier is not in the path. See `docs/RETIRED-zapier.md`.
+
+The old 2-step Zap used namespace `357570886`:
 
 **Subject:**
 ```
@@ -239,13 +238,9 @@ npm test -- --runInBand
 
 ## Delivery Guarantees
 
-- **Resend:** Primary path, always attempted first
-  - Success → Email sent directly
-  - Failure → Logs error, continues to webhook
-- **Webhook (Zap):** Secondary path, non-blocking
-  - Success (200) → Logs "Webhook sent"
-  - Failure (404, 5xx, timeout) → Logs warning, does not block final result
-- **Final status:** "delivered" if either channel succeeds; error only if both fail
+- **Resend** is the only channel.
+  - Success → email sent to the internal sales inbox
+  - Failure → the lead is not marked seen and is retried next run
 
 ## Run Reports
 
@@ -259,9 +254,8 @@ Report is always sent, even if zero matches found (configurable via `LEAD_SOURCE
 
 ## Troubleshooting
 
-### "Webhook relay failed: 404 please unsubscribe me!"
-- The Zap catch-hook URL lives only in the `LEAD_WEBHOOK_URL` env var / secret. If Zapier returns 404, the hook was regenerated: update the env var.
-- Resend primary still succeeds; Zap failure is non-blocking.
+### Old "Webhook relay failed: 404"
+- Ignore it. The Zapier hook was retired on 2026-10-30. Delete any leftover `LEAD_WEBHOOK_URL` secret. Do not regenerate the hook.
 
 ### "missing_resend_api_key"
 - `RESEND_API_KEY` not in effective environment. Check `.env`, `.env.local`, `.vercel/.env.production.local`.
@@ -272,7 +266,7 @@ Report is always sent, even if zero matches found (configurable via `LEAD_SOURCE
 - Try `LEAD_SOURCER_SKIP_DEDUP=true` to test without dedup filtering.
 
 ### Leads not relayed
-- Check `LEAD_WEBHOOK_URL` and `RESEND_API_KEY` are set.
+- Check `RESEND_API_KEY` is set. The webhook is retired.
 - Dry mode does not relay; use `LEAD_SOURCER_MODE=live`.
 - Check run logs at `runs/poll-runs.jsonl` for relay status per source.
 

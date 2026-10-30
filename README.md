@@ -16,7 +16,7 @@ The recovered project includes:
 
 - the Urban Stone Collective marketing site
 - a supplier scraper prototype for featured stone data
-- a lead-sourcer utility for polling public sources and relaying matched leads through the existing webhook flow
+- a lead-sourcer utility that emails matched permit leads to sales@ (Zapier retired 2026-10-30)
 - brand assets and countertop material imagery that were already committed in the source tree
 - architecture and upgrade notes for future backend and automation work
 
@@ -34,7 +34,7 @@ See MIGRATION_NOTES.md for the migration boundary and follow-up guidance.
 
 ## Current Status
 
-The production site is [urbanstone.co](https://urbanstone.co). Secrets for that deployment, including `LEAD_WEBHOOK_URL`, live in the host environment and are not in this tree. The list below still describes the public snapshot. Treat a gap as closed only when the deployment actually has it.
+The production site is [urbanstone.co](https://urbanstone.co). Secrets for that deployment live in the host environment and are not in this tree. `LEAD_WEBHOOK_URL` is retired and should be deleted wherever it remains. The list below still describes the public snapshot. Treat a gap as closed only when the deployment actually has it.
 
 The lead-sourcer runs unattended at 8:00, 12:00, and 5:00 ET. The scheduled job is in live mode and delivers matched leads to the sales inbox. It does not contact the people who posted. Onyx, the site chat, calls Ollama when that runtime is available and falls back to the on-site knowledge base if it is not. Social images committed in this repo are assets only. This repository does not post them.
 
@@ -54,7 +54,7 @@ What is present:
 
 What is still missing or incomplete:
 
-- a real CRM, email, or webhook destination behind `LEAD_WEBHOOK_URL`
+- a customer tracker. Leads already email sales@ via Resend. Zapier is retired. See `lead-sourcer/docs/RETIRED-zapier.md`.
 - production env configuration for contractor access and mail delivery (`SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `CONTRACTOR_SESSION_SECRET`, `CONTRACTOR_ADMIN_EMAILS`, optional `CONTRACTOR_APPROVED_EMAILS`, `RESEND_API_KEY`)
 - image optimization work if you want to replace the current flexible `img` usage with `next/image`
 - broader production concerns such as analytics, uptime monitoring, content workflow, and end-to-end browser tests
@@ -97,7 +97,7 @@ Local workflow:
 1. `cd frontend`
 2. `npm install`
 3. `cp .env.example .env.local`
-4. set `LEAD_WEBHOOK_URL` to the system that should receive quote requests
+4. set `RESEND_API_KEY` so quote requests email sales@
 5. `npm run dev`
 
 Contractor portal setup:
@@ -150,56 +150,11 @@ Lead webhook payload note:
 - `metadata.requestId` is propagated from inbound `x-request-id` when available, otherwise generated server-side.
 - `metadata.dedupeKey` is generated as a deterministic hash from normalized lead fields so Zapier/Storage duplicate suppression can use a stable key.
 
-### Zapier Pipeline
+### Zapier (retired 2026-10-30)
 
-Urban Stone production lead intake zap is published and live with the following configuration:
+The old Catch Hook zap (id `357570886`) is not in the path. Website forms and the lead sourcer email sales@ through Resend. Do not recreate the hook. Details: `lead-sourcer/docs/RETIRED-zapier.md`.
 
-- Zap ID: `357570886`
-- Architecture: 6-step dedup suppression + email routing
-
-The Zapier zap that receives leads from the webhook and forwards them to Outlook uses this step order:
-
-|Step|App|Purpose|
-|---|---|---|
-|1|Webhooks by Zapier — Catch Hook|Receives the inbound lead payload|
-|2|Filter by Zapier|Current live intake gate: continue only if `lead.email` and `lead.phone` exist|
-|3|Storage by Zapier — Get Value|Initial dedup read on the `urban-stone-dedupe` key|
-|4|Filter by Zapier|Duplicate check: continue only if no dedup value is found|
-|5|Storage by Zapier — Set Value|**Write** key `dedup::{{source}}::{{lead__email}}` = `1` to mark lead as processed|
-|6|Microsoft Outlook — Send Email|Forward formatted lead to the sales inbox|
-
-**Critical:** Step 5 (Storage Set Value) must come before Outlook. Without it, the filter at Step 4 passes every submission because the key is never written — making Zapier-side dedup non-functional.
-
-Current live storage key pattern: `dedup::{{source}}::{{lead__email}}`
-
-Current live dedup behavior: suppresses duplicate email sends for repeated submissions from the same source and email address (24h window in Zapier configuration).
-
-Current website payload contract:
-
-- `submittedAt`, `source`, `requestId`, `dedupeKey`, `routeId`, `automated`
-- `lead.{name, email, phone, projectDetails, ...}`
-- `metadata.{dedupeKey, automated, routeId, requestId, ip, userAgent, referer}`
-
-Outlook email subject template: `New Lead — {{source}} — {{name}} ({{routeId}})`
-
-Validation check:
-
-- Send 1 with a new source + email pair: all 6 steps execute and Outlook sends.
-- Send 2 with the same source + email pair: flow stops at Step 4 and Outlook is skipped.
-
-Post-deploy upgrade path:
-
-- After a fresh webhook sample exposes `dedupeKey` and `automated` in Zapier's trigger field picker, switch the Storage Get/Set key from `dedup::{{source}}::{{lead__email}}` to `dedup::{{dedupeKey}}` with `metadata__dedupeKey` fallback.
-- At the same time, widen the intake filter to continue when `(lead.email exists AND lead.phone exists) OR (automated = true OR metadata.automated = true)` so automated lead-sourcer payloads can share the same Zap safely.
-
-Deferred Zapier hardening backlog (optional, for later implementation):
-
-- add a source guard filter before Outlook to suppress internal `wire-test` events
-- include `source`, `routeId`, and classifier score (when present) in the Outlook subject/body for triage
-- add a low-volume alert path (for example Slack or digest email) when no accepted leads arrive in a configured window
-- make dedupe retention/TTL policy explicit in Zapier Storage operations for predictable replay behavior
-
-The code-side dedup guard in `frontend/pages/api/lead.js` provides within-session protection (1-hour TTL, in-memory). The Zapier Storage layer provides persistent cross-session protection.
+The in-memory dedupe in `frontend/pages/api/lead.js` still suppresses a repeat submission from the same browser session. It is not a database.
 
 ### Supplier Scraper
 
@@ -215,15 +170,15 @@ Do not commit generated scraper output unless it is intentionally reviewed and t
 
 ### Lead Sourcer
 
-The lead sourcer is a standalone Node.js utility under `lead-sourcer` that polls Reddit, Craigslist, and Apify tasks, classifies posts against countertop/remodel intent, deduplicates matches, and relays qualified leads to the configured webhook.
+The lead sourcer is a standalone Node.js utility under `lead-sourcer`. The live job checks Cincinnati, Hamilton County, and Butler County permits and emails matches to sales@. Reddit, Craigslist, and Facebook are off.
 
 Manual workflow:
 
 1. `cd lead-sourcer`
-2. create `lead-sourcer/.env` with `LEAD_WEBHOOK_URL=...`
+2. create `lead-sourcer/.env` with `RESEND_API_KEY=...` for a live run
 3. add source integration env entries:
 
-- required: `LEAD_WEBHOOK_URL=...`
+- required for live email: `RESEND_API_KEY=...`
 - optional Apify: `APIFY_TOKEN=...`
 - optional Apify task IDs: `APIFY_NEXTDOOR_TASK_ID=...`, `APIFY_FACEBOOK_TASK_ID=...`, `APIFY_AD_LIBRARY_TASK_ID=...`
 

@@ -1,3 +1,5 @@
+> Zapier catch-hook retired 2026-10-30. This file is historical. See lead-sourcer/docs/RETIRED-zapier.md.
+
 # Phase 1 Activation Guide - Lead Sniffer Live (April 4, 2026)
 
 ## Status: PARTIALLY READY
