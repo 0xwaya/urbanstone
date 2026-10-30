@@ -100,3 +100,24 @@ Each entry has this format:
   > 📞 (513) 307-5840 · ✉️ sales@urbanstone.co · 🌐 urbanstone.co
   >
   > #interiordesign #kitchendesign #homedesign #kitcheninspo #kitchensofinstagram #naturalstone #kitchenisland #kitchenideas #newkitchen #marble #stonefabrication #dreamkitchen #kitchencountertops #countertop #cincinnati #readingohio #cincinnatirealestate #cincy
+
+## 2026-10-30 — 6:00 AM ET
+- Posted at: ~6:05 AM ET (TikTok only; Instagram not posted)
+- Material: quartz (Calacatta Andromeda)
+- Finish: polished
+- Application: kitchen island
+- Format: single
+- Caption style: design
+- Location: Cincinnati, Ohio (planned for Instagram; not applied because Instagram didn't post)
+- About: Calacatta Andromeda quartz, Cincinnati Victorian kitchen with greige shaker cabinets, fall sink promo (AI-rendered concept, pre-made post approved by Edward)
+- Queue folder: social/instagram/queue/2026-10-30-0600/
+- Image: https://www.urbanstone.co/social/2026-10-30-0600/post_4x5.jpg
+- Instagram post: not posted (Instagram was signed out in the box browser at 6:00 AM ET)
+- TikTok post: under review (photo post on @urbanstoneco, "Only me" until review finishes; AI disclosure on; no public link yet)
+- Facebook: removed
+- Caption (TikTok, as posted):
+  > Calacatta Andromeda quartz: clean lines, zero fuss. 🤍
+  > 🎁 Free 18-gauge stainless sink on kitchens 50+ sq ft, through Dec 15.
+  > Fast estimate: link in bio 🔗
+  > AI-rendered design concept · Urban Stone Collective
+  > #kitchentok #countertops #quartzcountertops #cincinnati #kitchenremodel

@@ -37,7 +37,9 @@
     "brand_point": "warranty",
     "promo": true,
     "hashtag_set_id": "d4335b3f",
-    "slot": "6 AM"
+    "slot": "6 AM",
+    "finish": "polished",
+    "application": "kitchen island"
   },
   "hashtags": [
     "kitchen",
@@ -81,18 +83,20 @@
   },
   "platforms": {
     "instagram": {
-      "status": "queued"
+      "status": "failed",
+      "reason": "Instagram signed out in box Chrome (login page); not posted",
+      "checked_at_et": "2026-10-30 06:00"
     },
     "tiktok": {
-      "status": "queued",
+      "status": "under review",
       "image": "post_9x16.jpg",
-      "caption": "tiktok_caption.txt"
+      "caption": "tiktok_caption.txt",
+      "visibility": "Only me until review completes",
+      "account": "@urbanstoneco",
+      "posted_at_et": "2026-10-30 ~06:05",
+      "ai_disclosure": true
     },
-    "facebook": {
-      "status": "queued",
-      "image": "post_4x5.jpg",
-      "caption": "caption.txt"
-    }
+    "facebook": "removed — Facebook dropped Oct 29"
   },
   "approved_by": "Edward (automated posting approved, Oct 29 2026)"
 }
