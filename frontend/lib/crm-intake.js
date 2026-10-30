@@ -21,6 +21,11 @@ function clean(value, max = 2000) {
     return text ? text.slice(0, max) : null;
 }
 
+/** "Mason 45040" -> "Mason" (the ZIP goes in its own column). */
+function cityOnly(text) {
+    return clean(String(text || '').replace(/,?\s*\b\d{5}(?:-\d{4})?\b/g, ''), 120);
+}
+
 function zipFrom(text) {
     return String(text || '').match(/\b(\d{5})(?:-\d{4})?\b/)?.[1] || null;
 }
@@ -57,14 +62,15 @@ export function buildChatIntake(payload) {
             person_name: clean(lead.name, 200),
             email: clean(lead.email, 200),
             phone: clean(lead.phone, 40),
-            city: clean(chat.city, 120),
+            city: cityOnly(chat.city),
+            zip: zipFrom(chat.city),
         },
         intake: {
             source_channel: 'website_chat',
             sub_source: clean(payload.routeId, 80),
             source_ref: clean(payload.dedupeKey, 120),
             received_at: payload.submittedAt,
-            project_city: clean(chat.city, 120),
+            project_city: cityOnly(chat.city),
             project_zip: zipFrom(chat.city),
             scope: clean(chat.summary) || clean(lead.projectDetails),
             raw: safeRaw({ ...payload, chatIntake: undefined }, { chatIntake: chat }),

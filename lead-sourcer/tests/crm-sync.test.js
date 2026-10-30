@@ -1,5 +1,5 @@
 import { jest } from '@jest/globals';
-import { buildCrmIntake, isCrmSyncEnabled, syncLeadsToCrm, callCrmIngest, scrubError } from '../src/crm-sync.js';
+import { buildCrmIntake, isCrmSyncEnabled, syncLeadsToCrm, callCrmIngest, scrubError, realCompany, isNetworkError } from '../src/crm-sync.js';
 import { buildRunReportText, buildRunReportHtml } from '../src/run-report.js';
 
 // Fake data only; no real contacts.
@@ -82,6 +82,30 @@ describe('crm sync', () => {
         const out = await syncLeadsToCrm([], { env: ENV_ON, fetchFn });
         expect(fetchFn.mock.calls[0][0]).toMatch(/rpc\/crm_keepalive$/);
         expect(out.keepalive.ok).toBe(true);
+    });
+
+    test('generic contractor names are never sent as a company to match on', () => {
+        for (const name of ['Anonymous', 'OWNER', 'Home Owner', 'unknown', 'N/A']) expect(realCompany(name)).toBeNull();
+        expect(realCompany(' Acme Test Builders LLC ')).toBe('Acme Test Builders LLC');
+        expect(buildCrmIntake(lead({ lead: { name: 'Anonymous', email: '', phone: '' } }), 'permits').contact.company_name).toBeNull();
+    });
+
+    test('stops after the first network error so a Supabase outage cannot stall the run', async () => {
+        const fetchFn = jest.fn(async () => { const e = new Error('The operation was aborted due to timeout'); e.name = 'TimeoutError'; throw e; });
+        const entries = [1, 2, 3].map((n) => ({ payload: lead({ metadata: { ...lead().metadata, permitNumber: `2026PTEST${n}` } }), sourceKey: 'permits' }));
+        const out = await syncLeadsToCrm(entries, { env: ENV_ON, fetchFn });
+        expect(fetchFn).toHaveBeenCalledTimes(1);
+        expect(out).toMatchObject({ attempted: 3, failed: 3, created: 0 });
+        expect(out.errors.at(-1)).toMatch(/2 more lead\(s\) not saved: CRM unreachable/);
+    });
+
+    test('HTTP errors do not trip the breaker', async () => {
+        const fetchFn = jest.fn(async () => ({ ok: false, status: 400, text: async () => 'bad' }));
+        const out = await syncLeadsToCrm([lead(), lead()].map((payload) => ({ payload, sourceKey: 'permits' })), { env: ENV_ON, fetchFn });
+        expect(fetchFn).toHaveBeenCalledTimes(2);
+        expect(isNetworkError(new Error('fetch failed'))).toBe(true);
+        expect(isNetworkError(new Error('CRM RPC 400: bad'))).toBe(false);
+        expect(out.failed).toBe(2);
     });
 
     test('scrubError removes emails and phones', () => {

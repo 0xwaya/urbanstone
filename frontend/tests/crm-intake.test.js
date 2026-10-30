@@ -57,7 +57,8 @@ describe('crm intake mapping', () => {
     it('chat: maps city, zip, summary and contractor segment', () => {
         const body = buildChatIntake({ ...formPayload, routeId: 'ai-chat', chatIntake: { customerSegment: 'contractor-flipper', city: 'Mason 45040', summary: 'Quartz kitchen, 40 sq ft', transcript: [] } });
         expect(body.contact.contact_type).toBe('contractor');
-        expect(body.intake).toMatchObject({ source_channel: 'website_chat', project_zip: '45040', scope: 'Quartz kitchen, 40 sq ft' });
+        expect(body.intake).toMatchObject({ source_channel: 'website_chat', project_city: 'Mason', project_zip: '45040', scope: 'Quartz kitchen, 40 sq ft' });
+        expect(body.contact).toMatchObject({ city: 'Mason', zip: '45040' });
     });
 
     it('contractor estimate: company, location and scope', () => {

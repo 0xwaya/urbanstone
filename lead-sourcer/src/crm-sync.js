@@ -25,6 +25,15 @@ function clean(value) {
     return text || null;
 }
 
+// Placeholder / generic contractor names that must never be used to match a contact.
+const GENERIC_NAMES = new Set(['anonymous', 'unknown', 'owner', 'homeowner', 'propertyowner', 'owners', 'self', 'none', 'na', 'tbd', 'notlisted', 'notinregistry']);
+
+export function realCompany(value) {
+    const name = clean(value);
+    if (!name || GENERIC_NAMES.has(name.toLowerCase().replace(/[^a-z]/g, ''))) return null;
+    return name;
+}
+
 function realEmail(value) {
     const email = clean(value)?.toLowerCase() || null;
     if (!email || /^auto\+.*@urbanstone\.co$/.test(email) || !email.includes('@')) return null;
@@ -47,6 +56,13 @@ export function scrubError(error) {
         .slice(0, 200);
 }
 
+/** True for timeouts / connection failures (no HTTP response), not for HTTP errors. */
+export function isNetworkError(error) {
+    const name = String(error?.name || '');
+    const message = String(error?.message || error);
+    return name === 'TimeoutError' || name === 'AbortError' || /fetch failed|timeout|ECONN|ENOTFOUND|EAI_AGAIN|network/i.test(message);
+}
+
 /** Map one lead-sourcer payload to the RPC body. Exported for tests. */
 export function buildCrmIntake(payload, sourceKey, { runId = null } = {}) {
     const meta = payload?.metadata || {};
@@ -60,7 +76,7 @@ export function buildCrmIntake(payload, sourceKey, { runId = null } = {}) {
     return {
         contact: {
             contact_type: 'contractor',
-            company_name: clean(payload?.lead?.name),
+            company_name: realCompany(payload?.lead?.name),
             email: realEmail(payload?.lead?.email),
             phone: realPhone(payload?.lead?.phone),
         },
@@ -137,11 +153,20 @@ export async function syncLeadsToCrm(entries, { env = process.env, fetchFn = fet
     const result = { enabled: isCrmSyncEnabled(env), attempted: 0, created: 0, existing: 0, failed: 0, repeats: [], errors: [], keepalive: null };
     if (!result.enabled) return result;
 
+    // Stop after the first network error or timeout (Supabase down/paused) so a
+    // run with many leads is not held up 8 s per lead; the rest are counted failed.
+    let unreachable = null;
+    let skipped = 0;
     for (const { payload, sourceKey } of entries) {
         const body = buildCrmIntake(payload, sourceKey, { runId });
         const label = body.contact.company_name || 'Unknown';
         const ref = body.intake.source_ref || '';
         result.attempted += 1;
+        if (unreachable) {
+            result.failed += 1;
+            skipped += 1;
+            continue;
+        }
         try {
             const out = await ingestFn(body, { env, fetchFn });
             if (out?.created_intake) result.created += 1; else result.existing += 1;
@@ -157,8 +182,10 @@ export async function syncLeadsToCrm(entries, { env = process.env, fetchFn = fet
             result.failed += 1;
             result.errors.push(`${label}${ref ? ` (${ref})` : ''}: ${scrubError(error)}`);
             console.warn(`[crm] sync failed for ${ref || label}: ${scrubError(error)}`);
+            if (isNetworkError(error)) unreachable = scrubError(error);
         }
     }
+    if (skipped > 0) result.errors.push(`${skipped} more lead(s) not saved: CRM unreachable (${unreachable})`);
     if (result.attempted === 0) result.keepalive = await pingCrm({ env, fetchFn });
     console.log(`[crm] attempted=${result.attempted} created=${result.created} existing=${result.existing} failed=${result.failed} repeats=${result.repeats.length}`);
     return result;
