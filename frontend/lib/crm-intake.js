@@ -1,11 +1,12 @@
 /**
- * CRM intake (phase two): after a website lead email has been sent, save the
+ * CRM intake (phase two): just before a website lead email is sent, save the
  * contact + intake into the Supabase CRM through the service-role-only RPC
  * public.crm_ingest_intake. Server-only (uses SUPABASE_SERVICE_ROLE_KEY via
  * lib/supabase.js); never import this from client code.
  *
  * Off unless CRM_SYNC_ENABLED=true. Never throws and is capped at a short
- * timeout, so it can never block or fail the Resend email or the response.
+ * timeout, so it can never block or fail the Resend email or the response
+ * (the email only shows the result as a footer line).
  * Idempotent on (source_channel, dedupeKey).
  */
 import { getSupabase } from './supabase';

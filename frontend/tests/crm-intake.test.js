@@ -103,18 +103,19 @@ describe('saveCrmIntake', () => {
 describe('/api/lead with CRM sync', () => {
     const request = () => ({ method: 'POST', headers: { 'content-type': 'application/json', 'x-forwarded-for': `198.51.100.${Math.floor(Math.random() * 200)}` }, body: {} });
 
-    it('saves to the CRM after the email is sent', async () => {
+    it('saves to the CRM before the email and passes the result to it', async () => {
         vi.stubEnv('RESEND_API_KEY', 'test');
         vi.stubEnv('CRM_SYNC_ENABLED', 'true');
         sendWebsiteLeadEmail.mockResolvedValue({ id: 'email-1' });
-        const rpc = vi.fn().mockResolvedValue({ data: { created_intake: true }, error: null });
+        const rpc = vi.fn().mockResolvedValue({ data: { created_intake: true, intake_id: 'int-1' }, error: null });
         getSupabase.mockReturnValue({ rpc });
         const response = makeResponse();
         await leadHandler(request(), response);
         expect(response.statusCode).toBe(202);
         expect(sendWebsiteLeadEmail).toHaveBeenCalledTimes(1);
+        expect(sendWebsiteLeadEmail.mock.calls[0][3]).toMatchObject({ ok: true, data: { intake_id: 'int-1' } });
         expect(rpc).toHaveBeenCalledWith('crm_ingest_intake', expect.objectContaining({ p: expect.objectContaining({ intake: expect.objectContaining({ source_channel: 'website_form' }) }) }));
-        expect(sendWebsiteLeadEmail.mock.invocationCallOrder[0]).toBeLessThan(rpc.mock.invocationCallOrder[0]);
+        expect(rpc.mock.invocationCallOrder[0]).toBeLessThan(sendWebsiteLeadEmail.mock.invocationCallOrder[0]);
     });
 
     it('still returns 202 when the CRM fails', async () => {
@@ -126,6 +127,7 @@ describe('/api/lead with CRM sync', () => {
         await leadHandler(request(), response);
         expect(response.statusCode).toBe(202);
         expect(response.body.id).toBe('email-2');
+        expect(sendWebsiteLeadEmail.mock.calls[0][3]).toMatchObject({ ok: false });
     });
 
     it('flag off: no CRM call', async () => {
