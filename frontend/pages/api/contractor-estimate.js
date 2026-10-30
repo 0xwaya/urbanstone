@@ -79,17 +79,19 @@ export default async function handler(request, response) {
         return response.status(202).json({ message: 'Thanks. Your commercial estimate request is already in the queue and we will follow up shortly.' });
     }
 
+    // CRM save first (flag-gated, capped, never throws) so the email can show the intake id.
+    const crm = await saveCrmIntake(buildContractorEstimateIntake(payload));
+
     try {
-        const delivery = await sendLeadEmail(buildContractorEstimateEmail(payload), {
+        const delivery = await sendLeadEmail(buildContractorEstimateEmail(payload, process.env, crm), {
             idempotencyKey: `contractor-estimate-${payload.dedupeKey}-${payload.requestId}`,
         });
         console.info('contractor_estimate_email_sent', {
             requestId: payload.metadata.requestId,
             routeId: payload.metadata.routeId,
             emailId: delivery.id,
+            crmSaved: Boolean(crm?.ok),
         });
-        // Email is already sent; CRM save is flag-gated, time-capped and never throws.
-        await saveCrmIntake(buildContractorEstimateIntake(payload));
         return response.status(202).json({ message: 'Commercial estimate request received. Urban Stone will review the rollout details and follow up shortly.' });
     } catch (error) {
         // Release the dedupe key so the contractor can retry after a failed send.

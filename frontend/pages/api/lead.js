@@ -100,15 +100,19 @@ export default async function handler(request, response) {
 
     const payload = buildLeadForwardPayload(result.data, request);
 
+    // CRM save first so the email can show the intake id. It is flag-gated, capped at
+    // 2.5 s and never throws, so the email never depends on it. Idempotent on dedupeKey,
+    // so a visitor retry after a failed email does not create a second intake.
+    const crm = await saveCrmIntake(buildFormIntake(payload));
+
     try {
-        const delivery = await sendWebsiteLeadEmail(payload);
+        const delivery = await sendWebsiteLeadEmail(payload, process.env, fetch, crm);
         console.info('lead_email_sent', {
             requestId: payload.metadata.requestId,
             routeId: payload.metadata.routeId,
             emailId: delivery.id,
+            crmSaved: Boolean(crm?.ok),
         });
-        // Email is already sent; CRM save is flag-gated, time-capped and never throws.
-        await saveCrmIntake(buildFormIntake(payload));
         return response.status(202).json({
             message: 'Thanks. Your request is in the queue and we will follow up shortly.',
             id: delivery.id,

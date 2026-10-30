@@ -311,13 +311,14 @@ async function relayChatIntake(request, intake, conversation) {
         },
     };
 
+    // CRM save first (flag-gated, capped, never throws) so the email can show the intake id.
+    const crm = await saveCrmIntake(buildChatIntake(payload));
+
     try {
-        const delivery = await sendLeadEmail(buildChatLeadEmail(payload), {
+        const delivery = await sendLeadEmail(buildChatLeadEmail(payload, process.env, crm), {
             idempotencyKey: `chat-lead-${dedupeKey}-${requestId}`,
         });
-        console.info('chat_lead_email_sent', { requestId, emailId: delivery.id });
-        // Email is already sent; CRM save is flag-gated, time-capped and never throws.
-        await saveCrmIntake(buildChatIntake(payload));
+        console.info('chat_lead_email_sent', { requestId, emailId: delivery.id, crmSaved: Boolean(crm?.ok) });
         return { ok: true, requestId, dedupeKey, emailId: delivery.id };
     } catch (error) {
         console.error('chat_lead_email_failed', { requestId, error: error?.message || 'unknown' });
