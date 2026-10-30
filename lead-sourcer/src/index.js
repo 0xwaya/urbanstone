@@ -1,5 +1,8 @@
 /**
- * Main entry point — runs all pollers once, or on a configured interval.
+ * Main entry point — runs the permit pollers once, or on a configured interval.
+ * Live sources: Hamilton County permits, Cincinnati permits (Socrata), Butler
+ * County permits. Reddit, Craigslist and Apify/Facebook were retired on
+ * 2026-10-30 and are no longer imported; their env switches are ignored.
  * Default behavior remains one-shot; interval mode is opt-in.
  *
  * Usage:
@@ -10,9 +13,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { pollReddit } from './reddit.js';
-import { pollCraigslist } from './craigslist.js';
-import { pollApify } from './apify.js';
+import './config.js';
 import { pollPermits, isPermitsEnabled } from './permits.js';
 import { pollHamiltonPermits, pollButlerPermits, isHamiltonPermitsEnabled, isButlerPermitsEnabled } from './permits-accela.js';
 import { resolveRunMode } from './mode.js';
@@ -20,12 +21,6 @@ import { relay } from './relay.js';
 import { initializeTracing } from './tracing.js';
 import { assessRunHealth } from './run-health.js';
 import { buildRunReportText, buildRunReportHtml, summarizeLeadForReport, rankTopLeads } from './run-report.js';
-import {
-    APIFY_ENABLE_FB_MARKETPLACE,
-    APIFY_FB_MARKETPLACE_TASK_ID,
-    APIFY_FB_MARKETPLACE_MAX_CHARGE_USD,
-    APIFY_FB_MARKETPLACE_CANARY_MAX_CHARGE_USD,
-} from './config.js';
 import { buildPreDraft, shouldRunDaily, readDailyState, writeDailyState, resolveCooldownHours } from './daily-runner.js';
 import { checkScheduledSlot, parseAllowedHours } from './schedule-guard.js';
 
@@ -46,13 +41,16 @@ function envFlag(name, defaultValue = true) {
     return !['0', 'false', 'no', 'off'].includes(raw);
 }
 
-const ENABLE_REDDIT = envFlag('LEAD_SOURCER_ENABLE_REDDIT', true);
-const ENABLE_CRAIGSLIST = envFlag('LEAD_SOURCER_ENABLE_CRAIGSLIST', true);
-const ENABLE_APIFY = envFlag('LEAD_SOURCER_ENABLE_APIFY', true);
 const ENABLE_PERMITS = isPermitsEnabled();
 const ENABLE_PERMITS_HAMILTON = isHamiltonPermitsEnabled();
 const ENABLE_PERMITS_BUTLER = isButlerPermitsEnabled();
-const ENABLE_FB_MARKETPLACE = ENABLE_APIFY && APIFY_ENABLE_FB_MARKETPLACE && Boolean(APIFY_FB_MARKETPLACE_TASK_ID);
+
+// Live sources in report order: Hamilton County first.
+const SOURCES = [
+    { key: 'permits-hamilton', label: 'Hamilton County permits', enabled: ENABLE_PERMITS_HAMILTON, poll: pollHamiltonPermits, envName: 'LEAD_SOURCER_ENABLE_PERMITS_HAMILTON' },
+    { key: 'permits', label: 'Cincinnati permits', enabled: ENABLE_PERMITS, poll: pollPermits, envName: 'LEAD_SOURCER_ENABLE_PERMITS' },
+    { key: 'permits-butler', label: 'Butler County permits', enabled: ENABLE_PERMITS_BUTLER, poll: pollButlerPermits, envName: 'LEAD_SOURCER_ENABLE_PERMITS_BUTLER' },
+];
 
 await initializeTracing();
 
@@ -151,137 +149,55 @@ async function runOnce(mode) {
     const startedAt = new Date();
     console.log(`[lead-sourcer] Starting poll at ${startedAt.toISOString()} (mode=${mode})`);
 
-    if (!ENABLE_REDDIT) console.log('[lead-sourcer] Reddit poller disabled (LEAD_SOURCER_ENABLE_REDDIT=false).');
-    if (!ENABLE_CRAIGSLIST) console.log('[lead-sourcer] Craigslist poller disabled (LEAD_SOURCER_ENABLE_CRAIGSLIST=false).');
-    if (!ENABLE_APIFY) console.log('[lead-sourcer] Apify poller disabled (LEAD_SOURCER_ENABLE_APIFY=false).');
-    if (!ENABLE_PERMITS) console.log('[lead-sourcer] Permits poller disabled (LEAD_SOURCER_ENABLE_PERMITS is not true).');
-    if (!ENABLE_PERMITS_HAMILTON) console.log('[lead-sourcer] Hamilton County permits disabled (LEAD_SOURCER_ENABLE_PERMITS_HAMILTON is not true).');
-    if (!ENABLE_PERMITS_BUTLER) console.log('[lead-sourcer] Butler County permits disabled (LEAD_SOURCER_ENABLE_PERMITS_BUTLER is not true).');
+    for (const source of SOURCES) {
+        if (!source.enabled) console.log(`[lead-sourcer] ${source.label} disabled (${source.envName} is not true).`);
+    }
 
-    const [redditMatches, craigslistMatches, apifyMatches, permitsMatches, hamiltonMatches, butlerMatches] = await Promise.allSettled([
-        ENABLE_REDDIT ? pollReddit({ mode }) : Promise.resolve({ matches: [], stats: { status: 'disabled' } }),
-        ENABLE_CRAIGSLIST ? pollCraigslist({ mode }) : Promise.resolve({ matches: [], stats: { status: 'disabled' } }),
-        ENABLE_APIFY ? pollApify({ mode }) : Promise.resolve({ matches: [], stats: { status: 'disabled' } }),
-        ENABLE_PERMITS ? pollPermits({ mode }) : Promise.resolve({ matches: [], stats: { status: 'disabled' } }),
-        ENABLE_PERMITS_HAMILTON ? pollHamiltonPermits({ mode }) : Promise.resolve({ matches: [], stats: { status: 'disabled' } }),
-        ENABLE_PERMITS_BUTLER ? pollButlerPermits({ mode }) : Promise.resolve({ matches: [], stats: { status: 'disabled' } }),
-    ]);
+    const settled = await Promise.allSettled(SOURCES.map((source) => (
+        source.enabled ? source.poll({ mode }) : Promise.resolve({ matches: [], stats: { status: 'disabled' } })
+    )));
 
-    const redditResult = redditMatches.status === 'fulfilled'
-        ? normalizePollResult(redditMatches.value)
-        : { matches: [], stats: {} };
-    const craigslistResult = craigslistMatches.status === 'fulfilled'
-        ? normalizePollResult(craigslistMatches.value)
-        : { matches: [], stats: {} };
-    const apifyResult = apifyMatches.status === 'fulfilled'
-        ? normalizePollResult(apifyMatches.value)
-        : { matches: [], stats: {} };
-
-    const permitsResult = permitsMatches.status === 'fulfilled'
-        ? normalizePollResult(permitsMatches.value)
-        : { matches: [], stats: {} };
-
-    const hamiltonResult = hamiltonMatches.status === 'fulfilled'
-        ? normalizePollResult(hamiltonMatches.value)
-        : { matches: [], stats: {} };
-    const butlerResult = butlerMatches.status === 'fulfilled'
-        ? normalizePollResult(butlerMatches.value)
-        : { matches: [], stats: {} };
-
-    const redditCount = redditResult.matches.length;
-    const clCount = craigslistResult.matches.length;
-    const apifyCount = apifyResult.matches.length;
-    const permitsCount = permitsResult.matches.length;
-    const hamiltonCount = hamiltonResult.matches.length;
-    const butlerCount = butlerResult.matches.length;
-
+    const results = {};
     const errors = [];
-    if (redditMatches.status === 'rejected') {
-        console.error('[lead-sourcer] Reddit poller error:', redditMatches.reason);
-        errors.push({ source: 'reddit', message: String(redditMatches.reason?.message || redditMatches.reason) });
-    }
-    if (craigslistMatches.status === 'rejected') {
-        console.error('[lead-sourcer] Craigslist poller error:', craigslistMatches.reason);
-        errors.push({ source: 'craigslist', message: String(craigslistMatches.reason?.message || craigslistMatches.reason) });
-    }
-    if (apifyMatches.status === 'rejected') {
-        console.error('[lead-sourcer] Apify poller error:', apifyMatches.reason);
-        errors.push({ source: 'apify', message: String(apifyMatches.reason?.message || apifyMatches.reason) });
-    }
-    if (permitsMatches.status === 'rejected') {
-        console.error('[lead-sourcer] Permits poller error:', permitsMatches.reason);
-        errors.push({ source: 'permits', message: String(permitsMatches.reason?.message || permitsMatches.reason) });
-    }
-
-    for (const [source, settled] of [['permits-hamilton', hamiltonMatches], ['permits-butler', butlerMatches]]) {
-        if (settled.status !== 'rejected') continue;
-        console.error(`[lead-sourcer] ${source} poller error:`, settled.reason);
-        errors.push({ source, message: String(settled.reason?.message || settled.reason) });
-    }
-
-    const totalMatches = redditCount + clCount + apifyCount + permitsCount + hamiltonCount + butlerCount;
-    console.log(`[lead-sourcer] Poll complete — Reddit: ${redditCount} match(es), Craigslist: ${clCount} match(es), Apify: ${apifyCount} match(es), Permits: ${permitsCount} match(es), Hamilton permits: ${hamiltonCount} match(es), Butler permits: ${butlerCount} match(es), mode=${mode}`);
-    console.log('[lead-sourcer] Verdict stats', {
-        reddit: redditResult.stats,
-        craigslist: craigslistResult.stats,
-        apify: apifyResult.stats,
-        permits: permitsResult.stats,
-        'permits-hamilton': hamiltonResult.stats,
-        'permits-butler': butlerResult.stats,
+    SOURCES.forEach((source, i) => {
+        const outcome = settled[i];
+        if (outcome.status === 'fulfilled') {
+            results[source.key] = normalizePollResult(outcome.value);
+        } else {
+            results[source.key] = { matches: [], stats: {} };
+            console.error(`[lead-sourcer] ${source.key} poller error:`, outcome.reason);
+            errors.push({ source: source.key, message: String(outcome.reason?.message || outcome.reason) });
+        }
     });
+
+    const counts = {};
+    const verdicts = {};
+    const sourceStatuses = {};
+    const enabledSources = {};
+    for (const source of SOURCES) {
+        counts[source.key] = results[source.key].matches.length;
+        verdicts[source.key] = results[source.key].stats;
+        sourceStatuses[source.key] = results[source.key].stats.status || 'ok';
+        enabledSources[source.key] = source.enabled;
+    }
+    const totalMatches = SOURCES.reduce((total, source) => total + counts[source.key], 0);
+    counts.totalMatches = totalMatches;
+
+    console.log(`[lead-sourcer] Poll complete — ${SOURCES.map((source) => `${source.label}: ${counts[source.key]} match(es)`).join(', ')}, mode=${mode}`);
+    console.log('[lead-sourcer] Verdict stats', verdicts);
 
     const summary = {
         startedAt: startedAt.toISOString(),
         completedAt: new Date().toISOString(),
         mode,
-        counts: {
-            reddit: redditCount,
-            craigslist: clCount,
-            apify: apifyCount,
-            permits: permitsCount,
-            'permits-hamilton': hamiltonCount,
-            'permits-butler': butlerCount,
-            totalMatches,
-        },
-        verdicts: {
-            reddit: redditResult.stats,
-            craigslist: craigslistResult.stats,
-            apify: apifyResult.stats,
-            permits: permitsResult.stats,
-            'permits-hamilton': hamiltonResult.stats,
-            'permits-butler': butlerResult.stats,
-        },
-        sourceStatuses: {
-            reddit: redditResult.stats.status || 'ok',
-            craigslist: craigslistResult.stats.status || 'ok',
-            apify: apifyResult.stats.status || 'ok',
-            permits: permitsResult.stats.status || 'ok',
-            'permits-hamilton': hamiltonResult.stats.status || 'ok',
-            'permits-butler': butlerResult.stats.status || 'ok',
-        },
+        counts,
+        verdicts,
+        sourceStatuses,
         errors,
         // Drives which rows the run report shows; disabled sources are omitted.
-        enabledSources: {
-            reddit: ENABLE_REDDIT,
-            craigslist: ENABLE_CRAIGSLIST,
-            apify: ENABLE_APIFY,
-            'fb-marketplace': ENABLE_FB_MARKETPLACE,
-            permits: ENABLE_PERMITS,
-            'permits-hamilton': ENABLE_PERMITS_HAMILTON,
-            'permits-butler': ENABLE_PERMITS_BUTLER,
-        },
-        apifyCaps: ENABLE_FB_MARKETPLACE
-            ? { mainUsd: APIFY_FB_MARKETPLACE_MAX_CHARGE_USD, canaryUsd: APIFY_FB_MARKETPLACE_CANARY_MAX_CHARGE_USD }
-            : undefined,
+        enabledSources,
         // Contact-free summaries (no email/phone) for the report's top-leads list.
-        topLeads: rankTopLeads([
-            ...redditResult.matches.map((m) => summarizeLeadForReport(m, 'reddit')),
-            ...craigslistResult.matches.map((m) => summarizeLeadForReport(m, 'craigslist')),
-            ...apifyResult.matches.map((m) => summarizeLeadForReport(m, m?.source === 'apify-facebook-marketplace' ? 'fb-marketplace' : 'apify-other')),
-            ...permitsResult.matches.map((m) => summarizeLeadForReport(m, 'permits')),
-            ...hamiltonResult.matches.map((m) => summarizeLeadForReport(m, 'permits-hamilton')),
-            ...butlerResult.matches.map((m) => summarizeLeadForReport(m, 'permits-butler')),
-        ]),
+        topLeads: rankTopLeads(SOURCES.flatMap((source) => results[source.key].matches.map((m) => summarizeLeadForReport(m, source.key)))),
     };
 
     summary.health = assessRunHealth(summary, summary.enabledSources);
@@ -327,13 +243,12 @@ async function scheduleDailyRunIfNeeded() {
 // source instead of reporting green on a run that fetched nothing.
 function markExitCode(summary) {
     const unhealthy = summary?.health?.unhealthySources || [];
-    if (unhealthy.includes('reddit')) console.warn('[lead-sourcer] Reddit degraded (public access may be blocked); not failing the run for Reddit alone.');
     if (unhealthy.includes('permits')) console.warn('[lead-sourcer] Permits degraded (city data or registry unavailable); warn-only.');
     for (const source of ['permits-hamilton', 'permits-butler']) {
         if (unhealthy.includes(source)) console.warn(`[lead-sourcer] ${source} degraded (county portal unavailable or changed); warn-only.`);
     }
-    const WARN_ONLY_SOURCES = ['reddit', 'permits', 'permits-hamilton', 'permits-butler'];
-    if (summary?.health?.allFailed || unhealthy.some((s) => !WARN_ONLY_SOURCES.includes(s))) process.exitCode = 1;
+    // Permit sources are warn-only; fail the job only when every enabled source failed.
+    if (summary?.health?.allFailed) process.exitCode = 1;
 }
 
 async function run() {

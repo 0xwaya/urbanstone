@@ -2,39 +2,12 @@
  * Relay a payload to the sales inbox.
  * Delivery is Resend email only. The Zapier catch-hook was retired on
  * 2026-10-30. LEAD_WEBHOOK_URL is ignored. See docs/RETIRED-zapier.md.
+ * Lead emails use the branded layout in lead-email.js (HTML + plain text).
  */
-
-function escapeHtml(value) {
-    return String(value || '')
-        .replace(/&/g, '&')
-        .replace(/</g, '<')
-        .replace(/>/g, '>')
-        .replace(/"/g, '"')
-        .replace(/'/g, '&#39;');
-}
+import { buildLeadNotification } from './lead-email.js';
 
 function buildDefaultResendContent(payload) {
-    const routeId = payload?.metadata?.routeId || 'lead-sourcer/unknown';
-    const source = payload?.source || 'lead-sourcer';
-    const submittedAt = payload?.submittedAt || new Date().toISOString();
-    const lead = payload?.lead || {};
-
-    const subject = `[Lead Sourcer] ${routeId}`;
-    const text = [
-        `[LEAD SOURCER ALERT]`,
-        ``,
-        `Route: ${routeId}`,
-        `Source: ${source}`,
-        `Submitted: ${submittedAt}`,
-        `Name: ${lead.name || ''}`,
-        `Email: ${lead.email || ''}`,
-        `Phone: ${lead.phone || ''}`,
-        `URL: ${lead.externalPostUrl || ''}`,
-        ``,
-        `${lead.projectDetails || ''}`,
-    ].join('\n');
-    const html = `<pre style="font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace; white-space: pre-wrap;">${escapeHtml(text)}</pre>`;
-
+    const { subject, text, html } = buildLeadNotification(payload);
     return { subject, text, html };
 }
 

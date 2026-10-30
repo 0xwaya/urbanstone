@@ -61,8 +61,8 @@ describe('permits switch', () => {
 
     test('run health treats a degraded permits source as unhealthy (index.js keeps it warn-only)', () => {
         const health = assessRunHealth(
-            { sourceStatuses: { craigslist: 'ok', permits: 'degraded' }, errors: [] },
-            { reddit: false, craigslist: true, apify: false, permits: true },
+            { sourceStatuses: { 'permits-hamilton': 'ok', permits: 'degraded' }, errors: [] },
+            { 'permits-hamilton': true, permits: true },
         );
         expect(health.unhealthySources).toEqual(['permits']);
         expect(health.allFailed).toBe(false);

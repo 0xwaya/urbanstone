@@ -240,6 +240,17 @@ export function buildPermitLead(permit, contact = null, scoreResult = scorePermi
     payload.metadata.city = `Cincinnati${permit.zip ? ` ${permit.zip}` : ''}`;
     payload.metadata.estimatedCost = permit.cost > 0 ? permit.cost : null;
     payload.metadata.workSummary = String(permit.description || permit.subType || '').slice(0, 120);
+    // Structured fields for the internal lead notification email (src/lead-email.js).
+    payload.metadata.permit = {
+        jurisdiction: 'City of Cincinnati, OH',
+        address: `${permit.address || ''}, Cincinnati, OH ${permit.zip || ''}`.replace(/^, /, '').trim(),
+        recordType: permit.subType || '',
+        description: permit.description || '',
+        contractorType: contact?.types?.join('; ') || '',
+        contactRole: '',
+        date: issuedDay,
+        status: permit.status || '',
+    };
     return payload;
 }
 
