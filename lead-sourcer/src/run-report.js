@@ -88,6 +88,17 @@ function money(value) {
     return value ? `$${Math.round(value).toLocaleString('en-US')}` : '';
 }
 
+/** Contact-free CRM sync lines (null when CRM sync is off for this run). */
+export function buildCrmSection(summary) {
+    const crm = summary?.crm;
+    if (!crm || !crm.enabled) return null;
+    const headline = `CRM sync: ${crm.created || 0} new intake(s), ${crm.existing || 0} already in CRM, ${crm.failed || 0} failed`;
+    const repeats = (crm.repeats || []).map((r) => `REPEAT contractor: ${r.company}${r.permitNumber ? ` (permit ${r.permitNumber})` : ''} — ${r.priorIntakes} earlier intake(s), ${r.priorEmails} earlier email(s) from us`);
+    const errors = (crm.errors || []).map((e) => `CRM error: ${e}`);
+    const keepalive = crm.keepalive && !crm.keepalive.ok ? [`CRM keep-alive failed: ${crm.keepalive.error || 'unknown'}`] : [];
+    return { headline, repeats, errors: [...errors, ...keepalive] };
+}
+
 export function buildRunReportText(summary, { runLogFile } = {}) {
     const rows = buildSourceRows(summary);
     const total = totals(rows);
@@ -111,6 +122,8 @@ export function buildRunReportText(summary, { runLogFile } = {}) {
             ? leads.map((lead, i) => `  ${i + 1}. [${SOURCE_LABELS[lead.source] || lead.source}] ${lead.headline}${lead.city ? ` (${lead.city})` : ''}${Number.isFinite(lead.score) ? ` score ${lead.score}` : ''}${lead.estimatedCost ? ` est. ${money(lead.estimatedCost)}` : ''}`)
             : ['  (none this run)']),
     );
+    const crm = buildCrmSection(summary);
+    if (crm) lines.push('', crm.headline, ...crm.repeats.map((l) => `  ${l}`), ...crm.errors.map((l) => `  ${l}`));
     if (runLogFile) lines.push('', `Run log file: ${runLogFile}`);
     return lines.join('\n');
 }
@@ -124,6 +137,10 @@ export function buildRunReportHtml(summary) {
     const rows = buildSourceRows(summary);
     const total = totals(rows);
     const leads = topLeadsFor(summary, rows);
+    const crm = buildCrmSection(summary);
+    const crmHtml = crm
+        ? `<h2 style="font-family:${SERIF};font-size:21px;font-weight:600;color:${BRAND.navy};margin:26px 0 8px;">CRM</h2><p style="margin:0 0 6px;font-size:13px;">${escapeHtml(crm.headline)}</p>${crm.repeats.map((l) => `<p style="margin:0 0 4px;font-size:13px;color:${BRAND.navy};font-weight:600;">${escapeHtml(l)}</p>`).join('')}${crm.errors.map((l) => `<p style="margin:0 0 4px;font-size:12px;color:${STATUS_COLORS.error};">${escapeHtml(l)}</p>`).join('')}`
+        : '';
     const durationSec = ((new Date(summary.completedAt) - new Date(summary.startedAt)) / 1000).toFixed(1);
     const cell = `padding:10px 12px;border-bottom:1px solid ${BRAND.line};`;
     const th = `${cell}font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:${BRAND.muted};font-weight:600;`;
@@ -163,6 +180,7 @@ export function buildRunReportHtml(summary) {
       <tr style="text-align:left;"><th style="${th}">Lead</th><th style="${th}">Area</th><th style="${th}text-align:right;">Est. cost</th><th style="${th}text-align:right;">Score</th></tr>
       ${leadRows}
     </table>
+    ${crmHtml}
   </div>
   <div style="background:${BRAND.paper};padding:14px 28px;font-size:12px;color:${BRAND.muted};border-top:1px solid ${BRAND.line};">
     <p style="margin:0;">Run ${escapeHtml(formatEt(summary.startedAt))} &rarr; ${escapeHtml(formatEt(summary.completedAt))} &middot; mode ${escapeHtml(summary.mode)} &middot; ${durationSec}s</p>

@@ -23,6 +23,7 @@ import { assessRunHealth } from './run-health.js';
 import { buildRunReportText, buildRunReportHtml, summarizeLeadForReport, rankTopLeads } from './run-report.js';
 import { buildPreDraft, shouldRunDaily, readDailyState, writeDailyState, resolveCooldownHours } from './daily-runner.js';
 import { checkScheduledSlot, parseAllowedHours } from './schedule-guard.js';
+import { syncLeadsToCrm, scrubError } from './crm-sync.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -199,6 +200,20 @@ async function runOnce(mode) {
         // Contact-free summaries (no email/phone) for the report's top-leads list.
         topLeads: rankTopLeads(SOURCES.flatMap((source) => results[source.key].matches.map((m) => summarizeLeadForReport(m, source.key)))),
     };
+
+    // CRM sync runs only after every lead email above has been sent, so it can
+    // never block or delay one. Off unless CRM_SYNC_ENABLED=true; failures are
+    // reported in the run report, never thrown.
+    if (mode === 'live') {
+        try {
+            summary.crm = await syncLeadsToCrm(
+                SOURCES.flatMap((source) => results[source.key].matches.map((payload) => ({ payload, sourceKey: source.key }))),
+                { runId: process.env.GITHUB_RUN_ID ? `gh-${process.env.GITHUB_RUN_ID}` : summary.startedAt },
+            );
+        } catch (error) {
+            summary.crm = { enabled: true, attempted: 0, created: 0, existing: 0, failed: 0, repeats: [], errors: [scrubError(error)] };
+        }
+    }
 
     summary.health = assessRunHealth(summary, summary.enabledSources);
     if (summary.health.unhealthySources.length > 0) {
