@@ -11,6 +11,7 @@ import {
     sanitizeLeadPayload,
 } from '../../lib/lead';
 import { sendWebsiteLeadEmail } from '../../lib/lead-email';
+import { buildFormIntake, saveCrmIntake } from '../../lib/crm-intake';
 
 // Website leads are emailed directly to the sales inbox via Resend
 // (no Zapier webhook in the path). The dedupe store prevents the same lead
@@ -106,6 +107,8 @@ export default async function handler(request, response) {
             routeId: payload.metadata.routeId,
             emailId: delivery.id,
         });
+        // Email is already sent; CRM save is flag-gated, time-capped and never throws.
+        await saveCrmIntake(buildFormIntake(payload));
         return response.status(202).json({
             message: 'Thanks. Your request is in the queue and we will follow up shortly.',
             id: delivery.id,

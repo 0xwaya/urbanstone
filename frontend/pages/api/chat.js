@@ -23,6 +23,7 @@ import {
     shouldSubmitIntake,
 } from '../../lib/chat-intake';
 import { buildChatLeadEmail, sendLeadEmail } from '../../lib/lead-email';
+import { buildChatIntake, saveCrmIntake } from '../../lib/crm-intake';
 
 const OLLAMA_MODEL_NAME = process.env.OLLAMA_MODEL_NAME || 'llama3.1:8b';
 const OLLAMA_BASE_URL = process.env.OLLAMA_BASE_URL || 'http://localhost:11434';
@@ -315,6 +316,8 @@ async function relayChatIntake(request, intake, conversation) {
             idempotencyKey: `chat-lead-${dedupeKey}-${requestId}`,
         });
         console.info('chat_lead_email_sent', { requestId, emailId: delivery.id });
+        // Email is already sent; CRM save is flag-gated, time-capped and never throws.
+        await saveCrmIntake(buildChatIntake(payload));
         return { ok: true, requestId, dedupeKey, emailId: delivery.id };
     } catch (error) {
         console.error('chat_lead_email_failed', { requestId, error: error?.message || 'unknown' });

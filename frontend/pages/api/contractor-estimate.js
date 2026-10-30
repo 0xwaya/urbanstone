@@ -12,6 +12,7 @@ import {
     sanitizeContractorEstimatePayload,
 } from '../../lib/contractor-estimate';
 import { buildContractorEstimateEmail, sendLeadEmail } from '../../lib/lead-email';
+import { buildContractorEstimateIntake, saveCrmIntake } from '../../lib/crm-intake';
 
 function getErrorMessage(error) {
     if (error && typeof error.message === 'string') {
@@ -87,6 +88,8 @@ export default async function handler(request, response) {
             routeId: payload.metadata.routeId,
             emailId: delivery.id,
         });
+        // Email is already sent; CRM save is flag-gated, time-capped and never throws.
+        await saveCrmIntake(buildContractorEstimateIntake(payload));
         return response.status(202).json({ message: 'Commercial estimate request received. Urban Stone will review the rollout details and follow up shortly.' });
     } catch (error) {
         // Release the dedupe key so the contractor can retry after a failed send.
