@@ -102,6 +102,10 @@ jobs:
       APIFY_FB_MARKETPLACE_CANARY_MIN_RESULTS: ${{ vars.APIFY_FB_MARKETPLACE_CANARY_MIN_RESULTS || '5' }}
       # Wanted posts relay to sales@ only in live mode (internal-only; relay guard applies).
       APIFY_FB_MARKETPLACE_REVIEW_ONLY: ${{ vars.APIFY_FB_MARKETPLACE_REVIEW_ONLY || 'false' }}
+      # CRM sync (phase two). Off unless the repo variable CRM_SYNC_ENABLED is "true".
+      CRM_SYNC_ENABLED: ${{ vars.CRM_SYNC_ENABLED || 'false' }}
+      SUPABASE_PROJECT_URL: ${{ secrets.SUPABASE_PROJECT_URL }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
