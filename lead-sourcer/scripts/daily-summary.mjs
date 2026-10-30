@@ -59,9 +59,6 @@ function buildSummary(records) {
     });
 
     const runs = recent.length;
-    const redditMatches = sumBy(recent, 'reddit');
-    const craigslistMatches = sumBy(recent, 'craigslist');
-    const apifyMatches = sumBy(recent, 'apify');
     const totalMatches = sumBy(recent, 'totalMatches');
     const zeroMatchRuns = recent.filter((record) => Number(record?.counts?.totalMatches || 0) === 0).length;
     const errors = recent.reduce((total, record) => total + (Array.isArray(record.errors) ? record.errors.length : 0), 0);
@@ -74,9 +71,9 @@ function buildSummary(records) {
         runs,
         totalMatches,
         sourceMatches: {
-            reddit: redditMatches,
-            craigslist: craigslistMatches,
-            apify: apifyMatches,
+            'permits-hamilton': sumBy(recent, 'permits-hamilton'),
+            permits: sumBy(recent, 'permits'),
+            'permits-butler': sumBy(recent, 'permits-butler'),
         },
         zeroMatchRuns,
         zeroMatchStreak,

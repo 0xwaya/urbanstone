@@ -1,7 +1,7 @@
 {
   "name": "lead-sourcer",
   "version": "1.0.0",
-  "description": "Proactive lead sourcing from Reddit, Craigslist and Cincinnati permit data for Urban Stone Collective.",
+  "description": "Proactive B2B lead sourcing from Hamilton County, Cincinnati and Butler County permit data for Urban Stone Collective.",
   "type": "module",
   "main": "src/index.js",
   "scripts": {
@@ -9,16 +9,14 @@
     "sourcer": "node src/index.js",
     "sourcer:check": "node scripts/check-config.mjs",
     "start": "node src/index.js",
-    "poll:reddit": "node src/reddit.js",
-    "poll:craigslist": "node src/craigslist.js",
-    "poll:apify": "node src/apify.js",
     "poll:permits": "node src/permits.js",
     "poll:permits-hamilton": "node src/permits-accela.js hamilton-county",
     "poll:permits-butler": "node src/permits-accela.js butler-county",
     "summary:daily": "node scripts/daily-summary.mjs",
     "summary:weekly-tuning": "node scripts/weekly-tuning-summary.mjs",
     "test": "node --experimental-vm-modules node_modules/.bin/jest --testEnvironment node",
-    "report:sample": "node scripts/render-sample-report.mjs"
+    "report:sample": "node scripts/render-sample-report.mjs",
+    "email:sample": "node scripts/render-sample-lead-email.mjs"
   },
   "engines": {
     "node": "24.x"
@@ -27,7 +25,6 @@
     "@opentelemetry/auto-instrumentations-node": "^0.72.0",
     "@opentelemetry/exporter-trace-otlp-http": "^0.214.0",
     "@opentelemetry/sdk-node": "^0.214.0",
-    "apify-client": "^2.12.0",
     "dotenv": "^16.6.1",
     "fast-xml-parser": "^4.4.1"
   },

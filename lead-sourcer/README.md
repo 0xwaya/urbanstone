@@ -1,20 +1,17 @@
 # Lead Sourcer
 
-Automated lead sourcing and delivery pipeline for Urban Stone. Scrapes Reddit, Craigslist, and Apify sources for qualified contractor leads, scores them, and delivers via email.
+Automated B2B lead sourcing for Urban Stone Collective. Polls new building permits
+(Hamilton County ezTrak, City of Cincinnati open data, Butler County Accela), scores
+kitchen / bath / countertop work, and emails each lead to sales@.
+
+Retired on 2026-10-30 (code removed, switches ignored): Reddit, Craigslist and
+Apify (Facebook Marketplace / Groups / Ad Library, Nextdoor). Old repo variables such as
+`LEAD_SOURCER_ENABLE_REDDIT`, `LEAD_SOURCER_ENABLE_CRAIGSLIST`, `LEAD_SOURCER_ENABLE_APIFY`
+and `APIFY_*` have no effect.
 
 ## Architecture
 
-### Polling
-- **Reddit:** OAuth-backed subreddit polling; currently paused locally until API registration is complete
-- **Craigslist:** Multi-region HTML searches for contractor and countertop keywords
-- **Apify:** Direct task execution for Nextdoor/Facebook sources; optional and requires task permissions
-- **Facebook Marketplace (Apify, opt-in):** logged-out `curious_coder/facebook-marketplace` tasks (never cookies; a task
-  whose input has cookies is refused). A canary task runs first (cap `APIFY_FB_MARKETPLACE_CANARY_MAX_CHARGE_USD`, $0.05,
-  20 items); the main task (cap `APIFY_FB_MARKETPLACE_MAX_CHARGE_USD`, $0.50, 210 items) is skipped when the canary is
-  unhealthy. Caps are passed as Apify run options on every call. Only Cincinnati-area "wanted/ISO" posts become leads;
-  remodel sellers are logged for review. Leads are internal-only (sales@ via Resend, never the webhook or the seller) when
-  `LEAD_SOURCER_MODE=live` and `APIFY_FB_MARKETPLACE_REVIEW_ONLY=false`. Switches: `LEAD_SOURCER_ENABLE_APIFY` +
-  `APIFY_ENABLE_FB_MARKETPLACE`; task IDs `APIFY_FB_MARKETPLACE_TASK_ID`, `APIFY_FB_MARKETPLACE_CANARY_TASK_ID`.
+### Polling (live sources; the run report lists Hamilton County, then Cincinnati, then Butler County)
 - **County permits (B2B, opt-in):** Hamilton County ezTrak and Butler County Accela Citizen Access
   (`src/accela.js` shared scraper, `src/permits-accela.js` county configs). Anonymous date-range General
   Search only (never the reCAPTCHA pages), 1 request/sec, timeouts + retries, capped detail fetches.
@@ -26,18 +23,21 @@ Automated lead sourcing and delivery pipeline for Urban Stone. Scrapes Reddit, C
   `_MIN_INTERVAL_MS` (1000), `_TIMEOUT_MS` (30000), `_RETRIES` (2), `_TYPE_KEYWORDS`, `_TYPE_EXCLUDE`.
   Warn-only in run health. Run one county: `npm run poll:permits-hamilton` / `npm run poll:permits-butler`.
 
+- **Cincinnati permits (B2B, opt-in):** City of Cincinnati Socrata data (`src/permits.js`), switch
+  `LEAD_SOURCER_ENABLE_PERMITS`.
+
 The Node runner calls these sources directly and emails matches to sales@.
 Zapier is retired. See `docs/RETIRED-zapier.md`.
 
 ### Scoring
-- Material signals (granite, quartz, marble, etc.)
-- Direct match keywords (countertop, kitchen, renovation)
-- Project context (budget, timeline mentions)
-- Intent signals (planning, looking, considering)
-- Exclusion filters (spam, scams, unqualified)
+`scorePermit` in `src/permits.js`: counter > kitchen > bath/vanity > remodel, plus a valuation bonus.
 
 ### Delivery
-Direct email via Resend API → `sales@urbanstone.co`.
+Direct email via Resend API → `sales@urbanstone.co`. Each lead is a branded HTML email
+(navy/gold, `src/lead-email.js`) with a plain-text alternative: company, source, area,
+project type, valuation, phone/email, permit # and a link to the permit record. Empty
+fields are hidden. Preview with a fake lead: `npm run email:sample` (writes
+`runs/sample-lead-email/`).
 
 The Zapier catch-hook was retired on 2026-10-30. `LEAD_WEBHOOK_URL` is not read.
 
@@ -52,32 +52,14 @@ RESEND_API_KEY=...                 # Direct email to sales@
 
 `LEAD_WEBHOOK_URL` is retired. Do not set it.
 
-**Reddit access:**
-```
-REDDIT_CLIENT_ID=...                # Reddit script application client ID
-REDDIT_CLIENT_SECRET=...            # Reddit script application secret
-LEAD_SOURCER_REDDIT_USER_AGENT=...  # Optional descriptive user agent
-```
-
-Reddit now requires authenticated API access for the JSON endpoints used by the
-poller. When both OAuth variables are present, the poller requests an app-only
-token and uses `oauth.reddit.com`. Without them, Reddit requests are attempted
-against the public endpoint and may be rejected with `403` or redirected to login.
-
 **Optional (defaults shown):**
 ```
-LEAD_SOURCER_ENABLE_REDDIT=true
-LEAD_SOURCER_ENABLE_CRAIGSLIST=true
-LEAD_SOURCER_ENABLE_APIFY=true
-LEAD_SOURCER_SKIP_DEDUP=false      # Set true to bypass dedup (test mode)
+LEAD_SOURCER_ENABLE_PERMITS_HAMILTON=false
+LEAD_SOURCER_ENABLE_PERMITS=false
+LEAD_SOURCER_ENABLE_PERMITS_BUTLER=false
 LEAD_SOURCER_ALERT_EMAIL=sales@urbanstone.co  # Lead alert recipient
 LEAD_SOURCER_RUN_REPORT_EMAIL=sales@urbanstone.co  # Run report recipient
 LEAD_SOURCER_SEND_RUN_REPORT=true  # Always send report, even with 0 matches
-LEAD_SOURCER_ZAP_FIELD_NAMESPACE=357570886  # Zap field prefix
-LEAD_SOURCER_REDDIT_SEARCH_QUERY_LIMIT=10
-LEAD_SOURCER_CRAIGSLIST_PRIORITY_CITIES=Cincinnati,Mason,West Chester,Blue Ash,Covington
-LEAD_SOURCER_CRAIGSLIST_QUERY_LIMIT=40
-LEAD_SOURCER_CRAIGSLIST_INCLUDE_HOUSEHOLD_SERVICES=false
 ```
 
 Files: `.env`, `.env.local`, `.vercel/.env.production.local`
@@ -106,11 +88,6 @@ LEAD_SOURCER_MODE=live node src/index.js
 LEAD_SOURCER_MODE=dry node src/index.js
 ```
 
-**Skip dedup (test mode, allow repeated leads):**
-```bash
-LEAD_SOURCER_MODE=live LEAD_SOURCER_SKIP_DEDUP=true node src/index.js
-```
-
 **Interval polling (configurable minutes):**
 ```bash
 LEAD_SOURCER_INTERVAL_MINUTES=60 node src/index.js  # Run every 60 min
@@ -132,15 +109,14 @@ dispatch input `force` skips it once. It runs the tests,
 `runs/` between runs with the Actions cache. Controls (repo variables):
 
 - `LEAD_SOURCER_MODE` — `review-only` (default, no delivery) or `live` (email to sales@)
-- `LEAD_SOURCER_ENABLE_REDDIT` / `LEAD_SOURCER_ENABLE_APIFY` — default `false`;
-  set `true` once `REDDIT_CLIENT_ID`/`REDDIT_CLIENT_SECRET` or `APIFY_TOKEN` +
-  `APIFY_NEXTDOOR_TASK_ID`/`APIFY_FACEBOOK_TASK_ID` exist
-- Secrets used: `RESEND_API_KEY`, `REDDIT_CLIENT_ID`,
-  `REDDIT_CLIENT_SECRET`, `APIFY_TOKEN`. `LEAD_WEBHOOK_URL` is retired and must not be set.
+- `LEAD_SOURCER_ENABLE_PERMITS_HAMILTON` / `LEAD_SOURCER_ENABLE_PERMITS` /
+  `LEAD_SOURCER_ENABLE_PERMITS_BUTLER` — permit sources, default `false`
+- Secrets used: `RESEND_API_KEY` (and optional `SOCRATA_APP_TOKEN`). `LEAD_WEBHOOK_URL`
+  is retired and must not be set. Reddit/Apify secrets and variables passed by the
+  workflow are ignored by the code.
 
-A run exits non-zero when any enabled source is unhealthy (blocked, parse error,
-failed delivery), so a broken run shows up as a failed workflow instead of a quiet
-"0 leads".
+Permit sources are warn-only; a run exits non-zero only when every enabled source
+failed, so a fully broken run shows up as a failed workflow instead of a quiet "0 leads".
 
 Vercel has a trigger route at `frontend/pages/api/cron/lead-sourcer.js`, but it is
 not scheduled because it requires a public authenticated `LEAD_SOURCER_TRIGGER_URL`
@@ -153,27 +129,27 @@ Leads are emailed to sales@. The alert body is built from this payload shape:
 ```json
 {
   "submittedAt": "2026-05-14T14:47:53.801Z",
-  "source": "reddit",
-  "requestId": "lead-sourcer/reddit/post-123",
-  "dedupeKey": "post-123",
+  "source": "permits-hamilton",
+  "requestId": "lead-sourcer/permits-hamilton/eztrak:BLD2026-0001",
+  "dedupeKey": "eztrak:BLD2026-0001",
   "verdict": "match",
   "score": 78,
   "scoreBand": "warm",
   "hasAnchor": true,
   "lead": {
-    "name": "Username",
-    "email": "auto+username@urbanstone.co",
-    "phone": "+1-000-000-xxxx",
-    "projectDetails": "[REDDIT MATCH]\n\nTitle: ...\n\nPost URL: ...",
-    "externalPostId": "post-123",
-    "externalPostUrl": "https://reddit.com/..."
+    "name": "Example Builders LLC",
+    "email": "office@example.invalid",
+    "phone": "(513) 555-0100",
+    "projectDetails": "[PERMITS-HAMILTON MATCH]\n\nTitle: ...\n\nContractor: ...",
+    "externalPostId": "eztrak:BLD2026-0001",
+    "externalPostUrl": "https://eztrak.cagis.org/CitizenAccess/..."
   },
   "metadata": {
-    "routeId": "lead-sourcer/reddit",
+    "routeId": "lead-sourcer/permits-hamilton",
     "scoreBand": "warm",
     "score": 78,
     "verdict": "match",
-    "dedupeKey": "post-123",
+    "dedupeKey": "eztrak:BLD2026-0001",
     "automated": true,
     "signalFactors": {
       "directMatches": 1,
@@ -231,7 +207,9 @@ npm run sourcer:check
 npm test -- --runInBand
 ```
 
-- `tests/matcher.test.js` — Scoring logic validation
+- `tests/permits.test.js`, `tests/permits-accela.test.js` — Permit sources
+- `tests/run-report.test.js` — Run report (live sources only, Hamilton first)
+- `tests/lead-email.test.js` — Lead notification email
 - `tests/dedup.test.js` — Dedup store behavior
 - `tests/payload.test.js` — Lead payload shape and helpers
 - `tests/field-mapping.test.js` — Zap field extraction
@@ -245,7 +223,8 @@ npm test -- --runInBand
 ## Run Reports
 
 After each poll cycle (live mode only), a run-report email is sent summarizing:
-- Total matches found (reddit, craigslist, apify)
+- Live sources first (Hamilton County, Cincinnati, Butler County) with status and fetched/matched/emailed
+- Top leads (no contact details)
 - Counts: fetched, evaluated, matched, rejected, relayed per source
 - Any errors encountered
 - Duration and timestamp
@@ -261,9 +240,8 @@ Report is always sent, even if zero matches found (configurable via `LEAD_SOURCE
 - `RESEND_API_KEY` not in effective environment. Check `.env`, `.env.local`, `.vercel/.env.production.local`.
 
 ### No leads found
-- Check Reddit/Craigslist/Apify are enabled: `LEAD_SOURCER_ENABLE_REDDIT=true` etc.
-- Check scoring thresholds and keyword config in source files.
-- Try `LEAD_SOURCER_SKIP_DEDUP=true` to test without dedup filtering.
+- Check the permit sources are enabled: `LEAD_SOURCER_ENABLE_PERMITS_HAMILTON=true` etc.
+- Check keyword config (`LEAD_SOURCER_PERMITS_KEYWORDS`, `LEAD_SOURCER_ACCELA_TYPE_KEYWORDS`).
 
 ### Leads not relayed
 - Check `RESEND_API_KEY` is set. The webhook is retired.

@@ -291,8 +291,8 @@ describe('county permit sources', () => {
     });
 
     test('run health treats county permits as opt-in', () => {
-        const summary = { sourceStatuses: { reddit: 'ok', 'permits-hamilton': 'degraded', 'permits-butler': 'degraded' }, errors: [] };
-        expect(assessRunHealth(summary, { reddit: true, craigslist: false, apify: false }).unhealthySources).toEqual([]);
-        expect(assessRunHealth(summary, { reddit: true, craigslist: false, apify: false, 'permits-hamilton': true }).unhealthySources).toEqual(['permits-hamilton']);
+        const summary = { sourceStatuses: { permits: 'ok', 'permits-hamilton': 'degraded', 'permits-butler': 'degraded' }, errors: [] };
+        expect(assessRunHealth(summary, { permits: true }).unhealthySources).toEqual([]);
+        expect(assessRunHealth(summary, { permits: true, 'permits-hamilton': true }).unhealthySources).toEqual(['permits-hamilton']);
     });
 });

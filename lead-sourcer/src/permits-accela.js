@@ -158,6 +158,17 @@ export function buildCountyPermitLead(county, permit, contact = null, scoreResul
     payload.metadata.city = city || '';
     payload.metadata.estimatedCost = permit.cost > 0 ? permit.cost : null;
     payload.metadata.workSummary = String(permit.description || permit.recordType || '').slice(0, 120);
+    // Structured fields for the internal lead notification email (src/lead-email.js).
+    payload.metadata.permit = {
+        jurisdiction: county.jurisdiction,
+        address: permit.address || '',
+        recordType: permit.recordType || '',
+        description: permit.description || '',
+        contractorType: contact?.types?.join('; ') || permit.licenseType || '',
+        contactRole: permit.contactRole || '',
+        date: permit.date || '',
+        status: permit.status || '',
+    };
     if (payload.metadata.routeId !== `lead-sourcer/${county.source}`) throw new Error(`unexpected routeId ${payload.metadata.routeId}`);
     return payload;
 }

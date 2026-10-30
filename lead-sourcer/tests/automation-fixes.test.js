@@ -1,40 +1,6 @@
 import { jest } from '@jest/globals';
-import { countResultMarkers, extractCraigslistPostId, parseResultsFromHtml } from '../src/craigslist.js';
 import { deliverLead } from '../src/relay.js';
 import { assessRunHealth } from '../src/run-health.js';
-
-const CURRENT_CL_HTML = `
-<ol class="cl-static-search-results">
-  <li class="cl-static-search-result" title="Need granite countertop installed">
-    <a href="https://www.craigslist.org/view/d/fairfield-need-granite-countertop/r3AUappUGQafRP9tWBnvTL">
-      <div class="title">Need granite countertop installed</div>
-    </a>
-  </li>
-  <li class="cl-static-search-result" title="Kitchen remodel help &amp; quote">
-    <a href="https://cincinnati.craigslist.org/lbg/d/mason-kitchen-remodel/7801234567.html">
-      <div class="title">Kitchen remodel help</div>
-    </a>
-  </li>
-</ol>`;
-
-describe('craigslist parser (2026 markup)', () => {
-    test('parses new /view/d/ listing URLs and legacy .html URLs', () => {
-        const results = parseResultsFromHtml(CURRENT_CL_HTML);
-        expect(results).toHaveLength(2);
-        expect(results[0]).toMatchObject({ title: 'Need granite countertop installed', postId: 'r3AUappUGQafRP9tWBnvTL' });
-        expect(results[1]).toMatchObject({ title: 'Kitchen remodel help & quote', postId: '7801234567' });
-    });
-
-    test('counts result markers so a markup change is detectable', () => {
-        expect(countResultMarkers(CURRENT_CL_HTML)).toBe(2);
-        expect(countResultMarkers('<html></html>')).toBe(0);
-    });
-
-    test('extracts stable ids', () => {
-        expect(extractCraigslistPostId('https://www.craigslist.org/view/d/x-y/abcDEF123')).toBe('abcDEF123');
-        expect(extractCraigslistPostId('https://cincinnati.craigslist.org/ggg/d/x/123.html')).toBe('123');
-    });
-});
 
 describe('deliverLead', () => {
     test('marks seen only after a successful relay', async () => {
@@ -61,18 +27,26 @@ describe('deliverLead', () => {
 describe('assessRunHealth', () => {
     test('flags every enabled source failing', () => {
         const health = assessRunHealth({
-            sourceStatuses: { reddit: 'degraded', craigslist: 'parse-error', apify: 'disabled' },
+            sourceStatuses: { 'permits-hamilton': 'degraded', permits: 'parse-error', 'permits-butler': 'disabled' },
             errors: [],
-        }, { reddit: true, craigslist: true, apify: true });
-        expect(health).toEqual({ enabledCount: 2, unhealthySources: ['reddit', 'craigslist'], allFailed: true });
+        }, { 'permits-hamilton': true, permits: true, 'permits-butler': false });
+        expect(health).toEqual({ enabledCount: 2, unhealthySources: ['permits-hamilton', 'permits'], allFailed: true });
     });
 
     test('healthy run when enabled sources are ok', () => {
         const health = assessRunHealth({
-            sourceStatuses: { reddit: 'disabled', craigslist: 'ok', apify: 'disabled' },
+            sourceStatuses: { 'permits-hamilton': 'ok', permits: 'ok', 'permits-butler': 'disabled' },
             errors: [],
-        }, { reddit: false, craigslist: true, apify: false });
+        }, { 'permits-hamilton': true, permits: true, 'permits-butler': false });
         expect(health.unhealthySources).toEqual([]);
         expect(health.allFailed).toBe(false);
+    });
+
+    test('retired sources (Reddit, Craigslist, Apify) never count, even if a stale flag says enabled', () => {
+        const health = assessRunHealth({
+            sourceStatuses: { reddit: 'degraded', craigslist: 'parse-error', apify: 'error', 'permits-hamilton': 'ok' },
+            errors: [{ source: 'apify', message: 'boom' }],
+        }, { reddit: true, craigslist: true, apify: true, 'permits-hamilton': true });
+        expect(health).toEqual({ enabledCount: 1, unhealthySources: [], allFailed: false });
     });
 });
