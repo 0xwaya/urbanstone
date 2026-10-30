@@ -89,6 +89,17 @@ small route calling `crm_keepalive`) or upgrade the plan.
   save is capped at 2.5 s; the lead sourcer now stops after the first timeout/network error instead of
   waiting 8 s per lead.
 
+## Deployment status (Fri Oct 30, 2026, ~3 PM ET)
+
+Deployed at Edward's request. Steps 1–5 of the checklist below are done:
+
+- Workflow lines: committed to `main` in `20969cf`.
+- GitHub: secrets `SUPABASE_PROJECT_URL` and `SUPABASE_SERVICE_ROLE_KEY` exist; variable
+  `CRM_SYNC_ENABLED=true` set. The lead sourcer saves to the CRM from its next live run.
+- Vercel Production: `CRM_SYNC_ENABLED=true` added; the existing `SUPABASE_PROJECT_URL` and
+  `SUPABASE_SERVICE_ROLE_KEY` are reused.
+- PR #5 squash-merged into `main` and Production redeployed from it.
+
 ## Deployment checklist (Edward only)
 
 1. **Merge PR #5** into `main` (Squash and merge).
