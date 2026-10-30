@@ -22,7 +22,7 @@ const has = (name) => Boolean(String(process.env[name] || '').trim());
 
 const mode = resolveRunMode();
 const apifyEnabled = flag('LEAD_SOURCER_ENABLE_APIFY');
-const anyDelivery = has('RESEND_API_KEY') || has('LEAD_WEBHOOK_URL');
+const anyDelivery = has('RESEND_API_KEY');
 
 // [name, enabled, configured]
 const checks = [
@@ -40,7 +40,7 @@ const checks = [
     // A spend cap is mandatory for the pay-per-event Marketplace actor.
     ['APIFY_FB_MARKETPLACE_MAX_CHARGE_USD (0 < cap <= 2)', apifyEnabled && APIFY_ENABLE_FB_MARKETPLACE, APIFY_FB_MARKETPLACE_MAX_CHARGE_USD > 0 && APIFY_FB_MARKETPLACE_MAX_CHARGE_USD <= 2],
     // Live mode must have at least one channel; previously a missing key was reported as "disabled" and passed.
-    ['delivery channel (RESEND_API_KEY or LEAD_WEBHOOK_URL)', mode === 'live', anyDelivery],
+    ['delivery channel (RESEND_API_KEY)', mode === 'live', anyDelivery],
 ];
 
 console.log(`[sourcer:check] mode=${mode}`);
@@ -57,7 +57,7 @@ if (isPermitsEnabled()) console.log(`[sourcer:check] permits: SOCRATA_APP_TOKEN 
 if (apifyEnabled && APIFY_ENABLE_FB_MARKETPLACE) {
     console.log(`[sourcer:check] fb-marketplace: cap=$${APIFY_FB_MARKETPLACE_MAX_CHARGE_USD}/run, reviewOnly=${APIFY_FB_MARKETPLACE_REVIEW_ONLY}`);
 }
-console.log(`[sourcer:check] resend: ${has('RESEND_API_KEY') ? 'set' : 'not set'}, webhook: ${has('LEAD_WEBHOOK_URL') ? 'set' : 'not set'}`);
+console.log(`[sourcer:check] resend: ${has('RESEND_API_KEY') ? 'set' : 'not set'}, webhook: retired`);
 
 if (failures > 0) {
     console.warn(`[sourcer:check] ${failures} enabled requirement(s) are missing.`);

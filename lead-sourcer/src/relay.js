@@ -1,21 +1,15 @@
 /**
- * Relay a payload to notification backends.
- * Primary channel: Resend email. Secondary channel: webhook (Zap).
+ * Relay a payload to the sales inbox.
+ * Delivery is Resend email only. The Zapier catch-hook was retired on
+ * 2026-10-30. LEAD_WEBHOOK_URL is ignored. See docs/RETIRED-zapier.md.
  */
-import { toZapReadyPayload } from './core/field-mapping.js';
-
-function envFlag(name, defaultValue = true) {
-    const raw = String(process.env[name] || '').trim().toLowerCase();
-    if (!raw) return defaultValue;
-    return !['0', 'false', 'no', 'off'].includes(raw);
-}
 
 function escapeHtml(value) {
     return String(value || '')
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
+        .replace(/&/g, '&')
+        .replace(/</g, '<')
+        .replace(/>/g, '>')
+        .replace(/"/g, '"')
         .replace(/'/g, '&#39;');
 }
 
@@ -42,28 +36,6 @@ function buildDefaultResendContent(payload) {
     const html = `<pre style="font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace; white-space: pre-wrap;">${escapeHtml(text)}</pre>`;
 
     return { subject, text, html };
-}
-
-async function sendViaWebhook(zapPayload) {
-    const webhookUrl = String(process.env.LEAD_WEBHOOK_URL || '').trim();
-    if (!webhookUrl) {
-        console.warn('[relay] LEAD_WEBHOOK_URL not set; skipping webhook relay.');
-        return { sent: false, reason: 'missing_webhook_url' };
-    }
-
-    const response = await fetch(webhookUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(zapPayload),
-    });
-
-    if (!response.ok) {
-        const text = await response.text().catch(() => '');
-        throw new Error(`Webhook relay failed: ${response.status} ${text}`);
-    }
-
-    console.log(`[relay] Webhook sent from ${zapPayload.metadata?.routeId} -> ${response.status}`);
-    return { sent: true };
 }
 
 async function sendViaResend(payload, resendOverride = {}) {
@@ -125,44 +97,27 @@ async function sendViaResend(payload, resendOverride = {}) {
 }
 
 export async function relay(payload, options = {}) {
-    const zapPayload = toZapReadyPayload(payload);
-    const resendPrimary = envFlag('LEAD_SOURCER_RESEND_PRIMARY', true);
-    const webhookSecondary = envFlag('LEAD_SOURCER_WEBHOOK_SECONDARY', true);
     const errors = [];
     let resendSent = false;
-    let webhookSent = false;
 
-    if (resendPrimary) {
-        try {
-            const resendResult = await sendViaResend(payload, options?.resend || {});
-            resendSent = Boolean(resendResult?.sent);
-            if (!resendSent) {
-                console.warn(`[relay] Resend skipped (${resendResult?.reason || 'unknown_reason'})`);
-            }
-        } catch (error) {
-            errors.push(`resend: ${error?.message || error}`);
-            console.warn('[relay] Resend failed:', error?.message || error);
+    try {
+        const resendResult = await sendViaResend(payload, options?.resend || {});
+        resendSent = Boolean(resendResult?.sent);
+        if (!resendSent) {
+            console.warn(`[relay] Resend skipped (${resendResult?.reason || 'unknown_reason'})`);
         }
+    } catch (error) {
+        errors.push(`resend: ${error?.message || error}`);
+        console.warn('[relay] Resend failed:', error?.message || error);
     }
 
-    // internalOnly payloads (permit prospects with third-party contact data) stay off the webhook.
-    if (webhookSecondary && !payload?.metadata?.internalOnly) {
-        try {
-            const webhookResult = await sendViaWebhook(zapPayload);
-            webhookSent = Boolean(webhookResult?.sent);
-        } catch (error) {
-            errors.push(`webhook: ${error?.message || error}`);
-            console.warn('[relay] Webhook failed:', error?.message || error);
-        }
-    }
-
-    if (!resendSent && !webhookSent) {
-        throw new Error(`Relay failed: ${errors.join(' | ') || 'no delivery channel succeeded'}`);
+    if (!resendSent) {
+        throw new Error(`Relay failed: ${errors.join(' | ') || 'resend did not send'}`);
     }
 
     return {
         resendSent,
-        webhookSent,
+        webhookSent: false,
     };
 }
 

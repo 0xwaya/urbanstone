@@ -3,10 +3,9 @@
  * Default behavior remains one-shot; interval mode is opt-in.
  *
  * Usage:
- *   LEAD_WEBHOOK_URL=https://hooks.zapier.com/... node src/index.js
+ *   LEAD_SOURCER_MODE=live RESEND_API_KEY=... node src/index.js
  *
- * Or add to a cron job:
- *   0 * * * * cd /path/to/lead-sourcer && LEAD_WEBHOOK_URL=... node src/index.js >> logs/poller.log 2>&1
+ * Scheduled by .github/workflows/lead-sourcer.yml. Zapier is retired.
  */
 import fs from 'node:fs/promises';
 import path from 'node:path';

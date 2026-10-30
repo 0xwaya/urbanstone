@@ -19,8 +19,8 @@ This runbook deploys the Urban Stone implementation from this repository to Verc
 
 1. Lead delivery wiring is confirmed:
 
-- LEAD_WEBHOOK_URL is set in Vercel Production and Preview environments.
-- A real end-to-end test confirms a lead reaches your actual receiver.
+- RESEND_API_KEY is set. A test quote emails sales@.
+- LEAD_WEBHOOK_URL is retired (2026-10-30). Do not set it. See lead-sourcer/docs/RETIRED-zapier.md.
 
 1. Environment parity complete:
 
@@ -31,7 +31,6 @@ This runbook deploys the Urban Stone implementation from this repository to Verc
 - NEXT_PUBLIC_FACEBOOK_URL
 - NEXT_PUBLIC_TIKTOK_URL
 - NEXT_PUBLIC_WAYALABS_URL
-- LEAD_WEBHOOK_URL
 - SUPABASE_URL
 - SUPABASE_SERVICE_ROLE_KEY
 - CONTRACTOR_SESSION_SECRET
@@ -55,10 +54,10 @@ This runbook deploys the Urban Stone implementation from this repository to Verc
 - Keep same Vercel project to preserve domains and DNS behavior.
 - Point production source to urbanstone only after preview validation.
 
-1. Validate webhook contract:
+1. Validate lead email:
 
-- Urbanstone sends expanded lead payload fields.
-- Confirm receiver accepts all fields and larger payload sizes.
+- A quote submission sends one email to sales@ via Resend.
+- No webhook receiver is involved.
 
 ## Cutover Sequence
 
@@ -69,7 +68,7 @@ This runbook deploys the Urban Stone implementation from this repository to Verc
 - Quote section start/cancel behavior
 - Form validation UX
 - Successful lead submission
-- Webhook receipt
+- The sales inbox received the email
 1. In a low-traffic window, switch production source to urbanstone.
 2. Monitor first deployment logs to completion.
 3. Run immediate production checks:
@@ -96,15 +95,15 @@ Rollback immediately if any of the following occurs for more than 5 minutes:
 
 ## Post-Cutover (First 24-72h)
 
-1. Monitor lead delivery volume and webhook failures.
+1. Monitor lead emails to sales@.
 2. Monitor Vercel logs for serverless/API anomalies.
 3. Keep rollback path intact for at least 24 hours.
 4. Archive old code path only after stable observation window.
 
 ## Notes
 
-- In production, urbanstone requires LEAD_WEBHOOK_URL; it will not use local dev webhook fallback.
-- Local dev webhook route is disabled in production by design.
+- Production lead delivery is Resend email. LEAD_WEBHOOK_URL is retired.
+- The local dev webhook route is not the production path.
 - Contractor magic-link emails require RESEND_API_KEY and a verified sender domain in Resend.
   The default sender uses the `send.urbanstone.co` subdomain — verify this subdomain in the Resend
   dashboard before go-live, or override via CONTRACTOR_EMAIL_FROM.

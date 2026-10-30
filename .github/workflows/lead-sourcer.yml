@@ -3,7 +3,8 @@ name: Lead Sourcer
 # Scheduled runner for lead-sourcer/. Replaces the removed Vercel cron (which
 # had no runner to call) and the old laptop cron.
 #
-# Safe by default: runs in review-only mode (scan + log, no email/webhook)
+# Safe by default: runs in review-only mode (scan + log, no email).
+# Zapier was retired 2026-10-30. Do not pass LEAD_WEBHOOK_URL.
 # until the repo variable LEAD_SOURCER_MODE is set to "live".
 # The sourcer never contacts the authors of posts.
 
@@ -78,13 +79,11 @@ jobs:
       LEAD_SOURCER_COOLDOWN_HOURS: ${{ vars.LEAD_SOURCER_COOLDOWN_HOURS || '3' }}
       LEAD_SOURCER_FORCE_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.force && 'true' || 'false' }}
       LEAD_SOURCER_TRACING_ENABLED: 'false'
-      LEAD_SOURCER_WEBHOOK_SECONDARY: 'false'
       LEAD_SOURCER_ALERT_EMAIL: ${{ vars.LEAD_SOURCER_ALERT_EMAIL || 'sales@urbanstone.co' }}
       LEAD_SOURCER_RUN_REPORT_EMAIL: ${{ vars.LEAD_SOURCER_ALERT_EMAIL || 'sales@urbanstone.co' }}
       LEAD_SOURCER_EMAIL_FROM: ${{ vars.LEAD_SOURCER_EMAIL_FROM || 'Urban Stone <sales@urbanstone.co>' }}
       LEAD_SOURCER_RUN_REPORT_EMAIL_FROM: ${{ vars.LEAD_SOURCER_EMAIL_FROM || 'Urban Stone <sales@urbanstone.co>' }}
       RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
-      LEAD_WEBHOOK_URL: ${{ secrets.LEAD_WEBHOOK_URL }}
       REDDIT_CLIENT_ID: ${{ secrets.REDDIT_CLIENT_ID }}
       REDDIT_CLIENT_SECRET: ${{ secrets.REDDIT_CLIENT_SECRET }}
       LEAD_SOURCER_REDDIT_USER_AGENT: ${{ vars.LEAD_SOURCER_REDDIT_USER_AGENT }}
