@@ -6,7 +6,10 @@
  *    and read the detail page of candidates only. City of Cincinnati records
  *    in ezTrak are skipped (the Socrata "permits" source covers the city).
  *  - butler-county: Butler County ACA (aca-prod.accela.com/BUTLER). The grid
- *    carries a description, so the keyword filter runs before any detail fetch.
+ *    carries a short description that often omits kitchen or bath, so a
+ *    residential alteration with no keyword on the list line still gets a
+ *    detail read (cap 20 per run). The keyword filter then runs on the full
+ *    description.
  *
  * Same contract as permits.js: keyword/exclusion lists (LEAD_SOURCER_PERMITS_*),
  * scoring, registry enrichment, internal-only leads to sales@ through relay.js
@@ -47,6 +50,9 @@ export const COUNTY_SOURCES = {
         idPrefix: 'butler',
         jurisdiction: 'Butler County, OH',
         hasListDescription: true,
+        // The list line is usually too short to mention a kitchen or bath.
+        detailWhenListMissesKeyword: true,
+        maxDetails: 20,
         skipRecord: () => false,
     },
 };
@@ -197,8 +203,9 @@ export async function pollCountyPermits(countyKey, {
     if (!county) throw new Error(`unknown county source ${countyKey}`);
     const tag = `[${county.source}]`;
     const startedAt = Date.now();
-    const modeFlags = runModeFlags(mode);
     const config = getAccelaConfig(env);
+    const detailCap = Math.min(config.maxDetails, county.maxDetails || config.maxDetails);
+    const modeFlags = runModeFlags(mode);
     const stats = createStats();
     const matches = [];
     const reject = (reason) => {
@@ -250,8 +257,10 @@ export async function pollCountyPermits(countyKey, {
             continue;
         }
         stats.typeCandidates += 1;
-        // Grids with a description let us skip detail fetches; blank descriptions still get a detail read.
-        if (county.hasListDescription && row.description && !includesAny(`${row.recordType} ${row.description}`, config.keywords)) {
+        // Butler's grid description is short. A type match with no keyword still
+        // gets a detail read; the keyword filter runs on the full description.
+        const listText = `${row.recordType} ${row.description || ''}`;
+        if (county.hasListDescription && row.description && !includesAny(listText, config.keywords) && !county.detailWhenListMissesKeyword) {
             reject('no-keyword');
             continue;
         }
@@ -268,7 +277,7 @@ export async function pollCountyPermits(countyKey, {
     // Stage 2: detail pages for the shortlist only, capped per run.
     const candidates = [];
     for (const { row, id } of shortlist) {
-        if (stats.detailFetches >= config.maxDetails) {
+        if (stats.detailFetches >= detailCap) {
             stats.detailCapped += 1;
             continue;
         }
@@ -321,7 +330,7 @@ export async function pollCountyPermits(countyKey, {
         }
         candidates.push({ permit, id, scoreResult });
     }
-    if (stats.detailCapped > 0) console.warn(`${tag} detail cap (${config.maxDetails}) reached; ${stats.detailCapped} candidate(s) left for the next run.`);
+    if (stats.detailCapped > 0) console.warn(`${tag} detail cap (${detailCap}) reached; ${stats.detailCapped} candidate(s) left for the next run.`);
 
     let registry = { index: new Map(), status: 'skipped' };
     if (candidates.length > 0 && config.enrich) {

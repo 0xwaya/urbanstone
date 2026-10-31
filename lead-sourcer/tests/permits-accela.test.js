@@ -63,7 +63,10 @@ const hamiltonServer = () => fakeAca({
     results: ['hamilton-results-1.html', 'hamilton-results-2.html'],
     details: { kitchen: 'hamilton-detail-kitchen.html', owner: 'hamilton-detail-owner.html', nokeyword: 'hamilton-detail-nokeyword.html' },
 });
-const butlerServer = () => fakeAca({ results: ['butler-results.html'], details: { kitchen: 'butler-detail-kitchen.html', blank: 'hamilton-detail-owner.html' } });
+const butlerServer = () => fakeAca({
+    results: ['butler-results.html'],
+    details: { kitchen: 'butler-detail-kitchen.html', basement: 'butler-detail-basement.html', blank: 'hamilton-detail-owner.html' },
+});
 
 function harness(overrides = {}) {
     const seen = new Set();
@@ -221,18 +224,18 @@ describe('county permit sources', () => {
         expect(logged).not.toMatch(/example-builders\.test|555-01/);
     });
 
-    test('butler: list-description keyword filter before detail fetch; live mode relays to sales@ only', async () => {
+    test('butler: a list line with no keyword still opens the detail page, capped at 20', async () => {
+        expect(COUNTY_SOURCES['butler-county'].maxDetails).toBe(20);
         const { fetchImpl, calls } = butlerServer();
         const h = harness({ fetchImpl, mode: 'live' });
         const { matches, stats } = await pollCountyPermits('butler-county', h);
-        expect(stats).toMatchObject({ fetched: 5, typeCandidates: 3, detailFetches: 2, matches: 1, relayed: 1 });
-        // Blank grid description falls through to the detail page (here an owner-pulled record).
-        expect(stats.rejectReasons).toMatchObject({ 'no-keyword': 1, 'excluded-type': 1, 'no-detail-link': 1, 'owner-pulled': 1 });
-        expect(calls.filter((c) => c.url.includes('CapDetail'))).toHaveLength(2);
-        expect(matches[0].dedupeKey).toBe('butler:26BLD-000201');
-        expect(matches[0].metadata.routeId).toBe('lead-sourcer/permits-butler');
-        expect(matches[0].lead.projectDetails).toMatch(/Work: Smith Kitchen Kitchen remodel with new countertops/);
-        expect(h.relayFn).toHaveBeenCalledTimes(1);
+        expect(stats).toMatchObject({ fetched: 5, typeCandidates: 3, detailFetches: 3, matches: 2, relayed: 2 });
+        expect(stats.rejectReasons).toMatchObject({ 'excluded-type': 1, 'no-detail-link': 1, 'owner-pulled': 1 });
+        expect(stats.rejectReasons['no-keyword']).toBeUndefined();
+        expect(calls.filter((c) => c.url.includes('CapDetail')).map((c) => new URL(c.url).searchParams.get('id'))).toEqual(['kitchen', 'basement', 'blank']);
+        expect(matches.map((match) => match.dedupeKey)).toEqual(['butler:26BLD-000201', 'butler:26BLD-000202']);
+        expect(matches[1].lead.projectDetails).toMatch(/remodel the kitchen/);
+        expect(h.relayFn).toHaveBeenCalledTimes(2);
 
         const savedEnv = { ...process.env };
         const savedFetch = global.fetch;

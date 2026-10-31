@@ -16,10 +16,12 @@ and `APIFY_*` have no effect.
   (`src/accela.js` shared scraper, `src/permits-accela.js` county configs). Anonymous date-range General
   Search only (never the reCAPTCHA pages), 1 request/sec, timeouts + retries, capped detail fetches.
   Record-type filter first, then the `LEAD_SOURCER_PERMITS_KEYWORDS` / exclusion lists shared with the
-  Cincinnati permits source; owner-pulled permits are skipped. Leads are internal-only (sales@), dedupe
+  Cincinnati permits source. Butler's list line is often too short, so a residential alteration with no
+  keyword there still opens the detail page (20 per run) and the keyword filter runs on the full description.
+  Owner-pulled permits are skipped. Leads are internal-only (sales@), dedupe
   keys `eztrak:<permit>` / `butler:<permit>`, routes `lead-sourcer/permits-hamilton` / `lead-sourcer/permits-butler`.
   Switches: `LEAD_SOURCER_ENABLE_PERMITS_HAMILTON`, `LEAD_SOURCER_ENABLE_PERMITS_BUTLER` (default false).
-  Tuning: `LEAD_SOURCER_ACCELA_LOOKBACK_DAYS` (7), `_MAX_PAGES` (40), `_MAX_DETAILS` (40 per county per run),
+  Tuning: `LEAD_SOURCER_ACCELA_LOOKBACK_DAYS` (7), `_MAX_PAGES` (40), `_MAX_DETAILS` (40; Butler uses 20),
   `_MIN_INTERVAL_MS` (1000), `_TIMEOUT_MS` (30000), `_RETRIES` (2), `_TYPE_KEYWORDS`, `_TYPE_EXCLUDE`.
   Warn-only in run health. Run one county: `npm run poll:permits-hamilton` / `npm run poll:permits-butler`.
 
