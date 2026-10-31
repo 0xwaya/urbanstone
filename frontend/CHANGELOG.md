@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+
+- Projects: Added the Mason, OH island modification (`mason-island-modification` job): before/after of lowering the island's raised back wall to a single-level top (4 photos, EN/ES). Its after photo replaces the standalone `cincy-white-island` entry, which was the same job; homepage rotation stays at 8.
+
 ## [2.2.0] - 2026-10-31
 
 - Invite-verified reviews auto-publish on submit (`REVIEWS_AUTO_PUBLISH`, default on) and appear on `/` and `/es` immediately; Unpublish/Reject in `/admin/reviews` still takes one down.
