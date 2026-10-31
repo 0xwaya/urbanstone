@@ -8,7 +8,7 @@ import { ListingLink, useProjectLightbox } from './ProjectLightbox';
 import { projectsContent } from '../../data/projects-content';
 import { getProjectsByJob } from '../../data/projects';
 import { getCanonicalUrl, getSiteUrl } from '../../lib/site';
-import { buildBreadcrumbSchema } from '../../lib/seo';
+import { buildBreadcrumbSchema, getBusinessId } from '../../lib/seo';
 
 /** Full project gallery (/projects and /es/projects), grouped by job. */
 export default function ProjectsPage({ language = 'en' }) {
@@ -19,15 +19,51 @@ export default function ProjectsPage({ language = 'en' }) {
     const path = es ? '/es/projects' : '/projects';
     const home = es ? '/es' : '/';
     const canonicalUrl = getCanonicalUrl(path);
-    const ogImageUrl = `${getSiteUrl()}/api/og-image`;
-    const title = es ? 'Proyectos | Urban Stone Collective, Cincinnati' : 'Projects | Urban Stone Collective, Cincinnati';
+    const siteUrl = getSiteUrl();
+    const allProjects = groups.flatMap((job) => job.projects);
+    const coverPhoto = allProjects[0]?.photos[0];
+    const ogImageUrl = coverPhoto ? `${siteUrl}${coverPhoto.src}` : `${siteUrl}/api/og-image`;
+    const ogImageAlt = coverPhoto?.alt || 'Urban Stone Collective';
+    const title = es ? 'Nuestros proyectos en Cincinnati: baños y cubiertas | Urban Stone' : 'Our Projects in Cincinnati: Bathrooms & Countertops | Urban Stone';
     const description = es
-        ? 'Fotos reales de proyectos de Urban Stone Collective en el área de Cincinnati: baños a medida, encimeras de cocina y trabajos en piedra.'
-        : 'Real photos of Urban Stone Collective projects around Greater Cincinnati: custom bathrooms, kitchen countertops and stonework.';
+        ? 'Fotos reales de proyectos de Urban Stone Collective en el área de Cincinnati: baños a medida, cubiertas de cocina y trabajos en piedra, incluido un loft en Over-the-Rhine.'
+        : 'Real photos of Urban Stone Collective projects around Greater Cincinnati: custom bathrooms, kitchen countertops and stonework, including an Over-the-Rhine loft.';
     const breadcrumbSchema = buildBreadcrumbSchema([
         { name: es ? 'Inicio' : 'Home', url: getCanonicalUrl(home) },
         { name: copy.pageTitle, url: canonicalUrl },
     ]);
+    // CollectionPage + ImageGallery of real job photos, tied to the canonical business node.
+    const gallerySchema = {
+        '@context': 'https://schema.org',
+        '@type': 'CollectionPage',
+        '@id': `${canonicalUrl}#webpage`,
+        url: canonicalUrl,
+        name: title,
+        description,
+        inLanguage: es ? 'es-US' : 'en-US',
+        isPartOf: { '@id': `${siteUrl}/#website` },
+        about: { '@id': getBusinessId(siteUrl) },
+        primaryImageOfPage: coverPhoto ? `${siteUrl}${coverPhoto.src}` : undefined,
+        mainEntity: {
+            '@type': 'ImageGallery',
+            name: copy.pageTitle,
+            description: copy.pageIntro,
+            numberOfItems: allProjects.reduce((n, p) => n + p.photos.length, 0),
+            associatedMedia: allProjects.flatMap((project) =>
+                project.photos.map((photo) => ({
+                    '@type': 'ImageObject',
+                    contentUrl: `${siteUrl}${photo.src}`,
+                    url: `${siteUrl}${photo.src}`,
+                    width: photo.width,
+                    height: photo.height,
+                    caption: `${project.title}, ${project.location}`,
+                    description: photo.alt,
+                    creator: { '@id': getBusinessId(siteUrl) },
+                    copyrightHolder: { '@id': getBusinessId(siteUrl) },
+                })),
+            ),
+        },
+    };
 
     return (
         <>
@@ -44,9 +80,19 @@ export default function ProjectsPage({ language = 'en' }) {
                 <meta property="og:type" content="website" />
                 <meta property="og:url" content={canonicalUrl} />
                 <meta property="og:site_name" content="Urban Stone Collective" />
+                <meta property="og:locale" content={es ? 'es_US' : 'en_US'} />
+                <meta property="og:locale:alternate" content={es ? 'en_US' : 'es_US'} />
                 <meta property="og:image" content={ogImageUrl} />
+                <meta property="og:image:alt" content={ogImageAlt} />
+                {coverPhoto ? <meta property="og:image:width" content={String(coverPhoto.width)} /> : null}
+                {coverPhoto ? <meta property="og:image:height" content={String(coverPhoto.height)} /> : null}
                 <meta name="twitter:card" content="summary_large_image" />
+                <meta name="twitter:title" content={title} />
+                <meta name="twitter:description" content={description} />
+                <meta name="twitter:image" content={ogImageUrl} />
+                <meta name="twitter:image:alt" content={ogImageAlt} />
                 <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
+                <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(gallerySchema) }} />
             </Head>
             <div id="top" className="min-h-screen bg-bg text-text selection:bg-accent selection:text-white">
                 <div className="page-shell mx-auto max-w-7xl px-4 sm:px-8">

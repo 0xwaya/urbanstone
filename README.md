@@ -110,6 +110,12 @@ Contractor portal setup:
 - direct contractor inquiries now route to email/text from inside the portal instead of the residential estimate form
 - contractor pricing email preview can be sent with `npm run contractor:email:preview`
 
+Homepage and projects (Oct 2026):
+
+- homepage order: hero, fall offer, What we do (services), Recent projects (rotating gallery), materials + estimate form, contractor partner section, FAQ, reviews
+- `/projects` and `/es/projects` show every real job photo, grouped by job; add new ones with `npm run projects:add` and `frontend/data/projects.js` (see `frontend/README.md`, "Projects Gallery")
+- no client names, street addresses or listing links on project pages
+
 The frontend now includes a mobile-spacing pass for the live landing page, including the quote card, hero layout, and supplier browsing flow.
 
 Recent supplier-browser updates in the frontend include:

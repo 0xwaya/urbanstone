@@ -5,14 +5,15 @@
 //   1. From frontend/: `npm run projects:add -- <job-id> path/to/*.jpg`
 //      (resizes, strips EXIF/GPS, writes public/projects/<job-id>/ and prints a starter entry).
 //   2. If it's a new job, add it to `jobs` below (location stays city-level unless the
-//      owner approves more; `listing` is optional and only for links the owner gave us).
+//      owner approves more). Do NOT add listing/rental/sale links (owner decision 2026-10-31).
 //   3. Paste the printed entry into `projects` below and fill the TODOs. `photos[0]` is the cover. Give every photo
 //      an English and Spanish alt text that describes what is visible.
 //   4. `featured: true` puts it in the homepage rotation (first MAX_FEATURED featured entries,
 //      in file order, so put new work at the top). Every project is on /projects.
 //   `npx vitest run tests/projects-data.test.js` checks that files exist and fields are filled.
 //
-// Rules: no client names, no addresses beyond what the owner approved, no brands, specs or prices.
+// Rules: no client names, no street addresses (city/neighborhood only, owner-approved), no listing
+// links, no brands, specs or prices.
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const jobs = {

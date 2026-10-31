@@ -65,3 +65,14 @@
 - Infra: Added .gitignore to prevent chatbot source/config from being pushed until fully trained
 - Troubleshooting: Documented port/static asset issues and fixes
 - Backend: Noted chatbot backend requires `ollama` binary for LLM inference
+
+## [2.0.3] - 2026-10-31
+
+- Services: Added a "What we do" section (`components/ServicesSection.jsx`, `data/services-content.js`) covering countertops, cabinets, kitchen and bath remodels, interior renovations and redesign, full flips, high-end custom bathrooms, and owner-run job-site and contractor/sub management with collective crews (remodeling, roofing, framing, painting, flooring) and a structural engineering partner (PR #7).
+- Contractors: Reworked the contractor partner section and moved it below the materials and estimate form so the homeowner path comes first (PR #7).
+- SEO: Business schema description and offer catalog now include remodels, flips, custom bathrooms and project management; `/llms.txt` describes the full service set (PR #7).
+- Projects: Added a data-driven projects gallery. `data/projects.js` is the single source; the homepage "Recent projects around Cincinnati" section auto-rotates featured projects (pauses on hover/focus, swipe/arrow/dot controls, respects reduced motion) with a lightbox.
+- Projects: Added `/projects` and `/es/projects` pages listing every project grouped by job, plus a "Projects" footer link.
+- Projects: Added `npm run projects:add -- <job-id> <photos…>` (`scripts/add-project-photos.mjs`) to resize photos, strip EXIF/GPS and print a starter data entry.
+- Projects: No listing, rental or sale links on project pages (owner decision); `tests/projects-data.test.js` enforces complete bilingual data, existing files and alt text.
+- SEO: `/projects` pages have localized titles/descriptions, canonical + `hreflang` (en-US, es-US, x-default), Open Graph/Twitter cards using a real project photo, breadcrumb JSON-LD, and `CollectionPage` + `ImageGallery` JSON-LD with an `ImageObject` per photo tied to the business node. Both URLs are in `sitemap.xml`, and `/llms.txt` links the gallery and lists current projects (`tests/projects-seo.test.js`).
