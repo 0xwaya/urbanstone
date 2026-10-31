@@ -6,12 +6,12 @@ Nothing here posts anything until Edward supplies credentials **and** approves t
 ## Layout
 ```
 social/instagram/
-  config.json              schedule (06:00 + 16:00 America/New_York), brand, formats, logo stamp, hashtag mix, approval, Graph API version
+  config.json              schedule (06:00 + 16:00 America/New_York), brand, formats, logo stamp, 5-tag hashtag slots, approval, Graph API version
   brand/                   logo.tex (TikZ source), logo.pdf, render_logo.sh -> logo.png/svg, logo-icon.png (stamp), colors.txt
   fonts/                   Cormorant Garamond + Manrope (Google Fonts, OFL) - kept for future text graphics
   data/design_space.json   stones (repo catalog + labeled inspiration looks), cabinets, styles, lighting, layouts, hardware
   data/talking_points.json every caption fact, each with its repo source (Hero.jsx, homepage-content.js ...)
-  data/hashtags.json       tiered pools (high / mid / niche by material / local) with sourced post-count estimates
+  data/hashtags.json       5-slot pools (material / detail / application / local) + dropped list, sourced counts
   data/analytics.db        SQLite analytics (git-ignored, created on first run)
   data/weights.json        optional output of `analytics.py winners` (not read by the generator yet)
   state/history.json       every combo used (stone|cabinets|style|lighting|layout), CTA, hashtag set -> no repeats
@@ -88,11 +88,13 @@ outside this repo (Grok Bot routine).
   "Offer good October 15 - December 15, 2026." The caption line is added only when the slot date falls in
   that window, so it stops automatically after Dec 15.
 - CTA rotates DM -> link in bio -> call (513) 307-5840.
-- Hashtags: 3 high + 6 mid + 5 niche (material-specific, stone-aware) + 4 local = 18, rotating so each set
-  differs from the last 6 posts by 6+ tags. Counts in `hashtags.json` are third-party estimates
-  (best-hashtags.com, iqhashtags.com, displaypurposes.com, Oct 29 2026); `posts: null` = unverified tier.
-- Note: the older brand standard (brand/social-media-standard.md) asked for 3-5 hashtags; Edward's
-  Instagram brief asked for a high/niche mix, so 18 is used. Change `hashtags_per_post` to trim.
+- Hashtags (rebuilt 2026-10-31, see `hashtag-study-2026-10-31.md`): Instagram caps posts at **5 hashtags** (Dec 2025),
+  so each post gets material (#granitecountertops ...) + detail (stone/finish/trade: #blackgranite, #leatheredgranite,
+  #countertops ...) + application (#kitchenisland, #outdoorkitchen, #bathroomremodel ...) + #cincinnati + 1 rotating
+  local tag (#cincinnatiohio, #cincy, #nky, #westchesterohio ...). Each set differs from each of the last 3 posts by 4+ tags
+  (`hashtag_set_min_difference`, `hashtag_history_window`). Giant generic tags (#interiordesign, #homedecor,
+  #kitchen ...) are listed under `dropped` in `data/hashtags.json` and never used. Counts are third-party estimates
+  (best-hashtags.com); `posts: null` = unverified. `rules.py <queue_folder>` warns when a caption has more than 5 tags.
 
 ## Approval gate
 `require_approval: true` (from the brand standard: nothing publishes without Edward's OK). Approve per post
@@ -136,8 +138,8 @@ GitHub secrets/variables of 0xwaya/urbanstone, the Vercel project env, or /works
    refuses any level not in the creator's `privacy_level_options`.
 - Modes (`social/tiktok/config.json -> mode`): `photo` (default; PHOTO post of `post_9x16.jpg`, PULL_FROM_URL)
   or `video` (7 s slow Ken Burns zoom MP4 built by ffmpeg: `tiktok_publish.py video --queue-id <id>`).
-- TikTok caption: hook + promo (in window) + CTA + AI note + 5 tags (#kitchentok #countertops
-  #<material> #cincinnati #kitchenremodel).
+- TikTok caption: hook + promo (in window) + CTA + AI note + 5 tags (#<material>countertops #countertops
+  #<application> #cincinnati #kitchentok, or #beforeandafter for before-and-after posts).
 
 ## Analytics
 SQLite at `social/instagram/data/analytics.db` (git-ignored: it is runtime data; the repo stores no other

@@ -1,260 +1,80 @@
 {
-  "_note": "Post counts are third-party estimates retrieved 2026-10-29 from best-hashtags.com (countertops/worktops/cincinnati pages), iqhashtags.com (#kitchen) and displaypurposes.com (#cincinnati). Instagram does not publish exact counts; sources disagree (e.g. #kitchendesign 9.6M vs 19.6M). Tags with count null were not verified: their tier is an estimate. Tags with only_for_stones are used only when the stone name contains one of those strings.",
-  "tiers": {
-    "high": [
-      {
-        "tag": "interiordesign",
-        "posts": "124.4M-212.2M"
-      },
-      {
-        "tag": "homedecor",
-        "posts": "97.3M-172.8M"
-      },
-      {
-        "tag": "kitchen",
-        "posts": "19.6M-27.5M"
-      },
-      {
-        "tag": "homedesign",
-        "posts": "26.0M-49.9M"
-      },
-      {
-        "tag": "kitchendesign",
-        "posts": "9.6M-19.6M"
-      },
-      {
-        "tag": "interior",
-        "posts": "68.1M-100.6M"
-      },
-      {
-        "tag": "renovation",
-        "posts": "11.1M"
-      }
+  "_note": "Rebuilt 2026-10-31 for Instagram's 5-hashtag cap (Dec 2025). See hashtag-study-2026-10-31.md. Each Instagram post gets 5 tags: material + detail + application + #cincinnati + 1 rotating local. Post counts are third-party estimates from best-hashtags.com tables (pages updated 2024-10 to 2026-10; page dates in 'source'). Instagram itself no longer shows exact counts reliably; posts: null = not verified, tier is a judgement call. only_for_stones: used only when the stone name contains one of those strings. only_for_finishes: used only for that finish. weight: relative pick weight (default 1).",
+  "dropped": {
+    "_why": "Giant generic tags (10M-200M posts) bury a small account in seconds and tell Instagram little; others are off-audience or ambiguous. Not used on new posts.",
+    "tags": ["interiordesign", "homedecor", "interior", "homedesign", "kitchen", "kitchendesign", "renovation", "remodel", "homeimprovement", "homerenovation", "kitchendecor", "kitcheninspo", "kitchensofinstagram", "kitchenideas", "newkitchen", "quartz", "stonefabrication", "countertopinstall", "graniteslab", "naturalquartzite", "kitchenrenovation", "readingohio", "cincinnatirealestate", "covington", "cincygram", "cincyhomes"]
+  },
+  "material": {
+    "granite": [{"tag": "granitecountertops", "posts": "187.5K", "source": "best-hashtags.com/hashtag/granitecountertops (2024-10-15)"}],
+    "quartz": [{"tag": "quartzcountertops", "posts": "294.7K", "source": "best-hashtags.com/hashtag/granitecountertops (2024-10-15)"}],
+    "quartzite": [{"tag": "quartzitecountertops", "posts": "23.3K", "source": "best-hashtags.com/hashtag/quartzite (2024-10-14)"}],
+    "marble": [{"tag": "marblecountertops", "posts": null, "source": "best-hashtags.com/hashtag/marblecountertops (page exists, own count not shown)"}]
+  },
+  "detail": {
+    "_why": "Second niche slot: a stone-, finish- or trade-specific tag. Stone/finish-specific tags get weight 3 so they win when they apply.",
+    "general": [
+      {"tag": "countertops", "posts": "560.7K", "source": "best-hashtags.com/hashtag/countertops (2026-10-11)", "weight": 2},
+      {"tag": "countertop", "posts": "272.1K", "source": "best-hashtags.com/hashtag/countertops (2026-10-11)"}
     ],
-    "mid": [
-      {
-        "tag": "kitchendecor",
-        "posts": "3.7M-7.1M"
-      },
-      {
-        "tag": "remodel",
-        "posts": "3.6M"
-      },
-      {
-        "tag": "homerenovation",
-        "posts": "3.4M"
-      },
-      {
-        "tag": "homeimprovement",
-        "posts": "4.1M"
-      },
-      {
-        "tag": "naturalstone",
-        "posts": "2.0M"
-      },
-      {
-        "tag": "kitchenremodel",
-        "posts": "1.8M"
-      },
-      {
-        "tag": "kitcheninspo",
-        "posts": "1.7M"
-      },
-      {
-        "tag": "kitchenisland",
-        "posts": "810.5K"
-      },
-      {
-        "tag": "kitchenideas",
-        "posts": "770.4K"
-      },
-      {
-        "tag": "kitchensofinstagram",
-        "posts": "637.4K"
-      },
-      {
-        "tag": "countertops",
-        "posts": "560.7K"
-      },
-      {
-        "tag": "newkitchen",
-        "posts": "502.5K"
-      }
+    "granite": [
+      {"tag": "granite", "posts": "1.6M", "source": "hashtags.json 2026-10-29 (best-hashtags.com)"},
+      {"tag": "naturalstone", "posts": "2.0M", "source": "best-hashtags.com/hashtag/quartzite (2024-10-14)"},
+      {"tag": "blackgranite", "posts": null, "only_for_stones": ["Absolute Black", "Black Pearl", "Leathered Black"], "weight": 3},
+      {"tag": "leatheredgranite", "posts": null, "only_for_finishes": ["leathered"], "weight": 3}
     ],
-    "niche": {
-      "general": [
-        {
-          "tag": "countertop",
-          "posts": "272.1K"
-        },
-        {
-          "tag": "kitchencountertops",
-          "posts": null
-        },
-        {
-          "tag": "stonefabrication",
-          "posts": null
-        },
-        {
-          "tag": "countertopinstall",
-          "posts": null
-        },
-        {
-          "tag": "kitchenrenovation",
-          "posts": null
-        },
-        {
-          "tag": "dreamkitchen",
-          "posts": null
-        }
-      ],
-      "quartz": [
-        {
-          "tag": "quartz",
-          "posts": "5.0M"
-        },
-        {
-          "tag": "quartzcountertops",
-          "posts": "294.7K"
-        },
-        {
-          "tag": "calacatta",
-          "posts": "73.0K",
-          "only_for_stones": [
-            "Calacatta"
-          ]
-        },
-        {
-          "tag": "calacattaquartz",
-          "posts": null,
-          "only_for_stones": [
-            "Calacatta"
-          ]
-        },
-        {
-          "tag": "whitekitchen",
-          "posts": null
-        }
-      ],
-      "granite": [
-        {
-          "tag": "granite",
-          "posts": "1.6M"
-        },
-        {
-          "tag": "granitecountertops",
-          "posts": "187.5K"
-        },
-        {
-          "tag": "graniteslab",
-          "posts": null
-        },
-        {
-          "tag": "blackgranite",
-          "posts": null,
-          "only_for_stones": [
-            "Absolute Black",
-            "Black Pearl",
-            "Leathered Black"
-          ]
-        }
-      ],
-      "quartzite": [
-        {
-          "tag": "quartzite",
-          "posts": "141.5K"
-        },
-        {
-          "tag": "quartzitecountertops",
-          "posts": null
-        },
-        {
-          "tag": "tajmahalquartzite",
-          "posts": null,
-          "only_for_stones": [
-            "Taj Mahal"
-          ]
-        },
-        {
-          "tag": "naturalquartzite",
-          "posts": null
-        }
-      ],
-      "marble": [
-        {
-          "tag": "marble",
-          "posts": "7.3M"
-        },
-        {
-          "tag": "marblecountertops",
-          "posts": null
-        },
-        {
-          "tag": "marblekitchen",
-          "posts": null
-        },
-        {
-          "tag": "carraramarble",
-          "posts": null,
-          "only_for_stones": [
-            "Carrara"
-          ]
-        }
-      ]
-    },
-    "local": [
-      {
-        "tag": "cincinnati",
-        "posts": "3.5M (displaypurposes)"
-      },
-      {
-        "tag": "cincy",
-        "posts": "548.6K"
-      },
-      {
-        "tag": "cincygram",
-        "posts": "235.5K"
-      },
-      {
-        "tag": "cincinnatiohio",
-        "posts": "152.6K"
-      },
-      {
-        "tag": "covington",
-        "posts": "226.0K"
-      },
-      {
-        "tag": "cincinnatihomes",
-        "posts": null
-      },
-      {
-        "tag": "cincyhomes",
-        "posts": null
-      },
-      {
-        "tag": "readingohio",
-        "posts": null
-      },
-      {
-        "tag": "cincinnatirealestate",
-        "posts": null
-      },
-      {
-        "tag": "northernkentucky",
-        "posts": null
-      },
-      {
-        "tag": "nky",
-        "posts": null
-      },
-      {
-        "tag": "westchesterohio",
-        "posts": null
-      },
-      {
-        "tag": "masonohio",
-        "posts": null
-      }
+    "quartz": [
+      {"tag": "calacattaquartz", "posts": null, "only_for_stones": ["Calacatta"], "weight": 3},
+      {"tag": "whitekitchen", "posts": "627.9K", "source": "best-hashtags.com/hashtag/kitchenremodel (2025-12-10)", "only_for_stones": ["Calacatta", "Carrara"]}
+    ],
+    "quartzite": [
+      {"tag": "quartzite", "posts": "141.5K", "source": "hashtags.json 2026-10-29 (best-hashtags.com)", "weight": 2},
+      {"tag": "naturalstone", "posts": "2.0M", "source": "best-hashtags.com/hashtag/quartzite (2024-10-14)"},
+      {"tag": "tajmahalquartzite", "posts": null, "only_for_stones": ["Taj Mahal Quartzite"], "weight": 3}
+    ],
+    "marble": [
+      {"tag": "marble", "posts": "7.3M", "source": "best-hashtags.com/hashtag/countertops (2026-10-11)"},
+      {"tag": "naturalstone", "posts": "2.0M", "source": "best-hashtags.com/hashtag/quartzite (2024-10-14)"},
+      {"tag": "marblekitchen", "posts": null},
+      {"tag": "carraramarble", "posts": null, "only_for_stones": ["Carrara Marble"], "weight": 3},
+      {"tag": "calacattamarble", "posts": null, "only_for_stones": ["Calacatta Gold Marble"], "weight": 3}
+    ]
+  },
+  "application": {
+    "kitchen island": [
+      {"tag": "kitchenremodel", "posts": "1.8M", "source": "best-hashtags.com/hashtag/quartzite (2024-10-14)", "weight": 2},
+      {"tag": "kitchenisland", "posts": "810.5K", "source": "best-hashtags.com/hashtag/countertops (2026-10-11)", "weight": 2},
+      {"tag": "dreamkitchen", "posts": "777.1K", "source": "best-hashtags.com/hashtag/countertops (2026-10-11)"},
+      {"tag": "kitchenremodeling", "posts": "119.6K", "source": "best-hashtags.com/hashtag/kitchenremodel (2025-12-10)"}
+    ],
+    "backsplash": [
+      {"tag": "backsplash", "posts": "385.8K", "source": "best-hashtags.com/hashtag/countertops (2026-10-11)", "weight": 2},
+      {"tag": "kitchenremodel", "posts": "1.8M", "source": "best-hashtags.com/hashtag/quartzite (2024-10-14)"}
+    ],
+    "outdoor kitchen/grill area": [
+      {"tag": "outdoorkitchen", "posts": "438.8K", "source": "best-hashtags.com/hashtag/outdoorkitchen (2024-10-15)", "weight": 3},
+      {"tag": "outdoorkitchens", "posts": "27.7K-62.9K", "source": "best-hashtags.com/hashtag/outdoorkitchen (2024-10-15)"},
+      {"tag": "outdoorkitchendesign", "posts": "10.3K", "source": "best-hashtags.com/hashtag/outdoorkitchen (2024-10-15)"}
+    ],
+    "vanity": [
+      {"tag": "bathroomremodel", "posts": null, "source": "best-hashtags.com/hashtag/bathroomremodel (~5.1K uses/7 days, 2025-09-27; total not shown)", "weight": 2},
+      {"tag": "bathroomremodeling", "posts": "105.2K", "source": "best-hashtags.com/hashtag/bathroomremodel (2025-09-27)"},
+      {"tag": "bathroomvanity", "posts": null}
+    ],
+    "fireplace": [
+      {"tag": "fireplacedesign", "posts": null},
+      {"tag": "fireplacemakeover", "posts": null}
+    ]
+  },
+  "local": {
+    "always": {"tag": "cincinnati", "posts": "3.5M-4.0M", "source": "best-hashtags.com/hashtag/northernkentucky (4.0M); displaypurposes.com (3.5M, 2026-10-29)"},
+    "rotating": [
+      {"tag": "cincinnatiohio", "posts": "152.6K", "source": "best-hashtags.com/hashtag/cincinnati (2025-11-08)", "weight": 2},
+      {"tag": "cincy", "posts": "548.6K", "source": "best-hashtags.com/hashtag/cincinnati (2025-11-08)", "weight": 2},
+      {"tag": "nky", "posts": "119.9K", "source": "best-hashtags.com/hashtag/northernkentucky (2024-10-18)"},
+      {"tag": "northernkentucky", "posts": null, "source": "best-hashtags.com/hashtag/northernkentucky (page exists, ~1 post/hour, total not shown)"},
+      {"tag": "westchesterohio", "posts": null, "source": "best-hashtags.com/hashtag/westchesterohio (page exists, total not shown)"},
+      {"tag": "cincinnatihomes", "posts": null},
+      {"tag": "masonohio", "posts": null}
     ]
   }
 }

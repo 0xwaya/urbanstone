@@ -67,7 +67,8 @@ def main(argv=None):
     else:
         renders = compose.compose(a.scene, folder, a.focus_y)
     shutil.copyfile(a.scene, os.path.join(folder, "scene" + os.path.splitext(a.scene)[1].lower()))
-    tags, set_id = hashtags.pick(scene["material"], history, seed=scene["id"], stone=scene["stone"])
+    tags, set_id = hashtags.pick(scene["material"], history, seed=scene["id"], stone=scene["stone"],
+                                 application=application, finish=scene.get("finish"))
     caption, cap_meta = captions.build(scene, history, when, hashtags.render(tags), seed=scene["id"])
     with open(os.path.join(folder, "caption.txt"), "w", encoding="utf-8") as f:
         f.write(caption + "\n")

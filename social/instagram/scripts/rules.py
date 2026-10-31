@@ -4,6 +4,7 @@
 - Live edge finish: granite only (marble chips/crumbles on a live edge).
 - Leathered: granite, marble, quartzite. Quartz: polished.
 - Outdoor kitchen / grill area: granite only (never marble, quartzite or quartz outdoors).
+- Hashtags: Instagram accepts at most 5 per post (Dec 2025); the CLI warns when a caption has more.
 
 CLI: python3 social/instagram/scripts/rules.py <queue_folder>  -> exit 1 if the post breaks a rule.
 """
@@ -60,7 +61,25 @@ def check_folder(folder):
     return v
 
 
+IG_MAX_HASHTAGS = 5  # Instagram cap since Dec 2025 (help.instagram.com/351460621611097)
+
+
+def hashtag_warnings(folder):
+    """Warn (not block) when a caption has more hashtags than Instagram accepts."""
+    import re
+    out = []
+    for name, limit in (("caption.txt", IG_MAX_HASHTAGS), ("tiktok_caption.txt", 5)):
+        p = os.path.join(folder, name)
+        if os.path.exists(p):
+            n = len(re.findall(r"(?<!\w)#\w+", open(p, encoding="utf-8").read()))
+            if n > limit:
+                out.append(f"{name} has {n} hashtags (limit {limit}); trim before posting")
+    return out
+
+
 if __name__ == "__main__":
     v = check_folder(sys.argv[1])
+    for w in hashtag_warnings(sys.argv[1]):
+        print("WARN: " + w)
     print("OK" if not v else "BLOCKED: " + "; ".join(v))
     sys.exit(1 if v else 0)

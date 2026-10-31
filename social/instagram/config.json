@@ -16,12 +16,15 @@
   },
   "label_ai_images": true,
   "hashtags_per_post": {
-    "high": 3,
-    "mid": 6,
-    "niche": 5,
-    "local": 4
+    "material": 1,
+    "detail": 1,
+    "application": 1,
+    "local": 2
   },
-  "hashtag_set_min_difference": 6,
+  "instagram_max_hashtags": 5,
+  "_hashtags_note": "Instagram caps posts at 5 hashtags (Dec 2025). Slots: material + detail + application + #cincinnati + 1 rotating local. See hashtag-study-2026-10-31.md.",
+  "hashtag_set_min_difference": 4,
+  "hashtag_history_window": 3,
   "require_approval": true,
   "image_base_url": "",
   "graph_api": {

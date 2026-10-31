@@ -137,16 +137,35 @@ class GeneratorTests(Sandbox):
             self.assertTrue(all(h["catalog"] for h in hist))
         self.assertEqual({s["material"] for s in space}, {h["material"] for h in hist})
 
-    def test_hashtags_tiered_rotating_and_stone_aware(self):
+    def test_hashtags_five_max_rotating_and_stone_aware(self):
         hist = []
-        for i in range(5):
+        dropped = set(common.load_json("data/hashtags.json")["dropped"]["tags"])
+        for i in range(6):
             tags, sid = hashtags.pick("marble", hist, seed=i, stone="Nero Marquina Marble")
-            self.assertTrue(15 <= len(tags) <= 20, len(tags))
+            self.assertEqual(len(tags), 5, tags)
+            self.assertEqual(len(set(tags)), 5)
             self.assertIn("cincinnati", tags)
+            self.assertIn("marblecountertops", tags)
             self.assertNotIn("carraramarble", tags)
-            for h in hist:
-                self.assertGreaterEqual(len(set(tags) ^ set(h["hashtags"])), 1)
+            self.assertFalse(dropped & set(tags), tags)
+            if hist:
+                self.assertGreaterEqual(len(set(tags) ^ set(hist[-1]["hashtags"])), 2)
             hist.append({"hashtags": tags})
+
+    def test_hashtags_follow_application_and_finish(self):
+        tags, _ = hashtags.pick("granite", [], seed=1, stone="Absolute Black",
+                                application="outdoor kitchen/grill area", finish="leathered")
+        self.assertIn("granitecountertops", tags)
+        self.assertTrue({"outdoorkitchen", "outdoorkitchens", "outdoorkitchendesign"} & set(tags), tags)
+        self.assertTrue({"blackgranite", "leatheredgranite", "granite", "naturalstone", "countertops",
+                         "countertop"} & set(tags), tags)
+        tags, _ = hashtags.pick("quartz", [], seed=2, stone="Taj Mahal")  # quartz Taj Mahal is not quartzite
+        self.assertNotIn("tajmahalquartzite", tags)
+        self.assertIn("quartzcountertops", tags)
+        import tiktok_caption
+        tt = tiktok_caption.tags_for({"material": "granite", "application": "outdoor kitchen/grill area",
+                                      "format": "before_after"})
+        self.assertEqual(tt, ["granitecountertops", "countertops", "outdoorkitchen", "cincinnati", "beforeandafter"])
 
     def test_caption_promo_window_and_cta_rotation(self):
         sc = prompt_builder.choose(seed=3)
@@ -181,6 +200,9 @@ class GeneratorTests(Sandbox):
             self.assertTrue(os.path.exists(os.path.join(folder, f)), f)
         tk = open(os.path.join(folder, "tiktok_caption.txt")).read()
         self.assertLessEqual(tk.count("#"), 5)
+        import re
+        ig = open(os.path.join(folder, "caption.txt"), encoding="utf-8").read()
+        self.assertLessEqual(len(re.findall(r"(?<!\w)#\w+", ig)), 5)
         self.assertEqual(common.config()["schedule_slots"], ["06:00", "16:00"])
 
 
