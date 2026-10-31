@@ -83,52 +83,74 @@ export default function ProjectsGallery({ language = 'en' }) {
                 </h2>
                 <p className="mt-3 max-w-3xl text-base leading-7 text-muted sm:text-lg">{copy.intro}</p>
 
-                <ul className="mt-6 grid gap-4 sm:grid-cols-2">
-                    {copy.projects.map((project, projectIndex) => {
-                        const [lead, ...rest] = project.photos;
-                        return (
-                            <li key={project.id} className="overflow-hidden rounded-[1.35rem] border border-border bg-panel/75">
-                                <button
-                                    type="button"
-                                    className="group relative block aspect-[3/2] w-full overflow-hidden"
-                                    onClick={show(project, 0)}
-                                    aria-label={`${copy.viewLabel}: ${project.title} (${copy.photoCount(project.photos.length)})`}
-                                >
-                                    <Image
-                                        src={lead.src}
-                                        alt={lead.alt}
-                                        fill
-                                        sizes="(min-width: 1024px) 540px, (min-width: 640px) 50vw, 100vw"
-                                        className="object-cover transition duration-500 group-hover:scale-[1.03]"
-                                        priority={projectIndex === 0}
-                                    />
-                                    <span className="absolute left-3 top-3 rounded-full bg-black/60 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-white">{project.tag}</span>
-                                </button>
-                                <div className="flex items-start justify-between gap-3 p-4">
-                                    <div>
-                                        <h3 className="font-display text-lg font-semibold text-text">{project.title}</h3>
-                                        <p className="mt-1 text-sm leading-6 text-muted">{project.text}</p>
-                                    </div>
-                                    {rest.length ? (
-                                        <div className="flex shrink-0 gap-2">
-                                            {rest.map((p, i) => (
-                                                <button
-                                                    key={p.src}
-                                                    type="button"
-                                                    className="relative h-12 w-16 overflow-hidden rounded-lg border border-border"
-                                                    onClick={show(project, i + 1)}
-                                                    aria-label={`${copy.viewLabel}: ${p.alt}`}
-                                                >
-                                                    <Image src={p.src} alt="" fill sizes="64px" className="object-cover" />
-                                                </button>
-                                            ))}
+                {copy.jobs.map((job, jobIndex) => (
+                    <div key={job.id} className="mt-6">
+                        <div className="flex flex-col gap-2 rounded-[1.35rem] border border-border bg-panel/60 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+                            <div>
+                                <h3 className="font-display text-xl font-semibold text-text">{job.title}</h3>
+                                <p className="text-sm text-muted">
+                                    <span className="font-semibold text-text">{job.location}</span>
+                                    {job.summary ? <> · {job.summary}</> : null}
+                                </p>
+                            </div>
+                            {job.listing ? (
+                                <p className="text-sm text-muted sm:text-right">
+                                    {job.listing.text}:{' '}
+                                    <a className="font-semibold text-accent underline underline-offset-4 hover:text-text" href={job.listing.url} target="_blank" rel="noopener noreferrer nofollow">
+                                        {job.listing.linkText} ↗
+                                    </a>
+                                </p>
+                            ) : null}
+                        </div>
+                        <ul className="mt-4 grid gap-4 sm:grid-cols-2">
+                            {job.projects.map((project, projectIndex) => {
+                                const [lead, ...rest] = project.photos;
+                                return (
+                                    <li key={project.id} className="overflow-hidden rounded-[1.35rem] border border-border bg-panel/75">
+                                        <button
+                                            type="button"
+                                            className="group relative block aspect-[3/2] w-full overflow-hidden"
+                                            onClick={show(project, 0)}
+                                            aria-label={`${copy.viewLabel}: ${project.title}, ${job.location} (${copy.photoCount(project.photos.length)})`}
+                                        >
+                                            <Image
+                                                src={lead.src}
+                                                alt={lead.alt}
+                                                fill
+                                                sizes="(min-width: 1024px) 540px, (min-width: 640px) 50vw, 100vw"
+                                                className="object-cover transition duration-500 group-hover:scale-[1.03]"
+                                                priority={jobIndex === 0 && projectIndex === 0}
+                                            />
+                                            <span className="absolute left-3 top-3 rounded-full bg-black/60 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-white">{project.tag}</span>
+                                        </button>
+                                        <div className="flex items-start justify-between gap-3 p-4">
+                                            <div>
+                                                <h4 className="font-display text-lg font-semibold text-text">{project.title}</h4>
+                                                <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted">{job.location}</p>
+                                                <p className="mt-1 text-sm leading-6 text-muted">{project.text}</p>
+                                            </div>
+                                            {rest.length ? (
+                                                <div className="flex shrink-0 gap-2">
+                                                    {rest.map((p, i) => (
+                                                        <button
+                                                            key={p.src}
+                                                            type="button"
+                                                            className="relative h-12 w-16 overflow-hidden rounded-lg border border-border"
+                                                            onClick={show(project, i + 1)}
+                                                            aria-label={`${copy.viewLabel}: ${p.alt}`}
+                                                        >
+                                                            <Image src={p.src} alt="" fill sizes="64px" className="object-cover" />
+                                                        </button>
+                                                    ))}
+                                                </div>
+                                            ) : null}
                                         </div>
-                                    ) : null}
-                                </div>
-                            </li>
-                        );
-                    })}
-                </ul>
+                                    </li>
+                                );
+                            })}
+                        </ul>
+                    </div>
+                ))}
 
                 <div className="mt-6 flex justify-end border-t border-border/70 pt-5">
                     <a className="brand-button-primary rounded-md px-5 py-3 text-center font-semibold" href="#quote">{copy.cta}</a>

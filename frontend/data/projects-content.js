@@ -1,6 +1,8 @@
-// Real job photos (Urban Stone Collective install, Cincinnati). Keep copy at the level the owner
-// confirmed: custom bathrooms, kitchen countertops and ledger stone walls. No addresses, client
-// names, brands, specs or prices.
+// Real job photos (Urban Stone Collective installs). Keep copy at the level the owner confirmed.
+// No client names, brands, specs or prices. Location stays at the city level unless the owner
+// approves more for a specific job (real-job-01: Over-the-Rhine + its rental listing, approved
+// by Edward 2026-10-31). real-job-01 is a RENTAL listing: never describe it as for sale.
+export const RJ01_LISTING_URL = 'https://www.zillow.com/homedetails/214-E-14th-St-Unit-2A-Cincinnati-OH-45202/2058257360_zpid/';
 const W = 1681;
 const H = 1118;
 
@@ -55,31 +57,49 @@ export const projectsContent = {
     en: {
         eyebrow: 'Our work',
         title: 'Recent projects in Cincinnati',
-        intro: 'Real photos from a recent Urban Stone job: custom bathrooms, kitchen countertops and ledger stone walls.',
+        intro: 'Real photos from Urban Stone projects around Cincinnati: custom bathrooms, kitchen countertops, stonework and more.',
         viewLabel: 'View photos',
         photoCount: (n) => (n === 1 ? '1 photo' : `${n} photos`),
         cta: 'Start your project',
         lightbox: { close: 'Close', prev: 'Previous photo', next: 'Next photo', of: 'of' },
-        projects: [
-            { id: 'bathroom-marble', title: 'Custom bathroom', tag: 'Bathroom', text: 'Marble-look walls, a curbless walk-in shower and a wood vanity with a dark stone top.', photos: pick('en', 'marbleVanity', 'marbleShower', 'marbleWide') },
-            { id: 'kitchen-galley', title: 'Galley kitchen countertops', tag: 'Kitchen', text: 'Dark stone countertops along both runs of a loft galley kitchen.', photos: pick('en', 'galley', 'galleyView') },
-            { id: 'kitchen-island-ledger', title: 'Ledger stone kitchen island', tag: 'Kitchen', text: 'A stacked ledger stone wall wraps the island, finished with a dark stone top.', photos: pick('en', 'island', 'islandWide') },
-            { id: 'bathroom-fluted', title: 'Custom bathroom', tag: 'Bathroom', text: 'A fluted wood floating vanity, a clean white top and a backlit mirror.', photos: pick('en', 'flutedVanity') },
+        jobs: [
+            {
+                id: 'real-job-01',
+                title: 'Over-the-Rhine loft',
+                location: 'Over-the-Rhine, Cincinnati',
+                summary: 'Custom bathrooms, kitchen countertops and ledger stone walls.',
+                listing: { url: RJ01_LISTING_URL, text: 'This Over-the-Rhine loft is available for rent', linkText: 'View the listing on Zillow' },
+                projects: [
+                    { id: 'bathroom-marble', title: 'Custom bathroom', tag: 'Bathroom', text: 'Marble-look walls, a curbless walk-in shower and a wood vanity with a dark stone top.', photos: pick('en', 'marbleVanity', 'marbleShower', 'marbleWide') },
+                    { id: 'kitchen-galley', title: 'Galley kitchen countertops', tag: 'Kitchen', text: 'Dark stone countertops along both runs of a loft galley kitchen.', photos: pick('en', 'galley', 'galleyView') },
+                    { id: 'kitchen-island-ledger', title: 'Ledger stone kitchen island', tag: 'Kitchen', text: 'A stacked ledger stone wall wraps the island, finished with a dark stone top.', photos: pick('en', 'island', 'islandWide') },
+                    { id: 'bathroom-fluted', title: 'Custom bathroom', tag: 'Bathroom', text: 'A fluted wood floating vanity, a clean white top and a backlit mirror.', photos: pick('en', 'flutedVanity') },
+                ],
+            },
         ],
     },
     es: {
         eyebrow: 'Nuestro trabajo',
         title: 'Proyectos recientes en Cincinnati',
-        intro: 'Fotos reales de un trabajo reciente de Urban Stone: baños a medida, encimeras de cocina y muros de piedra apilada (ledger stone).',
+        intro: 'Fotos reales de proyectos de Urban Stone en la zona de Cincinnati: baños a medida, encimeras de cocina, trabajos en piedra y más.',
         viewLabel: 'Ver fotos',
         photoCount: (n) => (n === 1 ? '1 foto' : `${n} fotos`),
         cta: 'Empieza tu proyecto',
         lightbox: { close: 'Cerrar', prev: 'Foto anterior', next: 'Foto siguiente', of: 'de' },
-        projects: [
-            { id: 'bathroom-marble', title: 'Baño a medida', tag: 'Baño', text: 'Paredes estilo mármol, ducha a ras de piso y mueble de madera con cubierta de piedra oscura.', photos: pick('es', 'marbleVanity', 'marbleShower', 'marbleWide') },
-            { id: 'kitchen-galley', title: 'Encimeras para cocina tipo galera', tag: 'Cocina', text: 'Encimeras de piedra oscura a lo largo de ambos lados de una cocina tipo galera en un loft.', photos: pick('es', 'galley', 'galleyView') },
-            { id: 'kitchen-island-ledger', title: 'Isla con muro de piedra apilada', tag: 'Cocina', text: 'Un muro de piedra apilada (ledger stone) envuelve la isla, con cubierta de piedra oscura.', photos: pick('es', 'island', 'islandWide') },
-            { id: 'bathroom-fluted', title: 'Baño a medida', tag: 'Baño', text: 'Mueble flotante de madera acanalada, cubierta blanca y espejo retroiluminado.', photos: pick('es', 'flutedVanity') },
+        jobs: [
+            {
+                id: 'real-job-01',
+                title: 'Loft en Over-the-Rhine',
+                location: 'Over-the-Rhine, Cincinnati',
+                summary: 'Baños a medida, encimeras de cocina y muros de piedra apilada (ledger stone).',
+                listing: { url: RJ01_LISTING_URL, text: 'Este loft en Over-the-Rhine está disponible para renta', linkText: 'Ver el anuncio en Zillow' },
+                projects: [
+                    { id: 'bathroom-marble', title: 'Baño a medida', tag: 'Baño', text: 'Paredes estilo mármol, ducha a ras de piso y mueble de madera con cubierta de piedra oscura.', photos: pick('es', 'marbleVanity', 'marbleShower', 'marbleWide') },
+                    { id: 'kitchen-galley', title: 'Encimeras para cocina tipo galera', tag: 'Cocina', text: 'Encimeras de piedra oscura a lo largo de ambos lados de una cocina tipo galera en un loft.', photos: pick('es', 'galley', 'galleyView') },
+                    { id: 'kitchen-island-ledger', title: 'Isla con muro de piedra apilada', tag: 'Cocina', text: 'Un muro de piedra apilada (ledger stone) envuelve la isla, con cubierta de piedra oscura.', photos: pick('es', 'island', 'islandWide') },
+                    { id: 'bathroom-fluted', title: 'Baño a medida', tag: 'Baño', text: 'Mueble flotante de madera acanalada, cubierta blanca y espejo retroiluminado.', photos: pick('es', 'flutedVanity') },
+                ],
+            },
         ],
     },
 };
