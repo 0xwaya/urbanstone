@@ -21,6 +21,8 @@ describe('Spanish home portal', () => {
         expect(screen.getByText('Oferta de otoño')).toBeInTheDocument();
         expect(screen.getByText('Oferta válida del 15 de octubre al 15 de diciembre de 2026.')).toBeInTheDocument();
         expect(screen.getByRole('link', { name: 'Fregaderos gratis' })).toHaveAttribute('href', '#quote');
+        expect(screen.getByRole('heading', { level: 2, name: 'Fregadero de acero inoxidable gratis en proyectos seleccionados.' })).toBeInTheDocument();
+        expect(screen.getByRole('img', { name: /fregadero de cocina de acero inoxidable calibre 18/i })).toHaveAttribute('src', '/promos/free-sink-18g.png');
         expect(screen.getByRole('heading', { name: /cubiertas premium/i })).toBeInTheDocument();
         expect(screen.getByRole('heading', { name: /materiales seleccionados/i })).toBeInTheDocument();
         expect(screen.getByRole('heading', { name: /preguntas frecuentes/i })).toBeInTheDocument();

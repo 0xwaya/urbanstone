@@ -75,4 +75,13 @@ export const homepageAnnouncement = {
     ctaHref: '#quote',
     disclaimer: 'Offer good October 15 - December 15, 2026.',
     tags: ['50+ sq ft kitchens', '18-gauge stainless', 'single or double basin'],
+    sectionLabel: 'Current business announcement',
+    seal: { top: 'Free', bottom: '18-gauge sink' },
+    image: {
+        webp: '/promos/free-sink-18g.webp',
+        png: '/promos/free-sink-18g.png',
+        width: 1200,
+        height: 709,
+        alt: 'Top view of a single-bowl 18-gauge stainless steel undermount kitchen sink',
+    },
 };

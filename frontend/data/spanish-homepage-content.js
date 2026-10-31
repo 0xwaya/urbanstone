@@ -47,4 +47,13 @@ export const spanishAnnouncement = {
     ctaHref: '#quote',
     disclaimer: 'Oferta válida del 15 de octubre al 15 de diciembre de 2026.',
     tags: ['Cocinas de 50+ pies cuadrados', 'Acero inoxidable calibre 18', 'Una o dos cubetas'],
+    sectionLabel: 'Anuncio actual',
+    seal: { top: 'Gratis', bottom: 'Fregadero calibre 18' },
+    image: {
+        webp: '/promos/free-sink-18g.webp',
+        png: '/promos/free-sink-18g.png',
+        width: 1200,
+        height: 709,
+        alt: 'Vista superior de un fregadero de cocina de acero inoxidable calibre 18, de una cubeta y montaje inferior',
+    },
 };
