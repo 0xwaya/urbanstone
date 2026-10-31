@@ -10,14 +10,15 @@ name: Lead Sourcer
 
 on:
   schedule:
-    # 8 AM, 12 PM, 5 PM America/New_York. Cron is UTC, so both DST variants are
-    # listed; src/schedule-guard.js runs only the line that matches ET today.
-    - cron: '0 12 * * *'   # 8 AM EDT
-    - cron: '0 13 * * *'   # 8 AM EST
-    - cron: '0 16 * * *'   # 12 PM EDT
-    - cron: '0 17 * * *'   # 12 PM EST
-    - cron: '0 21 * * *'   # 5 PM EDT
-    - cron: '0 22 * * *'   # 5 PM EST
+    # 8 AM, 12 PM, 5 PM America/New_York, Monday–Friday. Cron is UTC, so both
+    # DST variants are listed; src/schedule-guard.js runs only the line that
+    # matches ET today and skips Saturday and Sunday.
+    - cron: '0 12 * * 1-5'   # 8 AM EDT, weekdays
+    - cron: '0 13 * * 1-5'   # 8 AM EST, weekdays
+    - cron: '0 16 * * 1-5'   # 12 PM EDT, weekdays
+    - cron: '0 17 * * 1-5'   # 12 PM EST, weekdays
+    - cron: '0 21 * * 1-5'   # 5 PM EDT, weekdays
+    - cron: '0 22 * * 1-5'   # 5 PM EST, weekdays
   workflow_dispatch:
     inputs:
       mode:

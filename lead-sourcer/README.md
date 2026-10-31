@@ -101,9 +101,10 @@ invocations do not duplicate the daily run. The cron helper resolves paths
 relative to this checkout and defaults to review-only; it does not contact prospects.
 
 **GitHub Actions (recommended runner):** `.github/workflows/lead-sourcer.yml` runs
-at 8 AM, 12 PM and 5 PM America/New_York (UTC cron lines for both EDT and EST;
-`src/schedule-guard.js` runs only the line that matches ET that day) and on manual
-dispatch. Live runs use a cooldown (`LEAD_SOURCER_COOLDOWN_HOURS`, default 3); the
+at 8 AM, 12 PM and 5 PM America/New_York, Monday through Friday (UTC cron lines
+for both EDT and EST; `src/schedule-guard.js` runs only the line that matches ET
+that day and skips Saturday and Sunday) and on manual dispatch. A manual run
+still works on a weekend. Live runs use a cooldown (`LEAD_SOURCER_COOLDOWN_HOURS`, default 3); the
 dispatch input `force` skips it once. It runs the tests,
 `scripts/check-config.mjs`, then `node src/index.js`, and carries `seen-ids.json` and
 `runs/` between runs with the Actions cache. Controls (repo variables):

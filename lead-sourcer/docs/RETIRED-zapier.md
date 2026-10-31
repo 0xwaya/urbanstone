@@ -28,4 +28,4 @@ The URL remains in old commits. Deleting the secret does not erase git history. 
 
 ## What still runs
 
-The lead sourcer GitHub Action at 8:00, 12:00, and 5:00 ET. Delivery is the sales inbox only.
+The lead sourcer GitHub Action at 8:00, 12:00, and 5:00 ET, Monday through Friday. Delivery is the sales inbox only.

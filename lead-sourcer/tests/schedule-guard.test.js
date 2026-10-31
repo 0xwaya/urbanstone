@@ -34,6 +34,18 @@ describe('schedule guard (ET slots from UTC cron)', () => {
         expect(checkScheduledSlot({ eventName: 'schedule', cron: '0 12 * * *', now: late }).run).toBe(true);
     });
 
+    test('scheduled runs skip Saturday and Sunday', () => {
+        const saturday = new Date('2026-10-31T12:05:00Z');
+        const sunday = new Date('2026-11-01T21:05:00Z');
+        expect(checkScheduledSlot({ eventName: 'schedule', cron: '0 12 * * 1-5', now: saturday })).toMatchObject({
+            run: false, reason: 'weekend', localHour: 8, weekday: 'Sat',
+        });
+        expect(checkScheduledSlot({ eventName: 'schedule', cron: '0 21 * * 1-5', now: sunday })).toMatchObject({
+            run: false, reason: 'weekend', weekday: 'Sun',
+        });
+        expect(checkScheduledSlot({ eventName: 'workflow_dispatch', now: saturday }).run).toBe(true);
+    });
+
     test('manual and local runs are never blocked', () => {
         expect(checkScheduledSlot({ eventName: 'workflow_dispatch', cron: '', now: EDT_DAY }).run).toBe(true);
         expect(checkScheduledSlot({}).run).toBe(true);

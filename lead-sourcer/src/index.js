@@ -276,7 +276,7 @@ async function run() {
         allowedHours: parseAllowedHours(process.env.LEAD_SOURCER_SCHEDULE_HOURS_ET),
     });
     if (!slot.run) {
-        console.log(`[lead-sourcer] Scheduled slot skipped: cron '${process.env.LEAD_SOURCER_SCHEDULE_CRON}' is ${slot.localHour}:00 ET today (${slot.reason}).`);
+        console.log(`[lead-sourcer] Scheduled slot skipped: cron '${process.env.LEAD_SOURCER_SCHEDULE_CRON}' is ${slot.localHour}:00 ET${slot.weekday ? ` ${slot.weekday}` : ''} (${slot.reason}).`);
         return;
     }
 
