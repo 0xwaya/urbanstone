@@ -13,7 +13,7 @@
 //   `npx vitest run tests/projects-data.test.js` checks that files exist and fields are filled.
 //
 // Rules: no client names, no street addresses (city/neighborhood only, owner-approved), no listing
-// links, no brands, specs or prices (exception: Edward approved naming Daltile for the OTR bathrooms, 2026-10-31).
+// links, no brands, specs or prices (exception: Edward approved naming Daltile and Floor & Decor for the OTR bathrooms, 2026-10-31).
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const jobs = {
@@ -143,29 +143,29 @@ export const projects = [
         category: 'bathroom',
         title: { en: 'Custom-built bathroom', es: 'Baño construido a medida' },
         text: {
-            en: 'Custom built from scratch, personally by our owner. Italian Daltile tile wraps the floor, every wall and the ceiling, raised to 13 ft, in one continuous infinity finish, with a curbless infinity floor and a long embedded linear drain, a wraparound steam shower system, a floating vanity, a smart mirror and an automatic bidet toilet.',
-            es: 'Construido a medida desde cero, personalmente por nuestro dueño. Azulejo italiano de Daltile envuelve el piso, todas las paredes y el techo, elevado a 13 pies (4 m), en un acabado infinito continuo, con piso infinito sin bordillo y un largo desagüe lineal empotrado, sistema de ducha de vapor envolvente, mueble flotante, espejo inteligente e inodoro con bidé automático.',
+            en: 'Custom built from scratch, personally by our owner. Tile from Floor & Decor wraps the floor, every wall and the ceiling, raised to 13 ft, in one continuous infinity finish, with a curbless infinity floor and a long embedded linear drain, a wraparound steam shower system, a floating vanity, a smart mirror and an automatic bidet toilet.',
+            es: 'Construido a medida desde cero, personalmente por nuestro dueño. Azulejo de Floor & Decor envuelve el piso, todas las paredes y el techo, elevado a 13 pies (4 m), en un acabado infinito continuo, con piso infinito sin bordillo y un largo desagüe lineal empotrado, sistema de ducha de vapor envolvente, mueble flotante, espejo inteligente e inodoro con bidé automático.',
         },
         photos: [
             {
                 file: 'bathroom-marble-vanity.jpg',
                 alt: {
-                    en: 'Custom-built bathroom wrapped in large-format Italian tile, with a floating wood vanity with a dark stone top, a white vessel sink and matte black fixtures',
-                    es: 'Baño construido a medida revestido con azulejo italiano de gran formato, mueble flotante de madera con cubierta de piedra oscura, lavabo blanco sobre cubierta y grifería negra mate',
+                    en: 'Custom-built bathroom wrapped in large-format tile, with a floating wood vanity with a dark stone top, a white vessel sink and matte black fixtures',
+                    es: 'Baño construido a medida revestido con azulejo de gran formato, mueble flotante de madera con cubierta de piedra oscura, lavabo blanco sobre cubierta y grifería negra mate',
                 },
             },
             {
                 file: 'bathroom-marble-shower.jpg',
                 alt: {
-                    en: 'Curbless walk-in shower in large-format Italian tile, with a linear drain and matte black body sprays',
-                    es: 'Ducha a ras de piso en azulejo italiano de gran formato, con desagüe lineal y rociadores negros mate',
+                    en: 'Curbless walk-in shower in large-format tile, with a linear drain and matte black body sprays',
+                    es: 'Ducha a ras de piso en azulejo de gran formato, con desagüe lineal y rociadores negros mate',
                 },
             },
             {
                 file: 'bathroom-marble-wide.jpg',
                 alt: {
-                    en: 'Wide view of the custom-built bathroom: Italian tile wrapping the walls, the floating vanity with a vessel sink, and the open walk-in shower beyond',
-                    es: 'Vista amplia del baño construido a medida: azulejo italiano en las paredes, el mueble flotante con lavabo sobre cubierta y la ducha abierta al fondo',
+                    en: 'Wide view of the custom-built bathroom: tile wrapping the walls, the floating vanity with a vessel sink, and the open walk-in shower beyond',
+                    es: 'Vista amplia del baño construido a medida: azulejo en las paredes, el mueble flotante con lavabo sobre cubierta y la ducha abierta al fondo',
                 },
             },
         ],
