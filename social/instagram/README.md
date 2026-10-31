@@ -184,3 +184,8 @@ How it works:
 `data/weights.json` there and replace `rng.choice(space[...])` with
 `rng.choices(options, weights=[w.get(dim, {}).get(o, 1.0) for o in options])` per dimension (keep the
 no-repeat check). Only do it once there are ~30+ posts with metrics.
+
+Per-post location: real-post specs can set `"location"` (+ `"location_note"`). It is written to
+`meta.json` as top-level `location` and `platforms.instagram.location`; the posting run should tag
+that location on Instagram instead of the "Cincinnati, Ohio" default. real-job-01 uses
+"Over-the-Rhine, Cincinnati". Its rental listing link is website-only: never put it in IG/TikTok captions.

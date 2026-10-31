@@ -5,7 +5,7 @@
   "approved": false,
   "scheduled_at_local": "2026-11-01T16:00:00-05:00",
   "scheduled_at_utc": "2026-11-01T21:00:00+00:00",
-  "created_at_utc": "2026-10-31T16:33:30.718081+00:00",
+  "created_at_utc": "2026-10-31T16:46:38.486211+00:00",
   "feed_format": "4x5",
   "files": {
     "1x1": {
@@ -124,9 +124,12 @@
     "ai_generated": false,
     "job": "real-job-01"
   },
+  "location": "Over-the-Rhine, Cincinnati",
+  "location_note": "Overrides the Cincinnati, Ohio default for real-job-01 only (Edward, Oct 31, 2026). Location tag only: no rental/listing/Zillow mention on Instagram or TikTok (website gallery only).",
   "platforms": {
     "instagram": {
-      "status": "queued"
+      "status": "queued",
+      "location": "Over-the-Rhine, Cincinnati"
     },
     "tiktok": {
       "status": "queued"

@@ -12,7 +12,8 @@ Spec (JSON): {"slot": "YYYY-MM-DD HH:MM", "job": "real-job-01", "title": ...,
   "format": "carousel"|"single", "application": ..., "images": [
     {"src": "/abs/path.jpg", "name": "01-bath", "focus_x": 0.5, "focus_x_9x16": 0.45, "alt": "..."}],
   "story_image": 0, "caption": "...", "tiktok_caption": "...", "hashtags": [...5],
-  "tiktok_hashtags": [...5], "cta": "dm"|"link"|"call", "promo": bool}
+  "tiktok_hashtags": [...5], "cta": "dm"|"link"|"call", "promo": bool,
+  "location": "IG location tag (default Cincinnati, Ohio)", "location_note": "why it overrides"}
 
 Usage: python3 social/instagram/scripts/make_real_post.py SPEC.json --photos-dir DIR [--replace]
 """
@@ -28,6 +29,9 @@ from PIL import Image, ImageFilter
 from common import QUEUE, config, now, parse_slot, save_json
 import compose
 import hashtags as ht
+
+# post-log.md 'Location' rule (Edward, Oct 29): Cincinnati, Ohio unless a job says otherwise
+DEFAULT_LOCATION = "Cincinnati, Ohio"
 
 
 def crop_x(img, W, H, focus_x):
@@ -114,7 +118,10 @@ def main(argv=None):
         },
         "hashtags": tags,
         "scene": {"ai_generated": False, "job": spec["job"]},
-        "platforms": {"instagram": {"status": "queued"}, "tiktok": {"status": "queued"}},
+        "location": spec.get("location", DEFAULT_LOCATION),
+        "location_note": spec.get("location_note", ""),
+        "platforms": {"instagram": {"status": "queued", "location": spec.get("location", DEFAULT_LOCATION)},
+                      "tiktok": {"status": "queued"}},
         "posting_notes": spec.get("posting_notes", ""),
     }
     save_json(os.path.join(folder, "meta.json"), meta)

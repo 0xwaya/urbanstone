@@ -45,5 +45,7 @@
     "bathroomtok",
     "cincinnati",
     "homerenovation"
-  ]
+  ],
+  "location": "Over-the-Rhine, Cincinnati",
+  "location_note": "Overrides the Cincinnati, Ohio default for real-job-01 only (Edward, Oct 31, 2026). Location tag only: no rental/listing/Zillow mention on Instagram or TikTok (website gallery only)."
 }
