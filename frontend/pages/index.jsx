@@ -11,11 +11,16 @@ import FAQSection from '../components/FAQSection';
 import ChatWidget from '../components/ChatWidget';
 import Footer from '../components/Footer';
 import ReviewSection from '../components/ReviewSection';
+import { getReviewStaticProps } from '../lib/reviews-db';
 import { homepageAnnouncement, homepageFaqContent, homepageFaqItems, homepageLeadFormContent } from '../data/homepage-content';
 import { getCanonicalUrl, getSiteUrl } from '../lib/site';
 import { BUSINESS_TELEPHONE, buildBreadcrumbSchema, buildBusinessSchema, getGeoRegion } from '../lib/seo';
 
-export default function Home() {
+export async function getStaticProps() {
+  return getReviewStaticProps();
+}
+
+export default function Home({ reviews = [] }) {
   const siteUrl = getSiteUrl();
   const canonicalUrl = getCanonicalUrl('/');
   const ogImageUrl = `${siteUrl}/api/og-image`;
@@ -152,7 +157,7 @@ export default function Home() {
               <ContractorCard />
             </section>
             <FAQSection {...homepageFaqContent} collapsible defaultExpanded={false} />
-            <ReviewSection />
+            <ReviewSection reviews={reviews} />
             <ServicesSection />
             <Footer />
           </main>

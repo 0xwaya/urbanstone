@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.0] - 2026-10-31
+
+- Customer reviews wired to the CRM: `crm.review_requests` (auto-eligible when a quote is closed and paid in full), `/admin/reviews` with per-message Approve & send (Resend from sales@ or manual), sends logged to `crm.communications`, no re-sends.
+- Invite link is now the verification (no Google sign-in needed); name/email/job prefilled.
+- Homepage review cards (EN/ES): stars, first name + last initial, job, location, month; published reviews render statically and revalidate on publish; graceful empty state.
+- Invite email ready for a Google review link via `REVIEW_GOOGLE_REVIEW_URL`.
+
 ## [2.0.0] - 2026-09-20
 
 - Added conversion-critical component coverage for `LeadForm`, `TopNav`, and `ChatWidget`.
