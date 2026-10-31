@@ -12,7 +12,9 @@ function toTelHref(value) {
     return String(value).replace(/[^\d+]/g, '');
 }
 
-export default function TopNav({ language = 'en' }) {
+export default function TopNav({ language = 'en', anchorBase = '', altLanguageHref = '' }) {
+    // On sub-pages pass anchorBase="/" (or "/es") so section links go back to the homepage.
+    const a = (hash) => `${anchorBase}${hash}`;
     const companyPhone = process.env.NEXT_PUBLIC_COMPANY_PHONE || '(513) 307-5840';
     const companyEmail = process.env.NEXT_PUBLIC_LEAD_EMAIL || 'sales@urbanstone.co';
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -20,7 +22,7 @@ export default function TopNav({ language = 'en' }) {
     const menuButtonRef = useRef(null);
     const closeMenu = () => setIsMenuOpen(false);
     const spanish = language === 'es';
-    const languageHref = spanish ? '/' : '/es';
+    const languageHref = altLanguageHref || (spanish ? '/' : '/es');
     const languageLabel = spanish ? 'EN' : 'ES';
     const smsLabel = spanish ? 'Escríbenos' : 'Text us';
     const smsMessage = spanish
@@ -32,7 +34,7 @@ export default function TopNav({ language = 'en' }) {
         <header className="sticky top-0 z-40 -mx-2 overflow-x-clip border-b border-transparent bg-bg/80 px-2 py-2 backdrop-blur sm:py-3">
             <nav className="top-nav-shell rounded-2xl border border-border px-3 py-2.5 shadow-soft sm:px-4 sm:py-3">
                 <div className="flex items-center gap-2 sm:gap-3">
-                    <a className="flex min-w-0 flex-1 items-center gap-3 sm:gap-3.5" href="#top" aria-label="Urban Stone Collective home">
+                    <a className="flex min-w-0 flex-1 items-center gap-3 sm:gap-3.5" href={a('#top')} aria-label="Urban Stone Collective home">
                         <LogoMark className="h-12 w-12 shrink-0 sm:h-14 sm:w-14" />
                         <div className="min-w-0">
                             <div className="nav-brand-wrap">
@@ -46,22 +48,23 @@ export default function TopNav({ language = 'en' }) {
                     </a>
 
                     <div className="hidden items-center gap-6 text-sm font-medium lg:flex">
-                        <a className="transition hover:text-accent" href="#services">
+                        <a className="transition hover:text-accent" href={a('#services')}>
                             {spanish ? 'Servicios' : 'Services'}
                         </a>
-                        <a className="transition hover:text-accent" href="#projects">
+                        {/* desktop link only on wide screens: the bar is already full at 1280px */}
+                        <a className="hidden transition hover:text-accent 2xl:inline" href={a('#projects')}>
                             {spanish ? 'Proyectos' : 'Projects'}
                         </a>
-                        <a className="transition hover:text-accent" href="#suppliers">
+                        <a className="transition hover:text-accent" href={a('#suppliers')}>
                             Materials
                         </a>
-                        <a className="transition hover:text-accent" href="#quote">
+                        <a className="transition hover:text-accent" href={a('#quote')}>
                             Request Quote
                         </a>
-                        <a className="transition hover:text-accent" href="#contact">
+                        <a className="transition hover:text-accent" href={a('#contact')}>
                             Contact
                         </a>
-                        <a className="transition hover:text-accent" href="#reviews">
+                        <a className="transition hover:text-accent" href={a('#reviews')}>
                             {spanish ? 'Opiniones' : 'Reviews'}
                         </a>
                     </div>
@@ -109,26 +112,26 @@ export default function TopNav({ language = 'en' }) {
                     <div ref={menuRef} role="dialog" aria-modal="true" aria-label="Mobile navigation" className="mt-3 rounded-2xl border border-border bg-panel/70 p-3 lg:hidden">
                         <div className="rounded-[1.5rem] border border-border/80 bg-surface/75 p-3 shadow-soft">
                             <div className="text-[11px] font-semibold uppercase tracking-[0.22em] text-muted">Menu</div>
-                            <a className="brand-button-primary mt-3 w-full px-4 py-3 text-base font-semibold" href="#quote" onClick={() => setIsMenuOpen(false)}>
+                            <a className="brand-button-primary mt-3 w-full px-4 py-3 text-base font-semibold" href={a('#quote')} onClick={() => setIsMenuOpen(false)}>
                                 Get an Estimate
                             </a>
                             <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
-                                <a className="brand-menu-tile rounded-xl px-3 py-2.5 text-center" href="#services" onClick={() => setIsMenuOpen(false)}>
+                                <a className="brand-menu-tile rounded-xl px-3 py-2.5 text-center" href={a('#services')} onClick={() => setIsMenuOpen(false)}>
                                     {spanish ? 'Servicios' : 'Services'}
                                 </a>
-                                <a className="brand-menu-tile rounded-xl px-3 py-2.5 text-center" href="#projects" onClick={() => setIsMenuOpen(false)}>
+                                <a className="brand-menu-tile rounded-xl px-3 py-2.5 text-center" href={a('#projects')} onClick={() => setIsMenuOpen(false)}>
                                     {spanish ? 'Proyectos' : 'Projects'}
                                 </a>
-                                <a className="brand-menu-tile rounded-xl px-3 py-2.5 text-center" href="#suppliers" onClick={() => setIsMenuOpen(false)}>
+                                <a className="brand-menu-tile rounded-xl px-3 py-2.5 text-center" href={a('#suppliers')} onClick={() => setIsMenuOpen(false)}>
                                     Materials
                                 </a>
                                 <Link className="brand-menu-tile rounded-xl px-3 py-2.5 text-center" href="/coverage" onClick={() => setIsMenuOpen(false)}>
                                     Service Areas
                                 </Link>
-                                <a className="brand-menu-tile rounded-xl px-3 py-2.5 text-center" href="#faq" onClick={() => setIsMenuOpen(false)}>
+                                <a className="brand-menu-tile rounded-xl px-3 py-2.5 text-center" href={a('#faq')} onClick={() => setIsMenuOpen(false)}>
                                     Q&amp;A
                                 </a>
-                                <a className="brand-menu-tile rounded-xl px-3 py-2.5 text-center" href="#reviews" onClick={() => setIsMenuOpen(false)}>
+                                <a className="brand-menu-tile rounded-xl px-3 py-2.5 text-center" href={a('#reviews')} onClick={() => setIsMenuOpen(false)}>
                                     {spanish ? 'Opiniones' : 'Reviews'}
                                 </a>
                                 <Link className="brand-menu-tile rounded-xl px-3 py-2.5 text-center" href="/contractors/login" onClick={() => setIsMenuOpen(false)}>
