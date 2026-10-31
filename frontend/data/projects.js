@@ -90,17 +90,17 @@ export const projects = [
         job: 'west-chester-kitchen',
         featured: true,
         category: 'kitchen',
-        title: { en: 'Kitchen with full-height stone backsplash', es: 'Cocina con salpicadero de piedra hasta el techo' },
+        title: { en: 'Kitchen with full-height quartz backsplash', es: 'Cocina con salpicadero de cuarzo hasta el techo' },
         text: {
-            en: 'Done in collaboration with a top designer, who helped design the custom island and the stone sink skirt. Marble-look countertops run up the wall as a full-height backsplash behind the range, with an undermount sink under the window.',
-            es: 'Realizada en colaboración con un diseñador de primer nivel, que ayudó a diseñar la isla a medida y el faldón de piedra del fregadero. Cubiertas estilo mármol que suben por la pared como salpicadero completo detrás de la estufa, con fregadero bajo cubierta junto a la ventana.',
+            en: 'Done in collaboration with a top designer, who helped design the custom island, the stone sink skirt and a custom stainless steel wall plate behind the range that protects the quartz backsplash from heat. Marble-look engineered quartz runs up the wall as a full-height backsplash, with an undermount sink under the window.',
+            es: 'Realizada en colaboración con un diseñador de primer nivel, que ayudó a diseñar la isla a medida, el faldón de piedra del fregadero y una placa de acero inoxidable a medida detrás de la estufa que protege del calor el salpicadero de cuarzo. Cuarzo de ingeniería estilo mármol sube por la pared como salpicadero completo, con fregadero bajo cubierta junto a la ventana.',
         },
         photos: [
             {
                 file: 'kitchen-brass-hood-marble-look.jpg', width: 2000, height: 1333,
                 alt: {
-                    en: 'White kitchen with marble-look countertops and a full-height matching stone backsplash, a stainless and brass range hood, a gas range and an undermount sink with a stone sink skirt below a window, designed in collaboration with a top designer',
-                    es: 'Cocina blanca con cubiertas estilo mármol y salpicadero de la misma piedra hasta el techo, campana de acero y latón, estufa de gas y fregadero bajo cubierta con faldón de piedra junto a una ventana, diseñada en colaboración con un diseñador de primer nivel',
+                    en: 'White kitchen with marble-look engineered quartz countertops and a full-height matching quartz backsplash, a stainless and brass range hood, a custom stainless steel heat-protection plate behind the gas range, and an undermount sink with a stone sink skirt below a window, designed in collaboration with a top designer',
+                    es: 'Cocina blanca con cubiertas de cuarzo de ingeniería estilo mármol y salpicadero del mismo cuarzo hasta el techo, campana de acero y latón, placa de acero inoxidable a medida contra el calor detrás de la estufa de gas, y fregadero bajo cubierta con faldón de piedra junto a una ventana, diseñada en colaboración con un diseñador de primer nivel',
                 },
             },
         ],
