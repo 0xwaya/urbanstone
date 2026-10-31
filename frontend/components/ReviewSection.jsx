@@ -41,7 +41,7 @@ function StarRow({ rating, size = 'text-base' }) {
     const value = Math.max(0, Math.min(5, Math.round(Number(rating) || 0)));
     return (
         <span className={`${size} tracking-[0.15em]`} role="img" aria-label={`${value} out of 5 stars`}>
-            <span className="text-accent">{'★'.repeat(value)}</span>
+            <span className="text-[rgb(196_168_112)]">{"★".repeat(value)}</span>
             <span className="text-border">{'★'.repeat(5 - value)}</span>
         </span>
     );
