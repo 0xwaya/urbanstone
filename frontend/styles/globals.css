@@ -1261,7 +1261,18 @@ html[data-theme="light"] .supplier-brand-mark {
   filter:
     drop-shadow(0 26px 30px rgba(0, 0, 0, 0.6))
     drop-shadow(0 6px 10px rgba(0, 0, 0, 0.4));
-  animation: fall-promo-float 7s ease-in-out infinite;
+  /* One gentle float cycle, then rest (WCAG 2.2.2: auto-motion stops within 5s). */
+  animation: fall-promo-float 5s ease-in-out 1 both;
+}
+
+/* Promo CTA focus: champagne ring (~13:1 vs the dark stone) separated from the
+   gold button by a navy gap, so it reads >=3:1 against both (WCAG 1.4.11 / 2.4.13). */
+.fall-promo .brand-button-primary:focus-visible {
+  outline: 3px solid rgb(244 234 210);
+  outline-offset: 3px;
+  box-shadow:
+    0 0 0 3px rgb(8 12 24),
+    0 20px 40px rgba(0, 0, 0, 0.45);
 }
 
 .fall-promo__seal {
@@ -1282,5 +1293,6 @@ html[data-theme="light"] .supplier-brand-mark {
 @media (prefers-reduced-motion: reduce) {
   .fall-promo__sink {
     animation: none;
+    transform: none;
   }
 }

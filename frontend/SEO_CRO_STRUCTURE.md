@@ -30,7 +30,7 @@ This document covers how the frontend is organized for local SEO discovery, inte
 - `TopNav`: top-level navigation and brand pathing
 - `Hero`: primary promise, service footprint, and first CTA layer
 - `FeaturesBar`: compact announcement strip used for current business updates and quick trust compression
-- `ServicesSection`: "What we do" services block after the fall offer bar
+- `ServicesSection`: "What we do" services block, last section before the footer
 - `ProjectsGallery`: rotating featured-projects carousel linking to `/projects`
 - `ServiceAreasSection`: internal-link hub into city pages
 - `SuppliersSection`: material browsing surface and slab exploration
