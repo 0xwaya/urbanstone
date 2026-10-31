@@ -49,6 +49,9 @@ export default function TopNav({ language = 'en' }) {
                         <a className="transition hover:text-accent" href="#services">
                             {spanish ? 'Servicios' : 'Services'}
                         </a>
+                        <a className="transition hover:text-accent" href="#projects">
+                            {spanish ? 'Proyectos' : 'Projects'}
+                        </a>
                         <a className="transition hover:text-accent" href="#suppliers">
                             Materials
                         </a>
@@ -112,6 +115,9 @@ export default function TopNav({ language = 'en' }) {
                             <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
                                 <a className="brand-menu-tile rounded-xl px-3 py-2.5 text-center" href="#services" onClick={() => setIsMenuOpen(false)}>
                                     {spanish ? 'Servicios' : 'Services'}
+                                </a>
+                                <a className="brand-menu-tile rounded-xl px-3 py-2.5 text-center" href="#projects" onClick={() => setIsMenuOpen(false)}>
+                                    {spanish ? 'Proyectos' : 'Projects'}
                                 </a>
                                 <a className="brand-menu-tile rounded-xl px-3 py-2.5 text-center" href="#suppliers" onClick={() => setIsMenuOpen(false)}>
                                     Materials
