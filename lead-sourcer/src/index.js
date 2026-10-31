@@ -16,7 +16,7 @@ import { fileURLToPath } from 'node:url';
 import './config.js';
 import { pollPermits, isPermitsEnabled } from './permits.js';
 import { pollHamiltonPermits, pollButlerPermits, isHamiltonPermitsEnabled, isButlerPermitsEnabled } from './permits-accela.js';
-import { resolveRunMode } from './mode.js';
+import { resolveRunMode, sourceIsActive } from './mode.js';
 import { relay } from './relay.js';
 import { initializeTracing } from './tracing.js';
 import { assessRunHealth } from './run-health.js';
@@ -154,12 +154,16 @@ async function runOnce(mode) {
     const startedAt = new Date();
     console.log(`[lead-sourcer] Starting poll at ${startedAt.toISOString()} (mode=${mode})`);
 
+    const only = String(process.env.LEAD_SOURCER_ONLY || '').trim();
+    if (only) console.log(`[lead-sourcer] This run is limited to ${only}.`);
+
     for (const source of SOURCES) {
         if (!source.enabled) console.log(`[lead-sourcer] ${source.label} disabled (${source.envName} is not true).`);
+        else if (!sourceIsActive(source, only)) console.log(`[lead-sourcer] ${source.label} skipped this run.`);
     }
 
     const settled = await Promise.allSettled(SOURCES.map((source) => (
-        source.enabled ? source.poll({ mode }) : Promise.resolve({ matches: [], stats: { status: 'disabled' } })
+        sourceIsActive(source, only) ? source.poll({ mode }) : Promise.resolve({ matches: [], stats: { status: source.enabled ? 'skipped' : 'disabled' } })
     )));
 
     const results = {};
@@ -183,7 +187,7 @@ async function runOnce(mode) {
         counts[source.key] = results[source.key].matches.length;
         verdicts[source.key] = results[source.key].stats;
         sourceStatuses[source.key] = results[source.key].stats.status || 'ok';
-        enabledSources[source.key] = source.enabled;
+        enabledSources[source.key] = sourceIsActive(source, only);
     }
     const totalMatches = SOURCES.reduce((total, source) => total + counts[source.key], 0);
     counts.totalMatches = totalMatches;

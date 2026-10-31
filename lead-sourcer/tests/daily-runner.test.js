@@ -1,4 +1,4 @@
-import { resolveRunMode, runModeFlags } from '../src/mode.js';
+import { resolveRunMode, runModeFlags, sourceIsActive } from '../src/mode.js';
 import { buildPreDraft, shouldRunDaily, resolveCooldownHours } from '../src/daily-runner.js';
 
 describe('daily automation helpers', () => {
@@ -10,6 +10,15 @@ describe('daily automation helpers', () => {
         const mode = resolveRunMode([], { LEAD_SOURCER_MODE: '' });
         expect(mode).toBe('review-only');
         expect(runModeFlags(mode).shouldRelay).toBe(false);
+    });
+
+    test('a one-county run leaves the other enabled sources idle', () => {
+        const butler = { key: 'permits-butler', enabled: true };
+        const hamilton = { key: 'permits-hamilton', enabled: true };
+        expect(sourceIsActive(butler, 'permits-butler')).toBe(true);
+        expect(sourceIsActive(hamilton, 'permits-butler')).toBe(false);
+        expect(sourceIsActive(hamilton, '')).toBe(true);
+        expect(sourceIsActive({ key: 'permits-butler', enabled: false }, 'permits-butler')).toBe(false);
     });
 
     test('creates a usable pre-draft from a lead payload', () => {

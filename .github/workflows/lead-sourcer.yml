@@ -31,6 +31,10 @@ on:
         type: boolean
         required: false
         default: false
+      only:
+        description: 'Limit this manual run to one source (permits-butler, permits-hamilton, or permits). Blank = all enabled.'
+        required: false
+        default: ''
   pull_request:
     paths:
       - 'lead-sourcer/**'
@@ -80,6 +84,7 @@ jobs:
       LEAD_SOURCER_SCHEDULE_HOURS_ET: ${{ vars.LEAD_SOURCER_SCHEDULE_HOURS_ET || '8,12,17' }}
       LEAD_SOURCER_COOLDOWN_HOURS: ${{ vars.LEAD_SOURCER_COOLDOWN_HOURS || '3' }}
       LEAD_SOURCER_FORCE_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.force && 'true' || 'false' }}
+      LEAD_SOURCER_ONLY: ${{ github.event_name == 'workflow_dispatch' && inputs.only || '' }}
       LEAD_SOURCER_TRACING_ENABLED: 'false'
       LEAD_SOURCER_ALERT_EMAIL: ${{ vars.LEAD_SOURCER_ALERT_EMAIL || 'sales@urbanstone.co' }}
       LEAD_SOURCER_RUN_REPORT_EMAIL: ${{ vars.LEAD_SOURCER_ALERT_EMAIL || 'sales@urbanstone.co' }}

@@ -28,3 +28,10 @@ export function runModeFlags(mode) {
         shouldLogReview: mode === 'review-only' || mode === 'dry-run' || mode === 'live',
     };
 }
+
+/** A manual run can name one source key. Blank means every enabled source. */
+export function sourceIsActive(source, only = '') {
+    if (!source?.enabled) return false;
+    const wanted = String(only || '').trim();
+    return !wanted || source.key === wanted;
+}
