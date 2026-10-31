@@ -1,5 +1,10 @@
 # Changelog
 
+## [2.2.0] - 2026-10-31
+
+- Invite-verified reviews auto-publish on submit (`REVIEWS_AUTO_PUBLISH`, default on) and appear on `/` and `/es` immediately; Unpublish/Reject in `/admin/reviews` still takes one down.
+- Best-effort heads-up email to sales@ when a review goes live (no customer email).
+
 ## [2.1.0] - 2026-10-31
 
 - Customer reviews wired to the CRM: `crm.review_requests` (auto-eligible when a quote is closed and paid in full), `/admin/reviews` with per-message Approve & send (Resend from sales@ or manual), sends logged to `crm.communications`, no re-sends.
