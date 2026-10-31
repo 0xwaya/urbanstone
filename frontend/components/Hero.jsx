@@ -2,19 +2,19 @@ import supplierSummaries from '../data/supplier-summaries.json';
 
 const HERO_COPY = {
   en: {
-    eyebrow: 'Cincinnati fabrication and install',
+    eyebrow: 'Cincinnati stone, remodels & project management',
     title: 'Premium Countertops. Fast Install. Built for Cincinnati.',
-    intro: 'We source premium slabs from curated suppliers and fabricate custom quartz, granite, and quartzite countertops with a 3-5 day turnaround from deposit to install.',
+    intro: 'We source premium slabs from curated suppliers and fabricate custom quartz, granite, and quartzite countertops with a 3-5 day turnaround from deposit to install. Through the collective, we also run full remodels, flips, and custom bathrooms with our own crews.',
     install: '3-5 Day Install', suppliers: 'Curated Supplier Network', warranty: '1-Year Workmanship Warranty',
-    estimate: 'Request Estimate', browse: 'Browse Curated Slabs', days: 'Days to install', curated: 'Curated suppliers', warrantyLabel: 'Workmanship warranty', next: 'What happens next',
+    estimate: 'Request Estimate', browse: 'Browse Curated Slabs', services: 'See All Services', days: 'Days to install', curated: 'Curated suppliers', warrantyLabel: 'Workmanship warranty', next: 'What happens next',
     one: '1. Send layout or inspiration', oneText: 'Photos, rough measurements, or a cabinet drawing is enough to start.', two: '2. Shortlist slab directions', twoText: 'We narrow the material lane before you spend time visiting every supplier.', three: '3. Measure, fabricate, install', threeText: 'Urban Stone handles field measure, final stone coordination, fabrication, and install.',
   },
   es: {
-    eyebrow: 'Fabricación e instalación en Cincinnati',
+    eyebrow: 'Piedra, remodelaciones y gestión de obra en Cincinnati',
     title: 'Cubiertas premium. Instalación rápida. Hechas para Cincinnati.',
-    intro: 'Seleccionamos losas premium de proveedores curados y fabricamos cubiertas de cuarzo, granito y cuarcita con un plazo de 3 a 5 días desde el depósito hasta la instalación.',
+    intro: 'Seleccionamos losas premium de proveedores curados y fabricamos cubiertas de cuarzo, granito y cuarcita con un plazo de 3 a 5 días desde el depósito hasta la instalación. A través del colectivo, también realizamos remodelaciones completas, flips y baños personalizados con nuestros propios equipos.',
     install: 'Instalación en 3-5 días', suppliers: 'Red de proveedores curados', warranty: 'Garantía de mano de obra de 1 año',
-    estimate: 'Solicitar presupuesto', browse: 'Ver losas seleccionadas', days: 'Días para instalar', curated: 'Proveedores curados', warrantyLabel: 'Garantía de mano de obra', next: 'Qué sucede después',
+    estimate: 'Solicitar presupuesto', browse: 'Ver losas seleccionadas', services: 'Ver todos los servicios', days: 'Días para instalar', curated: 'Proveedores curados', warrantyLabel: 'Garantía de mano de obra', next: 'Qué sucede después',
     one: '1. Envía tu plano o inspiración', oneText: 'Fotos, medidas aproximadas o un dibujo de los gabinetes son suficientes para comenzar.', two: '2. Selecciona opciones de losa', twoText: 'Reducimos las opciones de material antes de que visites cada proveedor.', three: '3. Medimos, fabricamos e instalamos', threeText: 'Urban Stone coordina la medición, la piedra final, la fabricación y la instalación.',
   },
 };
@@ -44,6 +44,9 @@ export default function Hero({ language = 'en' }) {
               </a>
               <a className="inline-flex items-center justify-center rounded-md border border-border px-5 py-3 font-semibold transition hover:-translate-y-0.5 hover:border-accent" href="#suppliers">
                 {copy.browse}
+              </a>
+              <a className="inline-flex items-center justify-center rounded-md border border-border px-5 py-3 font-semibold transition hover:-translate-y-0.5 hover:border-accent" href="#services">
+                {copy.services}
               </a>
             </div>
           </div>

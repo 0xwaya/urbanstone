@@ -3,6 +3,7 @@ import TopNav from '../components/TopNav';
 import Hero from '../components/Hero';
 import FeaturesBar from '../components/FeaturesBar';
 import ContractorCard from '../components/ContractorCard';
+import ServicesSection from '../components/ServicesSection';
 import SuppliersSection from '../components/SuppliersSection';
 import LeadForm from '../components/LeadForm';
 import FAQSection from '../components/FAQSection';
@@ -77,8 +78,8 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>Premium Countertops &amp; Fast Installation in Cincinnati | Urban Stone</title>
-        <meta name="description" content="Premium quartz, granite, and quartzite countertop fabrication and fast installation in Cincinnati and Northern Kentucky, with curated materials and personal project support." />
+        <title>Countertops, Remodels &amp; Project Management in Cincinnati | Urban Stone</title>
+        <meta name="description" content="Quartz, granite, and quartzite countertops, cabinet installation, full remodels, flips, and custom bathrooms in Cincinnati and Northern Kentucky, with hands-on project and job-site management." />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="theme-color" content="#f4efe7" />
         <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
@@ -88,8 +89,8 @@ export default function Home() {
         <link rel="alternate" hrefLang="en-US" href={canonicalUrl} />
         <link rel="alternate" hrefLang="es-US" href={getCanonicalUrl('/es')} />
         <link rel="alternate" hrefLang="x-default" href={canonicalUrl} />
-        <meta property="og:title" content="Premium Countertops &amp; Fast Installation in Cincinnati | Urban Stone" />
-        <meta property="og:description" content="Premium countertop materials, fast installation, and personal project support in Cincinnati and Northern Kentucky." />
+        <meta property="og:title" content="Countertops, Remodels &amp; Project Management in Cincinnati | Urban Stone" />
+        <meta property="og:description" content="Countertops and cabinets, full remodels and flips, custom bathrooms, and hands-on project management in Cincinnati and Northern Kentucky." />
         <meta property="og:type" content="website" />
         <meta property="og:url" content={canonicalUrl} />
         <meta property="og:site_name" content="Urban Stone Collective" />
@@ -102,8 +103,8 @@ export default function Home() {
         <meta property="og:image:height" content={ogImageHeight} />
         <meta property="og:image:alt" content="Urban Stone Collective social preview with brand wordmark on a dark stone-inspired background" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Premium Countertops &amp; Fast Installation in Cincinnati | Urban Stone" />
-        <meta name="twitter:description" content="Premium countertop materials, fast installation, and personal project support in Cincinnati and Northern Kentucky." />
+        <meta name="twitter:title" content="Countertops, Remodels &amp; Project Management in Cincinnati | Urban Stone" />
+        <meta name="twitter:description" content="Countertops and cabinets, full remodels and flips, custom bathrooms, and hands-on project management in Cincinnati and Northern Kentucky." />
         <meta name="twitter:image" content={ogImageUrl} />
         <meta name="twitter:image:alt" content="Urban Stone Collective social preview with brand wordmark on a dark stone-inspired background" />
         <link rel="icon" type="image/svg+xml" href="/brand/urban-stone-favicon.svg?v=20260401e" />
@@ -136,6 +137,7 @@ export default function Home() {
           <main className="pb-6">
             <Hero />
             <FeaturesBar announcement={homepageAnnouncement} />
+            <ServicesSection />
             <section className="mx-auto max-w-6xl px-4 mt-8 mb-8 sm:px-6">
               <ContractorCard />
             </section>

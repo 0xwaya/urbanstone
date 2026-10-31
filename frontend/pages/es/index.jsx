@@ -5,6 +5,7 @@ import TopNav from '../../components/TopNav';
 import Hero from '../../components/Hero';
 import FeaturesBar from '../../components/FeaturesBar';
 import ContractorCard from '../../components/ContractorCard';
+import ServicesSection from '../../components/ServicesSection';
 import SuppliersSection from '../../components/SuppliersSection';
 import LeadForm from '../../components/LeadForm';
 import FAQSection from '../../components/FAQSection';
@@ -40,15 +41,15 @@ export default function SpanishHome() {
     return (
         <>
             <Head>
-                <title>Urban Stone Collective | Cubiertas en Cincinnati</title>
-                <meta name="description" content="Cubiertas de cuarzo, granito y cuarcita con fabricación e instalación en Cincinnati y el norte de Kentucky." />
+                <title>Urban Stone Collective | Cubiertas, remodelaciones y gestión de obra en Cincinnati</title>
+                <meta name="description" content="Cubiertas de cuarzo, granito y cuarcita, instalación de gabinetes, remodelaciones completas, flips y baños personalizados en Cincinnati y el norte de Kentucky, con gestión de obra directa." />
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
                 <link rel="canonical" href={canonicalUrl} />
                 <link rel="alternate" hrefLang="en-US" href={getCanonicalUrl('/')} />
                 <link rel="alternate" hrefLang="es-US" href={canonicalUrl} />
                 <link rel="alternate" hrefLang="x-default" href={getCanonicalUrl('/')} />
-                <meta property="og:title" content="Urban Stone Collective | Cubiertas en Cincinnati" />
+                <meta property="og:title" content="Urban Stone Collective | Cubiertas, remodelaciones y gestión de obra en Cincinnati" />
                 <meta property="og:description" content="Fabricación e instalación de cubiertas de cuarzo, granito y cuarcita en Cincinnati." />
                 <meta property="og:type" content="website" />
                 <meta property="og:url" content={canonicalUrl} />
@@ -57,7 +58,7 @@ export default function SpanishHome() {
                 <meta property="og:image" content={ogImageUrl} />
                 <meta property="og:image:alt" content="Urban Stone Collective" />
                 <meta name="twitter:card" content="summary_large_image" />
-                <meta name="twitter:title" content="Urban Stone Collective | Cubiertas en Cincinnati" />
+                <meta name="twitter:title" content="Urban Stone Collective | Cubiertas, remodelaciones y gestión de obra en Cincinnati" />
                 <meta name="twitter:description" content="Fabricación e instalación de cubiertas de cuarzo, granito y cuarcita en Cincinnati." />
                 <meta name="twitter:image" content={ogImageUrl} />
                 <meta name="twitter:image:alt" content="Urban Stone Collective" />
@@ -92,6 +93,7 @@ export default function SpanishHome() {
                     <main className="pb-6">
                         <Hero language="es" />
                         <FeaturesBar announcement={spanishAnnouncement} />
+                        <ServicesSection language="es" />
                         <section className="mx-auto mt-8 mb-8 max-w-6xl px-4 sm:px-6">
                             <ContractorCard language="es" />
                         </section>

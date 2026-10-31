@@ -117,7 +117,7 @@ function ChatPopup({
                 </a>
                 <a
                     className="rounded-full border border-border bg-panel/80 px-3 py-1.5 text-xs font-semibold text-text transition hover:border-[rgba(196,173,128,0.65)] hover:text-[#dcc491]"
-                    href={getSmsHref('Hi Urban Stone, I need help with a countertop project.')}
+                    href={getSmsHref('Hi Urban Stone, I need help with a project.')}
                 >
                     Text us
                 </a>

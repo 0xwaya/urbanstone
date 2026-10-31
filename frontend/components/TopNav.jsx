@@ -24,8 +24,8 @@ export default function TopNav({ language = 'en' }) {
     const languageLabel = spanish ? 'EN' : 'ES';
     const smsLabel = spanish ? 'Escríbenos' : 'Text us';
     const smsMessage = spanish
-        ? 'Hola Urban Stone, necesito ayuda con un proyecto de cubiertas.'
-        : 'Hi Urban Stone, I would like help with a countertop project.';
+        ? 'Hola Urban Stone, necesito ayuda con un proyecto.'
+        : 'Hi Urban Stone, I would like help with a project.';
     useFocusTrap(menuRef, isMenuOpen, closeMenu, menuButtonRef);
 
     return (
@@ -41,11 +41,14 @@ export default function TopNav({ language = 'en' }) {
                                     <span className="nav-brand-secondary">Collective</span>
                                 </div>
                             </div>
-                            <div className="hidden font-display text-xl font-semibold leading-[1.05] sm:text-2xl">Countertops with fast turnaround</div>
+                            <div className="hidden font-display text-xl font-semibold leading-[1.05] sm:text-2xl">Countertops, remodels &amp; project management</div>
                         </div>
                     </a>
 
                     <div className="hidden items-center gap-6 text-sm font-medium lg:flex">
+                        <a className="transition hover:text-accent" href="#services">
+                            {spanish ? 'Servicios' : 'Services'}
+                        </a>
                         <a className="transition hover:text-accent" href="#suppliers">
                             Materials
                         </a>
@@ -107,6 +110,9 @@ export default function TopNav({ language = 'en' }) {
                                 Get an Estimate
                             </a>
                             <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
+                                <a className="brand-menu-tile rounded-xl px-3 py-2.5 text-center" href="#services" onClick={() => setIsMenuOpen(false)}>
+                                    {spanish ? 'Servicios' : 'Services'}
+                                </a>
                                 <a className="brand-menu-tile rounded-xl px-3 py-2.5 text-center" href="#suppliers" onClick={() => setIsMenuOpen(false)}>
                                     Materials
                                 </a>
