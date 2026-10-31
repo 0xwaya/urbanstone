@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { categoryLabels, getProjects, getProjectsByJob, jobs, projects } from '../data/projects';
+import { MAX_FEATURED, categoryLabels, getFeaturedProjects, getProjects, getProjectsByJob, jobs, projects } from '../data/projects';
 
 const publicDir = path.join(__dirname, '..', 'public');
 
@@ -40,5 +40,12 @@ describe('project gallery data', () => {
         expect(job.location).toBe('Over-the-Rhine, Cincinnati');
         expect(job.listing).toBeUndefined();
         expect(JSON.stringify(job)).not.toMatch(/for sale|en venta|zillow|utm_/i);
+    });
+
+    it('homepage rotation stays within the max and keeps the Over-the-Rhine loft', () => {
+        const rotation = getFeaturedProjects('en');
+        expect(rotation.length).toBeLessThanOrEqual(MAX_FEATURED);
+        expect(rotation.filter((p) => p.jobId === 'real-job-01').length).toBeGreaterThanOrEqual(2);
+        expect(rotation.some((p) => p.jobId === 'cincinnati-installs')).toBe(true);
     });
 });

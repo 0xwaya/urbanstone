@@ -17,6 +17,11 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const jobs = {
+    'cincinnati-installs': {
+        title: { en: 'Kitchens around Greater Cincinnati', es: 'Cocinas en el área de Cincinnati' },
+        location: 'Greater Cincinnati',
+        // Separate installs from different jobs (owner hasn't grouped them); city-level only.
+    },
     'real-job-01': {
         title: { en: 'Over-the-Rhine loft', es: 'Loft en Over-the-Rhine' },
         location: 'Over-the-Rhine, Cincinnati',
@@ -25,6 +30,86 @@ export const jobs = {
 };
 
 export const projects = [
+    {
+        id: 'cincy-kitchen-brass-hood',
+        job: 'cincinnati-installs',
+        featured: true,
+        category: 'kitchen',
+        title: { en: 'Kitchen with full-height stone backsplash', es: 'Cocina con salpicadero de piedra hasta el techo' },
+        text: {
+            en: 'Marble-look countertops run up the wall as a full-height backsplash behind the range, with an undermount sink under the window.',
+            es: 'Cubiertas estilo mármol que suben por la pared como salpicadero completo detrás de la estufa, con fregadero bajo cubierta junto a la ventana.',
+        },
+        photos: [
+            {
+                file: 'kitchen-brass-hood-marble-look.jpg', width: 2000, height: 1333,
+                alt: {
+                    en: 'White kitchen with marble-look countertops and a full-height matching stone backsplash, a stainless and brass range hood, a gas range and an undermount sink below a window',
+                    es: 'Cocina blanca con cubiertas estilo mármol y salpicadero de la misma piedra hasta el techo, campana de acero y latón, estufa de gas y fregadero bajo cubierta junto a una ventana',
+                },
+            },
+        ],
+    },
+    {
+        id: 'cincy-granite-u-kitchen',
+        job: 'cincinnati-installs',
+        featured: true,
+        category: 'kitchen',
+        title: { en: 'U-shaped kitchen in speckled granite', es: 'Cocina en U con granito moteado' },
+        text: {
+            en: 'Speckled white granite wraps a U-shaped layout and a wide peninsula, set against walnut-tone cabinets.',
+            es: 'Granito blanco moteado en una cocina en U con una península amplia, junto a gabinetes en tono nogal.',
+        },
+        photos: [
+            {
+                file: 'white-granite-u-kitchen-walnut.jpg', width: 2000, height: 1333,
+                alt: {
+                    en: 'U-shaped kitchen with speckled white and gray granite countertops, a wide peninsula, walnut-tone cabinets and stainless steel appliances',
+                    es: 'Cocina en U con cubiertas de granito blanco y gris moteado, península amplia, gabinetes en tono nogal y electrodomésticos de acero inoxidable',
+                },
+            },
+        ],
+    },
+    {
+        id: 'cincy-white-island',
+        job: 'cincinnati-installs',
+        featured: true,
+        category: 'kitchen',
+        title: { en: 'Large white kitchen island', es: 'Isla de cocina blanca de gran formato' },
+        text: {
+            en: 'A large island top in white stone with soft gray veining and an undermount prep sink.',
+            es: 'Una gran cubierta de isla en piedra blanca con vetas grises suaves y fregadero auxiliar bajo cubierta.',
+        },
+        photos: [
+            {
+                file: 'white-quartz-island-hex-tile.jpg', width: 2000, height: 1333,
+                alt: {
+                    en: 'Large kitchen island with a white stone top with soft gray veining and an undermount sink, a dark island base, and white cabinets with a hexagon tile backsplash behind',
+                    es: 'Gran isla de cocina con cubierta de piedra blanca con vetas grises suaves y fregadero bajo cubierta, base oscura y gabinetes blancos con salpicadero de azulejo hexagonal al fondo',
+                },
+            },
+        ],
+    },
+    {
+        id: 'cincy-farmhouse-kitchen',
+        job: 'cincinnati-installs',
+        featured: true,
+        category: 'kitchen',
+        title: { en: 'Farmhouse kitchen with black countertops', es: 'Cocina estilo granja con cubiertas negras' },
+        text: {
+            en: 'Black countertops on a long run of white cabinets and a center island, in an open kitchen with polished concrete floors.',
+            es: 'Cubiertas negras sobre una larga fila de gabinetes blancos y una isla central, en una cocina abierta con piso de concreto pulido.',
+        },
+        photos: [
+            {
+                file: 'farmhouse-kitchen-black-tops.jpg', width: 1200, height: 800,
+                alt: {
+                    en: 'Open farmhouse-style kitchen with black countertops on white cabinets and a center island with a sink, pendant lights and a polished concrete floor',
+                    es: 'Cocina abierta estilo granja con cubiertas negras sobre gabinetes blancos y una isla central con fregadero, lámparas colgantes y piso de concreto pulido',
+                },
+            },
+        ],
+    },
     {
         id: 'otr-bathroom-marble',
         job: 'real-job-01',
