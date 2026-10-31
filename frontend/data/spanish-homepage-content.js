@@ -12,6 +12,10 @@ export const spanishFaqItems = [
         answer: 'Envía tu ciudad, tipo de proyecto, medidas aproximadas, preferencia de material, fotos del espacio y fecha ideal. Con eso podemos preparar una orientación más precisa.',
     },
     {
+        question: '¿Hacen algo más que cubiertas?',
+        answer: 'Sí. Las cubiertas, los tocadores y la instalación de gabinetes son nuestra base, y a través del colectivo también realizamos remodelaciones de cocinas y baños, renovaciones interiores, rediseños, flips completos y baños personalizados de alta gama, con equipos de remodelación, techos, estructura, pintura y pisos. Edward dirige la obra personalmente.',
+    },
+    {
         question: '¿Trabajan en Cincinnati y el norte de Kentucky?',
         answer: 'Sí. Atendemos Cincinnati, Mason, West Chester, Fairfield, Hamilton, Blue Ash, Loveland, Milford, Anderson Township, Covington, Newport, Florence, Erlanger y comunidades cercanas.',
     },

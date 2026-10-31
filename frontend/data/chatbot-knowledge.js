@@ -39,6 +39,9 @@ export const chatbotPolicies = {
         'Inventory and transfer: not all materials are stocked in every warehouse. Supplier transfer logistics and transfer costs may apply when material is moved to fabrication.',
     ],
     approvedMessaging: [
+        'Beyond countertops, vanity tops, and cabinet installation, Urban Stone Collective runs kitchen and bath remodels, interior renovations and redesigns, full flips, and high-end custom bathrooms through the collective, with crews for remodeling, roofing, framing, painting, and flooring.',
+        'Edward personally manages job sites and coordinates contractors and subcontractors; a structural engineering partner is brought in when a project involves structural changes.',
+        'General contractors and builders can use Urban Stone as a dependable countertop and cabinet sub, or as project support on remodels and flips. Offer a sit-down with Edward for larger projects.',
         'We guide clients through slab selection and layout planning before finalizing fabrication.',
         'We confirm measurements on-site before final quotes.',
     ],

@@ -54,6 +54,40 @@ export function buildCountertopOfferCatalog({ url, areaServed, focusMaterial }) 
     };
 }
 
+// Broader services beyond countertops, listed on the canonical business node.
+const PROJECT_SERVICES = [
+    { name: 'Vanity Top Fabrication & Installation', serviceType: 'Vanity tops' },
+    { name: 'Cabinet Installation', serviceType: 'Cabinet installation' },
+    { name: 'Kitchen & Bathroom Remodeling', serviceType: 'Remodeling' },
+    { name: 'High-End Custom Bathrooms', serviceType: 'Bathroom remodeling' },
+    { name: 'Full Home Remodels & Flips', serviceType: 'Home renovation' },
+    { name: 'Interior Renovation & Redesign', serviceType: 'Interior renovation' },
+    { name: 'Project & Job-Site Management', serviceType: 'Construction project management' },
+    { name: 'Contractor & Subcontractor Coordination', serviceType: 'Construction coordination' },
+    { name: 'Roofing, Framing, Painting & Flooring Crews', serviceType: 'General construction trades' },
+];
+
+export function buildBusinessOfferCatalog({ url, areaServed }) {
+    const countertopCatalog = buildCountertopOfferCatalog({ url, areaServed });
+    return {
+        '@type': 'OfferCatalog',
+        name: 'Countertop, Remodeling & Project Management Services',
+        itemListElement: [
+            ...countertopCatalog.itemListElement,
+            ...PROJECT_SERVICES.map((service) => ({
+                '@type': 'Offer',
+                itemOffered: {
+                    '@type': 'Service',
+                    name: service.name,
+                    serviceType: service.serviceType,
+                    url,
+                    areaServed: dedupeAreas(areaServed),
+                },
+            })),
+        ],
+    };
+}
+
 export const BUSINESS_TELEPHONE = '+1-513-307-5840';
 export const BUSINESS_EMAIL = 'sales@urbanstone.co';
 
@@ -106,9 +140,9 @@ export function buildBusinessSchema({ siteUrl, image, sameAs = [] }) {
         priceRange: '$$',
         areaServed: [...BUSINESS_AREA_SERVED, buildServiceAreaGeoCircle()],
         knowsLanguage: ['en', 'es'],
-        hasOfferCatalog: buildCountertopOfferCatalog({ url: siteUrl, areaServed: BUSINESS_AREA_SERVED }),
+        hasOfferCatalog: buildBusinessOfferCatalog({ url: siteUrl, areaServed: BUSINESS_AREA_SERVED }),
         sameAs,
-        description: 'Urban Stone Collective fabricates and installs quartz countertops, granite countertops, and quartzite countertops across the Cincinnati metro and Northern Kentucky with curated slab sourcing and fast turnaround.',
+        description: 'Urban Stone Collective fabricates and installs quartz, granite, and quartzite countertops and vanity tops, installs cabinets, and manages full remodels, flips, and high-end custom bathrooms with its own crews across the Cincinnati metro and Northern Kentucky.',
     };
 }
 

@@ -37,10 +37,10 @@ export default function Footer({ language = 'en' }) {
                         <div className="max-w-[36rem]">
                             <div className="eyebrow">Urban Stone Collective</div>
                             <div className="font-display text-[1.42rem] font-semibold leading-[0.98] sm:text-[1.78rem]">
-                                {spanish ? 'Instalaciones más limpias, decisiones más rápidas y losas seleccionadas en todo Cincinnati.' : 'Cleaner installs, faster decisions, and curated slab sourcing across greater Cincinnati.'}
+                                {spanish ? 'Cubiertas, remodelaciones y obras bien dirigidas en todo Cincinnati.' : 'Clean installs, well-run job sites, and one point of contact across greater Cincinnati.'}
                             </div>
                             <p className="mt-2 max-w-[31rem] text-sm leading-6 text-muted">
-                                {spanish ? 'Urban Stone Collective ayuda a propietarios, remodeladores y constructores con losas seleccionadas, fabricación e instalación en Cincinnati.' : 'Urban Stone Collective serves homeowners, remodelers, and builders with curated slabs, fabrication, and installation across greater Cincinnati.'}
+                                {spanish ? 'Urban Stone Collective ayuda a propietarios, inversionistas, remodeladores y constructores con cubiertas, gabinetes, remodelaciones completas, flips, baños personalizados y gestión de obra en Cincinnati.' : 'Urban Stone Collective serves homeowners, investors, remodelers, and builders with countertops, cabinets, full remodels, flips, custom bathrooms, and project management across greater Cincinnati.'}
                             </p>
                         </div>
 

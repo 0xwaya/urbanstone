@@ -32,6 +32,18 @@ export const homepageFaqItems = [
         answer: 'For the fastest estimate, send your city or neighborhood, project type, rough measurements, material preference, photos of the space, and target timeline. That gives us enough context to quote quartz countertops, granite countertops, or quartzite countertops more accurately.',
     },
     {
+        question: 'Do you do more than countertops?',
+        answer: 'Yes. Countertops, vanity tops, and cabinet installation are our core, and through the collective we also run kitchen and bath remodels, interior renovations and redesigns, full flips, and high-end custom bathrooms. We have crews for remodeling, roofing, framing, painting, and flooring.',
+    },
+    {
+        question: 'Can you manage my whole remodel or flip?',
+        answer: 'Yes. Edward manages the job site personally: scheduling crews and subcontractors, keeping work in the right order, and keeping you updated. When a project involves structural changes, we bring in our structural engineering partner.',
+    },
+    {
+        question: 'Do you work with general contractors and builders?',
+        answer: 'Yes. Contractors bring us in as a dependable countertop and cabinet sub: clear communication, clean installs, and dates we keep. When you want more than stone, we can also manage the job site and crews on a remodel or flip, so you have one partner for the job. We are happy to sit down and walk you through everything we do.',
+    },
+    {
         question: 'Who is the best countertop company near me in Cincinnati?',
         answer: 'If you are searching for a countertop company near Cincinnati, OH, Urban Stone Collective fabricates and installs quartz, granite, and quartzite countertops for homeowners throughout Cincinnati and nearby communities, with curated slab sourcing and a 3-5 day install turnaround after deposit.',
     },
@@ -47,12 +59,12 @@ export const homepageFaqContent = {
 export const homepageLeadFormContent = {
     eyebrow: 'Request a quote',
     title: 'Start with a Fast Estimate',
-    description: 'Send your layout, measurements, and material preference. We will guide the premium slab selection, confirm the details personally, and plan fabrication and fast installation timing.',
-    placeholder: 'Anything unusual to note: appliance changes, access constraints, edge requests, demo concerns, or scheduling notes.',
+    description: 'Send your layout, measurements, and material preference. We will guide the premium slab selection, confirm the details personally, and plan fabrication and fast installation timing. Planning a bigger remodel? Tell us the scope in the notes.',
+    placeholder: 'Anything to note: appliance changes, access constraints, edge requests, demo concerns, scheduling, or other work you need (cabinets, bathroom, full remodel).',
     submitLabel: 'Send estimate request',
     submittingLabel: 'Sending request...',
     directResponseTitle: 'Need help with next steps?',
-    coverageText: 'We respond to countertop estimate requests across Cincinnati and nearby communities throughout greater Cincinnati and Northern Kentucky, and we handle the path from slab shortlisting through measurements, deposit, fabrication, and install.',
+    coverageText: 'We respond to countertop, cabinet, and remodel requests across greater Cincinnati and Northern Kentucky. For stone, we handle the path from slab shortlisting through measurements, deposit, fabrication, and install; for bigger projects, we manage the job site and crews from start to finish.',
 };
 
 export const homepageAnnouncement = {
