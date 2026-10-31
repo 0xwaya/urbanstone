@@ -76,3 +76,4 @@
 - Projects: Added `npm run projects:add -- <job-id> <photos…>` (`scripts/add-project-photos.mjs`) to resize photos, strip EXIF/GPS and print a starter data entry.
 - Projects: No listing, rental or sale links on project pages (owner decision); `tests/projects-data.test.js` enforces complete bilingual data, existing files and alt text.
 - SEO: `/projects` pages have localized titles/descriptions, canonical + `hreflang` (en-US, es-US, x-default), Open Graph/Twitter cards using a real project photo, breadcrumb JSON-LD, and `CollectionPage` + `ImageGallery` JSON-LD with an `ImageObject` per photo tied to the business node. Both URLs are in `sitemap.xml`, and `/llms.txt` links the gallery and lists current projects (`tests/projects-seo.test.js`).
+- Projects: Added four Greater Cincinnati kitchen installs (`cincinnati-installs` job) to the gallery and the homepage rotation (8 featured: 4 new + 4 Over-the-Rhine loft).

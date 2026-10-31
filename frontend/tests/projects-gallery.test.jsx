@@ -94,9 +94,11 @@ describe('ProjectsGallery carousel', () => {
 
     it('opens the lightbox from a slide', () => {
         render(<ProjectsGallery />);
-        fireEvent.click(within(current()).getByRole('button', { name: /^view 3 photos$/i }));
+        const n = featured[0].photos.length;
+        fireEvent.click(within(current()).getByRole('button', { name: new RegExp(`^View photos: ${featured[0].title}`) }));
         const dialog = screen.getByRole('dialog');
-        expect(within(dialog).getByText(/1 of 3/)).toBeInTheDocument();
+        expect(within(dialog).getByRole('img', { name: featured[0].photos[0].alt })).toBeInTheDocument();
+        if (n > 1) expect(within(dialog).getByText(new RegExp(`1 of ${n}`))).toBeInTheDocument();
         fireEvent.keyDown(document, { key: 'Escape' });
         expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
     });
