@@ -25,7 +25,7 @@ The active homepage funnel is:
 
 ## Homepage Layout
 
-Section order (English `/` and Spanish `/es`): hero, fall offer bar, **What we do** (services), **Recent projects** (rotating gallery), materials + estimate form, contractor partner section, FAQ, reviews. Homeowners come first; the contractor section deliberately sits below materials and the estimate form.
+Section order (English `/` and Spanish `/es`): hero, fall offer bar, **Recent projects** (rotating gallery), materials + estimate form, contractor partner section, FAQ, reviews, **What we do** (services, last section before the footer). Homeowners come first; the contractor section deliberately sits below materials and the estimate form.
 
 - `components/ServicesSection.jsx` + `data/services-content.js`: countertops, cabinets, remodels, interior renovations and redesign, flips, high-end custom bathrooms, and owner-run job-site/contractor management with the collective's crews and a structural engineering partner.
 - `components/ContractorCard.jsx`: contractor/builder partner pitch and portal entry.

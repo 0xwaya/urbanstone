@@ -39,6 +39,8 @@ describe('Home page', () => {
         expect(screen.getByText('Fall offer')).toBeInTheDocument();
         expect(screen.getByText('Offer good October 15 - December 15, 2026.')).toBeInTheDocument();
         expect(screen.getByRole('link', { name: 'Free Sinks' })).toHaveAttribute('href', '#quote');
+        expect(screen.getByRole('heading', { level: 2, name: 'Free stainless sink with qualifying kitchen projects.' })).toBeInTheDocument();
+        expect(screen.getByRole('img', { name: /18-gauge stainless steel undermount kitchen sink/i })).toHaveAttribute('src', '/promos/free-sink-18g.png');
         expect(screen.queryByText(/spring special|May 30, 2026/i)).not.toBeInTheDocument();
         expect(screen.getByRole('heading', { name: /premium countertops\. fast install\. built for cincinnati\./i })).toBeInTheDocument();
         expect(screen.getByRole('heading', { name: /curated countertop materials/i })).toBeInTheDocument();

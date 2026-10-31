@@ -6,16 +6,14 @@ const HERO_COPY = {
     title: 'Premium Countertops. Fast Install. Built for Cincinnati.',
     intro: 'We source premium slabs from curated suppliers and fabricate custom quartz, granite, and quartzite countertops with a 3-5 day turnaround from deposit to install. Through the collective, we also run full remodels, flips, and custom bathrooms with our own crews.',
     install: '3-5 Day Install', suppliers: 'Curated Supplier Network', warranty: '1-Year Workmanship Warranty',
-    estimate: 'Request Estimate', browse: 'Browse Curated Slabs', services: 'See All Services', days: 'Days to install', curated: 'Curated suppliers', warrantyLabel: 'Workmanship warranty', next: 'What happens next',
-    one: '1. Send layout or inspiration', oneText: 'Photos, rough measurements, or a cabinet drawing is enough to start.', two: '2. Shortlist slab directions', twoText: 'We narrow the material lane before you spend time visiting every supplier.', three: '3. Measure, fabricate, install', threeText: 'Urban Stone handles field measure, final stone coordination, fabrication, and install.',
+    estimate: 'Request Estimate', browse: 'Browse Curated Slabs', services: 'See All Services', days: 'Days to install', curated: 'Curated suppliers', warrantyLabel: 'Workmanship warranty',
   },
   es: {
     eyebrow: 'Piedra, remodelaciones y gestión de obra en Cincinnati',
     title: 'Cubiertas premium. Instalación rápida. Hechas para Cincinnati.',
     intro: 'Seleccionamos losas premium de proveedores curados y fabricamos cubiertas de cuarzo, granito y cuarcita con un plazo de 3 a 5 días desde el depósito hasta la instalación. A través del colectivo, también realizamos remodelaciones completas, flips y baños personalizados con nuestros propios equipos.',
     install: 'Instalación en 3-5 días', suppliers: 'Red de proveedores curados', warranty: 'Garantía de mano de obra de 1 año',
-    estimate: 'Solicitar presupuesto', browse: 'Ver losas seleccionadas', services: 'Ver todos los servicios', days: 'Días para instalar', curated: 'Proveedores curados', warrantyLabel: 'Garantía de mano de obra', next: 'Qué sucede después',
-    one: '1. Envía tu plano o inspiración', oneText: 'Fotos, medidas aproximadas o un dibujo de los gabinetes son suficientes para comenzar.', two: '2. Selecciona opciones de losa', twoText: 'Reducimos las opciones de material antes de que visites cada proveedor.', three: '3. Medimos, fabricamos e instalamos', threeText: 'Urban Stone coordina la medición, la piedra final, la fabricación y la instalación.',
+    estimate: 'Solicitar presupuesto', browse: 'Ver losas seleccionadas', services: 'Ver todos los servicios', days: 'Días para instalar', curated: 'Proveedores curados', warrantyLabel: 'Garantía de mano de obra',
   },
 };
 
@@ -52,37 +50,19 @@ export default function Hero({ language = 'en' }) {
           </div>
 
           <div className="grid gap-4">
-            <div className="rounded-[2rem] border border-border bg-panel/80 p-5 shadow-soft sm:p-6">
-              <div className="grid grid-cols-3 gap-3">
-                <div className="rounded-[1.35rem] border border-border bg-surface/70 px-3 py-4 text-center">
+            <div className="rounded-[2rem] border border-border bg-panel/80 p-3 shadow-soft sm:p-6">
+              <div className="grid grid-cols-3 gap-1.5 sm:gap-3">
+                <div className="min-w-0 rounded-[1.35rem] border border-border bg-surface/70 px-1 py-4 text-center sm:px-3">
                   <div className="text-2xl font-display font-semibold text-text sm:text-3xl">3-5</div>
-                  <div className="mt-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-muted">{copy.days}</div>
+                  <div className="mt-1 text-[10px] font-semibold uppercase leading-tight tracking-[0.02em] text-muted [overflow-wrap:anywhere] sm:text-[11px] sm:leading-normal sm:tracking-[0.18em]">{copy.days}</div>
                 </div>
-                <div className="rounded-[1.35rem] border border-border bg-surface/70 px-3 py-4 text-center">
+                <div className="min-w-0 rounded-[1.35rem] border border-border bg-surface/70 px-1 py-4 text-center sm:px-3">
                   <div className="text-2xl font-display font-semibold text-text sm:text-3xl">{supplierSummaries.length}</div>
-                  <div className="mt-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-muted">{copy.curated}</div>
+                  <div className="mt-1 text-[10px] font-semibold uppercase leading-tight tracking-[0.02em] text-muted [overflow-wrap:anywhere] sm:text-[11px] sm:leading-normal sm:tracking-[0.18em]">{copy.curated}</div>
                 </div>
-                <div className="rounded-[1.35rem] border border-border bg-surface/70 px-3 py-4 text-center">
+                <div className="min-w-0 rounded-[1.35rem] border border-border bg-surface/70 px-1 py-4 text-center sm:px-3">
                   <div className="text-2xl font-display font-semibold text-text sm:text-3xl">1 yr</div>
-                  <div className="mt-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-muted">{copy.warrantyLabel}</div>
-                </div>
-              </div>
-            </div>
-
-            <div className="rounded-[2rem] border border-border bg-surface/70 p-5 shadow-soft sm:p-6">
-              <div className="eyebrow mb-2">{copy.next}</div>
-              <div className="grid gap-3">
-                <div className="rounded-[1.35rem] border border-border bg-panel/75 px-4 py-4">
-                  <div className="text-sm font-semibold text-text">{copy.one}</div>
-                  <div className="mt-1 text-sm leading-6 text-muted">{copy.oneText}</div>
-                </div>
-                <div className="rounded-[1.35rem] border border-border bg-panel/75 px-4 py-4">
-                  <div className="text-sm font-semibold text-text">{copy.two}</div>
-                  <div className="mt-1 text-sm leading-6 text-muted">{copy.twoText}</div>
-                </div>
-                <div className="rounded-[1.35rem] border border-border bg-panel/75 px-4 py-4">
-                  <div className="text-sm font-semibold text-text">{copy.three}</div>
-                  <div className="mt-1 text-sm leading-6 text-muted">{copy.threeText}</div>
+                  <div className="mt-1 text-[10px] font-semibold uppercase leading-tight tracking-[0.02em] text-muted [overflow-wrap:anywhere] sm:text-[11px] sm:leading-normal sm:tracking-[0.18em]">{copy.warrantyLabel}</div>
                 </div>
               </div>
             </div>

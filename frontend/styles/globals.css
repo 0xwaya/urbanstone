@@ -1197,3 +1197,102 @@ html[data-theme="light"] .supplier-brand-mark {
     padding: 0.18rem 0.48rem;
   }
 }
+
+/* ── Fall promo (FeaturesBar): leathered black stone under a brand-navy overlay.
+   The card stays dark in both themes (stone look), so it re-scopes the dark tokens. */
+.fall-promo {
+  --bg: 8 12 24;
+  --surface: 12 18 32;
+  --panel: 16 24 41;
+  --text: 231 238 248;
+  --muted: 190 197 212;
+  --accent: 74 144 226;
+  --border: 52 72 102;
+  background-color: rgb(var(--bg));
+  color: rgb(var(--text));
+}
+
+.fall-promo__stone {
+  background-image: url("/promos/leathered-black.webp");
+  background-size: cover;
+  background-position: center;
+}
+
+.fall-promo__overlay {
+  background:
+    radial-gradient(120% 90% at 100% 0%, rgb(var(--accent) / 0.2), transparent 55%),
+    linear-gradient(180deg, rgb(var(--bg) / 0.55) 0%, rgb(var(--bg) / 0.78) 100%);
+}
+
+@media (min-width: 1024px) {
+  .fall-promo__overlay {
+    background:
+      radial-gradient(60% 85% at 78% 50%, rgb(var(--accent) / 0.18), transparent 70%),
+      linear-gradient(90deg, rgb(var(--bg) / 0.86) 0%, rgb(var(--bg) / 0.62) 50%, rgb(var(--bg) / 0.3) 100%);
+  }
+}
+
+.fall-promo__eyebrow {
+  border: 1px solid rgba(196, 173, 128, 0.5);
+  background: rgba(196, 173, 128, 0.14);
+  color: rgb(222 204 166);
+}
+
+.fall-promo__dot {
+  background: rgb(212 193 152);
+  box-shadow: 0 0 0 3px rgba(212, 193, 152, 0.22);
+}
+
+.fall-promo__tag {
+  border: 1px solid rgb(var(--border) / 0.9);
+  background: rgb(var(--panel) / 0.78);
+}
+
+.fall-promo__tag svg {
+  color: rgb(212 193 152);
+}
+
+.fall-promo__halo {
+  background: radial-gradient(closest-side, rgb(var(--accent) / 0.3), transparent 75%);
+  filter: blur(18px);
+}
+
+.fall-promo__sink {
+  filter:
+    drop-shadow(0 26px 30px rgba(0, 0, 0, 0.6))
+    drop-shadow(0 6px 10px rgba(0, 0, 0, 0.4));
+  /* One gentle float cycle, then rest (WCAG 2.2.2: auto-motion stops within 5s). */
+  animation: fall-promo-float 5s ease-in-out 1 both;
+}
+
+/* Promo CTA focus: champagne ring (~13:1 vs the dark stone) separated from the
+   gold button by a navy gap, so it reads >=3:1 against both (WCAG 1.4.11 / 2.4.13). */
+.fall-promo .brand-button-primary:focus-visible {
+  outline: 3px solid rgb(244 234 210);
+  outline-offset: 3px;
+  box-shadow:
+    0 0 0 3px rgb(8 12 24),
+    0 20px 40px rgba(0, 0, 0, 0.45);
+}
+
+.fall-promo__seal {
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  background: linear-gradient(180deg, rgb(212 193 152), rgb(171 147 103));
+  color: rgb(14 21 33);
+  box-shadow:
+    0 14px 30px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  transform: rotate(-8deg);
+}
+
+@keyframes fall-promo-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fall-promo__sink {
+    animation: none;
+    transform: none;
+  }
+}

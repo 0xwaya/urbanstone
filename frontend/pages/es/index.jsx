@@ -94,7 +94,6 @@ export default function SpanishHome() {
                     <main className="pb-6">
                         <Hero language="es" />
                         <FeaturesBar announcement={spanishAnnouncement} />
-                        <ServicesSection language="es" />
                         <ProjectsGallery language="es" />
                         <div className="my-8 h-px bg-gradient-to-r from-transparent via-accent/40 to-transparent sm:my-10" />
                         <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
@@ -116,6 +115,7 @@ export default function SpanishHome() {
                             expandedLabel="Ocultar preguntas"
                         />
                         <ReviewSection language="es" />
+                        <ServicesSection language="es" />
                         <Footer language="es" />
                     </main>
                 </div>
