@@ -1,0 +1,99 @@
+{
+  "queue_id": "2026-10-31-1600",
+  "status": "published",
+  "approved": false,
+  "scheduled_at_local": "2026-10-31T16:00:00-04:00",
+  "scheduled_at_utc": "2026-10-31T20:00:00+00:00",
+  "created_at_utc": "2026-10-31T19:23:02.936669+00:00",
+  "feed_format": "4x5",
+  "files": {
+    "1x1": {
+      "png": "post_1x1.png",
+      "jpg": "post_1x1.jpg",
+      "logo_corner": "top-left"
+    },
+    "4x5": {
+      "png": "post_4x5.png",
+      "jpg": "post_4x5.jpg",
+      "logo_corner": "top-left"
+    },
+    "9x16": {
+      "png": "post_9x16.png",
+      "jpg": "post_9x16.jpg",
+      "logo_corner": "top-left"
+    }
+  },
+  "dimensions": {
+    "post_type": "backsplash",
+    "application": "backsplash",
+    "finish": "polished",
+    "format": "single",
+    "material": "quartz",
+    "stone": "Carrara Classique",
+    "catalog_stone": true,
+    "style": "mid-century modern",
+    "cabinets": "warm white oak slab-front cabinets",
+    "lighting": "bright soft morning daylight from large windows",
+    "layout": "galley kitchen",
+    "hardware": "polished nickel",
+    "cta": "dm",
+    "brand_point": "local",
+    "promo": true,
+    "caption_style": "design",
+    "hashtag_set_id": "1a6ba93a",
+    "slot": "4 PM"
+  },
+  "hashtags": [
+    "quartzcountertops",
+    "countertop",
+    "kitchenremodel",
+    "cincinnati",
+    "masonohio"
+  ],
+  "scene_full": {
+    "stone": "Carrara Classique",
+    "material": "quartz",
+    "catalog": true,
+    "cabinets": "warm white oak slab-front cabinets",
+    "style": "mid-century modern",
+    "lighting": "bright soft morning daylight from large windows",
+    "layout": "galley kitchen",
+    "hardware": "polished nickel",
+    "application": "backsplash",
+    "finish": "polished",
+    "key": "Carrara Classique|warm white oak slab-front cabinets|mid-century modern|bright soft morning daylight from large windows|galley kitchen|backsplash|polished",
+    "prompt": "Bright, airy, light-filled photorealistic interior photograph of a mid-century modern kitchen, galley kitchen. The hero is the countertop: Carrara Classique quartz (soft white quartz with fine feathery grey Carrara-style veining), 3cm thick, a high-gloss polished surface with a clean eased edge, shown in full with no cropped ends or corners. The same stone runs as a full-height slab backsplash behind the range, veining flowing continuously from countertop to backsplash. Warm white oak slab-front cabinets with polished nickel hardware, bright soft morning daylight from large windows. Light walls, styled minimally (a bowl of lemons, a small vase of greenery, a cutting board). Clean bright exposure, fresh and stunning, uncluttered, real materials and true-to-life reflections, eye-level architectural photography, 24-35mm lens, magazine quality. Tall vertical 9:16 composition: the stone surface sits in the vertical middle of the frame and spans no more than 85% of the width, with generous space above and below, so the image can also be cropped to 4:5 and 1:1 around it. Quiet, low-detail upper corners. No people, no text, no logos, no watermarks.",
+    "format": "single",
+    "id": "8b4cc57122",
+    "created_at": "2026-10-31T15:22:28.500039-04:00"
+  },
+  "scene": {
+    "id": "8b4cc57122",
+    "key": "Carrara Classique|warm white oak slab-front cabinets|mid-century modern|bright soft morning daylight from large windows|galley kitchen|backsplash|polished",
+    "prompt": "Bright, airy, light-filled photorealistic interior photograph of a mid-century modern kitchen, galley kitchen. The hero is the countertop: Carrara Classique quartz (soft white quartz with fine feathery grey Carrara-style veining), 3cm thick, a high-gloss polished surface with a clean eased edge, shown in full with no cropped ends or corners. The same stone runs as a full-height slab backsplash behind the range, veining flowing continuously from countertop to backsplash. Warm white oak slab-front cabinets with polished nickel hardware, bright soft morning daylight from large windows. Light walls, styled minimally (a bowl of lemons, a small vase of greenery, a cutting board). Clean bright exposure, fresh and stunning, uncluttered, real materials and true-to-life reflections, eye-level architectural photography, 24-35mm lens, magazine quality. Tall vertical 9:16 composition: the stone surface sits in the vertical middle of the frame and spans no more than 85% of the width, with generous space above and below, so the image can also be cropped to 4:5 and 1:1 around it. Quiet, low-detail upper corners. No people, no text, no logos, no watermarks.",
+    "ai_generated": true
+  },
+  "platforms": {
+    "instagram": {
+      "status": "published",
+      "url": "https://www.instagram.com/p/DfK9_UrRpWo/",
+      "posted_at_et": "2026-10-31 16:02",
+      "location": "Cincinnati, Ohio",
+      "tag_users": [],
+      "ai_label": true,
+      "story": {
+        "status": "posted",
+        "image": "post_9x16.jpg",
+        "posted_at_et": "2026-10-31 16:04"
+      }
+    },
+    "tiktok": {
+      "status": "under review",
+      "account": "@urbanstoneco",
+      "type": "photo",
+      "image": "post_9x16.jpg",
+      "ai_disclosure": true,
+      "posted_at_et": "2026-10-31 16:10"
+    }
+  }
+}

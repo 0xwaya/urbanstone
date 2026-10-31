@@ -192,3 +192,46 @@ Each entry has this format:
   > Call/text (513) 307-5840 📞
   > AI-rendered design concept · Urban Stone Collective
   > #kitchentok #countertops #granite #cincinnati #kitchenremodel
+
+## 2026-10-31 — 4:00 PM ET
+- Posted at: Instagram feed 4:02 PM ET, Story 4:04 PM ET, TikTok ~4:10 PM ET
+- Material: quartz (Carrara Classique)
+- Finish: polished
+- Application: backsplash (full-height slab behind the range, galley kitchen)
+- Format: single
+- Caption style: design-focused
+- Location: Cincinnati, Ohio
+- About: Carrara Classique quartz countertop and full-height backsplash with white oak cabinets, fall sink promo (AI-rendered concept)
+- Queue folder: social/instagram/queue/2026-10-31-1600/
+- Image: https://www.urbanstone.co/social/2026-10-31-1600/post_4x5.jpg
+- Instagram post: https://www.instagram.com/p/DfK9_UrRpWo/ (AI label on)
+- Instagram Story: posted (post_9x16.jpg)
+- TikTok post: under review (photo post on @urbanstoneco, AI disclosure on)
+- Facebook: removed
+- Caption (Instagram, as posted):
+  > Carrara Classique sets the tone for the whole room. Here's how we'd build around it. 🤍
+  >
+  > The design: warm white oak slab-front cabinets, polished nickel hardware and bright soft morning daylight from large windows, all built around Carrara Classique. Light stone keeps the room open; the veining adds movement without the busy feel.
+  >
+  > Polished finish: a high gloss that makes the color and veining pop.
+  > Quartz: consistent color, lower maintenance and no sealing requirement.
+  > Fabrication and install across greater Cincinnati and Northern Kentucky.
+  > We narrow the slab options with you, so you don't have to sort through every warehouse alone.
+  > Available through our suppliers. Ask us about this slab for your project.
+  >
+  > 🎁 Fall offer: a complimentary 18-gauge stainless steel sink with kitchen projects of 50 sq ft and above. Undermount or top-mount, single or double basin. Through Dec 15.
+  >
+  > 👉 DM us a photo of your kitchen and we'll help you pick the slab.
+  >
+  > Image: AI-rendered design concept.
+  >
+  > Premium Countertops. Fast Install. Built for Cincinnati.
+  > 📞 (513) 307-5840 · ✉️ sales@urbanstone.co · 🌐 urbanstone.co
+  >
+  > #quartzcountertops #countertop #kitchenremodel #cincinnati #masonohio
+- Caption (TikTok, as posted):
+  > Carrara Classique sets the tone for the whole room. Here's how we'd build around it. 🤍
+  > 🎁 Free 18-gauge stainless sink on kitchens 50+ sq ft, through Dec 15.
+  > DM us your kitchen pic 📸
+  > AI-rendered design concept · Urban Stone Collective
+  > #quartzcountertops #countertops #backsplash #cincinnati #kitchentok
