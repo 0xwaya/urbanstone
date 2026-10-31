@@ -13,7 +13,7 @@
 //   `npx vitest run tests/projects-data.test.js` checks that files exist and fields are filled.
 //
 // Rules: no client names, no street addresses (city/neighborhood only, owner-approved), no listing
-// links, no brands, specs or prices.
+// links, no brands, specs or prices (exception: Edward approved naming Daltile for the OTR bathrooms, 2026-10-31).
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const jobs = {
@@ -141,31 +141,31 @@ export const projects = [
         job: 'real-job-01',
         featured: true,
         category: 'bathroom',
-        title: { en: 'Custom bathroom', es: 'Baño a medida' },
+        title: { en: 'Custom-built bathroom', es: 'Baño construido a medida' },
         text: {
-            en: 'Marble-look walls, a curbless walk-in shower and a wood vanity with a dark stone top.',
-            es: 'Paredes estilo mármol, ducha a ras de piso y mueble de madera con cubierta de piedra oscura.',
+            en: 'Custom built from scratch, personally by our owner. Italian Daltile tile wraps the floor, every wall and the ceiling in one continuous infinity finish, with a floating vanity, a smart mirror and an automatic bidet toilet.',
+            es: 'Construido a medida desde cero, personalmente por nuestro dueño. Azulejo italiano de Daltile envuelve el piso, todas las paredes y el techo en un acabado infinito continuo, con mueble flotante, espejo inteligente e inodoro con bidé automático.',
         },
         photos: [
             {
                 file: 'bathroom-marble-vanity.jpg',
                 alt: {
-                    en: 'Custom bathroom with large marble-look wall panels, a wood vanity with a dark stone top, a white vessel sink and matte black fixtures',
-                    es: 'Baño a medida con grandes paneles de pared estilo mármol, mueble de madera con cubierta de piedra oscura, lavabo blanco sobre cubierta y grifería negra mate',
+                    en: 'Custom-built bathroom wrapped in large-format Italian tile, with a floating wood vanity with a dark stone top, a white vessel sink and matte black fixtures',
+                    es: 'Baño construido a medida revestido con azulejo italiano de gran formato, mueble flotante de madera con cubierta de piedra oscura, lavabo blanco sobre cubierta y grifería negra mate',
                 },
             },
             {
                 file: 'bathroom-marble-shower.jpg',
                 alt: {
-                    en: 'Curbless walk-in shower with large marble-look wall panels, a linear drain and matte black body sprays',
-                    es: 'Ducha a ras de piso con grandes paneles estilo mármol, desagüe lineal y rociadores negros mate',
+                    en: 'Curbless walk-in shower in large-format Italian tile, with a linear drain and matte black body sprays',
+                    es: 'Ducha a ras de piso en azulejo italiano de gran formato, con desagüe lineal y rociadores negros mate',
                 },
             },
             {
                 file: 'bathroom-marble-wide.jpg',
                 alt: {
-                    en: 'Wide view of the custom bathroom: vessel sink on a dark stone vanity top and the open walk-in shower beyond',
-                    es: 'Vista amplia del baño a medida: lavabo sobre cubierta de piedra oscura y la ducha abierta al fondo',
+                    en: 'Wide view of the custom-built bathroom: Italian tile wrapping the walls, the floating vanity with a vessel sink, and the open walk-in shower beyond',
+                    es: 'Vista amplia del baño construido a medida: azulejo italiano en las paredes, el mueble flotante con lavabo sobre cubierta y la ducha abierta al fondo',
                 },
             },
         ],
@@ -229,17 +229,17 @@ export const projects = [
         job: 'real-job-01',
         featured: true,
         category: 'bathroom',
-        title: { en: 'Custom bathroom', es: 'Baño a medida' },
+        title: { en: 'Custom-built bathroom', es: 'Baño construido a medida' },
         text: {
-            en: 'A fluted wood floating vanity, a clean white top and a backlit mirror.',
-            es: 'Mueble flotante de madera acanalada, cubierta blanca y espejo retroiluminado.',
+            en: 'The loft’s second bathroom, also custom built from scratch by our owner: Italian Daltile tile wrapping floor, walls and ceiling, a fluted wood floating vanity, a smart mirror and an automatic bidet toilet.',
+            es: 'El segundo baño del loft, también construido a medida desde cero por nuestro dueño: azulejo italiano de Daltile en piso, paredes y techo, mueble flotante de madera acanalada, espejo inteligente e inodoro con bidé automático.',
         },
         photos: [
             {
                 file: 'bathroom-fluted-vanity.jpg',
                 alt: {
-                    en: 'Custom bathroom with grey textured tile, a fluted wood floating vanity with a white top, a backlit round mirror and a glass shower',
-                    es: 'Baño a medida con azulejo gris texturizado, mueble flotante de madera acanalada con cubierta blanca, espejo redondo retroiluminado y ducha de vidrio',
+                    en: 'Custom-built bathroom with grey textured Italian tile, a fluted wood floating vanity with a white top, a round backlit smart mirror and a glass shower',
+                    es: 'Baño construido a medida con azulejo italiano gris texturizado, mueble flotante de madera acanalada con cubierta blanca, espejo inteligente redondo retroiluminado y ducha de vidrio',
                 },
             },
         ],
