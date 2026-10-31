@@ -21,11 +21,6 @@ export default function ProjectCard({ project, copy, onOpen }) {
                 {project.tag ? <span className="absolute left-3 top-3 rounded-full bg-black/60 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-white">{project.tag}</span> : null}
             </button>
             <div className="flex min-w-0 flex-col gap-3 p-4">
-                <div className="min-w-0">
-                    <h3 className="font-display text-lg font-semibold text-text">{project.title}</h3>
-                    <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted">{project.location}</p>
-                    <p className="mt-1 text-sm leading-6 text-muted">{project.text}</p>
-                </div>
                 {rest.length ? (
                     <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1">
                         {rest.map((p, i) => (
@@ -35,6 +30,11 @@ export default function ProjectCard({ project, copy, onOpen }) {
                         ))}
                     </div>
                 ) : null}
+                <div className="min-w-0">
+                    <h3 className="font-display text-lg font-semibold text-text">{project.title}</h3>
+                    <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted">{project.location}</p>
+                    <p className="mt-1 text-justify text-sm leading-6 text-muted hyphens-auto sm:text-left">{project.text}</p>
+                </div>
             </div>
         </li>
     );
