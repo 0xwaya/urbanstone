@@ -19,12 +19,7 @@ export const jobs = {
     'real-job-01': {
         title: { en: 'Over-the-Rhine loft', es: 'Loft en Over-the-Rhine' },
         location: 'Over-the-Rhine, Cincinnati',
-        // Approved by Edward 2026-10-31. RENTAL listing: never describe this unit as for sale.
-        listing: {
-            url: 'https://www.zillow.com/homedetails/214-E-14th-St-Unit-2A-Cincinnati-OH-45202/2058257360_zpid/',
-            text: { en: 'This Over-the-Rhine loft is available for rent', es: 'Este loft en Over-the-Rhine está disponible para renta' },
-            linkText: { en: 'View the listing on Zillow', es: 'Ver el anuncio en Zillow' },
-        },
+        // Edward 2026-10-31: no rental/listing link on the site (Zillow has no affiliate program).
     },
 };
 

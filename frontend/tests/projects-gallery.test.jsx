@@ -46,7 +46,7 @@ describe('ProjectsGallery carousel', () => {
         expect(screen.getByRole('button', { name: /pause rotation/i })).toBeInTheDocument();
         expect(screen.getAllByRole('link', { name: /see all projects/i })[0]).toHaveAttribute('href', '/projects');
         expect(screen.getAllByText('Over-the-Rhine, Cincinnati').length).toBeGreaterThan(0);
-        expect(screen.getAllByRole('link', { name: /view the listing on zillow/i, hidden: true })[0]).toHaveAttribute('rel', 'noopener noreferrer nofollow');
+        expect(screen.queryAllByRole('link', { name: /zillow/i, hidden: true })).toHaveLength(0);
     });
 
     it('lazy-renders only the current slide and its neighbours', () => {
@@ -111,12 +111,12 @@ describe('ProjectsGallery carousel', () => {
 describe('ProjectsPage', () => {
     beforeAll(() => mockReducedMotion(false));
 
-    it('lists every project grouped by job, with the rental link', () => {
+    it('lists every project grouped by job, without listing links', () => {
         render(<ProjectsPage />);
         expect(screen.getByRole('heading', { level: 1, name: /our projects/i })).toBeInTheDocument();
         expect(screen.getByRole('heading', { level: 2, name: /over-the-rhine loft/i })).toBeInTheDocument();
         expect(screen.getAllByRole('heading', { level: 3 }).length).toBeGreaterThanOrEqual(getProjects('en').length);
-        expect(screen.getByRole('link', { name: /view the listing on zillow/i })).toHaveAttribute('target', '_blank');
+        expect(screen.queryByRole('link', { name: /zillow/i })).toBeNull();
         expect(document.body.textContent).not.toMatch(/for sale/i);
     });
 });

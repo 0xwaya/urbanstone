@@ -35,11 +35,10 @@ describe('project gallery data', () => {
         expect(getProjectsByJob('en').flatMap((g) => g.projects)).toHaveLength(projects.length);
     });
 
-    it('the Over-the-Rhine loft is a rental listing, never for sale', () => {
+    it('the Over-the-Rhine loft has its location and no listing link', () => {
         const job = jobs['real-job-01'];
         expect(job.location).toBe('Over-the-Rhine, Cincinnati');
-        expect(job.listing.url).toBe('https://www.zillow.com/homedetails/214-E-14th-St-Unit-2A-Cincinnati-OH-45202/2058257360_zpid/');
-        expect(JSON.stringify(job)).not.toMatch(/for sale|en venta|utm_/i);
-        expect(job.listing.text.en).toMatch(/available for rent/i);
+        expect(job.listing).toBeUndefined();
+        expect(JSON.stringify(job)).not.toMatch(/for sale|en venta|zillow|utm_/i);
     });
 });
