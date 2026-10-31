@@ -13,10 +13,19 @@
 //   `npx vitest run tests/projects-data.test.js` checks that files exist and fields are filled.
 //
 // Rules: no client names, no street addresses (city/neighborhood only, owner-approved), no listing
-// links, no brands, specs or prices.
+// links, no brands, specs or prices (exception: Edward approved naming Daltile and Floor & Decor for the OTR bathrooms, 2026-10-31).
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const jobs = {
+    'west-chester-kitchen': {
+        title: { en: 'Designer kitchen — West Chester, OH', es: 'Cocina de diseñador — West Chester, OH' },
+        location: 'West Chester, OH',
+        // Designer collaboration; do not name the designer (Edward 2026-10-31).
+    },
+    'union-ky-barn': {
+        title: { en: 'Converted barn — Union, KY', es: 'Granero convertido — Union, KY' },
+        location: 'Union, KY',
+    },
     'mason-island-modification': {
         title: { en: 'Island modification — Mason, OH', es: 'Modificación de isla — Mason, OH' },
         location: 'Mason, OH',
@@ -78,20 +87,20 @@ export const projects = [
     },
     {
         id: 'cincy-kitchen-brass-hood',
-        job: 'cincinnati-installs',
+        job: 'west-chester-kitchen',
         featured: true,
         category: 'kitchen',
-        title: { en: 'Kitchen with full-height stone backsplash', es: 'Cocina con salpicadero de piedra hasta el techo' },
+        title: { en: 'Kitchen with full-height quartz backsplash', es: 'Cocina con salpicadero de cuarzo hasta el techo' },
         text: {
-            en: 'Marble-look countertops run up the wall as a full-height backsplash behind the range, with an undermount sink under the window.',
-            es: 'Cubiertas estilo mármol que suben por la pared como salpicadero completo detrás de la estufa, con fregadero bajo cubierta junto a la ventana.',
+            en: 'Done in collaboration with a top designer, who helped design the custom island, the stone sink skirt and a custom stainless steel wall plate behind the range that protects the quartz backsplash from heat. Marble-look engineered quartz runs up the wall as a full-height backsplash, with an undermount sink under the window.',
+            es: 'Realizada en colaboración con un diseñador de primer nivel, que ayudó a diseñar la isla a medida, el faldón de piedra del fregadero y una placa de acero inoxidable a medida detrás de la estufa que protege del calor el salpicadero de cuarzo. Cuarzo de ingeniería estilo mármol sube por la pared como salpicadero completo, con fregadero bajo cubierta junto a la ventana.',
         },
         photos: [
             {
                 file: 'kitchen-brass-hood-marble-look.jpg', width: 2000, height: 1333,
                 alt: {
-                    en: 'White kitchen with marble-look countertops and a full-height matching stone backsplash, a stainless and brass range hood, a gas range and an undermount sink below a window',
-                    es: 'Cocina blanca con cubiertas estilo mármol y salpicadero de la misma piedra hasta el techo, campana de acero y latón, estufa de gas y fregadero bajo cubierta junto a una ventana',
+                    en: 'White kitchen with marble-look engineered quartz countertops and a full-height matching quartz backsplash, a stainless and brass range hood, a custom stainless steel heat-protection plate behind the gas range, and an undermount sink with a stone sink skirt below a window, designed in collaboration with a top designer',
+                    es: 'Cocina blanca con cubiertas de cuarzo de ingeniería estilo mármol y salpicadero del mismo cuarzo hasta el techo, campana de acero y latón, placa de acero inoxidable a medida contra el calor detrás de la estufa de gas, y fregadero bajo cubierta con faldón de piedra junto a una ventana, diseñada en colaboración con un diseñador de primer nivel',
                 },
             },
         ],
@@ -118,20 +127,20 @@ export const projects = [
     },
     {
         id: 'cincy-farmhouse-kitchen',
-        job: 'cincinnati-installs',
+        job: 'union-ky-barn',
         featured: true,
         category: 'kitchen',
-        title: { en: 'Farmhouse kitchen with black countertops', es: 'Cocina estilo granja con cubiertas negras' },
+        title: { en: 'Converted barn kitchen with black countertops', es: 'Cocina en granero convertido con cubiertas negras' },
         text: {
-            en: 'Black countertops on a long run of white cabinets and a center island, in an open kitchen with polished concrete floors.',
-            es: 'Cubiertas negras sobre una larga fila de gabinetes blancos y una isla central, en una cocina abierta con piso de concreto pulido.',
+            en: 'Black countertops on a long run of white cabinets and a center island, in the open kitchen of a converted barn with polished concrete floors.',
+            es: 'Cubiertas negras sobre una larga fila de gabinetes blancos y una isla central, en la cocina abierta de un granero convertido con piso de concreto pulido.',
         },
         photos: [
             {
                 file: 'farmhouse-kitchen-black-tops.jpg', width: 1200, height: 800,
                 alt: {
-                    en: 'Open farmhouse-style kitchen with black countertops on white cabinets and a center island with a sink, pendant lights and a polished concrete floor',
-                    es: 'Cocina abierta estilo granja con cubiertas negras sobre gabinetes blancos y una isla central con fregadero, lámparas colgantes y piso de concreto pulido',
+                    en: 'Open farmhouse-style kitchen in a converted barn with black countertops on white cabinets and a center island with a sink, pendant lights and a polished concrete floor',
+                    es: 'Cocina abierta estilo granja en un granero convertido con cubiertas negras sobre gabinetes blancos y una isla central con fregadero, lámparas colgantes y piso de concreto pulido',
                 },
             },
         ],
@@ -141,31 +150,31 @@ export const projects = [
         job: 'real-job-01',
         featured: true,
         category: 'bathroom',
-        title: { en: 'Custom bathroom', es: 'Baño a medida' },
+        title: { en: 'Custom-built bathroom', es: 'Baño construido a medida' },
         text: {
-            en: 'Marble-look walls, a curbless walk-in shower and a wood vanity with a dark stone top.',
-            es: 'Paredes estilo mármol, ducha a ras de piso y mueble de madera con cubierta de piedra oscura.',
+            en: 'Custom built from scratch, personally by our owner. Floor & Decor tile wraps the floor, every wall and the ceiling, raised to 13 ft, in one seamless finish over a curbless infinity floor with a long embedded linear drain. A wraparound steam shower system, a floating vanity, a smart mirror and an automatic bidet toilet complete it.',
+            es: 'Construido a medida desde cero, personalmente por nuestro dueño. Azulejo de Floor & Decor envuelve el piso, todas las paredes y el techo, elevado a 13 pies (4 m), en un acabado continuo sobre un piso infinito sin bordillo con un largo desagüe lineal empotrado. Lo completan un sistema de ducha de vapor envolvente, mueble flotante, espejo inteligente e inodoro con bidé automático.',
         },
         photos: [
             {
                 file: 'bathroom-marble-vanity.jpg',
                 alt: {
-                    en: 'Custom bathroom with large marble-look wall panels, a wood vanity with a dark stone top, a white vessel sink and matte black fixtures',
-                    es: 'Baño a medida con grandes paneles de pared estilo mármol, mueble de madera con cubierta de piedra oscura, lavabo blanco sobre cubierta y grifería negra mate',
+                    en: 'Custom-built bathroom wrapped in large-format tile, with a floating wood vanity with a dark stone top, a white vessel sink and matte black fixtures',
+                    es: 'Baño construido a medida revestido con azulejo de gran formato, mueble flotante de madera con cubierta de piedra oscura, lavabo blanco sobre cubierta y grifería negra mate',
                 },
             },
             {
                 file: 'bathroom-marble-shower.jpg',
                 alt: {
-                    en: 'Curbless walk-in shower with large marble-look wall panels, a linear drain and matte black body sprays',
-                    es: 'Ducha a ras de piso con grandes paneles estilo mármol, desagüe lineal y rociadores negros mate',
+                    en: 'Curbless walk-in shower in large-format tile, with a linear drain and matte black body sprays',
+                    es: 'Ducha a ras de piso en azulejo de gran formato, con desagüe lineal y rociadores negros mate',
                 },
             },
             {
                 file: 'bathroom-marble-wide.jpg',
                 alt: {
-                    en: 'Wide view of the custom bathroom: vessel sink on a dark stone vanity top and the open walk-in shower beyond',
-                    es: 'Vista amplia del baño a medida: lavabo sobre cubierta de piedra oscura y la ducha abierta al fondo',
+                    en: 'Wide view of the custom-built bathroom: tile wrapping the walls, the floating vanity with a vessel sink, and the open walk-in shower beyond',
+                    es: 'Vista amplia del baño construido a medida: azulejo en las paredes, el mueble flotante con lavabo sobre cubierta y la ducha abierta al fondo',
                 },
             },
         ],
@@ -229,17 +238,17 @@ export const projects = [
         job: 'real-job-01',
         featured: true,
         category: 'bathroom',
-        title: { en: 'Custom bathroom', es: 'Baño a medida' },
+        title: { en: 'Custom-built bathroom', es: 'Baño construido a medida' },
         text: {
-            en: 'A fluted wood floating vanity, a clean white top and a backlit mirror.',
-            es: 'Mueble flotante de madera acanalada, cubierta blanca y espejo retroiluminado.',
+            en: 'The loft’s second bathroom, also custom built from scratch by our owner: Italian Daltile tile wrapping floor, walls and a ceiling raised to 13 ft, a curbless infinity floor with a long embedded linear drain, a fluted wood floating vanity, a smart mirror and an automatic bidet toilet.',
+            es: 'El segundo baño del loft, también construido a medida desde cero por nuestro dueño: azulejo italiano de Daltile en piso, paredes y techo elevado a 13 pies (4 m), piso infinito sin bordillo con un largo desagüe lineal empotrado, mueble flotante de madera acanalada, espejo inteligente e inodoro con bidé automático.',
         },
         photos: [
             {
                 file: 'bathroom-fluted-vanity.jpg',
                 alt: {
-                    en: 'Custom bathroom with grey textured tile, a fluted wood floating vanity with a white top, a backlit round mirror and a glass shower',
-                    es: 'Baño a medida con azulejo gris texturizado, mueble flotante de madera acanalada con cubierta blanca, espejo redondo retroiluminado y ducha de vidrio',
+                    en: 'Custom-built bathroom with grey textured Italian tile, a fluted wood floating vanity with a white top, a round backlit smart mirror and a glass shower',
+                    es: 'Baño construido a medida con azulejo italiano gris texturizado, mueble flotante de madera acanalada con cubierta blanca, espejo inteligente redondo retroiluminado y ducha de vidrio',
                 },
             },
         ],
