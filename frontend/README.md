@@ -23,6 +23,22 @@ The active homepage funnel is:
 - open curated slab previews only when needed
 - return to Urban Stone for estimate, measurements, deposit, fabrication, and installation
 
+## Homepage Layout
+
+Section order (English `/` and Spanish `/es`): hero, fall offer bar, **What we do** (services), **Recent projects** (rotating gallery), materials + estimate form, contractor partner section, FAQ, reviews. Homeowners come first; the contractor section deliberately sits below materials and the estimate form.
+
+- `components/ServicesSection.jsx` + `data/services-content.js`: countertops, cabinets, remodels, interior renovations and redesign, flips, high-end custom bathrooms, and owner-run job-site/contractor management with the collective's crews and a structural engineering partner.
+- `components/ContractorCard.jsx`: contractor/builder partner pitch and portal entry.
+
+## Projects Gallery
+
+- `data/projects.js` is the single source for the homepage carousel (`components/ProjectsGallery.jsx`) and the `/projects` and `/es/projects` pages (`components/projects/ProjectsPage.jsx`). UI strings live in `data/projects-content.js`.
+- The homepage rotates up to `MAX_FEATURED` (8) projects marked `featured: true`, in file order, so put new work at the top. Every project appears on `/projects`, grouped by job.
+- Add photos: `npm run projects:add -- <job-id> path/to/*.jpg` resizes them, strips EXIF/GPS, writes `public/projects/<job-id>/`, and prints a starter entry. Add the job to `jobs` if new, paste the entry into `projects`, and fill every TODO with English and Spanish titles, text and descriptive alt text. `photos[0]` is the cover.
+- Rules: no client names, no street addresses (city or neighborhood only, as approved by the owner), no listing/rental/sale links, no brands, specs or prices.
+- Check: `npx vitest run tests/projects-data.test.js` (files exist, fields filled, no TODOs) and `tests/projects-seo.test.js` (sitemap and `/llms.txt`).
+- SEO: the projects pages carry canonical + `hreflang`, a real project photo as the Open Graph image, breadcrumb JSON-LD, and `CollectionPage`/`ImageGallery` JSON-LD generated from the same data, so new projects are picked up automatically.
+
 ## Requirements
 
 - Node.js 20.11 or newer
@@ -157,6 +173,8 @@ Lead webhook payload notes:
 - `lib/seo.js` centralizes local-business structured data (`buildLocalBusinessSchema`) used by the homepage, `service-areas/[slug]`, and `materials/[slug]` pages: `priceRange`, service-hub `geo` coordinates, a `GeoCircle` service radius, and a `hasOfferCatalog` listing quartz/granite/quartzite fabrication and installation as distinct `Service` entities.
 - `pages/robots.txt.js` explicitly allows major AI/answer-engine crawlers (`GPTBot`, `ChatGPT-User`, `OAI-SearchBot`, `ClaudeBot`, `Claude-Web`, `PerplexityBot`, `Google-Extended`, `Applebot-Extended`, `Amazonbot`, `Bytespider`, `CCBot`) alongside the default `Allow: /` rule.
 - `pages/llms.txt.js` serves a plain-text business summary, contact info, service area, and full page link map at `/llms.txt` for AI assistants and answer engines to cite accurately.
+- `/llms.txt` also links the projects gallery and lists current projects from `data/projects.js`; `sitemap.xml` includes `/projects` and `/es/projects`.
+- `/projects` and `/es/projects` emit `CollectionPage` + `ImageGallery` JSON-LD (one `ImageObject` per photo, linked to the business `@id`) and use a project photo for Open Graph/Twitter cards.
 - `data/homepage-content.js` FAQ items are written as natural-language local-intent Q&A (e.g. "best countertop company near me in Cincinnati") to support both classic featured snippets and AI Overview-style extraction.
 - The high-intent Cincinnati quartz query has a dedicated material page at `/materials/cincinnati-quartz-countertops`; city-wide and material-specific pages should remain distinct so each page answers one search intent clearly.
 

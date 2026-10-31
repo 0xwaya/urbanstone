@@ -25,6 +25,16 @@ export async function getServerSideProps({ res }) {
             priority: '0.9',
         },
         {
+            loc: getCanonicalUrl('/projects'),
+            changefreq: 'weekly',
+            priority: '0.8',
+        },
+        {
+            loc: getCanonicalUrl('/es/projects'),
+            changefreq: 'weekly',
+            priority: '0.7',
+        },
+        {
             loc: getCanonicalUrl('/coverage'),
             changefreq: 'weekly',
             priority: '0.9',

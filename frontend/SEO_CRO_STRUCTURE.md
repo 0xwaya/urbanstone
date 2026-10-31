@@ -11,6 +11,7 @@ This document covers how the frontend is organized for local SEO discovery, inte
 - `pages/service-areas/[slug].jsx`: city-level landing pages
 - `pages/materials/[slug].jsx`: material-by-city landing pages
 - `pages/ai-chat.jsx`: local Stone Haven chat experience used when no external embed URL is configured
+- `pages/projects.jsx` / `pages/es/projects.jsx`: real project photo gallery grouped by job (`CollectionPage` + `ImageGallery` schema, hreflang pair)
 - `pages/robots.txt.js`: crawl directives
 - `pages/sitemap.xml.js`: sitemap assembled from shared data arrays
 - `pages/api/lead.js`: quote-request intake endpoint
@@ -20,6 +21,8 @@ This document covers how the frontend is organized for local SEO discovery, inte
 
 - `data/service-areas.js`: city metadata, nearby areas, related areas, project types, competitor cities, and page-level FAQs
 - `data/material-pages.js`: material metadata, best-fit use cases, project types, competitor cities, related material pages, and page-level FAQs
+- `data/projects.js`: project gallery data (jobs, projects, bilingual titles and alt text) used by the homepage carousel, `/projects`, and `/llms.txt`
+- `data/services-content.js`: "What we do" service list
 - `lib/site.js`: canonical URL and production-origin helper
 
 ### Shared Components
@@ -27,6 +30,8 @@ This document covers how the frontend is organized for local SEO discovery, inte
 - `TopNav`: top-level navigation and brand pathing
 - `Hero`: primary promise, service footprint, and first CTA layer
 - `FeaturesBar`: compact announcement strip used for current business updates and quick trust compression
+- `ServicesSection`: "What we do" services block after the fall offer bar
+- `ProjectsGallery`: rotating featured-projects carousel linking to `/projects`
 - `ServiceAreasSection`: internal-link hub into city pages
 - `SuppliersSection`: material browsing surface and slab exploration
 - `LeadForm`: main CRO capture surface with route-specific copy overrides

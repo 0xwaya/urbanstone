@@ -1,6 +1,7 @@
 import { getCanonicalUrl, getSiteUrl } from '../lib/site';
 import { materialPages } from '../data/material-pages';
 import { serviceAreas } from '../data/service-areas';
+import { getProjects } from '../data/projects';
 
 // llms.txt is an emerging convention that gives AI assistants and answer
 // engines a concise, structured summary of the site so it can be cited
@@ -16,6 +17,10 @@ export async function getServerSideProps({ res }) {
 
     const materialLines = materialPages
         .map((page) => `- [${page.headline}](${getCanonicalUrl(`/materials/${page.slug}`)})`)
+        .join('\n');
+
+    const projectLines = getProjects('en')
+        .map((project) => `- ${project.title} (${project.location}): ${project.text}`)
         .join('\n');
 
     const body = `# Urban Stone Collective
@@ -42,10 +47,17 @@ Cincinnati, OH and nearby communities including Mason, West Chester, Liberty Tow
 - [Homepage](${getCanonicalUrl('/')})
 - [Spanish homepage](${getCanonicalUrl('/es')})
 - [Coverage Hub](${getCanonicalUrl('/coverage')})
+- [Projects gallery](${getCanonicalUrl('/projects')}) (Spanish: ${getCanonicalUrl('/es/projects')})
 
 ## Language Support
 
 The public website and estimate-request flow are available in English and Spanish. Use [the Spanish homepage](${getCanonicalUrl('/es')}) for Spanish-language customers; both versions share the same service area, materials catalog, and contact routes. The contractor portal is a separate business-facing service.
+
+## Recent Projects
+
+Real photos of completed Urban Stone jobs around Greater Cincinnati, grouped by job, are at ${getCanonicalUrl('/projects')}. The homepage rotates featured projects. Current projects:
+
+${projectLines}
 
 ### City Service Pages
 

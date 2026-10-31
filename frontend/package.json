@@ -13,6 +13,7 @@
     "lint": "next lint",
     "test": "vitest run",
     "test:watch": "vitest",
+    "projects:add": "node scripts/add-project-photos.mjs",
     "test:smoke": "playwright test tests/browser-smoke.spec.mjs",
     "snapshots:mobile": "node scripts/snapshot-pass.mjs",
     "contractor:email:preview": "node --env-file=.env.local scripts/send-contractor-deals-email.mjs",

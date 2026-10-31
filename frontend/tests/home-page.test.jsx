@@ -43,6 +43,7 @@ describe('Home page', () => {
         expect(screen.getByRole('heading', { name: /premium countertops\. fast install\. built for cincinnati\./i })).toBeInTheDocument();
         expect(screen.getByRole('heading', { name: /curated countertop materials/i })).toBeInTheDocument();
         expect(screen.getByRole('heading', { name: /whole projects are what we run/i })).toBeInTheDocument();
+        expect(screen.getByRole('heading', { name: /recent projects around cincinnati/i })).toBeInTheDocument();
         expect(screen.getByRole('heading', { name: /project & job-site management/i })).toBeInTheDocument();
         expect(screen.getByRole('heading', { name: /a stone partner who shows up/i })).toBeInTheDocument();
         expect(screen.getByRole('link', { name: 'Contractor Portal' })).toHaveAttribute('href', '/contractors/login');
