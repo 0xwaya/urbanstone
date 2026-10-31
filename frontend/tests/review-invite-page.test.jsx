@@ -1,88 +1,43 @@
-import { render, screen, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 import ReviewInvitePage from '../pages/reviews/invite';
-import { getSupabaseBrowserClient } from '../lib/supabase-browser';
 
 vi.mock('next/head', () => ({ default: ({ children }) => <>{children}</> }));
-vi.mock('next/link', () => ({ default: ({ href, children, ...props }) => <a href={href} {...props}>{children}</a> }));
-vi.mock('../lib/supabase-browser', () => ({ getSupabaseBrowserClient: vi.fn() }));
 
-const INVITE_TOKEN = 'A'.repeat(43);
+const TOKEN = 'T'.repeat(43);
 
-function setInviteUrl() {
-    window.history.replaceState(null, '', `/reviews/invite#invite=${INVITE_TOKEN}`);
-}
-
-function makeAuthClient(session = null) {
-    return {
-        auth: {
-            onAuthStateChange: vi.fn(() => ({ data: { subscription: { unsubscribe: vi.fn() } } })),
-            getSession: vi.fn().mockResolvedValue({ data: { session }, error: null }),
-            signInWithOAuth: vi.fn().mockResolvedValue({ error: null }),
-            signOut: vi.fn().mockResolvedValue({ error: null }),
-        },
-    };
-}
-
-afterEach(() => {
-    window.history.replaceState(null, '', '/');
-    window.sessionStorage.clear();
-    vi.unstubAllGlobals();
-    vi.clearAllMocks();
-});
-
-describe('ReviewInvitePage', () => {
-    it('keeps the invitation in session storage, removes it from the URL, and starts Google OAuth', async () => {
-        const user = userEvent.setup();
-        const client = makeAuthClient();
-        getSupabaseBrowserClient.mockReturnValue(client);
-        setInviteUrl();
-
-        render(<ReviewInvitePage />);
-        expect(await screen.findByRole('button', { name: 'Continue with Google' })).toBeInTheDocument();
-        expect(window.location.hash).toBe('');
-        expect(window.sessionStorage.getItem('urbanstone:review-invite')).toBe(INVITE_TOKEN);
-
-        await user.click(screen.getByRole('button', { name: 'Continue with Google' }));
-        await waitFor(() => expect(client.auth.signInWithOAuth).toHaveBeenCalledWith({
-            provider: 'google',
-            options: { redirectTo: `${window.location.origin}/reviews/invite` },
-        }));
+describe('ReviewInvitePage (token-verified, no Google sign-in)', () => {
+    afterEach(() => {
+        vi.unstubAllGlobals();
+        window.sessionStorage.clear();
     });
 
-    it('submits an unbiased review using the signed-in access token and consumes the local invite after success', async () => {
-        const user = userEvent.setup();
-        const session = {
-            access_token: 'test-access-token',
-            user: { email: 'customer@example.com', app_metadata: { provider: 'google' } },
-        };
-        const client = makeAuthClient(session);
-        getSupabaseBrowserClient.mockReturnValue(client);
-        vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
-            ok: true,
-            json: async () => ({ message: 'Review saved for moderation.' }),
-        }));
-        setInviteUrl();
-
+    it('asks for an invitation when there is no token', async () => {
+        window.history.replaceState(null, '', '/reviews/invite');
         render(<ReviewInvitePage />);
-        await screen.findByRole('textbox', { name: /name to display/i });
-        await user.type(screen.getByRole('textbox', { name: /name to display/i }), 'Jordan');
-        await user.click(screen.getByRole('radio', { name: '1' }));
-        await user.type(screen.getByRole('textbox', { name: /honest feedback/i }), 'The project took longer than planned, but the team resolved my concerns.');
-        await user.click(screen.getByRole('button', { name: 'Submit review' }));
+        expect(await screen.findByText(/personal invitation link is required/i)).toBeInTheDocument();
+    });
 
-        await waitFor(() => expect(fetch).toHaveBeenCalledWith('/api/reviews/submit', expect.objectContaining({
-            method: 'POST',
-            headers: expect.objectContaining({ Authorization: 'Bearer test-access-token' }),
-            body: JSON.stringify({
-                inviteToken: INVITE_TOKEN,
-                displayName: 'Jordan',
-                rating: '1',
-                reviewText: 'The project took longer than planned, but the team resolved my concerns.',
-            }),
-        })));
-        expect(await screen.findByRole('status')).toHaveTextContent('Review saved for moderation.');
-        expect(window.sessionStorage.getItem('urbanstone:review-invite')).toBeNull();
+    it('prefills from the invite, hides the token from the URL, and submits', async () => {
+        window.history.replaceState(null, '', `/reviews/invite#invite=${TOKEN}`);
+        const fetchMock = vi.fn()
+            .mockResolvedValueOnce({ ok: true, json: async () => ({ invite: { first_name: 'Pat', display_name: 'Pat E.', email: 'pat@example.com', job_label: 'Kitchen countertops' } }) })
+            .mockResolvedValueOnce({ ok: true, json: async () => ({ ok: true, message: 'Thank you! Your review was received.' }) });
+        vi.stubGlobal('fetch', fetchMock);
+        render(<ReviewInvitePage />);
+
+        expect(await screen.findByRole('heading', { name: /thank you, pat/i })).toBeInTheDocument();
+        expect(window.location.hash).toBe('');
+        expect(screen.getByDisplayValue('Pat E.')).toBeInTheDocument();
+        expect(screen.getByText('pat@example.com')).toBeInTheDocument();
+
+        fireEvent.click(screen.getByLabelText('5 stars'));
+        fireEvent.change(screen.getByLabelText('Your review'), { target: { value: 'Beautiful work and a very smooth install.' } });
+        fireEvent.click(screen.getByRole('button', { name: /submit review/i }));
+
+        await waitFor(() => expect(screen.getByRole('status')).toHaveTextContent(/thank you/i));
+        const body = JSON.parse(fetchMock.mock.calls[1][1].body);
+        expect(body).toMatchObject({ inviteToken: TOKEN, displayName: 'Pat E.', rating: 5 });
+        expect(fetchMock.mock.calls[1][1].headers.Authorization).toBeUndefined();
     });
 });

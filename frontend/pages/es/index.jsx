@@ -13,6 +13,7 @@ import FAQSection from '../../components/FAQSection';
 import ChatWidget from '../../components/ChatWidget';
 import Footer from '../../components/Footer';
 import ReviewSection from '../../components/ReviewSection';
+import { getReviewStaticProps } from '../../lib/reviews-db';
 import {
     spanishAnnouncement,
     spanishFaqContent,
@@ -21,7 +22,11 @@ import {
 import { getCanonicalUrl, getSiteUrl } from '../../lib/site';
 import { buildBreadcrumbSchema, buildBusinessSchema } from '../../lib/seo';
 
-export default function SpanishHome() {
+export async function getStaticProps() {
+    return getReviewStaticProps();
+}
+
+export default function SpanishHome({ reviews = [] }) {
     const siteUrl = getSiteUrl();
     const canonicalUrl = getCanonicalUrl('/es');
     const ogImageUrl = `${siteUrl}/api/og-image`;
@@ -114,7 +119,7 @@ export default function SpanishHome() {
                             collapsedLabel="Abrir preguntas"
                             expandedLabel="Ocultar preguntas"
                         />
-                        <ReviewSection language="es" />
+                        <ReviewSection language="es" reviews={reviews} />
                         <ServicesSection language="es" />
                         <Footer language="es" />
                     </main>

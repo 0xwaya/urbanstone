@@ -26,7 +26,7 @@ export async function getServerSideProps({ res }) {
 
     res.setHeader('Content-Type', 'text/plain; charset=utf-8');
     res.write(
-        `User-agent: *\nAllow: /\nAllow: /api/og-image\nDisallow: /api/\nDisallow: /contractors/login\nDisallow: /*?*\n\n${aiCrawlerRules}\nHost: ${siteUrl}\nSitemap: ${siteUrl}/sitemap.xml\n`
+        `User-agent: *\nAllow: /\nAllow: /api/og-image\nDisallow: /api/\nDisallow: /contractors/login\nDisallow: /admin/\nDisallow: /reviews/invite\nDisallow: /*?*\n\n${aiCrawlerRules}\nHost: ${siteUrl}\nSitemap: ${siteUrl}/sitemap.xml\n`
     );
     res.end();
 

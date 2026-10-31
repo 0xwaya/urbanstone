@@ -84,23 +84,17 @@ Recommended local run command (avoids port conflicts):
 
 If `RESEND_API_KEY` is not set, `/api/lead` and `/api/contractor-estimate` return a 503 and chat intake reports a submission error. Delivery succeeds only after Resend accepts the email.
 
-## Invite-only first-party customer reviews
+## Customer reviews (CRM invites, collected on urbanstone.co)
 
-This flow collects reviews on Urban Stone's own site. Google OAuth verifies the identity of an invited customer; submissions are saved as `pending` for moderation and are never posted or forwarded to Google or Google Maps. No Google Maps Business account is needed. Invitations are issued manually; there is no bulk-send or automated email path.
+Reviews are collected on Urban Stone's own site until the Google Business Profile is verified. Nothing is posted to Google.
 
-### Owner-side setup
-
-1. Configure the Supabase project and set `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `NEXT_PUBLIC_SUPABASE_URL`, and `NEXT_PUBLIC_SUPABASE_ANON_KEY` in the frontend environment. Keep the service-role key server-side, and set the public URL before the frontend build so CSP allows the project origin.
-2. Enable Google as a Supabase Auth provider. Set the Supabase Auth Site URL to the canonical site origin and add `https://www.urbanstone.co/reviews/invite` to the allowed redirect URLs. The Google OAuth callback is the Supabase Auth callback, not a Google Maps review endpoint.
-3. Apply `supabase/migrations/20261017_invited_customer_reviews.sql` to the intended Supabase project. It creates invite/review tables, enables RLS, denies direct browser table access, and limits the security-definer RPCs to `service_role`.
-4. Set `NEXT_PUBLIC_SITE_URL` to the canonical HTTPS origin and configure independent random server-only values of at least 32 bytes for `REVIEW_INVITE_ADMIN_SECRET` and `REVIEW_INVITE_EMAIL_HMAC_KEY`. Keep the HMAC key stable while invitations exist; rotating it invalidates outstanding email hashes.
-5. Rebuild/redeploy after setting the variables and verify OAuth, invite matching, and submission in a staging Supabase project before inviting real customers. Live OAuth/database behavior must be tested against the owner's configured project.
-
-### Manual invitations and moderation
-
-- After verifying a previous-customer relationship and a non-sensitive job reference, an authorized operator calls `POST /api/reviews/invites` with the admin bearer secret, customer email, and reference. The API stores only a token digest and HMAC of the normalized email, then returns a manual, one-time link expiring in 14 days. Deliver the link privately; never log or commit the token, email, or admin secret. Reissuing for a reference revokes its older unused invitation.
-- The customer signs in with the same verified Google email named in the invitation. Reviews enter `pending`; rating and sentiment do not determine eligibility.
-- An admin uses `GET /api/reviews/moderate` to inspect pending submissions and `PATCH /api/reviews/moderate` with a review ID and `published` or `rejected` status to moderate. Only published rows are returned by `/api/reviews/published` and shown publicly.
+- **Eligibility (CRM):** `crm.review_requests` gets one row per quote automatically (trigger + backfill) when a quote is `closed`, `balance_due = 0` and `amount_paid > 0`. Status flow: `eligible` -> `approved` (invite link created) -> `sent` -> `reviewed`, or `declined`.
+- **Admin:** `/admin/reviews` (noindex). Sign in with `REVIEW_INVITE_ADMIN_SECRET`. Each eligible customer shows the exact email; **Approve & send** sends that one message from `sales@urbanstone.co` via Resend (BCC sales@) when `RESEND_API_KEY` is set, otherwise it creates the link and shows the email to send manually, then **Mark as sent**. Each send is logged to `crm.communications`; a request that is `sent`/`reviewed`/`declined` can never be sent again. Pending reviews are published/rejected here; publishing revalidates `/` and `/es` immediately.
+- **Customer:** the one-time invite link (14 days, single use, stored only as a SHA-256 digest) is the verification; name/email/job are prefilled. Google sign-in is no longer required (the earlier OAuth RPC remains in the database and can be re-enabled later).
+- **Homepage:** `getStaticProps` loads published reviews (first name + last initial, job, location, month) with on-demand revalidation; with none, the section shows a short "inviting recent customers" note and no error.
+- **Google later:** set `REVIEW_GOOGLE_REVIEW_URL` (Google review short link) and the invite email adds a "leave one on Google" line automatically.
+- **Database:** `supabase/migrations/20261017_invited_customer_reviews.sql` + `20261031_review_requests_crm.sql`. All access goes through SECURITY DEFINER RPCs: public ones are gated by the invite-token digest, admin ones by the SHA-256 of the admin secret stored in `public.review_admin_config` (rotate both together).
+- **Env:** `REVIEWS_SUPABASE_URL`, `REVIEWS_SUPABASE_PUBLISHABLE_KEY` (public key; falls back to the CRM service client), `REVIEW_INVITE_ADMIN_SECRET`, `REVIEW_INVITE_EMAIL_HMAC_KEY`, optional `REVIEW_INVITE_DELIVERY=manual`, optional `REVIEW_GOOGLE_REVIEW_URL`.
 
 ## Contractor Portal
 
@@ -185,7 +179,7 @@ Lead webhook payload notes:
 - `lib/contact.js` builds SMS deep links to the business line. Set `NEXT_PUBLIC_COMPANY_SMS` to override the default `+15133075840`.
 - SMS actions appear in the main navigation, quote contact panel, Onyx chat footer, and contractor access page with prefilled context prompts.
 - The customer-facing chatbot is branded **Onyx** / **Onyx AI Assistant**. Internal component filenames remain unchanged to avoid unnecessary runtime churn.
-- The homepage review wall fetches only rows marked `published` by `/api/reviews/published`; no demo/placeholder testimonials or Google review handoff are rendered.
+- The homepage review section renders only reviews published in `/admin/reviews` (statically, revalidated on publish); no demo/placeholder testimonials, no Review/AggregateRating schema.
 
 Security check:
 
