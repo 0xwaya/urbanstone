@@ -17,6 +17,11 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const jobs = {
+    'mason-island-modification': {
+        title: { en: 'Island modification — Mason, OH', es: 'Modificación de isla — Mason, OH' },
+        location: 'Mason, OH',
+        // Edward 2026-10-31: before/after of lowering the island's raised back wall to one level.
+    },
     'cincinnati-installs': {
         title: { en: 'Kitchens around Greater Cincinnati', es: 'Cocinas en el área de Cincinnati' },
         location: 'Greater Cincinnati',
@@ -30,6 +35,47 @@ export const jobs = {
 };
 
 export const projects = [
+    {
+        id: 'mason-island-lowered-back-wall',
+        job: 'mason-island-modification',
+        featured: true,
+        category: 'remodel',
+        title: { en: 'Island modification: lowered back wall', es: 'Modificación de isla: muro trasero rebajado' },
+        text: {
+            en: 'Before and after: we lowered the raised back wall of this kitchen island so one single-level countertop now covers the whole island, opening up the kitchen.',
+            es: 'Antes y después: rebajamos el muro trasero elevado de esta isla de cocina para que una sola cubierta a un mismo nivel cubra toda la isla y la cocina se sienta más abierta.',
+        },
+        photos: [
+            {
+                file: 'island-after-single-level.jpg', width: 2000, height: 1500,
+                alt: {
+                    en: 'After: the kitchen island with its back wall lowered and one single-level white stone countertop with soft gray veining across the whole island, gray island cabinets and dark wood floors',
+                    es: 'Después: la isla de cocina con el muro trasero rebajado y una sola cubierta de piedra blanca con vetas grises suaves a un mismo nivel en toda la isla, gabinetes grises y piso de madera oscura',
+                },
+            },
+            {
+                file: 'island-before-raised-back-wall.jpg', width: 2000, height: 1500,
+                alt: {
+                    en: 'Before: the same kitchen island with its old tops removed, showing the raised back wall that stood above the main counter level',
+                    es: 'Antes: la misma isla de cocina sin sus cubiertas anteriores, mostrando el muro trasero elevado que sobresalía del nivel principal de la cubierta',
+                },
+            },
+            {
+                file: 'island-before-back-wall-closeup.jpg', width: 2000, height: 1500,
+                alt: {
+                    en: 'Before: close-up of the tall back wall of the island, framed above the cabinet height, before it was lowered',
+                    es: 'Antes: vista de cerca del muro trasero alto de la isla, por encima de la altura de los gabinetes, antes de rebajarlo',
+                },
+            },
+            {
+                file: 'island-after-sink-side.jpg', width: 2000, height: 1500,
+                alt: {
+                    en: 'After: the finished single-level island top in white stone with gray veining and an undermount sink, seen from the dining area',
+                    es: 'Después: la cubierta de la isla terminada a un solo nivel, en piedra blanca con vetas grises y fregadero bajo cubierta, vista desde el comedor',
+                },
+            },
+        ],
+    },
     {
         id: 'cincy-kitchen-brass-hood',
         job: 'cincinnati-installs',
@@ -66,26 +112,6 @@ export const projects = [
                 alt: {
                     en: 'U-shaped kitchen with speckled white and gray granite countertops, a wide peninsula, walnut-tone cabinets and stainless steel appliances',
                     es: 'Cocina en U con cubiertas de granito blanco y gris moteado, península amplia, gabinetes en tono nogal y electrodomésticos de acero inoxidable',
-                },
-            },
-        ],
-    },
-    {
-        id: 'cincy-white-island',
-        job: 'cincinnati-installs',
-        featured: true,
-        category: 'kitchen',
-        title: { en: 'Large white kitchen island', es: 'Isla de cocina blanca de gran formato' },
-        text: {
-            en: 'A large island top in white stone with soft gray veining and an undermount prep sink.',
-            es: 'Una gran cubierta de isla en piedra blanca con vetas grises suaves y fregadero auxiliar bajo cubierta.',
-        },
-        photos: [
-            {
-                file: 'white-quartz-island-hex-tile.jpg', width: 2000, height: 1333,
-                alt: {
-                    en: 'Large kitchen island with a white stone top with soft gray veining and an undermount sink, a dark island base, and white cabinets with a hexagon tile backsplash behind',
-                    es: 'Gran isla de cocina con cubierta de piedra blanca con vetas grises suaves y fregadero bajo cubierta, base oscura y gabinetes blancos con salpicadero de azulejo hexagonal al fondo',
                 },
             },
         ],
