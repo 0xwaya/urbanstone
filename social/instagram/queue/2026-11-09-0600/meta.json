@@ -1,0 +1,162 @@
+{
+  "queue_id": "2026-11-09-0600",
+  "status": "queued",
+  "source": "real-install",
+  "approved": false,
+  "scheduled_at_local": "2026-11-09T06:00:00-05:00",
+  "scheduled_at_utc": "2026-11-09T11:00:00+00:00",
+  "created_at_utc": "2026-10-31T21:37:13.322291+00:00",
+  "feed_format": "4x5",
+  "files": {
+    "1x1": {
+      "jpg": "post_1x1.jpg",
+      "logo_corner": "top-left"
+    },
+    "4x5": {
+      "jpg": "post_4x5.jpg",
+      "logo_corner": "top-left"
+    },
+    "9x16": {
+      "jpg": "post_9x16.jpg",
+      "logo_corner": "top-right"
+    }
+  },
+  "carousel": {
+    "feed": [
+      "slide_01_4x5.jpg",
+      "slide_02_4x5.jpg"
+    ],
+    "tiktok": [
+      "slide_01_9x16.jpg",
+      "slide_02_9x16.jpg"
+    ],
+    "story": "slide_02_9x16.jpg",
+    "story_video": "reel_9x16.mp4"
+  },
+  "slides": [
+    {
+      "name": "newport-in-progress",
+      "alt": "Dog shower station in progress: white subway tile with black grout around a raised basin, tiled step and bench",
+      "files": {
+        "1x1": {
+          "jpg": "slide_01_1x1.jpg",
+          "logo_corner": "top-left",
+          "upscale": 0.36
+        },
+        "4x5": {
+          "jpg": "slide_01_4x5.jpg",
+          "logo_corner": "top-right",
+          "upscale": 0.45
+        },
+        "9x16": {
+          "jpg": "slide_01_9x16.jpg",
+          "logo_corner": "top-right",
+          "upscale": 0.63
+        }
+      }
+    },
+    {
+      "name": "newport-finished",
+      "alt": "Finished dog shower station: white subway tile, raised basin, industrial faucet with a pull-down sprayer and a tiled ledge",
+      "files": {
+        "1x1": {
+          "jpg": "slide_02_1x1.jpg",
+          "logo_corner": "top-left",
+          "upscale": 0.75
+        },
+        "4x5": {
+          "jpg": "slide_02_4x5.jpg",
+          "logo_corner": "top-left",
+          "upscale": 0.94
+        },
+        "9x16": {
+          "jpg": "slide_02_9x16.jpg",
+          "logo_corner": "top-right",
+          "upscale": 1.33
+        }
+      }
+    }
+  ],
+  "dimensions": {
+    "post_type": "real project",
+    "application": "pet wash station",
+    "format": "video",
+    "material": null,
+    "finish": null,
+    "stone": null,
+    "cta": "dm",
+    "promo": false,
+    "caption_style": "real_project",
+    "slot": "6 AM",
+    "job": "real-job-newport-dog-shower",
+    "title": "Custom subway tile dog shower station"
+  },
+  "hashtags": [
+    "dogwashstation",
+    "subwaytile",
+    "petwashstation",
+    "cincinnati",
+    "northernkentucky"
+  ],
+  "scene": {
+    "ai_generated": false,
+    "job": "real-job-newport-dog-shower"
+  },
+  "location": "Newport, Kentucky",
+  "instagram": {
+    "location": "Newport, Kentucky",
+    "tag_users": []
+  },
+  "location_note": "Real job in Newport, KY (Edward, Oct 31, 2026).",
+  "platforms": {
+    "instagram": {
+      "status": "queued",
+      "location": "Newport, Kentucky",
+      "tag_users": [],
+      "post_as": "reel",
+      "video": "reel_9x16.mp4",
+      "share_to_feed": true,
+      "cover": "slide_02_9x16.jpg",
+      "story": "reel_9x16.mp4",
+      "fallback_feed_carousel": [
+        "slide_01_4x5.jpg",
+        "reel_4x5.mp4"
+      ]
+    },
+    "tiktok": {
+      "status": "queued",
+      "post_as": "video",
+      "video": "reel_9x16.mp4",
+      "cover": "slide_02_9x16.jpg"
+    },
+    "facebook": {
+      "status": "skip"
+    }
+  },
+  "posting_notes": "VIDEO POST: publish reel_9x16.mp4 as an Instagram Reel (share to feed; cover = cover image) and as the TikTok video; Story = reel_9x16.mp4. Do NOT set any AI label (real job, ai_generated false). No Facebook.",
+  "format": "video",
+  "media_type": "video",
+  "video": "reel_9x16.mp4",
+  "videos": {
+    "9x16": {
+      "mp4": "reel_9x16.mp4",
+      "duration_s": 14.93
+    },
+    "4x5": {
+      "mp4": "reel_4x5.mp4",
+      "duration_s": 14.93
+    }
+  },
+  "cover": {
+    "9x16": "slide_02_9x16.jpg",
+    "4x5": "slide_02_4x5.jpg",
+    "1x1": "slide_02_1x1.jpg"
+  },
+  "ai_label": false,
+  "label_ai": false,
+  "publish_requirements": [
+    "upload the MP4 (IG Reel + Story, TikTok video); do not post the stills as the main media",
+    "do NOT set any AI label / 'AI info' / TikTok AI-generated toggle",
+    "no Facebook"
+  ]
+}

@@ -1,0 +1,162 @@
+{
+  "queue_id": "2026-11-07-1600",
+  "status": "queued",
+  "source": "real-install",
+  "approved": false,
+  "scheduled_at_local": "2026-11-07T16:00:00-05:00",
+  "scheduled_at_utc": "2026-11-07T21:00:00+00:00",
+  "created_at_utc": "2026-10-31T21:37:11.853736+00:00",
+  "feed_format": "4x5",
+  "files": {
+    "1x1": {
+      "jpg": "post_1x1.jpg",
+      "logo_corner": "top-left"
+    },
+    "4x5": {
+      "jpg": "post_4x5.jpg",
+      "logo_corner": "top-right"
+    },
+    "9x16": {
+      "jpg": "post_9x16.jpg",
+      "logo_corner": "top-left"
+    }
+  },
+  "carousel": {
+    "feed": [
+      "slide_01_4x5.jpg",
+      "slide_02_4x5.jpg"
+    ],
+    "tiktok": [
+      "slide_01_9x16.jpg",
+      "slide_02_9x16.jpg"
+    ],
+    "story": "slide_02_9x16.jpg",
+    "story_video": "reel_9x16.mp4"
+  },
+  "slides": [
+    {
+      "name": "reading-in-progress",
+      "alt": "Bathroom in progress: large gray tile wrapped up the walls, a tiled half wall and mosaic shower floor around a window",
+      "files": {
+        "1x1": {
+          "jpg": "slide_01_1x1.jpg",
+          "logo_corner": "top-right",
+          "upscale": 0.36
+        },
+        "4x5": {
+          "jpg": "slide_01_4x5.jpg",
+          "logo_corner": "top-right",
+          "upscale": 0.36
+        },
+        "9x16": {
+          "jpg": "slide_01_9x16.jpg",
+          "logo_corner": "top-right",
+          "upscale": 0.48
+        }
+      }
+    },
+    {
+      "name": "reading-finished",
+      "alt": "Finished walk-in shower with large gray wall tile, a rain shower head, glass panel on a tiled half wall",
+      "files": {
+        "1x1": {
+          "jpg": "slide_02_1x1.jpg",
+          "logo_corner": "top-left",
+          "upscale": 0.75
+        },
+        "4x5": {
+          "jpg": "slide_02_4x5.jpg",
+          "logo_corner": "top-right",
+          "upscale": 0.75
+        },
+        "9x16": {
+          "jpg": "slide_02_9x16.jpg",
+          "logo_corner": "top-left",
+          "upscale": 1.0
+        }
+      }
+    }
+  ],
+  "dimensions": {
+    "post_type": "real project",
+    "application": "bathroom remodel",
+    "format": "video",
+    "material": null,
+    "finish": null,
+    "stone": null,
+    "cta": "dm",
+    "promo": false,
+    "caption_style": "real_project",
+    "slot": "4 PM",
+    "job": "real-job-reading-bath",
+    "title": "Full bathroom reframe, tile wrap and walk-in shower"
+  },
+  "hashtags": [
+    "bathroomremodel",
+    "tileshower",
+    "walkinshower",
+    "cincinnati",
+    "cincinnatiohio"
+  ],
+  "scene": {
+    "ai_generated": false,
+    "job": "real-job-reading-bath"
+  },
+  "location": "Reading, Ohio",
+  "instagram": {
+    "location": "Reading, Ohio",
+    "tag_users": []
+  },
+  "location_note": "Real job in Reading, OH (Edward, Oct 31, 2026).",
+  "platforms": {
+    "instagram": {
+      "status": "queued",
+      "location": "Reading, Ohio",
+      "tag_users": [],
+      "post_as": "reel",
+      "video": "reel_9x16.mp4",
+      "share_to_feed": true,
+      "cover": "slide_02_9x16.jpg",
+      "story": "reel_9x16.mp4",
+      "fallback_feed_carousel": [
+        "slide_01_4x5.jpg",
+        "reel_4x5.mp4"
+      ]
+    },
+    "tiktok": {
+      "status": "queued",
+      "post_as": "video",
+      "video": "reel_9x16.mp4",
+      "cover": "slide_02_9x16.jpg"
+    },
+    "facebook": {
+      "status": "skip"
+    }
+  },
+  "posting_notes": "VIDEO POST: publish reel_9x16.mp4 as an Instagram Reel (share to feed; cover = cover image) and as the TikTok video; Story = reel_9x16.mp4. Do NOT set any AI label (real job, ai_generated false). No Facebook.",
+  "format": "video",
+  "media_type": "video",
+  "video": "reel_9x16.mp4",
+  "videos": {
+    "9x16": {
+      "mp4": "reel_9x16.mp4",
+      "duration_s": 25.17
+    },
+    "4x5": {
+      "mp4": "reel_4x5.mp4",
+      "duration_s": 25.17
+    }
+  },
+  "cover": {
+    "9x16": "slide_02_9x16.jpg",
+    "4x5": "slide_02_4x5.jpg",
+    "1x1": "slide_02_1x1.jpg"
+  },
+  "ai_label": false,
+  "label_ai": false,
+  "publish_requirements": [
+    "upload the MP4 (IG Reel + Story, TikTok video); do not post the stills as the main media",
+    "do NOT set any AI label / 'AI info' / TikTok AI-generated toggle",
+    "no Facebook"
+  ]
+}
