@@ -13,7 +13,8 @@ Spec (JSON): {"slot": "YYYY-MM-DD HH:MM", "job": "real-job-01", "title": ...,
     {"src": "/abs/path.jpg", "name": "01-bath", "focus_x": 0.5, "focus_x_9x16": 0.45, "alt": "..."}],
   "story_image": 0, "caption": "...", "tiktok_caption": "...", "hashtags": [...5],
   "tiktok_hashtags": [...5], "cta": "dm"|"link"|"call", "promo": bool,
-  "location": "IG location tag (default Cincinnati, Ohio)", "location_note": "why it overrides"}
+  "location": "IG location tag (default Cincinnati, Ohio)", "location_note": "why it overrides",
+  "instagram_tag_users": ["handle"]  # tagged in the photo on IG (no @)}
 
 Usage: python3 social/instagram/scripts/make_real_post.py SPEC.json --photos-dir DIR [--replace]
 """
@@ -120,7 +121,8 @@ def main(argv=None):
         "scene": {"ai_generated": False, "job": spec["job"]},
         "location": spec.get("location", DEFAULT_LOCATION),
         "location_note": spec.get("location_note", ""),
-        "platforms": {"instagram": {"status": "queued", "location": spec.get("location", DEFAULT_LOCATION)},
+        "platforms": {"instagram": {"status": "queued", "location": spec.get("location", DEFAULT_LOCATION),
+                                    "tag_users": spec.get("instagram_tag_users", [])},
                       "tiktok": {"status": "queued"}},
         "posting_notes": spec.get("posting_notes", ""),
     }
