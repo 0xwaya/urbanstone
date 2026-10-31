@@ -143,8 +143,8 @@ export const projects = [
         category: 'bathroom',
         title: { en: 'Custom-built bathroom', es: 'Baño construido a medida' },
         text: {
-            en: 'Custom built from scratch, personally by our owner. Italian Daltile tile wraps the floor, every wall and the ceiling in one continuous infinity finish, with a floating vanity, a smart mirror and an automatic bidet toilet.',
-            es: 'Construido a medida desde cero, personalmente por nuestro dueño. Azulejo italiano de Daltile envuelve el piso, todas las paredes y el techo en un acabado infinito continuo, con mueble flotante, espejo inteligente e inodoro con bidé automático.',
+            en: 'Custom built from scratch, personally by our owner. Italian Daltile tile wraps the floor, every wall and the ceiling, raised to 13 ft, in one continuous infinity finish, with a wraparound steam shower system, a floating vanity, a smart mirror and an automatic bidet toilet.',
+            es: 'Construido a medida desde cero, personalmente por nuestro dueño. Azulejo italiano de Daltile envuelve el piso, todas las paredes y el techo, elevado a 13 pies (4 m), en un acabado infinito continuo, con sistema de ducha de vapor envolvente, mueble flotante, espejo inteligente e inodoro con bidé automático.',
         },
         photos: [
             {
@@ -231,8 +231,8 @@ export const projects = [
         category: 'bathroom',
         title: { en: 'Custom-built bathroom', es: 'Baño construido a medida' },
         text: {
-            en: 'The loft’s second bathroom, also custom built from scratch by our owner: Italian Daltile tile wrapping floor, walls and ceiling, a fluted wood floating vanity, a smart mirror and an automatic bidet toilet.',
-            es: 'El segundo baño del loft, también construido a medida desde cero por nuestro dueño: azulejo italiano de Daltile en piso, paredes y techo, mueble flotante de madera acanalada, espejo inteligente e inodoro con bidé automático.',
+            en: 'The loft’s second bathroom, also custom built from scratch by our owner: Italian Daltile tile wrapping floor, walls and a ceiling raised to 13 ft, a fluted wood floating vanity, a smart mirror and an automatic bidet toilet.',
+            es: 'El segundo baño del loft, también construido a medida desde cero por nuestro dueño: azulejo italiano de Daltile en piso, paredes y techo elevado a 13 pies (4 m), mueble flotante de madera acanalada, espejo inteligente e inodoro con bidé automático.',
         },
         photos: [
             {
