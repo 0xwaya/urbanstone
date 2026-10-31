@@ -138,9 +138,6 @@ export default function Home() {
             <Hero />
             <FeaturesBar announcement={homepageAnnouncement} />
             <ServicesSection />
-            <section className="mx-auto max-w-6xl px-4 mt-8 mb-8 sm:px-6">
-              <ContractorCard />
-            </section>
             <div className="my-8 h-px bg-gradient-to-r from-transparent via-accent/40 to-transparent sm:my-10" />
             <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
               <div className="lg:col-span-2">
@@ -150,6 +147,9 @@ export default function Home() {
                 <LeadForm content={homepageLeadFormContent} routeId="homepage" collapsible defaultExpanded={false} />
               </div>
             </div>
+            <section className="mx-auto max-w-6xl px-4 mt-8 mb-8 sm:px-6">
+              <ContractorCard />
+            </section>
             <FAQSection {...homepageFaqContent} collapsible defaultExpanded={false} />
             <ReviewSection />
             <Footer />
