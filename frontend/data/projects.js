@@ -143,8 +143,8 @@ export const projects = [
         category: 'bathroom',
         title: { en: 'Custom-built bathroom', es: 'Baño construido a medida' },
         text: {
-            en: 'Custom built from scratch, personally by our owner. Tile from Floor & Decor wraps the floor, every wall and the ceiling, raised to 13 ft, in one continuous infinity finish, with a curbless infinity floor and a long embedded linear drain, a wraparound steam shower system, a floating vanity, a smart mirror and an automatic bidet toilet.',
-            es: 'Construido a medida desde cero, personalmente por nuestro dueño. Azulejo de Floor & Decor envuelve el piso, todas las paredes y el techo, elevado a 13 pies (4 m), en un acabado infinito continuo, con piso infinito sin bordillo y un largo desagüe lineal empotrado, sistema de ducha de vapor envolvente, mueble flotante, espejo inteligente e inodoro con bidé automático.',
+            en: 'Custom built from scratch, personally by our owner. Floor & Decor tile wraps the floor, every wall and the ceiling, raised to 13 ft, in one seamless finish over a curbless infinity floor with a long embedded linear drain. A wraparound steam shower system, a floating vanity, a smart mirror and an automatic bidet toilet complete it.',
+            es: 'Construido a medida desde cero, personalmente por nuestro dueño. Azulejo de Floor & Decor envuelve el piso, todas las paredes y el techo, elevado a 13 pies (4 m), en un acabado continuo sobre un piso infinito sin bordillo con un largo desagüe lineal empotrado. Lo completan un sistema de ducha de vapor envolvente, mueble flotante, espejo inteligente e inodoro con bidé automático.',
         },
         photos: [
             {
