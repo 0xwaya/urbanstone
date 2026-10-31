@@ -219,3 +219,17 @@ export function summarizeLeadForReport(match, source) {
 export function rankTopLeads(entries, limit = 10) {
     return [...entries].filter((entry) => LIVE_SOURCE_KEYS.has(entry?.source)).sort((a, b) => (b.score ?? -1) - (a.score ?? -1)).slice(0, limit);
 }
+
+/** Email the run report when there is something to act on, plus one Friday 5 PM ET heartbeat. */
+export function shouldSendRunReport(summary, now = new Date(), timeZone = 'America/New_York') {
+    if (!summary || summary.mode !== 'live') return false;
+    const leads = Number(summary.counts?.totalMatches || 0);
+    const degraded = (summary.health?.unhealthySources || []).length > 0;
+    if (leads > 0 || degraded) return true;
+    const parts = new Intl.DateTimeFormat('en-US', {
+        timeZone, weekday: 'short', hour: 'numeric', hourCycle: 'h23',
+    }).formatToParts(now);
+    const weekday = parts.find((part) => part.type === 'weekday')?.value;
+    const hour = Number(parts.find((part) => part.type === 'hour')?.value);
+    return weekday === 'Fri' && hour >= 17;
+}

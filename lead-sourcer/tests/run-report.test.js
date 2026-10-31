@@ -3,6 +3,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
     buildRunReportText, buildRunReportHtml, buildSourceRows, resolveEnabledSources, summarizeLeadForReport, rankTopLeads,
+    shouldSendRunReport,
 } from '../src/run-report.js';
 import { assessRunHealth } from '../src/run-health.js';
 
@@ -83,6 +84,21 @@ describe('run report', () => {
         const html = buildRunReportHtml(report);
         expect(html).toContain('Acme &lt;Remodel&gt; — Kitchen remodel');
         expect(html).not.toMatch(/example\.invalid|555-0100/);
+    });
+});
+
+describe('run report delivery', () => {
+    const quiet = { mode: 'live', counts: { totalMatches: 0 }, health: { unhealthySources: [] } };
+
+    test('sends when there is a lead or a source is down', () => {
+        expect(shouldSendRunReport({ ...quiet, counts: { totalMatches: 1 } }, new Date('2026-10-29T12:07:00Z'))).toBe(true);
+        expect(shouldSendRunReport({ ...quiet, health: { unhealthySources: ['permits-butler'] } }, new Date('2026-10-29T12:07:00Z'))).toBe(true);
+    });
+
+    test('suppresses a healthy zero-lead poll, except the Friday 5 PM heartbeat', () => {
+        expect(shouldSendRunReport(quiet, new Date('2026-10-29T16:07:00Z'))).toBe(false);
+        expect(shouldSendRunReport(quiet, new Date('2026-10-30T21:07:00Z'))).toBe(true);
+        expect(shouldSendRunReport({ ...quiet, mode: 'review-only' }, new Date('2026-10-30T21:07:00Z'))).toBe(false);
     });
 });
 

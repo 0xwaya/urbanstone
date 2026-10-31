@@ -20,7 +20,7 @@ import { resolveRunMode } from './mode.js';
 import { relay } from './relay.js';
 import { initializeTracing } from './tracing.js';
 import { assessRunHealth } from './run-health.js';
-import { buildRunReportText, buildRunReportHtml, summarizeLeadForReport, rankTopLeads } from './run-report.js';
+import { buildRunReportText, buildRunReportHtml, summarizeLeadForReport, rankTopLeads, shouldSendRunReport } from './run-report.js';
 import { buildPreDraft, shouldRunDaily, readDailyState, writeDailyState, resolveCooldownHours } from './daily-runner.js';
 import { checkScheduledSlot, parseAllowedHours } from './schedule-guard.js';
 import { syncLeadsToCrm, scrubError } from './crm-sync.js';
@@ -84,6 +84,10 @@ function normalizePollResult(result) {
 
 async function maybeSendRunReport(summary) {
     if (!SEND_RUN_REPORT || summary.mode !== 'live') return;
+    if (!shouldSendRunReport(summary)) {
+        console.log('[lead-sourcer] Run report suppressed (no new leads, sources healthy, not the Friday heartbeat).');
+        return;
+    }
 
     const reportId = `run-report:${summary.startedAt}`;
     const reportEmailToken = String(Date.parse(summary.startedAt));

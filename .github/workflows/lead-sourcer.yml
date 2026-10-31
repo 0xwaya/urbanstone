@@ -10,15 +10,16 @@ name: Lead Sourcer
 
 on:
   schedule:
-    # 8 AM, 12 PM, 5 PM America/New_York, Monday–Friday. Cron is UTC, so both
-    # DST variants are listed; src/schedule-guard.js runs only the line that
-    # matches ET today and skips Saturday and Sunday.
-    - cron: '0 12 * * 1-5'   # 8 AM EDT, weekdays
-    - cron: '0 13 * * 1-5'   # 8 AM EST, weekdays
-    - cron: '0 16 * * 1-5'   # 12 PM EDT, weekdays
-    - cron: '0 17 * * 1-5'   # 12 PM EST, weekdays
-    - cron: '0 21 * * 1-5'   # 5 PM EDT, weekdays
-    - cron: '0 22 * * 1-5'   # 5 PM EST, weekdays
+    # 8:07, 12:07, and 5:07 PM America/New_York, Monday–Friday.
+    # timezone is applied by GitHub (IANA, since March 2026), so one line per
+    # slot covers both EDT and EST. :07 stays off the top-of-hour queue.
+    # src/schedule-guard.js still refuses a run that starts on Sat or Sun.
+    - cron: '7 8 * * 1-5'
+      timezone: America/New_York
+    - cron: '7 12 * * 1-5'
+      timezone: America/New_York
+    - cron: '7 17 * * 1-5'
+      timezone: America/New_York
   workflow_dispatch:
     inputs:
       mode:

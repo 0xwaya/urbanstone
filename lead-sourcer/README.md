@@ -59,7 +59,7 @@ LEAD_SOURCER_ENABLE_PERMITS=false
 LEAD_SOURCER_ENABLE_PERMITS_BUTLER=false
 LEAD_SOURCER_ALERT_EMAIL=sales@urbanstone.co  # Lead alert recipient
 LEAD_SOURCER_RUN_REPORT_EMAIL=sales@urbanstone.co  # Run report recipient
-LEAD_SOURCER_SEND_RUN_REPORT=true  # Always send report, even with 0 matches
+LEAD_SOURCER_SEND_RUN_REPORT=true  # Send when there is a lead, a source is down, or it is the Friday 5 PM heartbeat
 ```
 
 Files: `.env`, `.env.local`, `.vercel/.env.production.local`
@@ -101,10 +101,10 @@ invocations do not duplicate the daily run. The cron helper resolves paths
 relative to this checkout and defaults to review-only; it does not contact prospects.
 
 **GitHub Actions (recommended runner):** `.github/workflows/lead-sourcer.yml` runs
-at 8 AM, 12 PM and 5 PM America/New_York, Monday through Friday (UTC cron lines
-for both EDT and EST; `src/schedule-guard.js` runs only the line that matches ET
-that day and skips Saturday and Sunday) and on manual dispatch. A manual run
-still works on a weekend. Live runs use a cooldown (`LEAD_SOURCER_COOLDOWN_HOURS`, default 3); the
+at 8:07 AM, 12:07 PM and 5:07 PM America/New_York, Monday through Friday. GitHub
+reads those times in `America/New_York`, so daylight time does not need a second
+cron. `src/schedule-guard.js` still skips a scheduled run that starts on Saturday
+or Sunday. A manual run still works on a weekend. Live runs use a cooldown (`LEAD_SOURCER_COOLDOWN_HOURS`, default 3); the
 dispatch input `force` skips it once. It runs the tests,
 `scripts/check-config.mjs`, then `node src/index.js`, and carries `seen-ids.json` and
 `runs/` between runs with the Actions cache. Controls (repo variables):
@@ -230,7 +230,7 @@ After each poll cycle (live mode only), a run-report email is sent summarizing:
 - Any errors encountered
 - Duration and timestamp
 
-Report is always sent, even if zero matches found (configurable via `LEAD_SOURCER_SEND_RUN_REPORT`).
+Report email goes out when the poll found a lead or a source is unhealthy, and once on Friday at the 5:07 PM ET run even if both are quiet. Set `LEAD_SOURCER_SEND_RUN_REPORT=false` to turn reports off.
 
 ## Troubleshooting
 
