@@ -14,7 +14,7 @@ const samplePermit = {
 describe('lead notification email', () => {
     test('county permit lead renders the key fields with brand styling and no raw dump', () => {
         const { subject, html, text, fields } = buildLeadNotification(buildCountyPermitLead(COUNTY_SOURCES['hamilton-county'], samplePermit));
-        expect(subject).toMatch(/^\[Lead Sourcer\] Hamilton County permit · Example Builders LLC · Kitchen \+ Bath \/ vanity remodel · Anderson Township · \$190,000$/);
+        expect(subject).toMatch(/^\[Lead Sourcer\] HOT · Hamilton County permit · Example Builders LLC · Kitchen \+ Bath \/ vanity remodel · Anderson Township · \$190,000$/);
         expect(fields).toMatchObject({ name: 'Example Builders LLC', city: 'Anderson Township', valuation: '$190,000', permitNumber: 'BLD2026-00001', phone: '(513) 555-0100', email: 'office@example.invalid' });
         expect(html).toContain('#0B1220');
         expect(html).toContain('#C4A35A');

@@ -179,20 +179,74 @@ export function evaluatePermit(permit, config) {
     return { include: true, reason: 'match' };
 }
 
-/** Simple score: kitchen/counter > bath/vanity > remodel, plus a cost bonus. */
-export function scorePermit({ description, cost }) {
-    const text = String(description || '').toLowerCase();
-    let base = 0;
-    if (text.includes('counter')) base = 70;
-    else if (text.includes('kitchen')) base = 60;
-    else if (text.includes('bath') || text.includes('vanity')) base = 45;
-    else if (text.includes('remodel') || text.includes('renovat')) base = 30;
+/** Score v2. Six capped factors, then penalties. Hot ≥ 70, Warm 45–69, Cold below 45. */
+export function scorePermit(permit = {}, now = new Date()) {
+    const text = `${permit.description || ''} ${permit.recordType || ''}`.toLowerCase();
+    const kitchen = /\bkitchen|counter/.test(text);
+    const bath = /\bbath|vanit|powder room/.test(text);
+    const newHome = /\bnew (single[- ]family|home|dwelling|residence)\b/.test(text);
+    const remodel = /\bremodel|renovat|alteration|\binterior\b/.test(text);
+    let scope = 0;
+    let scopeLabel = 'none';
+    if (kitchen && bath) { scope = 30; scopeLabel = 'kitchen-bath'; }
+    else if (kitchen) { scope = 35; scopeLabel = 'kitchen'; }
+    else if (newHome) { scope = 25; scopeLabel = 'new-home'; }
+    else if (bath) { scope = 20; scopeLabel = 'bath'; }
+    else if (remodel) { scope = 10; scopeLabel = 'remodel'; }
 
-    const amount = Number(cost) || 0;
-    const costBonus = amount >= 100000 ? 20 : amount >= 50000 ? 15 : amount >= 20000 ? 10 : amount >= 5000 ? 5 : 0;
-    const score = Math.min(100, base + costBonus);
-    const band = score >= 70 ? 'high' : score >= 50 ? 'medium' : 'low';
-    return { score, band, anchored: true, factors: { directMatches: base > 0 ? 1 : 0, materialSignals: text.includes('counter') ? 1 : 0, projectContext: 1, intentSignals: 0, excluded: 0 } };
+    const amount = Number(permit.cost) || 0;
+    const value = amount >= 100000 ? 20 : amount >= 50000 ? 16 : amount >= 20000 ? 12 : amount >= 8000 ? 6 : 2;
+    const age = permitAgeDays(permit, now);
+    const timing = age == null ? 0 : age <= 7 ? 15 : age <= 21 ? 10 : age <= 45 ? 5 : 0;
+    const hasPhone = Boolean(String(permit.phone || permit.contractorPhone || '').trim());
+    const hasEmail = Boolean(String(permit.email || permit.contractorEmail || '').trim());
+    const contactPts = hasPhone && hasEmail ? 10 : (hasPhone || hasEmail) ? 6 : 0;
+    const relationship = permit.repeat ? 10 : permit.partner ? 6 : 3;
+    const place = `${permit.jurisdiction || ''} ${permit.address || ''}`.toLowerCase();
+    const geography = /hamilton county|\bcincinnati\b|\bcovington\b|\bnewport\b|\bbellevue\b|\bfort thomas\b|\bcampbell county\b|\bkenton\b/.test(place)
+        ? 10
+        : /butler county|\bwarren county\b|\bclermont\b/.test(place) ? 7 : (place.trim() ? 3 : 0);
+    const commercial = /\bobc\b|ohio building code|\bcommercial\b/.test(text);
+    const investor = /\b(llc|l\.l\.c|holdings|investments|properties)\b/i.test(permit.owner || '') && amount > 0 && amount < 20000;
+    const penalty = (commercial ? 15 : 0) + (investor ? 10 : 0);
+    const score = Math.max(0, Math.min(100, scope + value + timing + contactPts + relationship + geography - penalty));
+    const band = score >= 70 ? 'hot' : score >= 45 ? 'warm' : 'cold';
+    const reasons = [
+        `scope:${scopeLabel} +${scope}`,
+        `value:${amount > 0 ? `$${Math.round(amount)}` : 'blank'} +${value}`,
+        `timing:${age == null ? 'unknown' : `${age}d`} +${timing}`,
+        `contact:${hasPhone && hasEmail ? 'both' : hasPhone ? 'phone' : hasEmail ? 'email' : 'none'} +${contactPts}`,
+        `relationship:${permit.repeat ? 'repeat' : permit.partner ? 'partner' : 'new'} +${relationship}`,
+        `geography +${geography}`,
+        ...(commercial ? ['commercial -15'] : []),
+        ...(investor ? ['investor -10'] : []),
+    ];
+    return {
+        score,
+        band,
+        reasons,
+        anchored: true,
+        factors: {
+            directMatches: scope,
+            materialSignals: value,
+            projectContext: timing,
+            intentSignals: contactPts + relationship + geography,
+            excluded: penalty,
+        },
+    };
+}
+
+function permitAgeDays(permit, now) {
+    const raw = String(permit.issuedAt || permit.date || '').trim();
+    if (!raw) return null;
+    let issued = null;
+    if (/^\d{4}-\d{2}-\d{2}/.test(raw)) issued = new Date(`${raw.slice(0, 10)}T12:00:00Z`);
+    else {
+        const [month, day, year] = raw.split(/[/-]/);
+        if (year && year.length === 4) issued = new Date(`${year}-${month}-${day}T12:00:00Z`);
+    }
+    if (!issued || Number.isNaN(issued.getTime())) return null;
+    return Math.floor((now.getTime() - issued.getTime()) / 86400000);
 }
 
 function formatCost(cost) {
@@ -200,9 +254,15 @@ function formatCost(cost) {
 }
 
 /** Map a joined permit (+ optional registry contact) onto the shared lead payload. */
-export function buildPermitLead(permit, contact = null, scoreResult = scorePermit(permit)) {
+export function buildPermitLead(permit, contact = null) {
     const id = `permits:${permit.permitNumber}`;
     const issuedDay = String(permit.issuedAt || '').slice(0, 10);
+    const scoreResult = scorePermit({
+        ...permit,
+        phone: contact?.phone || '',
+        email: contact?.email || '',
+        jurisdiction: permit.jurisdiction || 'Cincinnati, OH',
+    });
     const title = `${permit.contractor}: ${permit.subType || 'Residential permit'} at ${permit.address}`;
     const body = [
         'B2B prospect: contractor of record on a newly issued City of Cincinnati permit. Internal only; do not auto-contact.',
@@ -236,6 +296,7 @@ export function buildPermitLead(permit, contact = null, scoreResult = scorePermi
     payload.lead.phone = contact?.phone || '';
     payload.metadata.internalOnly = true;
     payload.metadata.permitNumber = permit.permitNumber;
+    payload.metadata.scoreReasons = scoreResult.reasons;
     // Contact-free fields for the run report's top-leads list.
     payload.metadata.city = `Cincinnati${permit.zip ? ` ${permit.zip}` : ''}`;
     payload.metadata.estimatedCost = permit.cost > 0 ? permit.cost : null;

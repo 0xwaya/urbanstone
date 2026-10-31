@@ -118,11 +118,12 @@ export function cityFromAddress(address) {
 }
 
 /** Map a county permit (+ registry contact) onto the shared lead payload. */
-export function buildCountyPermitLead(county, permit, contact = null, scoreResult = scorePermit(permit)) {
+export function buildCountyPermitLead(county, permit, contact = null) {
     const id = `${county.idPrefix}:${permit.permitNumber}`;
     const phone = permit.contractorPhone || contact?.phone || '';
     const email = permit.contractorEmail || contact?.email || '';
     const city = cityFromAddress(permit.address);
+    const scoreResult = scorePermit({ ...permit, phone, email, jurisdiction: county.jurisdiction });
     const title = `${permit.contractor}: ${permit.recordType || 'Building permit'} at ${permit.address}`;
     const body = [
         `B2B prospect: contractor/contact of record on a new ${county.jurisdiction} permit. Internal only; do not auto-contact.`,
@@ -160,6 +161,7 @@ export function buildCountyPermitLead(county, permit, contact = null, scoreResul
     payload.metadata.internalOnly = true;
     payload.metadata.permitNumber = permit.permitNumber;
     payload.metadata.jurisdiction = county.jurisdiction;
+    payload.metadata.scoreReasons = scoreResult.reasons;
     // Contact-free fields for the run report's top-leads list.
     payload.metadata.city = city || '';
     payload.metadata.estimatedCost = permit.cost > 0 ? permit.cost : null;

@@ -106,11 +106,28 @@ describe('permit query, grouping and filters', () => {
         expect(evaluatePermit(permit, config)).toEqual({ include, reason });
     });
 
-    test('scoring ranks kitchen/counter > bath > remodel with a cost bonus', () => {
-        expect(scorePermit({ description: 'NEW COUNTERTOPS', cost: 0 }).score).toBe(70);
-        expect(scorePermit({ description: 'KITCHEN UPDATE', cost: 120000 })).toMatchObject({ score: 80, band: 'high' });
-        expect(scorePermit({ description: 'BATH REMODEL', cost: 6000 }).score).toBe(50);
-        expect(scorePermit({ description: 'INTERIOR REMODEL', cost: 0 })).toMatchObject({ score: 30, band: 'low' });
+    test('score v2 uses scope, value, timing, contact, relationship and geography', () => {
+        const now = new Date('2026-10-31T16:00:00Z');
+        expect(scorePermit({
+            description: 'Kitchen renovation', cost: 80000, date: '10/28/2026',
+            phone: '513-555-0100', email: 'a@b.test', jurisdiction: 'Hamilton County, OH',
+        }, now)).toMatchObject({ score: 89, band: 'hot' });
+        expect(scorePermit({
+            description: 'Bathroom addition', cost: 20000, date: '10/28/2026',
+            phone: '513-555-0100', email: 'a@b.test', jurisdiction: 'Cincinnati, OH',
+        }, now)).toMatchObject({ score: 70, band: 'hot' });
+        expect(scorePermit({
+            description: 'Kitchen remodel', cost: 12000, date: '10/28/2026',
+            phone: '513-555-0100', email: 'a@b.test', jurisdiction: 'Hamilton County, OH', repeat: true,
+        }, now)).toMatchObject({ score: 86, band: 'hot' });
+        expect(scorePermit({
+            description: 'Commercial alteration', recordType: 'OBC Alteration', cost: 60000, date: '10/28/2026',
+            phone: '513-555-0100', email: 'a@b.test', jurisdiction: 'Hamilton County, OH',
+        }, now)).toMatchObject({ score: 49, band: 'warm' });
+        expect(scorePermit({
+            description: 'Generic remodel', cost: 12000, date: '10/28/2026',
+            phone: '513-555-0100', owner: 'Investor LLC', jurisdiction: 'Hamilton County, OH',
+        }, now)).toMatchObject({ score: 40, band: 'cold' });
     });
 });
 
@@ -172,7 +189,8 @@ describe('permit lead mapping', () => {
             source: 'permits',
             dedupeKey: 'permits:2026P08754',
             verdict: 'b2b',
-            score: 80,
+            score: expect.any(Number),
+            scoreBand: expect.stringMatching(/^(hot|warm|cold)$/),
             lead: {
                 name: 'DYNAMIC CONTRACTORS UNLIMITED',
                 phone: '513-555-0101',

@@ -136,7 +136,8 @@ function linkFor(label, value) {
 }
 
 export function buildLeadSubject(fields) {
-    return ['[Lead Sourcer]', [fields.sourceLabel, fields.name || 'New lead', fields.projectType, fields.city, fields.valuation].filter(Boolean).join(' · ')].join(' ');
+    const band = fields.scoreBand ? fields.scoreBand.toUpperCase() : '';
+    return ['[Lead Sourcer]', [band, fields.sourceLabel, fields.name || 'New lead', fields.projectType, fields.city, fields.valuation].filter(Boolean).join(' · ')].join(' ');
 }
 
 export function buildLeadEmailText(fields) {

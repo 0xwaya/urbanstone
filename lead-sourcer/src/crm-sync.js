@@ -102,6 +102,7 @@ export function buildCrmIntake(payload, sourceKey, { runId = null } = {}) {
                 contactRole: clean(permit.contactRole),
                 score: Number.isFinite(payload?.score) ? payload.score : null,
                 scoreBand: clean(payload?.scoreBand),
+                scoreReasons: Array.isArray(payload?.metadata?.scoreReasons) ? payload.metadata.scoreReasons : null,
                 sourceUrl: clean(payload?.lead?.externalPostUrl),
                 dedupeKey: clean(payload?.dedupeKey),
                 routeId: clean(meta.routeId),
