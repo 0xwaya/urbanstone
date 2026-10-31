@@ -1,0 +1,113 @@
+{
+  "queue_id": "2026-11-03-0600",
+  "status": "queued",
+  "source": "real-install",
+  "approved": false,
+  "scheduled_at_local": "2026-11-03T06:00:00-05:00",
+  "scheduled_at_utc": "2026-11-03T11:00:00+00:00",
+  "created_at_utc": "2026-10-31T16:33:05.215341+00:00",
+  "feed_format": "4x5",
+  "files": {
+    "1x1": {
+      "jpg": "post_1x1.jpg",
+      "logo_corner": "top-right"
+    },
+    "4x5": {
+      "jpg": "post_4x5.jpg",
+      "logo_corner": "top-right"
+    },
+    "9x16": {
+      "jpg": "post_9x16.jpg",
+      "logo_corner": "top-right"
+    }
+  },
+  "carousel": {
+    "feed": [
+      "slide_01_4x5.jpg",
+      "slide_02_4x5.jpg"
+    ],
+    "tiktok": [
+      "slide_01_9x16.jpg",
+      "slide_02_9x16.jpg"
+    ],
+    "story": "slide_01_9x16.jpg"
+  },
+  "slides": [
+    {
+      "name": "kitchen-galley",
+      "alt": "Loft galley kitchen with dark stone countertops, warm wood cabinets and a stacked-stone backsplash under industrial pendant lights",
+      "files": {
+        "1x1": {
+          "jpg": "slide_01_1x1.jpg",
+          "logo_corner": "top-right",
+          "upscale": 0.97
+        },
+        "4x5": {
+          "jpg": "slide_01_4x5.jpg",
+          "logo_corner": "top-right",
+          "upscale": 1.21
+        },
+        "9x16": {
+          "jpg": "slide_01_9x16.jpg",
+          "logo_corner": "top-right",
+          "upscale": 1.72
+        }
+      }
+    },
+    {
+      "name": "kitchen-galley-2",
+      "alt": "View down the loft galley kitchen: dark stone countertops on both runs of wood cabinets toward tall windows",
+      "files": {
+        "1x1": {
+          "jpg": "slide_02_1x1.jpg",
+          "logo_corner": "top-left",
+          "upscale": 0.97
+        },
+        "4x5": {
+          "jpg": "slide_02_4x5.jpg",
+          "logo_corner": "top-left",
+          "upscale": 1.21
+        },
+        "9x16": {
+          "jpg": "slide_02_9x16.jpg",
+          "logo_corner": "top-right",
+          "upscale": 1.72
+        }
+      }
+    }
+  ],
+  "dimensions": {
+    "post_type": "real project",
+    "application": "kitchen countertops",
+    "format": "carousel",
+    "material": null,
+    "finish": null,
+    "stone": null,
+    "cta": "link",
+    "promo": true,
+    "caption_style": "real_project",
+    "slot": "6 AM",
+    "job": "real-job-01",
+    "title": "Loft galley kitchen countertops"
+  },
+  "hashtags": [
+    "countertops",
+    "kitchenremodel",
+    "dreamkitchen",
+    "cincinnati",
+    "cincy"
+  ],
+  "scene": {
+    "ai_generated": false,
+    "job": "real-job-01"
+  },
+  "platforms": {
+    "instagram": {
+      "status": "queued"
+    },
+    "tiktok": {
+      "status": "queued"
+    }
+  },
+  "posting_notes": ""
+}

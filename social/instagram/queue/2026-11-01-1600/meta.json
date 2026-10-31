@@ -1,0 +1,136 @@
+{
+  "queue_id": "2026-11-01-1600",
+  "status": "queued",
+  "source": "real-install",
+  "approved": false,
+  "scheduled_at_local": "2026-11-01T16:00:00-05:00",
+  "scheduled_at_utc": "2026-11-01T21:00:00+00:00",
+  "created_at_utc": "2026-10-31T16:33:30.718081+00:00",
+  "feed_format": "4x5",
+  "files": {
+    "1x1": {
+      "jpg": "post_1x1.jpg",
+      "logo_corner": "top-right"
+    },
+    "4x5": {
+      "jpg": "post_4x5.jpg",
+      "logo_corner": "top-left"
+    },
+    "9x16": {
+      "jpg": "post_9x16.jpg",
+      "logo_corner": "top-left"
+    }
+  },
+  "carousel": {
+    "feed": [
+      "slide_01_4x5.jpg",
+      "slide_02_4x5.jpg",
+      "slide_03_4x5.jpg"
+    ],
+    "tiktok": [
+      "slide_01_9x16.jpg",
+      "slide_02_9x16.jpg",
+      "slide_03_9x16.jpg"
+    ],
+    "story": "slide_01_9x16.jpg"
+  },
+  "slides": [
+    {
+      "name": "bath-2-vanity",
+      "alt": "Custom bathroom with large marble-look wall panels, a wood vanity with a dark stone top, a white vessel sink and matte black fixtures",
+      "files": {
+        "1x1": {
+          "jpg": "slide_01_1x1.jpg",
+          "logo_corner": "top-right",
+          "upscale": 0.97
+        },
+        "4x5": {
+          "jpg": "slide_01_4x5.jpg",
+          "logo_corner": "top-left",
+          "upscale": 1.21
+        },
+        "9x16": {
+          "jpg": "slide_01_9x16.jpg",
+          "logo_corner": "top-left",
+          "upscale": 1.72
+        }
+      }
+    },
+    {
+      "name": "bath-2-shower",
+      "alt": "Curbless walk-in shower with large marble-look wall panels, a linear drain and matte black body sprays",
+      "files": {
+        "1x1": {
+          "jpg": "slide_02_1x1.jpg",
+          "logo_corner": "top-right",
+          "upscale": 0.97
+        },
+        "4x5": {
+          "jpg": "slide_02_4x5.jpg",
+          "logo_corner": "top-right",
+          "upscale": 1.21
+        },
+        "9x16": {
+          "jpg": "slide_02_9x16.jpg",
+          "logo_corner": "top-left",
+          "upscale": 1.72
+        }
+      }
+    },
+    {
+      "name": "bath-2-wide",
+      "alt": "Wide view of the custom bathroom: vessel sink on a dark stone vanity top and the open walk-in shower beyond",
+      "files": {
+        "1x1": {
+          "jpg": "slide_03_1x1.jpg",
+          "logo_corner": "top-left",
+          "upscale": 0.97
+        },
+        "4x5": {
+          "jpg": "slide_03_4x5.jpg",
+          "logo_corner": "top-left",
+          "upscale": 1.21
+        },
+        "9x16": {
+          "jpg": "slide_03_9x16.jpg",
+          "logo_corner": "top-left",
+          "upscale": 1.72
+        }
+      }
+    }
+  ],
+  "dimensions": {
+    "post_type": "real project",
+    "application": "custom bathroom",
+    "format": "carousel",
+    "material": null,
+    "finish": null,
+    "stone": null,
+    "cta": "dm",
+    "promo": false,
+    "caption_style": "real_project",
+    "slot": "4 PM",
+    "job": "real-job-01",
+    "title": "Custom bathroom: marble-look walls, curbless shower"
+  },
+  "hashtags": [
+    "bathroomremodel",
+    "custombathroom",
+    "bathroomvanity",
+    "cincinnati",
+    "cincinnatihomes"
+  ],
+  "scene": {
+    "ai_generated": false,
+    "job": "real-job-01"
+  },
+  "platforms": {
+    "instagram": {
+      "status": "queued"
+    },
+    "tiktok": {
+      "status": "queued"
+    }
+  },
+  "posting_notes": ""
+}
