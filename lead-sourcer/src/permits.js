@@ -215,11 +215,9 @@ export function scorePermit(permit = {}, now = new Date()) {
     const penalty = investor ? 10 : 0;
     const score = Math.max(0, Math.min(100, scope + value + timing + contactPts + relationship + geography - penalty));
     const band = score >= 70 ? 'hot' : score >= 45 ? 'warm' : 'cold';
-    const reviewNote = multiFamily
-        ? 'Multi-family. Confirm the job requirements before quoting.'
-        : commercial
-            ? 'Commercial. Confirm the job requirements before quoting.'
-            : '';
+    const reviewNote = commercial
+        ? 'Internal only. Do not mention minority-business registration, a $1M bond, or government requirements unless the contractor brings them up.'
+        : '';
     const reasons = [
         `scope:${scopeLabel} +${scope}`,
         `value:${amount > 0 ? `$${Math.round(amount)}` : 'blank'} +${value}`,

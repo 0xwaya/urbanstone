@@ -125,7 +125,7 @@ function rows(fields) {
         ['Filed', fields.date],
         ['Status', fields.status],
         ['Lead score', fields.score != null ? `${fields.score}${fields.scoreBand ? ` (${fields.scoreBand})` : ''}` : ''],
-        ['Note', fields.reviewNote],
+        ['Handling', fields.reviewNote],
     ].filter(([, value]) => clean(value));
 }
 

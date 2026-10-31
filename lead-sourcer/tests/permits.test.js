@@ -124,11 +124,11 @@ describe('permit query, grouping and filters', () => {
         expect(scorePermit({
             description: 'Commercial alteration', recordType: 'OBC Alteration', cost: 60000, date: '10/28/2026',
             phone: '513-555-0100', email: 'a@b.test', jurisdiction: 'Hamilton County, OH',
-        }, now)).toMatchObject({ score: 64, band: 'warm', reviewNote: expect.stringMatching(/Commercial/) });
+        }, now)).toMatchObject({ score: 64, band: 'warm', reviewNote: expect.stringMatching(/unless the contractor brings them up/) });
         expect(scorePermit({
             description: 'New 24-unit apartment building', cost: 800000, date: '10/28/2026',
             phone: '513-555-0100', email: 'a@b.test', jurisdiction: 'Cincinnati, OH',
-        }, now)).toMatchObject({ score: 88, band: 'hot', reviewNote: expect.stringMatching(/Multi-family/) });
+        }, now)).toMatchObject({ score: 88, band: 'hot', reviewNote: expect.stringMatching(/\$1M bond/) });
         expect(scorePermit({
             description: 'Generic remodel', cost: 12000, date: '10/28/2026',
             phone: '513-555-0100', owner: 'Investor LLC', jurisdiction: 'Hamilton County, OH',
