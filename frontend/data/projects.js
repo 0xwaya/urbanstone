@@ -17,6 +17,10 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const jobs = {
+    'union-ky-barn': {
+        title: { en: 'Converted barn — Union, KY', es: 'Granero convertido — Union, KY' },
+        location: 'Union, KY',
+    },
     'mason-island-modification': {
         title: { en: 'Island modification — Mason, OH', es: 'Modificación de isla — Mason, OH' },
         location: 'Mason, OH',
@@ -118,20 +122,20 @@ export const projects = [
     },
     {
         id: 'cincy-farmhouse-kitchen',
-        job: 'cincinnati-installs',
+        job: 'union-ky-barn',
         featured: true,
         category: 'kitchen',
-        title: { en: 'Farmhouse kitchen with black countertops', es: 'Cocina estilo granja con cubiertas negras' },
+        title: { en: 'Converted barn kitchen with black countertops', es: 'Cocina en granero convertido con cubiertas negras' },
         text: {
-            en: 'Black countertops on a long run of white cabinets and a center island, in an open kitchen with polished concrete floors.',
-            es: 'Cubiertas negras sobre una larga fila de gabinetes blancos y una isla central, en una cocina abierta con piso de concreto pulido.',
+            en: 'Black countertops on a long run of white cabinets and a center island, in the open kitchen of a converted barn with polished concrete floors.',
+            es: 'Cubiertas negras sobre una larga fila de gabinetes blancos y una isla central, en la cocina abierta de un granero convertido con piso de concreto pulido.',
         },
         photos: [
             {
                 file: 'farmhouse-kitchen-black-tops.jpg', width: 1200, height: 800,
                 alt: {
-                    en: 'Open farmhouse-style kitchen with black countertops on white cabinets and a center island with a sink, pendant lights and a polished concrete floor',
-                    es: 'Cocina abierta estilo granja con cubiertas negras sobre gabinetes blancos y una isla central con fregadero, lámparas colgantes y piso de concreto pulido',
+                    en: 'Open farmhouse-style kitchen in a converted barn with black countertops on white cabinets and a center island with a sink, pendant lights and a polished concrete floor',
+                    es: 'Cocina abierta estilo granja en un granero convertido con cubiertas negras sobre gabinetes blancos y una isla central con fregadero, lámparas colgantes y piso de concreto pulido',
                 },
             },
         ],
