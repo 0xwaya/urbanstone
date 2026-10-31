@@ -186,22 +186,22 @@ export const projects = [
         category: 'kitchen',
         title: { en: 'Galley kitchen countertops', es: 'Encimeras para cocina tipo galera' },
         text: {
-            en: 'Dark stone countertops along both runs of a loft galley kitchen.',
-            es: 'Encimeras de piedra oscura a lo largo de ambos lados de una cocina tipo galera en un loft.',
+            en: 'Dark stone countertops with a leathered finish and live edges along both runs of a loft galley kitchen.',
+            es: 'Encimeras de piedra oscura con acabado cepillado (leathered) y canto vivo natural a lo largo de ambos lados de una cocina tipo galera en un loft.',
         },
         photos: [
             {
                 file: 'kitchen-galley.jpg',
                 alt: {
-                    en: 'Loft galley kitchen with dark stone countertops, warm wood cabinets and a stacked-stone backsplash under industrial pendant lights',
-                    es: 'Cocina tipo galera en un loft con encimeras de piedra oscura, gabinetes de madera y salpicadero de piedra apilada bajo lámparas industriales',
+                    en: 'Loft galley kitchen with dark stone countertops with a leathered finish and live edges, warm wood cabinets and a stacked-stone backsplash under industrial pendant lights',
+                    es: 'Cocina tipo galera en un loft con encimeras de piedra oscura con acabado cepillado y canto vivo natural, gabinetes de madera y salpicadero de piedra apilada bajo lámparas industriales',
                 },
             },
             {
                 file: 'kitchen-galley-view.jpg',
                 alt: {
-                    en: 'View down the loft galley kitchen: dark stone countertops on both runs of wood cabinets toward tall windows',
-                    es: 'Vista a lo largo de la cocina tipo galera: encimeras de piedra oscura en ambos lados hacia ventanales altos',
+                    en: 'View down the loft galley kitchen: leathered dark stone countertops with live edges on both runs of wood cabinets toward tall windows',
+                    es: 'Vista a lo largo de la cocina tipo galera: encimeras de piedra oscura con acabado cepillado y canto vivo natural en ambos lados hacia ventanales altos',
                 },
             },
         ],
@@ -213,15 +213,15 @@ export const projects = [
         category: 'kitchen',
         title: { en: 'Ledger stone kitchen island', es: 'Isla con muro de piedra apilada' },
         text: {
-            en: 'A stacked ledger stone wall wraps the island, finished with a dark stone top.',
-            es: 'Un muro de piedra apilada (ledger stone) envuelve la isla, con cubierta de piedra oscura.',
+            en: 'A stacked ledger stone wall wraps the island, finished with a dark stone top in a leathered finish with live edges.',
+            es: 'Un muro de piedra apilada (ledger stone) envuelve la isla, con cubierta de piedra oscura de acabado cepillado (leathered) y canto vivo natural.',
         },
         photos: [
             {
                 file: 'kitchen-island-ledger-stone.jpg',
                 alt: {
-                    en: 'Loft kitchen island wrapped in a stacked ledger stone wall with a dark stone top and bar stools',
-                    es: 'Isla de cocina en un loft revestida con muro de piedra apilada (ledger stone), cubierta de piedra oscura y bancos altos',
+                    en: 'Loft kitchen island wrapped in a stacked ledger stone wall with a leathered dark stone top with live edges and bar stools',
+                    es: 'Isla de cocina en un loft revestida con muro de piedra apilada (ledger stone), cubierta de piedra oscura con acabado cepillado y canto vivo natural, y bancos altos',
                 },
             },
             {
