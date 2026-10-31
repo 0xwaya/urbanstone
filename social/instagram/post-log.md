@@ -121,3 +121,74 @@ Each entry has this format:
   > Fast estimate: link in bio 🔗
   > AI-rendered design concept · Urban Stone Collective
   > #kitchentok #countertops #quartzcountertops #cincinnati #kitchenremodel
+
+## 2026-10-30 — 6:00 AM ET (Instagram catch-up)
+- Posted at: Instagram feed ~11:22 AM ET Oct 31, Story ~11:30 AM ET Oct 31 (late catch-up; TikTok went out Oct 30, logged above)
+- Material: quartz (Calacatta Andromeda)
+- Finish: polished
+- Application: kitchen island
+- Format: single
+- Caption style: design
+- Location: Cincinnati, Ohio
+- About: Calacatta Andromeda quartz, Cincinnati Victorian kitchen with greige shaker cabinets, fall sink promo (AI-rendered concept)
+- Queue folder: social/instagram/queue/2026-10-30-0600/
+- Image: https://www.urbanstone.co/social/2026-10-30-0600/post_4x5.jpg
+- Instagram post: https://www.instagram.com/urbanstonec/p/DfKd-h2vhl7/
+- Instagram Story: posted (post_9x16.jpg)
+- TikTok post: see Oct 30 6:00 AM entry (under review)
+- Facebook: removed
+- Caption (Instagram, as posted; 18 hashtags, before the 5-tag rule):
+  > Calacatta Andromeda quartz: clean lines, zero fuss. 🤍
+  >
+  > Quartz: consistent color, lower maintenance and no sealing requirement.
+  > Every install is backed by our 1-Year Workmanship Warranty.
+  > Available through our suppliers. Ask us about this slab for your project.
+  >
+  > 🎁 Fall offer: a complimentary 18-gauge stainless steel sink with kitchen projects of 50 sq ft and above. Undermount or top-mount, single or double basin. Through Dec 15.
+  >
+  > 👉 Request your fast estimate at the link in bio.
+  >
+  > Image: AI-rendered design concept.
+  >
+  > Premium Countertops. Fast Install. Built for Cincinnati.
+  > 📞 (513) 307-5840 · ✉️ sales@urbanstone.co · 🌐 urbanstone.co
+  >
+  > #kitchen #kitchendesign #renovation #remodel #kitchenisland #kitchendecor #newkitchen #homerenovation #countertops #quartz #calacattaquartz #dreamkitchen #kitchenrenovation #countertop #cincinnati #cincinnatirealestate #cincygram #cincinnatiohio
+
+## 2026-10-30 — 4:00 PM ET (catch-up)
+- Posted at: Instagram feed 11:13 AM ET Oct 31, Story ~11:18 AM ET, TikTok ~11:20 AM ET (late catch-up)
+- Material: granite (Absolute Black)
+- Finish: leathered
+- Application: kitchen island
+- Format: single
+- Caption style: punchy
+- Location: Cincinnati, Ohio
+- About: Leathered Absolute Black granite island, 3-5 day turnaround target, fall sink promo (AI-rendered concept)
+- Queue folder: social/instagram/queue/2026-10-30-1600/
+- Image: https://www.urbanstone.co/social/2026-10-30-1600/post_4x5.jpg
+- Instagram post: https://www.instagram.com/urbanstonec/p/DfKc9xFB3MH/
+- Instagram Story: posted (post_9x16.jpg)
+- TikTok post: under review (photo post on @urbanstoneco, AI disclosure on)
+- Facebook: removed
+- Caption (Instagram, as posted; 18 hashtags, before the 5-tag rule):
+  > Leathered Absolute Black. Built tough, looks sharp. 🖤
+  >
+  > Leathered finish: a soft sheen and a texture you can feel.
+  > Our target: a 3-5 day turnaround from deposit to install on qualifying projects.
+  >
+  > 🎁 Free 18-gauge stainless sink on kitchens 50+ sq ft · through Dec 15
+  >
+  > 👉 Call or text (513) 307-5840 for an estimate.
+  >
+  > Image: AI-rendered design concept.
+  >
+  > Premium Countertops. Fast Install. Built for Cincinnati.
+  > 📞 (513) 307-5840 · ✉️ sales@urbanstone.co · 🌐 urbanstone.co
+  >
+  > #interior #homedesign #homedecor #homerenovation #newkitchen #kitchenideas #remodel #countertops #homeimprovement #granite #countertop #granitecountertops #blackgranite #countertopinstall #cincinnati #cincyhomes #westchesterohio #northernkentucky
+- Caption (TikTok, as posted):
+  > Leathered Absolute Black. Built tough, looks sharp. 🖤
+  > 🎁 Free 18-gauge stainless sink on kitchens 50+ sq ft, through Dec 15.
+  > Call/text (513) 307-5840 📞
+  > AI-rendered design concept · Urban Stone Collective
+  > #kitchentok #countertops #granite #cincinnati #kitchenremodel

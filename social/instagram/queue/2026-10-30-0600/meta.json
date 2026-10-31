@@ -1,6 +1,6 @@
 {
   "queue_id": "2026-10-30-0600",
-  "status": "approved",
+  "status": "published",
   "approved": true,
   "scheduled_at_local": "2026-10-30T06:00:00-04:00",
   "scheduled_at_utc": "2026-10-30T10:00:00+00:00",
@@ -83,9 +83,17 @@
   },
   "platforms": {
     "instagram": {
-      "status": "failed",
-      "reason": "Instagram signed out in box Chrome (login page); not posted",
-      "checked_at_et": "2026-10-30 06:00"
+      "status": "published",
+      "url": "https://www.instagram.com/urbanstonec/p/DfKd-h2vhl7/",
+      "posted_at_et": "2026-10-31 ~11:22",
+      "location": "Cincinnati, Ohio",
+      "ai_label": true,
+      "note": "late catch-up by hand (missed Oct 30 6 AM slot: IG signed out); went out with the original 18-hashtag line, before the 5-tag rule",
+      "story": {
+        "status": "posted",
+        "posted_at_et": "2026-10-31 ~11:30",
+        "image": "post_9x16.jpg"
+      }
     },
     "tiktok": {
       "status": "under review",
