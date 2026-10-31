@@ -1,6 +1,7 @@
 import handler, { canSendWithResend, getInviteOrigin } from '../pages/api/reviews/admin';
 import submitHandler from '../pages/api/reviews/submit';
 import { buildReviewInviteEmail, sendReviewInviteEmail } from '../lib/review-invite-email';
+import { buildReviewPublishedNotice, isAutoPublishEnabled, notifySalesReviewPublished } from '../lib/review-publish-notify';
 
 const SECRET = 'a'.repeat(40);
 
@@ -126,10 +127,72 @@ describe('/api/reviews/submit', () => {
         expect(db.rpc).toHaveBeenCalledWith('review_submit_by_token', expect.objectContaining({ p_rating: 5 }));
     });
 
+    const body = { inviteToken: 'x'.repeat(43), displayName: 'Pat E.', rating: 5, reviewText: 'Great work from start to finish, thank you!' };
+    const RID = '22222222-2222-4222-8222-222222222222';
+
+    it('auto-publishes invite-verified reviews, revalidates the homepage and notifies sales@ only', async () => {
+        const db = { rpc: vi.fn(async (name) => (name === 'review_submit_by_token'
+            ? { data: { review_id: RID, status: 'pending' }, error: null }
+            : { data: { id: RID, status: 'published' }, error: null })) };
+        const notify = vi.fn().mockResolvedValue({ sent: true });
+        const res = mockResponse();
+        await submitHandler({ method: 'POST', headers: {}, body }, res, { db, adminSecret: SECRET, env: {}, notify });
+        expect(res.statusCode).toBe(201);
+        expect(res.body.status).toBe('published');
+        expect(db.rpc).toHaveBeenCalledWith('review_admin_moderate', { p_secret: SECRET, p_review_id: RID, p_status: 'published' });
+        expect(res.revalidate).toHaveBeenCalledWith('/');
+        expect(res.revalidate).toHaveBeenCalledWith('/es');
+        expect(notify).toHaveBeenCalledTimes(1);
+        expect(notify.mock.calls[0][0]).toMatchObject({ displayName: 'Pat E.', rating: 5 });
+    });
+
+    it('keeps the review pending when REVIEWS_AUTO_PUBLISH=false', async () => {
+        const db = { rpc: vi.fn().mockResolvedValue({ data: { review_id: RID, status: 'pending' }, error: null }) };
+        const notify = vi.fn();
+        const res = mockResponse();
+        await submitHandler({ method: 'POST', headers: {}, body }, res, { db, adminSecret: SECRET, env: { REVIEWS_AUTO_PUBLISH: 'false' }, notify });
+        expect(res.body.status).toBe('pending');
+        expect(db.rpc).toHaveBeenCalledTimes(1);
+        expect(notify).not.toHaveBeenCalled();
+    });
+
+    it('still succeeds (pending) if publishing fails, and a notice failure never breaks a live review', async () => {
+        const failing = { rpc: vi.fn(async (name) => (name === 'review_submit_by_token' ? { data: { review_id: RID }, error: null } : { data: null, error: { code: 'XX000' } })) };
+        const res1 = mockResponse();
+        await submitHandler({ method: 'POST', headers: {}, body }, res1, { db: failing, adminSecret: SECRET, env: {}, notify: vi.fn() });
+        expect(res1.statusCode).toBe(201);
+        expect(res1.body.status).toBe('pending');
+
+        const ok = { rpc: vi.fn(async (name) => (name === 'review_submit_by_token' ? { data: { review_id: RID }, error: null } : { data: {}, error: null })) };
+        const res2 = mockResponse();
+        await submitHandler({ method: 'POST', headers: {}, body }, res2, { db: ok, adminSecret: SECRET, env: {}, notify: vi.fn().mockRejectedValue(new Error('down')) });
+        expect(res2.body.status).toBe('published');
+    });
+
     it('rejects used or expired invitations', async () => {
         const db = { rpc: vi.fn().mockResolvedValue({ data: null, error: { code: 'P0001' } }) };
         const res = mockResponse();
         await submitHandler({ method: 'POST', headers: {}, body: { inviteToken: 'x'.repeat(43), displayName: 'Pat', rating: 4, reviewText: 'Great work from start to finish, thank you!' } }, res, { db });
         expect(res.statusCode).toBe(409);
+    });
+});
+
+describe('review publish notice', () => {
+    it('defaults auto-publish on and can be switched off', () => {
+        expect(isAutoPublishEnabled({})).toBe(true);
+        expect(isAutoPublishEnabled({ REVIEWS_AUTO_PUBLISH: 'true' })).toBe(true);
+        expect(isAutoPublishEnabled({ REVIEWS_AUTO_PUBLISH: 'false' })).toBe(false);
+        expect(isAutoPublishEnabled({ REVIEWS_AUTO_PUBLISH: 'off' })).toBe(false);
+    });
+
+    it('emails only sales@, escapes HTML, and skips without a Resend key', async () => {
+        const notice = buildReviewPublishedNotice({ displayName: 'Pat E.', rating: 5, reviewText: '<b>Great</b>' });
+        expect(notice.html).not.toContain('<b>Great</b>');
+        expect(await notifySalesReviewPublished({ displayName: 'Pat E.', rating: 5, reviewText: 'Great' }, { env: {}, fetchImpl: vi.fn() })).toEqual({ skipped: 'no-resend-key' });
+        const fetchImpl = vi.fn().mockResolvedValue({ ok: true, json: async () => ({ id: 'x' }) });
+        await notifySalesReviewPublished({ displayName: 'Pat E.', rating: 5, reviewText: 'Great' }, { env: { RESEND_API_KEY: 'k' }, fetchImpl });
+        const sent = JSON.parse(fetchImpl.mock.calls[0][1].body);
+        expect(sent.to).toEqual(['sales@urbanstone.co']);
+        expect(sent.bcc).toBeUndefined();
     });
 });

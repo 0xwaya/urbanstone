@@ -90,7 +90,7 @@ export default function ReviewInvitePage() {
                         {invite?.first_name ? `Thank you, ${invite.first_name}!` : 'Share your Urban Stone experience'}
                     </h1>
                     <p className="mt-4 text-sm leading-7 text-muted sm:text-base">
-                        Your review goes to Urban Stone and appears on urbanstone.co after a quick check for privacy. Honest feedback of any kind is welcome.
+                        Your review goes to Urban Stone and is posted on urbanstone.co as soon as you submit it. Please leave out anything private, like your street address. Honest feedback of any kind is welcome.
                     </p>
 
                     {checking ? (
