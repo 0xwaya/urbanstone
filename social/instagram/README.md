@@ -188,4 +188,4 @@ no-repeat check). Only do it once there are ~30+ posts with metrics.
 Per-post location: real-post specs can set `"location"` (+ `"location_note"`). It is written to
 `meta.json` as top-level `location` and `platforms.instagram.location`; the posting run should tag
 that location on Instagram instead of the "Cincinnati, Ohio" default. real-job-01 uses
-"Over-the-Rhine, Cincinnati". Its Zillow rental link is website-only. IG captions carry one rental line pointing to @the.unlearn.experiment, who is tagged in the photo (`platforms.instagram.tag_users`); TikTok captions carry no rental line.
+"Over-the-Rhine, Cincinnati". Its Zillow rental link is website-only. IG captions carry one rental line pointing to @the.unlearn.experiment, who is tagged in the photo (`meta.instagram.tag_users`, mirrored in `platforms.instagram.tag_users`; location in `meta.instagram.location`); TikTok captions carry no rental line.

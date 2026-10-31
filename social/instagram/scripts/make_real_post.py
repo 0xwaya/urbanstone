@@ -120,6 +120,9 @@ def main(argv=None):
         "hashtags": tags,
         "scene": {"ai_generated": False, "job": spec["job"]},
         "location": spec.get("location", DEFAULT_LOCATION),
+        # what the posting routine reads for IG (mirrored under platforms.instagram)
+        "instagram": {"location": spec.get("location", DEFAULT_LOCATION),
+                      "tag_users": spec.get("instagram_tag_users", [])},
         "location_note": spec.get("location_note", ""),
         "platforms": {"instagram": {"status": "queued", "location": spec.get("location", DEFAULT_LOCATION),
                                     "tag_users": spec.get("instagram_tag_users", [])},
