@@ -74,13 +74,14 @@ describe('permit query, grouping and filters', () => {
 
     test('config defaults and sanitized keywords', () => {
         expect(config.lookbackDays).toBe(14);
-        expect(config.keywords).toEqual(['kitchen', 'bath', 'counter', 'vanity', 'remodel', 'renovat']);
+        expect(config.keywords).toEqual(['kitchen', 'bath', 'counter', 'vanity', 'remodel', 'renovat', 'apartment', 'multifamily', 'condo']);
         expect(getPermitsConfig({ LEAD_SOURCER_PERMITS_KEYWORDS: "kitchen,x' OR 1=1" }).keywords).toEqual(['kitchen', 'x or']);
     });
 
     test('builds a residential, date-bounded keyword query', () => {
         const query = buildComboQuery({ ...config, now: NOW });
         expect(query.$where).toContain("code_book='Residential'");
+        expect(query.$where).toContain("code_book='Commercial'");
         expect(query.$where).toContain("date_issued >= '2026-10-15T00:00:00'");
         expect(query.$where).toContain("upper(desc_of_work) like '%KITCHEN%'");
     });
@@ -123,7 +124,11 @@ describe('permit query, grouping and filters', () => {
         expect(scorePermit({
             description: 'Commercial alteration', recordType: 'OBC Alteration', cost: 60000, date: '10/28/2026',
             phone: '513-555-0100', email: 'a@b.test', jurisdiction: 'Hamilton County, OH',
-        }, now)).toMatchObject({ score: 49, band: 'warm' });
+        }, now)).toMatchObject({ score: 64, band: 'warm', reviewNote: expect.stringMatching(/Commercial/) });
+        expect(scorePermit({
+            description: 'New 24-unit apartment building', cost: 800000, date: '10/28/2026',
+            phone: '513-555-0100', email: 'a@b.test', jurisdiction: 'Cincinnati, OH',
+        }, now)).toMatchObject({ score: 88, band: 'hot', reviewNote: expect.stringMatching(/Multi-family/) });
         expect(scorePermit({
             description: 'Generic remodel', cost: 12000, date: '10/28/2026',
             phone: '513-555-0100', owner: 'Investor LLC', jurisdiction: 'Hamilton County, OH',

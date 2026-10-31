@@ -26,7 +26,7 @@ import { loadContractorRegistry, lookupContractor } from './contractor-registry.
 import { getPermitsConfig, evaluatePermit, scorePermit } from './permits.js';
 import { createAccelaClient, formatAcaDate, pickContractor } from './accela.js';
 
-export const DEFAULT_TYPE_KEYWORDS = ['alteration', 'addition', 'remodel', 'renovat', 'repair', 'tenant finish', 'interior'];
+export const DEFAULT_TYPE_KEYWORDS = ['alteration', 'addition', 'remodel', 'renovat', 'repair', 'tenant finish', 'interior', 'apartment', 'multi-family', 'multifamily', 'condo'];
 export const DEFAULT_TYPE_EXCLUDE_KEYWORDS = ['special inspection', 'revision', 'mechanical', 'hvac', 're-roof', 'roof', 'sign', 'demolition', 'fence', 'pool', 'deck', 'electrical', 'plumbing', 'sewer', 'fire'];
 const INACTIVE_STATUS_RE = /\b(void|withdrawn?|expired|denied|cancel+ed|revoked|abandoned)\b/i;
 
@@ -162,6 +162,7 @@ export function buildCountyPermitLead(county, permit, contact = null) {
     payload.metadata.permitNumber = permit.permitNumber;
     payload.metadata.jurisdiction = county.jurisdiction;
     payload.metadata.scoreReasons = scoreResult.reasons;
+    payload.metadata.reviewNote = scoreResult.reviewNote || '';
     // Contact-free fields for the run report's top-leads list.
     payload.metadata.city = city || '';
     payload.metadata.estimatedCost = permit.cost > 0 ? permit.cost : null;
@@ -326,10 +327,7 @@ export async function pollCountyPermits(countyKey, {
             continue;
         }
         const scoreResult = scorePermit(permit);
-        if (scoreResult.score < config.minScore) {
-            reject('below-min-score');
-            continue;
-        }
+        // The band is a review label. Cold leads are delivered too.
         candidates.push({ permit, id, scoreResult });
     }
     if (stats.detailCapped > 0) console.warn(`${tag} detail cap (${detailCap}) reached; ${stats.detailCapped} candidate(s) left for the next run.`);

@@ -32,7 +32,7 @@ The Node runner calls these sources directly and emails matches to sales@.
 Zapier is retired. See `docs/RETIRED-zapier.md`.
 
 ### Scoring
-`scorePermit` in `src/permits.js`: counter > kitchen > bath/vanity > remodel, plus a valuation bonus.
+`scorePermit` in `src/permits.js` labels every lead Hot (70+), Warm (45–69) or Cold. The band is for review order only. Nothing is dropped because it is Cold. Commercial and apartment jobs are kept; the email notes when extra job requirements need a look before quoting.
 
 ### Delivery
 Direct email via Resend API → `sales@urbanstone.co`. Each lead is a branded HTML email

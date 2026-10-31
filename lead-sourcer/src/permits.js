@@ -1,10 +1,11 @@
 /**
  * Cincinnati building-permit poller (B2B prospects).
  *
- * Finds recently issued residential permits whose work description mentions
- * kitchens, baths, counters or remodels (City of Cincinnati open data, Socrata),
- * joins the contractor of record, enriches it from the city's contractor
- * registry and relays each new permit as an internal lead to sales@.
+ * Finds recently issued residential and commercial permits whose work description
+ * mentions kitchens, baths, counters, remodels or apartments (City of Cincinnati
+ * open data, Socrata), joins the contractor of record, enriches it from the
+ * city's contractor registry and relays each new permit as an internal lead
+ * to sales@. Hot, Warm and Cold are labels for review. They never drop a lead.
  *
  * These are contractors who may need a countertop fabricator, not homeowner
  * quote requests. Nothing here contacts the contractor: delivery goes through
@@ -26,7 +27,7 @@ export const COMBO_DATASET = 'thvx-5mem'; // Building combo permits with desc_of
 export const PERMITS_DATASET = 'uhjb-xac9'; // Building permits with companyname, cost, link
 export const DATASET_PAGE_URL = 'https://data.cincinnati-oh.gov/Thriving-Neighborhoods/Cincinnati-Building-Permits/uhjb-xac9';
 
-export const DEFAULT_PERMIT_KEYWORDS = ['kitchen', 'bath', 'counter', 'vanity', 'remodel', 'renovat'];
+export const DEFAULT_PERMIT_KEYWORDS = ['kitchen', 'bath', 'counter', 'vanity', 'remodel', 'renovat', 'apartment', 'multifamily', 'condo'];
 export const DEFAULT_PERMIT_EXCLUDE_KEYWORDS = [
     'basement waterproof', 'waterproofing', 'foundation', 'underpin', 'solar', 'deck', 'roof', 'hvac',
     'furnace', 'air condition', 'porch', 'fence', 'garage', 'siding', 'window replacement', 'retaining wall',
@@ -88,7 +89,7 @@ export function buildComboQuery({ keywords, lookbackDays, now = new Date() }) {
     const keywordClause = keywords.map((keyword) => `upper(desc_of_work) like '%${keyword.toUpperCase()}%'`).join(' OR ');
     return {
         $select: 'number_key,sub_type_desc,code_book,dwelling_units,date_issued,location,desc_of_work,data_status',
-        $where: `code_book='Residential' AND date_issued >= '${isoDay(since)}T00:00:00' AND (${keywordClause})`,
+        $where: `(code_book='Residential' OR code_book='Commercial') AND date_issued >= '${isoDay(since)}T00:00:00' AND (${keywordClause})`,
         $order: 'date_issued DESC',
         $limit: '1000',
     };
@@ -124,6 +125,7 @@ export function groupComboRows(rows = []) {
             byPermit.set(permitNumber, {
                 permitNumber,
                 subType: row.sub_type_desc || '',
+                codeBook: row.code_book || '',
                 dwellingUnits: row.dwelling_units || '',
                 issuedAt: row.date_issued || '',
                 address: String(row.location || '').replace(/\s+/g, ' ').trim(),
@@ -179,17 +181,19 @@ export function evaluatePermit(permit, config) {
     return { include: true, reason: 'match' };
 }
 
-/** Score v2. Six capped factors, then penalties. Hot ≥ 70, Warm 45–69, Cold below 45. */
+/** Score v2. Bands are review labels only: every match is still delivered. */
 export function scorePermit(permit = {}, now = new Date()) {
-    const text = `${permit.description || ''} ${permit.recordType || ''}`.toLowerCase();
+    const text = `${permit.description || ''} ${permit.recordType || ''} ${permit.subType || ''}`.toLowerCase();
     const kitchen = /\bkitchen|counter/.test(text);
     const bath = /\bbath|vanit|powder room/.test(text);
+    const multiFamily = /\b(apartments?|multi-?family|multifamily|condos?|condominiums?)\b/.test(text) || Number(permit.dwellingUnits) > 1;
     const newHome = /\bnew (single[- ]family|home|dwelling|residence)\b/.test(text);
     const remodel = /\bremodel|renovat|alteration|\binterior\b/.test(text);
     let scope = 0;
     let scopeLabel = 'none';
     if (kitchen && bath) { scope = 30; scopeLabel = 'kitchen-bath'; }
     else if (kitchen) { scope = 35; scopeLabel = 'kitchen'; }
+    else if (multiFamily) { scope = 30; scopeLabel = 'apartment'; }
     else if (newHome) { scope = 25; scopeLabel = 'new-home'; }
     else if (bath) { scope = 20; scopeLabel = 'bath'; }
     else if (remodel) { scope = 10; scopeLabel = 'remodel'; }
@@ -206,11 +210,16 @@ export function scorePermit(permit = {}, now = new Date()) {
     const geography = /hamilton county|\bcincinnati\b|\bcovington\b|\bnewport\b|\bbellevue\b|\bfort thomas\b|\bcampbell county\b|\bkenton\b/.test(place)
         ? 10
         : /butler county|\bwarren county\b|\bclermont\b/.test(place) ? 7 : (place.trim() ? 3 : 0);
-    const commercial = /\bobc\b|ohio building code|\bcommercial\b/.test(text);
+    const commercial = multiFamily || /\bobc\b|ohio building code|\bcommercial\b/.test(text) || /commercial/i.test(permit.codeBook || '');
     const investor = /\b(llc|l\.l\.c|holdings|investments|properties)\b/i.test(permit.owner || '') && amount > 0 && amount < 20000;
-    const penalty = (commercial ? 15 : 0) + (investor ? 10 : 0);
+    const penalty = investor ? 10 : 0;
     const score = Math.max(0, Math.min(100, scope + value + timing + contactPts + relationship + geography - penalty));
     const band = score >= 70 ? 'hot' : score >= 45 ? 'warm' : 'cold';
+    const reviewNote = multiFamily
+        ? 'Multi-family. Confirm the job requirements before quoting.'
+        : commercial
+            ? 'Commercial. Confirm the job requirements before quoting.'
+            : '';
     const reasons = [
         `scope:${scopeLabel} +${scope}`,
         `value:${amount > 0 ? `$${Math.round(amount)}` : 'blank'} +${value}`,
@@ -218,13 +227,14 @@ export function scorePermit(permit = {}, now = new Date()) {
         `contact:${hasPhone && hasEmail ? 'both' : hasPhone ? 'phone' : hasEmail ? 'email' : 'none'} +${contactPts}`,
         `relationship:${permit.repeat ? 'repeat' : permit.partner ? 'partner' : 'new'} +${relationship}`,
         `geography +${geography}`,
-        ...(commercial ? ['commercial -15'] : []),
+        ...(reviewNote ? ['commercial:kept'] : []),
         ...(investor ? ['investor -10'] : []),
     ];
     return {
         score,
         band,
         reasons,
+        reviewNote,
         anchored: true,
         factors: {
             directMatches: scope,
@@ -297,6 +307,7 @@ export function buildPermitLead(permit, contact = null) {
     payload.metadata.internalOnly = true;
     payload.metadata.permitNumber = permit.permitNumber;
     payload.metadata.scoreReasons = scoreResult.reasons;
+    payload.metadata.reviewNote = scoreResult.reviewNote || '';
     // Contact-free fields for the run report's top-leads list.
     payload.metadata.city = `Cincinnati${permit.zip ? ` ${permit.zip}` : ''}`;
     payload.metadata.estimatedCost = permit.cost > 0 ? permit.cost : null;
@@ -383,10 +394,7 @@ export async function pollPermits({
             continue;
         }
         const scoreResult = scorePermit(permit);
-        if (scoreResult.score < config.minScore) {
-            reject('below-min-score');
-            continue;
-        }
+        // The band is a review label. Cold leads are delivered too.
         candidates.push({ permit, id, scoreResult });
     }
 

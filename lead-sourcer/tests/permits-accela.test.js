@@ -180,13 +180,14 @@ describe('county permit sources', () => {
         expect(isButlerPermitsEnabled({ LEAD_SOURCER_ENABLE_PERMITS_BUTLER: 'true' })).toBe(true);
         expect(isHamiltonPermitsEnabled({ LEAD_SOURCER_ENABLE_PERMITS_HAMILTON: 'false' })).toBe(false);
         expect(getAccelaConfig({ LEAD_SOURCER_ACCELA_MAX_DETAILS: '5' }).maxDetails).toBe(5);
-        expect(getAccelaConfig({}).keywords).toEqual(['kitchen', 'bath', 'counter', 'vanity', 'remodel', 'renovat']);
+        expect(getAccelaConfig({}).keywords).toEqual(['kitchen', 'bath', 'counter', 'vanity', 'remodel', 'renovat', 'apartment', 'multifamily', 'condo']);
     });
 
     test('filters by record type before any detail fetch', () => {
         const config = getAccelaConfig({});
         expect(evaluateRecordType({ recordType: 'RCO Alteration', detailUrl: 'x', status: 'Issued' }, config).include).toBe(true);
         expect(evaluateRecordType({ recordType: 'Residential Additions and Alterations to Existing Home', detailUrl: 'x' }, config).include).toBe(true);
+        expect(evaluateRecordType({ recordType: 'OBC Multi-Family Apartment Building', detailUrl: 'x' }, config).include).toBe(true);
         expect(evaluateRecordType({ recordType: 'RCO Mechanical', detailUrl: 'x' }, config).reason).toBe('excluded-type');
         expect(evaluateRecordType({ recordType: 'RCO New Building', detailUrl: 'x' }, config).reason).toBe('other-type');
         expect(evaluateRecordType({ recordType: 'RCO Repair', detailUrl: 'x', status: 'Void' }, config).reason).toBe('inactive-status');

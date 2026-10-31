@@ -105,6 +105,7 @@ export function extractLeadFields(payload = {}) {
         url: clean(lead.externalPostUrl),
         score: Number.isFinite(payload.score) ? payload.score : null,
         scoreBand: clean(payload.scoreBand),
+        reviewNote: clean(meta.reviewNote),
         leadId: clean(payload.dedupeKey || lead.externalPostId),
     };
 }
@@ -124,6 +125,7 @@ function rows(fields) {
         ['Filed', fields.date],
         ['Status', fields.status],
         ['Lead score', fields.score != null ? `${fields.score}${fields.scoreBand ? ` (${fields.scoreBand})` : ''}` : ''],
+        ['Note', fields.reviewNote],
     ].filter(([, value]) => clean(value));
 }
 
