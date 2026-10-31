@@ -52,19 +52,19 @@ export default function Hero({ language = 'en' }) {
           </div>
 
           <div className="grid gap-4">
-            <div className="rounded-[2rem] border border-border bg-panel/80 p-5 shadow-soft sm:p-6">
-              <div className="grid grid-cols-3 gap-3">
-                <div className="rounded-[1.35rem] border border-border bg-surface/70 px-3 py-4 text-center">
+            <div className="rounded-[2rem] border border-border bg-panel/80 p-3 shadow-soft sm:p-6">
+              <div className="grid grid-cols-3 gap-1.5 sm:gap-3">
+                <div className="min-w-0 rounded-[1.35rem] border border-border bg-surface/70 px-1 py-4 text-center sm:px-3">
                   <div className="text-2xl font-display font-semibold text-text sm:text-3xl">3-5</div>
-                  <div className="mt-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-muted">{copy.days}</div>
+                  <div className="mt-1 text-[10px] font-semibold uppercase leading-tight tracking-[0.02em] text-muted [overflow-wrap:anywhere] sm:text-[11px] sm:leading-normal sm:tracking-[0.18em]">{copy.days}</div>
                 </div>
-                <div className="rounded-[1.35rem] border border-border bg-surface/70 px-3 py-4 text-center">
+                <div className="min-w-0 rounded-[1.35rem] border border-border bg-surface/70 px-1 py-4 text-center sm:px-3">
                   <div className="text-2xl font-display font-semibold text-text sm:text-3xl">{supplierSummaries.length}</div>
-                  <div className="mt-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-muted">{copy.curated}</div>
+                  <div className="mt-1 text-[10px] font-semibold uppercase leading-tight tracking-[0.02em] text-muted [overflow-wrap:anywhere] sm:text-[11px] sm:leading-normal sm:tracking-[0.18em]">{copy.curated}</div>
                 </div>
-                <div className="rounded-[1.35rem] border border-border bg-surface/70 px-3 py-4 text-center">
+                <div className="min-w-0 rounded-[1.35rem] border border-border bg-surface/70 px-1 py-4 text-center sm:px-3">
                   <div className="text-2xl font-display font-semibold text-text sm:text-3xl">1 yr</div>
-                  <div className="mt-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-muted">{copy.warrantyLabel}</div>
+                  <div className="mt-1 text-[10px] font-semibold uppercase leading-tight tracking-[0.02em] text-muted [overflow-wrap:anywhere] sm:text-[11px] sm:leading-normal sm:tracking-[0.18em]">{copy.warrantyLabel}</div>
                 </div>
               </div>
             </div>
