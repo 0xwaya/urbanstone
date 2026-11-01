@@ -1,0 +1,91 @@
+{
+  "queue_id": "2026-11-01-0600",
+  "status": "published",
+  "approved": false,
+  "scheduled_at_local": "2026-11-01T06:00:00-05:00",
+  "scheduled_at_utc": "2026-11-01T11:00:00+00:00",
+  "created_at_utc": "2026-11-01T10:23:12.017806+00:00",
+  "feed_format": "4x5",
+  "files": {
+    "1x1": {
+      "png": "post_1x1.png",
+      "jpg": "post_1x1.jpg",
+      "logo_corner": "bottom-right"
+    },
+    "4x5": {
+      "png": "post_4x5.png",
+      "jpg": "post_4x5.jpg",
+      "logo_corner": "bottom-right"
+    },
+    "9x16": {
+      "png": "post_9x16.png",
+      "jpg": "post_9x16.jpg",
+      "logo_corner": "bottom-right"
+    }
+  },
+  "dimensions": {
+    "post_type": "kitchen island",
+    "application": "kitchen island",
+    "finish": "polished",
+    "format": "single",
+    "material": "marble",
+    "stone": "Fantasy Brown",
+    "catalog_stone": true,
+    "style": "contemporary luxury",
+    "cabinets": "forest green inset cabinets",
+    "lighting": "bright natural light from a skylight and tall windows",
+    "layout": "U-shaped kitchen with peninsula",
+    "hardware": "matte black",
+    "cta": "link",
+    "brand_point": "curated",
+    "promo": true,
+    "caption_style": "exotic",
+    "hashtag_set_id": "2ec9f870",
+    "slot": "6 AM"
+  },
+  "hashtags": [
+    "marblecountertops",
+    "marble",
+    "kitchenisland",
+    "cincinnati",
+    "cincy"
+  ],
+  "scene_full": {
+    "stone": "Fantasy Brown",
+    "material": "marble",
+    "catalog": true,
+    "cabinets": "forest green inset cabinets",
+    "style": "contemporary luxury",
+    "lighting": "bright natural light from a skylight and tall windows",
+    "layout": "U-shaped kitchen with peninsula",
+    "hardware": "matte black",
+    "application": "kitchen island",
+    "finish": "polished",
+    "key": "Fantasy Brown|forest green inset cabinets|contemporary luxury|bright natural light from a skylight and tall windows|U-shaped kitchen with peninsula|kitchen island|polished",
+    "prompt": "Bright, airy, light-filled photorealistic interior photograph of a contemporary luxury kitchen, U-shaped kitchen with peninsula. The hero is the countertop: Fantasy Brown marble (natural stone with flowing brown, cream and grey bands), 3cm thick, a high-gloss polished surface with a clean eased edge, shown in full with no cropped ends or corners. Forest green inset cabinets with matte black hardware, bright natural light from a skylight and tall windows. Light walls, styled minimally (a bowl of lemons, a small vase of greenery, a cutting board). Clean bright exposure, fresh and stunning, uncluttered, real materials and true-to-life reflections, eye-level architectural photography, 24-35mm lens, magazine quality. Tall vertical 9:16 composition: the stone surface sits in the vertical middle of the frame and spans no more than 85% of the width, with generous space above and below, so the image can also be cropped to 4:5 and 1:1 around it. Quiet, low-detail upper corners. No people, no text, no logos, no watermarks.",
+    "format": "single",
+    "id": "e6951117f7",
+    "created_at": "2026-11-01T05:21:54.408272-05:00"
+  },
+  "scene": {
+    "id": "e6951117f7",
+    "key": "Fantasy Brown|forest green inset cabinets|contemporary luxury|bright natural light from a skylight and tall windows|U-shaped kitchen with peninsula|kitchen island|polished",
+    "prompt": "Bright, airy, light-filled photorealistic interior photograph of a contemporary luxury kitchen, U-shaped kitchen with peninsula. The hero is the countertop: Fantasy Brown marble (natural stone with flowing brown, cream and grey bands), 3cm thick, a high-gloss polished surface with a clean eased edge, shown in full with no cropped ends or corners. Forest green inset cabinets with matte black hardware, bright natural light from a skylight and tall windows. Light walls, styled minimally (a bowl of lemons, a small vase of greenery, a cutting board). Clean bright exposure, fresh and stunning, uncluttered, real materials and true-to-life reflections, eye-level architectural photography, 24-35mm lens, magazine quality. Tall vertical 9:16 composition: the stone surface sits in the vertical middle of the frame and spans no more than 85% of the width, with generous space above and below, so the image can also be cropped to 4:5 and 1:1 around it. Quiet, low-detail upper corners. No people, no text, no logos, no watermarks.",
+    "ai_generated": true
+  },
+  "platforms": {
+    "instagram": {
+      "url": "https://www.instagram.com/urbanstonec/p/DfMlL4rhnuf/",
+      "time_et": "~6:03 AM",
+      "note": "posted by morning run before interruption (original showroom line)",
+      "story": {
+        "status": "posted ~6 AM"
+      }
+    },
+    "tiktok": {
+      "status": "under review",
+      "time_et": "12:07 PM",
+      "caption": "stop and stare line"
+    }
+  }
+}

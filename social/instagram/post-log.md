@@ -235,3 +235,10 @@ Each entry has this format:
   > DM us your kitchen pic 📸
   > AI-rendered design concept · Urban Stone Collective
   > #quartzcountertops #countertops #backsplash #cincinnati #kitchentok
+
+## 2026-11-01 6 AM slot (Fantasy Brown, marble, polished, kitchen island, AI rendering on real photo)
+- Instagram feed: https://www.instagram.com/urbanstonec/p/DfMlL4rhnuf/ (~6:03 AM ET, morning run; caption used original "walk across the showroom for" line)
+- Instagram Story: posted ~6 AM ET
+- TikTok: under review, posted 12:07 PM ET (catch-up after the run was interrupted; caption line "stop and stare at")
+- Hosted: https://www.urbanstone.co/social/2026-11-01-0600/post_4x5.jpg
+- Facebook: removed
