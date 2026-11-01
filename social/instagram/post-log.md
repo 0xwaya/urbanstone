@@ -242,3 +242,43 @@ Each entry has this format:
 - TikTok: under review, posted 12:07 PM ET (catch-up after the run was interrupted; caption line "stop and stare at")
 - Hosted: https://www.urbanstone.co/social/2026-11-01-0600/post_4x5.jpg
 - Facebook: removed
+
+## 2026-11-01 — 4:00 PM ET
+- Posted at: Instagram feed 4:00 PM ET, Story ~4:02 PM ET, TikTok ~4:05 PM ET
+- Material: n/a (real project)
+- Finish: n/a
+- Application: custom bathroom
+- Format: carousel (3 photos)
+- Caption style: real_project
+- Source: real-install (no AI)
+- Location: Over-the-Rhine, Cincinnati (TikTok: Over-The-Rhine, Ohio)
+- Tagged users: @the.unlearn.experiment (photo 1)
+- About: Over-the-Rhine loft custom bathroom with marble-look walls, curbless shower, wood vanity with dark stone top; loft available for rent
+- Queue folder: social/instagram/queue/2026-11-01-1600/
+- Image: https://www.urbanstone.co/social/2026-11-01-1600/post_4x5.jpg
+- Instagram post: https://www.instagram.com/urbanstonec/p/DfNpcZNj0pm/ (AI label off)
+- Instagram Story: posted (slide_01_9x16.jpg)
+- TikTok post: under review (photo carousel on @urbanstoneco, AI disclosure off)
+- Facebook: removed
+- Caption (Instagram, as posted):
+  > Real project, real Cincinnati home: a custom bathroom by Urban Stone Collective. 🤍
+  >
+  > Large-format marble-look walls, a curbless walk-in shower and a warm wood vanity with a dark stone top. Swipe for the shower ➡️
+  >
+  > Custom bathrooms are some of our favorite projects, and we run them start to finish.
+  >
+  > This Over-the-Rhine loft is available for rent. Questions? Reach out to @the.unlearn.experiment 🔑
+  >
+  > 👉 DM us to talk through your bathroom.
+  >
+  > Real project · Urban Stone Collective
+  >
+  > Premium Countertops. Fast Install. Built for Cincinnati.
+  > 📞 (513) 307-5840 · ✉️ sales@urbanstone.co · 🌐 urbanstone.co
+  >
+  > #bathroomremodel #custombathroom #bathroomvanity #cincinnati #cincinnatihomes
+- Caption (TikTok, as posted):
+  > Real project: a custom bathroom by Urban Stone Collective. Swipe for the curbless shower 🤍
+  > DM us to talk through your bathroom 📸
+  > Real project · Urban Stone Collective
+  > #bathroomremodel #custombathroom #bathroomtok #cincinnati #homerenovation
