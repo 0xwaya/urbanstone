@@ -33,6 +33,15 @@ export default async function handler(req, res) {
 
     // Mark token as used and update last_login_at
     await supabase.from('magic_links').update({ used: true }).eq('id', link.id);
+
+    const { data: access } = await supabase
+        .from('contractors')
+        .select('approved, status')
+        .eq('id', link.contractor_id)
+        .single();
+    if (!access?.approved || access.status === 'rejected') {
+        return res.status(403).send('This account is not approved for portal access yet.');
+    }
     await supabase.from('contractors').update({ last_login_at: new Date().toISOString() }).eq('id', link.contractor_id);
 
     const secret = process.env.CONTRACTOR_SESSION_SECRET;

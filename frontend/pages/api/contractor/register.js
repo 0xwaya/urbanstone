@@ -1,14 +1,22 @@
+import crypto from 'crypto';
+import { Resend } from 'resend';
 import { getSupabase } from '../../../lib/supabase';
-import { getEmailAccess, hasPrivateEmailDomain, hasBusinessWebsite } from '../../../lib/contractor-access';
+import { getEmailAccess } from '../../../lib/contractor-access';
+import { getContractorEmailFrom, getContractorPortalBaseUrl } from '../../../lib/contractor-portal';
 import {
-    buildContractorRegistrationEvent,
-    relayContractorRegistrationEvent,
-    sendContractorRegistrationNotification,
-} from '../../../lib/contractor-notifications';
+    checkWebsite,
+    detectBotSubmission,
+    getGibberishFlags,
+    renderContractorConfirmEmail,
+    verifyTurnstile,
+} from '../../../lib/contractor-signup';
 
 const RATE_WINDOW_MS = 60_000;
 const RATE_LIMIT = 5;
+const CONFIRM_TTL_MS = 48 * 60 * 60 * 1000;
 const ipTimestamps = new Map();
+
+const RECEIVED_MESSAGE = 'Application received. Check your email and click the confirmation link so we can review your request.';
 
 function checkRate(ip) {
     const now = Date.now();
@@ -27,120 +35,125 @@ function isValidUrl(str) {
     }
 }
 
-export default async function handler(req, res) {
+function normalizeWebsite(value) {
+    const trimmed = String(value || '').trim();
+    if (!trimmed) return '';
+    return /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
+}
+
+async function sendConfirmEmail(req, email, token) {
+    const resendKey = process.env.RESEND_API_KEY;
+    if (!resendKey) return { skipped: true };
+    const confirmUrl = `${getContractorPortalBaseUrl(req)}/api/contractor/confirm?token=${encodeURIComponent(token)}`;
+    const { data, error } = await new Resend(resendKey).emails.send({
+        from: getContractorEmailFrom(),
+        to: email,
+        subject: 'Confirm your email for Urban Stone contractor access',
+        html: renderContractorConfirmEmail(confirmUrl),
+    });
+    if (error) throw new Error(typeof error === 'string' ? error : JSON.stringify(error));
+    return { id: data?.id || null };
+}
+
+export default async function handler(req, res, deps = {}) {
     try {
         if (req.method !== 'POST') return res.status(405).end();
 
-        const ip = req.headers['x-forwarded-for']?.split(',')[0]?.trim() || req.socket.remoteAddress || 'unknown';
+        const ip = req.headers['x-forwarded-for']?.split(',')[0]?.trim() || req.socket?.remoteAddress || 'unknown';
         if (!checkRate(ip)) return res.status(429).json({ error: 'Too many requests' });
 
-        const { email, company_name, website } = req.body || {};
-
-        if (!email || !company_name || !website) {
-            return res.status(400).json({ error: 'email, company_name, and website are required' });
+        const body = req.body || {};
+        const botReason = detectBotSubmission(body);
+        if (botReason) {
+            console.warn('[contractor/register] dropped bot submission', { reason: botReason });
+            return res.status(201).json({ message: RECEIVED_MESSAGE });
         }
-        if (typeof email !== 'string' || !email.includes('@') || email.length > 254) {
+
+        if (!(await (deps.verifyTurnstile || verifyTurnstile)(body.turnstile_token, ip))) {
+            return res.status(400).json({ error: 'Verification failed. Please refresh the page and try again.' });
+        }
+
+        const { email, company_name } = body;
+        const website = normalizeWebsite(body.website);
+
+        if (!email || !company_name) {
+            return res.status(400).json({ error: 'email and company_name are required' });
+        }
+        if (typeof email !== 'string' || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()) || email.length > 254) {
             return res.status(400).json({ error: 'Invalid email' });
         }
         if (typeof company_name !== 'string' || company_name.trim().length < 2 || company_name.length > 120) {
             return res.status(400).json({ error: 'Invalid company name' });
         }
-        if (!isValidUrl(website) || website.length > 512) {
+        if (website && (!isValidUrl(website) || website.length > 512)) {
             return res.status(400).json({ error: 'Invalid website URL' });
         }
 
         const emailAccess = getEmailAccess(email);
-        const supabase = getSupabase();
+        const supabase = deps.supabase || getSupabase();
+        const companyName = company_name.trim();
 
-        const autoApprove = emailAccess.isApproved
-            || hasPrivateEmailDomain(email)
-            || hasBusinessWebsite(website);
+        const siteCheck = await (deps.checkWebsite || checkWebsite)(website);
+        const riskFlags = [
+            ...(siteCheck.reachable === false ? ['website_unreachable'] : []),
+            ...(website ? [] : ['no_website']),
+            ...getGibberishFlags({ email: emailAccess.normalizedEmail, companyName, website }),
+        ];
 
-        let contractor = null;
-        const { data: insertedContractor, error } = await supabase
+        // Pre-vetted emails (static/env allowlist) are the only automatic approvals.
+        const preApproved = emailAccess.isApproved;
+        const token = crypto.randomBytes(32).toString('hex');
+        const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
+        const verificationExpiresAt = new Date(Date.now() + CONFIRM_TTL_MS).toISOString();
+
+        const { data: inserted, error } = await supabase
             .from('contractors')
             .insert({
                 email: emailAccess.normalizedEmail,
-                company_name: company_name.trim(),
-                website: website.trim(),
-                approved: autoApprove,
+                company_name: companyName,
+                website,
+                approved: preApproved,
+                status: preApproved ? 'approved' : 'pending',
+                risk_flags: riskFlags,
+                verification_token_hash: tokenHash,
+                verification_expires_at: verificationExpiresAt,
             })
-            .select('id, email, company_name, website, approved, created_at')
+            .select('id, status, email_verified')
             .single();
 
-        if (!error && insertedContractor) {
-            contractor = insertedContractor;
-        }
+        let shouldSendConfirm = Boolean(inserted);
 
         if (error && error.code === '23505') {
-            const { data: existingContractor, error: refetchError } = await supabase
+            const { data: existing, error: refetchError } = await supabase
                 .from('contractors')
-                .select('id, email, company_name, website, approved, created_at')
+                .select('id, status, email_verified')
                 .eq('email', emailAccess.normalizedEmail)
                 .maybeSingle();
-
-            if (refetchError || !existingContractor) {
-                console.error('[contractor/register] duplicate contractor refetch failed', refetchError?.message || 'missing contractor');
+            if (refetchError || !existing) {
+                console.error('[contractor/register] duplicate refetch failed', refetchError?.message || 'missing');
                 return res.status(500).json({ error: 'Registration failed. Please try again.' });
             }
-
-            contractor = existingContractor;
+            if (existing.status === 'pending' && !existing.email_verified) {
+                await supabase.from('contractors')
+                    .update({ verification_token_hash: tokenHash, verification_expires_at: verificationExpiresAt })
+                    .eq('id', existing.id);
+                shouldSendConfirm = true;
+            }
         } else if (error) {
             console.error('[contractor/register]', error.message);
             return res.status(500).json({ error: 'Registration failed. Please try again.' });
         }
 
-        const event = buildContractorRegistrationEvent(contractor || {
-            email: emailAccess.normalizedEmail,
-            company_name: company_name.trim(),
-            website: website.trim(),
-            approved: autoApprove,
-        }, req);
-
-        const webhookUrl = process.env.CONTRACTOR_REGISTRATION_WEBHOOK_URL;
-        const notificationJobs = [];
-
-        if (webhookUrl) {
-            notificationJobs.push(
-                relayContractorRegistrationEvent(event, webhookUrl)
-                    .then(() => ({ channel: 'webhook', ok: true }))
-                    .catch((notifyError) => ({ channel: 'webhook', ok: false, error: notifyError }))
-            );
+        if (shouldSendConfirm) {
+            try {
+                await (deps.sendConfirmEmail || sendConfirmEmail)(req, emailAccess.normalizedEmail, token);
+            } catch (sendError) {
+                console.error('[contractor/register] confirm email failed', sendError instanceof Error ? sendError.message : String(sendError));
+                return res.status(502).json({ error: 'We could not send your confirmation email. Please try again or contact sales@urbanstone.co.' });
+            }
         }
 
-        notificationJobs.push(
-            sendContractorRegistrationNotification(event)
-                .then(result => ({ channel: 'email', ok: true, result }))
-                .catch((notifyError) => ({ channel: 'email', ok: false, error: notifyError }))
-        );
-
-        const notificationResults = await Promise.all(notificationJobs);
-
-        notificationResults.forEach((result) => {
-            if (result.ok) {
-                console.log('[contractor/register] notification delivered', {
-                    channel: result.channel,
-                    requestId: event.requestId,
-                    email: event.contractor.email,
-                    notificationId: result.result?.id || null,
-                    skipped: result.result?.skipped || false,
-                });
-                return;
-            }
-
-            console.error('[contractor/register] notification failed', {
-                channel: result.channel,
-                requestId: event.requestId,
-                email: event.contractor.email,
-                message: result.error instanceof Error ? result.error.message : String(result.error),
-            });
-        });
-
-        return res.status(201).json({
-            message: autoApprove
-                ? 'Access is approved for this email. You can request a magic link now.'
-                : 'Application received. We will review and send a magic link when approved.',
-        });
+        return res.status(201).json({ message: RECEIVED_MESSAGE });
     } catch (error) {
         console.error('[contractor/register] fatal', error);
         const message = error instanceof Error && error.message.includes('Missing Supabase server environment variables')
