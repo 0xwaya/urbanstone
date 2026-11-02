@@ -97,7 +97,7 @@ begin
     perform public.review_admin_assert(p_secret);
     return json_build_object(
         'jobs', coalesce((select json_agg(j order by j.install_date nulls last, j.created_at) from (
-            select jb.id, jb.title, jb.stage, jb.stage_changed_at, jb.deposit_at, jb.deposit_amount,
+            select jb.id, jb.created_at, jb.title, jb.stage, jb.stage_changed_at, jb.deposit_at, jb.deposit_amount,
                    jb.schedule_window, jb.template_date, jb.install_date, jb.paid_at, jb.referred_by, jb.notes,
                    coalesce(c.person_name, c.company_name) as customer_name, c.phone, c.email,
                    coalesce(i.project_city, c.city) as city, i.scope,
@@ -111,7 +111,8 @@ begin
         'open_quotes', coalesce((select json_agg(x order by x.quote_number) from (
             select q.quote_number, q.version, q.status, q.total, coalesce(c.person_name, c.company_name) as customer_name
               from crm.quotes q join crm.contacts c on c.id = q.contact_id
-             where not exists (select 1 from crm.jobs jb where jb.quote_id = q.id) and q.status <> 'lost') x), '[]'::json)
+             where not exists (select 1 from crm.jobs jb where jb.quote_id = q.id
+                                  or (q.intake_id is not null and jb.intake_id = q.intake_id)) and q.status <> 'lost') x), '[]'::json)
     );
 end $$;
 
