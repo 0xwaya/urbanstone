@@ -282,3 +282,45 @@ Each entry has this format:
   > DM us to talk through your bathroom 📸
   > Real project · Urban Stone Collective
   > #bathroomremodel #custombathroom #bathroomtok #cincinnati #homerenovation
+
+## 2026-11-02 — 6:00 AM ET
+- Posted at: Instagram feed 6:08 AM ET, Story 6:12 AM ET, TikTok 6:14 AM ET
+- Material: quartz (Calacatta Aurus)
+- Finish: polished
+- Application: kitchen island
+- Format: single
+- Caption style: rendering on real photo
+- Location: Cincinnati, Ohio
+- About: Calacatta Aurus quartz (white with gold and grey veins) on island, perimeter and full-height backsplash; rendering on real photo 01-white-kitchen-brass-hood-full-backsplash.jpg (unsorted-2026-10-31, left edge cropped)
+- Queue folder: social/instagram/queue/2026-11-02-0600/
+- Image: https://www.urbanstone.co/social/2026-11-02-0600/post_4x5.jpg
+- Instagram post: https://www.instagram.com/urbanstonec/p/DfPKiOqPfwL/ (AI label on)
+- Instagram Story: posted (post_9x16.jpg)
+- TikTok post: under review (photo post on @urbanstoneco, AI disclosure on)
+- Facebook: removed
+- Caption (Instagram, as posted):
+  > Imagine Calacatta Aurus in a kitchen like this: light, movement and a calm, high-end finish. ✨
+  >
+  > This concept puts Calacatta Aurus on the island, perimeter and full-height backsplash, with white shaker cabinets, brass hardware and a statement brass hood. Light stone keeps the room open; the veining adds movement without the busy feel.
+  >
+  > Polished finish: a high gloss that makes the color and veining pop.
+  > Quartz: consistent color, lower maintenance and no sealing requirement.
+  > We narrow the slab options with you, so you don't have to sort through every warehouse alone.
+  > Available through our suppliers. Ask us about this slab for your project.
+  >
+  > 🎁 Fall offer: a complimentary 18-gauge stainless steel sink with kitchen projects of 50 sq ft and above. Undermount or top-mount, single or double basin. Through Dec 15.
+  >
+  > 👉 Call or text (513) 307-5840 for an estimate.
+  >
+  > Image: AI-rendered design concept (rendering, not a finished install).
+  >
+  > Premium Countertops. Fast Install. Built for Cincinnati.
+  > 📞 (513) 307-5840 · ✉️ sales@urbanstone.co · 🌐 urbanstone.co
+  >
+  > #quartzcountertops #calacattaquartz #dreamkitchen #cincinnati #nky
+- Caption (TikTok, as posted):
+  > Imagine Calacatta Aurus in a kitchen like this: gold veins, polished finish, full-height backsplash. ✨
+  > 🎁 Free 18-gauge stainless sink on kitchens 50+ sq ft, through Dec 15.
+  > Call/text (513) 307-5840 📞
+  > AI-rendered design concept · Urban Stone Collective
+  > #quartzcountertops #countertops #kitchenremodel #cincinnati #kitchentok

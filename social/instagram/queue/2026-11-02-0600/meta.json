@@ -1,0 +1,101 @@
+{
+  "queue_id": "2026-11-02-0600",
+  "status": "published",
+  "approved": false,
+  "scheduled_at_local": "2026-11-02T06:00:00-05:00",
+  "scheduled_at_utc": "2026-11-02T11:00:00+00:00",
+  "created_at_utc": "2026-11-02T10:29:31.270232+00:00",
+  "feed_format": "4x5",
+  "files": {
+    "1x1": {
+      "png": "post_1x1.png",
+      "jpg": "post_1x1.jpg",
+      "logo_corner": "bottom-right"
+    },
+    "4x5": {
+      "png": "post_4x5.png",
+      "jpg": "post_4x5.jpg",
+      "logo_corner": "bottom-right"
+    },
+    "9x16": {
+      "png": "post_9x16.png",
+      "jpg": "post_9x16.jpg",
+      "logo_corner": "top-right"
+    }
+  },
+  "dimensions": {
+    "post_type": "kitchen island",
+    "application": "kitchen island",
+    "finish": "polished",
+    "format": "single",
+    "material": "quartz",
+    "stone": "Calacatta Aurus",
+    "catalog_stone": true,
+    "style": "Scandinavian",
+    "cabinets": "sage green shaker cabinets",
+    "lighting": "airy bright overcast daylight",
+    "layout": "kitchen with island and matching slab backsplash behind the range",
+    "hardware": "unlacquered brass",
+    "cta": "call",
+    "brand_point": "guided",
+    "promo": true,
+    "caption_style": "design",
+    "hashtag_set_id": "2dc3f78e",
+    "slot": "6 AM"
+  },
+  "hashtags": [
+    "quartzcountertops",
+    "calacattaquartz",
+    "dreamkitchen",
+    "cincinnati",
+    "nky"
+  ],
+  "scene_full": {
+    "stone": "Calacatta Aurus",
+    "material": "quartz",
+    "catalog": true,
+    "cabinets": "sage green shaker cabinets",
+    "style": "Scandinavian",
+    "lighting": "airy bright overcast daylight",
+    "layout": "kitchen with island and matching slab backsplash behind the range",
+    "hardware": "unlacquered brass",
+    "application": "kitchen island",
+    "finish": "polished",
+    "key": "Calacatta Aurus|sage green shaker cabinets|Scandinavian|airy bright overcast daylight|kitchen with island and matching slab backsplash behind the range|kitchen island|polished",
+    "prompt": "Bright, airy, light-filled photorealistic interior photograph of a Scandinavian kitchen, kitchen with island and matching slab backsplash behind the range. The hero is the countertop: Calacatta Aurus quartz (white quartz with bold gold and grey veins), 3cm thick, a high-gloss polished surface with a clean eased edge, shown in full with no cropped ends or corners. Sage green shaker cabinets with unlacquered brass hardware, airy bright overcast daylight. Light walls, styled minimally (a bowl of lemons, a small vase of greenery, a cutting board). Clean bright exposure, fresh and stunning, uncluttered, real materials and true-to-life reflections, eye-level architectural photography, 24-35mm lens, magazine quality. Tall vertical 9:16 composition: the stone surface sits in the vertical middle of the frame and spans no more than 85% of the width, with generous space above and below, so the image can also be cropped to 4:5 and 1:1 around it. Quiet, low-detail upper corners. No people, no text, no logos, no watermarks.",
+    "format": "single",
+    "id": "8e0d493cc9",
+    "created_at": "2026-11-02T05:27:39.929221-05:00"
+  },
+  "scene": {
+    "id": "8e0d493cc9",
+    "key": "Calacatta Aurus|sage green shaker cabinets|Scandinavian|airy bright overcast daylight|kitchen with island and matching slab backsplash behind the range|kitchen island|polished",
+    "prompt": "Bright, airy, light-filled photorealistic interior photograph of a Scandinavian kitchen, kitchen with island and matching slab backsplash behind the range. The hero is the countertop: Calacatta Aurus quartz (white quartz with bold gold and grey veins), 3cm thick, a high-gloss polished surface with a clean eased edge, shown in full with no cropped ends or corners. Sage green shaker cabinets with unlacquered brass hardware, airy bright overcast daylight. Light walls, styled minimally (a bowl of lemons, a small vase of greenery, a cutting board). Clean bright exposure, fresh and stunning, uncluttered, real materials and true-to-life reflections, eye-level architectural photography, 24-35mm lens, magazine quality. Tall vertical 9:16 composition: the stone surface sits in the vertical middle of the frame and spans no more than 85% of the width, with generous space above and below, so the image can also be cropped to 4:5 and 1:1 around it. Quiet, low-detail upper corners. No people, no text, no logos, no watermarks.",
+    "ai_generated": true
+  },
+  "platforms": {
+    "instagram": {
+      "status": "published",
+      "url": "https://www.instagram.com/urbanstonec/p/DfPKiOqPfwL/",
+      "posted_at_et": "2026-11-02 06:08",
+      "location": "Cincinnati, Ohio",
+      "ai_label": true,
+      "base_photo": "unsorted-2026-10-31/01-white-kitchen-brass-hood-full-backsplash.jpg (cropped left edge)",
+      "story": {
+        "status": "posted",
+        "posted_at_et": "2026-11-02 06:12",
+        "file": "post_9x16.jpg"
+      }
+    },
+    "tiktok": {
+      "status": "under review",
+      "posted_at_et": "2026-11-02 06:14",
+      "account": "@urbanstoneco",
+      "ai_disclosure": true,
+      "file": "post_9x16.jpg",
+      "note": "Studio shows privacy Only me during review"
+    }
+  },
+  "base_photo": "unsorted-2026-10-31/01-white-kitchen-brass-hood-full-backsplash.jpg (cropped left edge)",
+  "rendering": true
+}
