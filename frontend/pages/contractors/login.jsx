@@ -1,6 +1,7 @@
 import Head from 'next/head';
 import LogoMark from '../../components/LogoMark';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import Script from 'next/script';
 import { getContractorAdminEmails, normalizeEmail } from '../../lib/contractor-access';
 import { getSmsHref } from '../../lib/contact';
 
@@ -22,7 +23,7 @@ const COPY = {
         loginIntro: 'Enter your approved business email.',
         email: 'Business Email',
         company: 'Company Name',
-        website: 'Website or Social Profile',
+        website: 'Website or Social Profile (optional)',
         emailPlaceholder: 'you@yourcompany.com',
         companyPlaceholder: 'Apex Builders LLC',
         websitePlaceholder: 'https://yourcompany.com',
@@ -52,7 +53,7 @@ const COPY = {
         loginIntro: 'Ingresa el correo empresarial aprobado.',
         email: 'Correo empresarial',
         company: 'Nombre de la empresa',
-        website: 'Sitio web o perfil social',
+        website: 'Sitio web o perfil social (opcional)',
         emailPlaceholder: 'tu@empresa.com',
         companyPlaceholder: 'Constructora Apex LLC',
         websitePlaceholder: 'https://tuempresa.com',
@@ -96,6 +97,13 @@ export default function ContractorLogin() {
     const [regWebsite, setRegWebsite] = useState('');
     const [regStatus, setRegStatus] = useState(null); // null | 'loading' | 'success' | 'error'
     const [regMsg, setRegMsg] = useState('');
+    const [regHoneypot, setRegHoneypot] = useState('');
+    const formStartedAt = useRef(0);
+    const turnstileSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || '';
+
+    useEffect(() => {
+        formStartedAt.current = Date.now();
+    }, []);
 
     // Login state
     const [loginEmail, setLoginEmail] = useState('');
@@ -121,7 +129,14 @@ export default function ContractorLogin() {
             const res = await fetch('/api/contractor/register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email: regEmail, company_name: regCompany, website: regWebsite }),
+                body: JSON.stringify({
+                    email: regEmail,
+                    company_name: regCompany,
+                    website: regWebsite,
+                    company_fax: regHoneypot,
+                    form_started_at: formStartedAt.current,
+                    turnstile_token: e.currentTarget?.querySelector?.('[name="cf-turnstile-response"]')?.value || '',
+                }),
             });
             if (res.ok) {
                 const message = await readApiResponse(res, copy.registrationSuccess);
@@ -313,13 +328,30 @@ export default function ContractorLogin() {
                                                 <input
                                                     id="reg-website"
                                                     type="url"
-                                                    required
                                                     value={regWebsite}
                                                     onChange={e => setRegWebsite(e.target.value)}
                                                     placeholder={copy.websitePlaceholder}
                                                     className="form-input rounded-lg py-2.5 text-sm"
                                                 />
                                             </div>
+                                            <div aria-hidden="true" style={{ position: 'absolute', left: '-10000px', width: 1, height: 1, overflow: 'hidden' }}>
+                                                <label htmlFor="reg-company-fax">Company fax</label>
+                                                <input
+                                                    id="reg-company-fax"
+                                                    name="company_fax"
+                                                    type="text"
+                                                    tabIndex={-1}
+                                                    autoComplete="off"
+                                                    value={regHoneypot}
+                                                    onChange={e => setRegHoneypot(e.target.value)}
+                                                />
+                                            </div>
+                                            {turnstileSiteKey ? (
+                                                <>
+                                                    <Script src="https://challenges.cloudflare.com/turnstile/v0/api.js" strategy="afterInteractive" />
+                                                    <div className="cf-turnstile" data-sitekey={turnstileSiteKey} data-theme="dark" />
+                                                </>
+                                            ) : null}
                                             {regStatus === 'error' && (
                                                 <p className="text-sm text-red-400">{regMsg}</p>
                                             )}

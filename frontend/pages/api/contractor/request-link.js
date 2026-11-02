@@ -37,7 +37,7 @@ export default async function handler(req, res) {
 
         let { data: contractor, error: lookupError } = await supabase
             .from('contractors')
-            .select('id, approved')
+            .select('id, approved, status')
             .eq('email', normalizedEmail)
             .maybeSingle();
 
@@ -55,14 +55,14 @@ export default async function handler(req, res) {
                     website: 'https://urbanstone.co',
                     approved: true,
                 })
-                .select('id, approved')
+                .select('id, approved, status')
                 .single();
 
             if (insertContractorError) {
                 if (insertContractorError.code === '23505') {
                     const { data: existingContractor, error: refetchError } = await supabase
                         .from('contractors')
-                        .select('id, approved')
+                        .select('id, approved, status')
                         .eq('email', normalizedEmail)
                         .maybeSingle();
 
@@ -81,7 +81,7 @@ export default async function handler(req, res) {
             }
         }
 
-        const hasAccess = Boolean(contractor && (contractor.approved || emailAccess.isApproved));
+        const hasAccess = Boolean(contractor && contractor.status !== 'rejected' && (contractor.approved || emailAccess.isApproved));
         console.log('[contractor/request-link] access-check', {
             requestId,
             email: normalizedEmail,
