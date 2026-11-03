@@ -13,27 +13,30 @@ function CheckIcon() {
  * over a leathered black stone texture under a brand-navy overlay (dark in both themes).
  * Offer terms come from data/homepage-content.js (EN) and data/spanish-homepage-content.js (ES).
  */
-export default function FeaturesBar({ announcement = homepageAnnouncement }) {
+export default function FeaturesBar({ announcement = homepageAnnouncement, variant = 'full' }) {
     const { image, seal } = announcement;
+    const compact = variant === 'compact';
     const titleId = 'fall-promo-title';
 
     return (
-        <section aria-label={announcement.sectionLabel || 'Current business announcement'} className="py-6 sm:py-8">
-            <div className="mx-auto max-w-6xl px-4 sm:px-6">
-                <article aria-labelledby={titleId} className={`fall-promo relative isolate overflow-hidden rounded-[1.75rem] border border-border shadow-soft`}>
+        <section aria-label={announcement.sectionLabel || 'Current business announcement'} className={compact ? 'flex flex-1 flex-col' : 'py-6 sm:py-8'}>
+            <div className={compact ? 'flex flex-1 flex-col' : 'mx-auto max-w-6xl px-4 sm:px-6'}>
+                <article aria-labelledby={titleId} className={`fall-promo relative isolate flex-1 overflow-hidden rounded-[1.75rem] border border-border shadow-soft${compact ? ' rounded-[2rem]' : ''}`}>
                     <div aria-hidden="true" className="fall-promo__stone absolute inset-0 -z-20" />
                     <div aria-hidden="true" className="fall-promo__overlay absolute inset-0 -z-10" />
 
-                    <div className="grid items-center gap-2 px-6 py-7 sm:px-10 sm:py-10 lg:grid-cols-[minmax(0,1.08fr)_minmax(0,0.92fr)] lg:gap-8 lg:py-12">
+                    <div className={compact
+                        ? 'grid h-full grid-cols-1 items-center gap-2 px-6 py-7 sm:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] sm:gap-6 sm:px-8 sm:py-8 lg:grid-cols-1 lg:content-center lg:gap-0 lg:pt-6'
+                        : 'grid items-center gap-2 px-6 py-7 sm:px-10 sm:py-10 lg:grid-cols-[minmax(0,1.08fr)_minmax(0,0.92fr)] lg:gap-8 lg:py-12'}>
                         <div className="min-w-0">
                             <div className="fall-promo__eyebrow inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-[0.24em]">
                                 <span aria-hidden="true" className="fall-promo__dot h-1.5 w-1.5 rounded-full" />
                                 {announcement.eyebrow}
                             </div>
-                            <h2 id={titleId} className="mt-4 max-w-xl font-display text-[2rem] font-semibold leading-[1.05] tracking-tight text-text sm:text-[2.6rem] lg:text-[3rem]">
+                            <h2 id={titleId} className={`mt-4 max-w-xl font-display text-[2rem] font-semibold leading-[1.05] tracking-tight text-text ${compact ? 'sm:text-[2.3rem] lg:text-[2.2rem] xl:text-[2.35rem]' : 'sm:text-[2.6rem] lg:text-[3rem]'}`}>
                                 {announcement.title}
                             </h2>
-                            <p className="mt-4 max-w-xl text-base leading-7 text-muted sm:text-lg">
+                            <p className={`mt-4 max-w-xl text-base leading-7 text-muted ${compact ? 'sm:text-[1.05rem]' : 'sm:text-lg'}`}>
                                 {announcement.detail}
                             </p>
                             {announcement.tags?.length ? (
@@ -46,7 +49,7 @@ export default function FeaturesBar({ announcement = homepageAnnouncement }) {
                                     ))}
                                 </ul>
                             ) : null}
-                            <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-5">
+                            <div className={`mt-6 flex flex-col gap-3 ${compact ? 'sm:items-start' : 'sm:flex-row sm:items-center sm:gap-5'}`}>
                                 <a href={announcement.ctaHref} className="brand-button-primary self-start px-6 py-3 text-sm font-semibold">
                                     {announcement.ctaLabel}
                                     <span aria-hidden="true" className="ml-2">→</span>
@@ -60,7 +63,9 @@ export default function FeaturesBar({ announcement = homepageAnnouncement }) {
                         </div>
 
                         {image ? (
-                            <div className="relative order-first mx-auto w-full max-w-[22rem] pt-2 sm:max-w-md lg:order-none lg:max-w-none lg:pt-0">
+                            <div className={compact
+                                ? 'relative order-first mx-auto w-full max-w-[22rem] pt-2 sm:order-none sm:max-w-none lg:order-first lg:max-w-[15rem] lg:pt-0 xl:max-w-[17rem]'
+                                : 'relative order-first mx-auto w-full max-w-[22rem] pt-2 sm:max-w-md lg:order-none lg:max-w-none lg:pt-0'}>
                                 <div aria-hidden="true" className="fall-promo__halo absolute inset-x-[6%] inset-y-[10%] rounded-full" />
                                 <picture>
                                     <source type="image/webp" srcSet={image.webp} />
