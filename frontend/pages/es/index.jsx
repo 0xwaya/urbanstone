@@ -97,8 +97,7 @@ export default function SpanishHome({ reviews = [] }) {
                 <div className="page-shell mx-auto max-w-7xl px-4 sm:px-8">
                     <TopNav language="es" />
                     <main className="pb-6">
-                        <Hero language="es" />
-                        <FeaturesBar announcement={spanishAnnouncement} />
+                        <Hero language="es" aside={<FeaturesBar announcement={spanishAnnouncement} variant="compact" />} />
                         <ProjectsGallery language="es" />
                         <div className="my-8 h-px bg-gradient-to-r from-transparent via-accent/40 to-transparent sm:my-10" />
                         <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
