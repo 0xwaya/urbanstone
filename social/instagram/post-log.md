@@ -324,3 +324,45 @@ Each entry has this format:
   > Call/text (513) 307-5840 📞
   > AI-rendered design concept · Urban Stone Collective
   > #quartzcountertops #countertops #kitchenremodel #cincinnati #kitchentok
+
+## 2026-11-03 — 6:00 AM ET
+- Posted at: Instagram feed 6:00 AM ET, Story 6:03 AM ET, TikTok 6:05 AM ET
+- Source: real-install (no AI)
+- Material: dark stone (leathered granite, live edges)
+- Finish: leathered
+- Application: kitchen countertops
+- Format: carousel (2 photos)
+- Caption style: real_project
+- Location: Over-the-Rhine, Cincinnati
+- Tagged users: @the.unlearn.experiment (photo 1)
+- About: real loft galley kitchen install, dark leathered countertops with live edges (real-job-01)
+- Queue folder: social/instagram/queue/2026-11-03-0600/
+- Image: https://www.urbanstone.co/social/2026-11-03-0600/slide_01_4x5.jpg
+- Instagram post: https://www.instagram.com/p/DfRuXhREffu/ (AI label off)
+- Instagram Story: posted (post_9x16.jpg)
+- TikTok post: under review (2-photo carousel on @urbanstoneco, AI disclosure off)
+- Facebook: removed
+- Caption (Instagram, as posted):
+  > Loft kitchen, real install. 🖤 Dark stone countertops with a leathered finish and live edges run the full galley in this Cincinnati project by Urban Stone Collective.
+  >
+  > Long runs, warm wood cabinets and plenty of room to prep. Swipe for the view down the galley ➡️
+  > Our target: a 3-5 day turnaround from deposit to install on qualifying projects.
+  >
+  > 🎁 Free 18-gauge stainless sink on kitchens 50+ sq ft · through Dec 15
+  >
+  > This Over-the-Rhine loft is available for rent. Questions? Reach out to @the.unlearn.experiment 🔑
+  >
+  > 👉 Tap the link in bio for a fast estimate.
+  >
+  > Real project · Urban Stone Collective
+  >
+  > Premium Countertops. Fast Install. Built for Cincinnati.
+  > 📞 (513) 307-5840 · ✉️ sales@urbanstone.co · 🌐 urbanstone.co
+  >
+  > #countertops #kitchenremodel #dreamkitchen #cincinnati #cincy
+- Caption (TikTok, as posted):
+  > Real loft kitchen, real install: leathered dark stone countertops with live edges down the whole galley 🖤
+  > 🎁 Free 18-gauge stainless sink on kitchens 50+ sq ft, through Dec 15.
+  > Fast estimate: link in bio 🔗
+  > Real project · Urban Stone Collective
+  > #countertops #kitchenremodel #kitchentok #cincinnati #loftliving
