@@ -53,6 +53,15 @@ describe('kenton query and parsing', () => {
         const verdicts = data.features.map((f) => evaluateKentonPermit(normalizeKentonFeature(f), config).reason);
         expect(verdicts).toEqual(['match', 'match', 'excluded-type', 'match']);
     });
+
+    test('preserves nonresidential type descriptions when types are overridden', () => {
+        const permit = normalizeKentonFeature(data.features[2]);
+        expect(evaluateKentonPermit(permit, getKentonConfig({ LEAD_SOURCER_KENTON_TYPES: 'commercial - proposed' })).include).toBe(true);
+        const lead = buildKentonLead(permit);
+        expect(lead.metadata.permit.description).toBe('New commercial - proposed project, in Test Park');
+        expect(lead.metadata.scoreReasons).toContain('scope:none +0');
+        expect(lead.metadata.scoreReasons).toContain('commercial:kept');
+    });
 });
 
 describe('kenton lead payload', () => {
@@ -62,7 +71,7 @@ describe('kenton lead payload', () => {
         expect(payload.lead.email).toBe('');
         expect(payload.metadata.permit.address).toBe('1400 TEST WAY, Unincorporated, KY');
         const body = buildCrmIntake(payload, 'permits-kenton');
-        expect(body.intake).toMatchObject({ sub_source: 'permit_kenton', source_ref: '20263001', project_state: 'KY', valuation: null });
+        expect(body.intake).toMatchObject({ sub_source: 'permit_kenton', source_ref: '20263001', project_city: 'Unincorporated', project_state: 'KY', valuation: null });
     });
 
     test('new home scores on scope, apartment on multi-family', () => {
@@ -87,6 +96,30 @@ describe('pollKentonPermits', () => {
         const h = harness(memoryDedup(['kenton:20263001']));
         const { stats } = await pollKentonPermits({ mode: 'dry-run', ...harness(), isSeen: h.isSeen, markSeen: h.markSeen });
         expect(stats.skippedSeen).toBe(1);
+    });
+
+    test('fetches all pages in stable order when ArcGIS reports a transfer limit', async () => {
+        const fetchImpl = jest.fn()
+            .mockResolvedValueOnce(jsonResponse({ features: [data.features[0]], exceededTransferLimit: true }))
+            .mockResolvedValueOnce(jsonResponse({ features: [data.features[1]], exceededTransferLimit: false }));
+        const h = harness({ fetchImpl });
+        const { stats } = await pollKentonPermits({ mode: 'dry-run', ...h });
+        expect(stats).toMatchObject({ status: 'ok', fetched: 2, matches: 2 });
+        expect(fetchImpl).toHaveBeenCalledTimes(2);
+        const firstUrl = new URL(fetchImpl.mock.calls[0][0]);
+        const secondUrl = new URL(fetchImpl.mock.calls[1][0]);
+        expect(firstUrl.searchParams.get('orderByFields')).toBe('PERMIT_DAT DESC,FID ASC');
+        expect(secondUrl.searchParams.get('resultOffset')).toBe('1');
+    });
+
+    test('degrades without processing partial results when a later page fails', async () => {
+        const fetchImpl = jest.fn()
+            .mockResolvedValueOnce(jsonResponse({ features: [data.features[0]], exceededTransferLimit: true }))
+            .mockResolvedValueOnce(jsonResponse({}, 503));
+        const result = await pollKentonPermits({ mode: 'dry-run', ...harness({ fetchImpl }) });
+        expect(result.stats.status).toBe('degraded');
+        expect(result.stats.fetched).toBe(0);
+        expect(result.matches).toEqual([]);
     });
 
     test('a layer outage degrades the source instead of throwing', async () => {

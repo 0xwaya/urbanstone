@@ -52,16 +52,17 @@ export function getKentonConfig(env = process.env) {
     };
 }
 
-export function buildKentonQueryUrl({ lookbackDays, now = new Date() }) {
+export function buildKentonQueryUrl({ lookbackDays, now = new Date(), resultOffset = 0 }) {
     const since = new Date(now.getTime() - lookbackDays * 86400000).toISOString().slice(0, 10);
     const params = new URLSearchParams({
         where: `PERMIT_DAT >= DATE '${since}'`,
         outFields: OUT_FIELDS,
-        orderByFields: 'PERMIT_DAT DESC',
+        orderByFields: 'PERMIT_DAT DESC,FID ASC',
         returnGeometry: 'false',
         resultRecordCount: '1000',
         f: 'json',
     });
+    if (resultOffset > 0) params.set('resultOffset', String(resultOffset));
     return `${KENTON_LAYER_URL}/query?${params.toString()}`;
 }
 
@@ -77,7 +78,7 @@ export function normalizeKentonFeature(feature) {
     const bedrooms = Number(a.BEDROOM_CO) || 0;
     const multi = /multi|senior/i.test(type);
     const description = [
-        multi ? `New ${type.toLowerCase()} building` : `New single family home`,
+        multi ? `New ${type.toLowerCase()} building` : /^residential$/i.test(type) ? 'New single family home' : `New ${type.toLowerCase()} project`,
         bedrooms ? `${bedrooms} bedroom` : '',
         subdivision && !/single-site/i.test(subdivision) ? `in ${subdivision}` : '',
     ].filter(Boolean).join(', ');
@@ -137,7 +138,7 @@ export function buildKentonLead(permit, scoreResult = null) {
     payload.metadata.permitNumber = permit.permitNumber;
     payload.metadata.scoreReasons = score.reasons;
     payload.metadata.reviewNote = score.reviewNote || '';
-    payload.metadata.city = `${permit.municipality}, KY`;
+    payload.metadata.city = permit.municipality;
     payload.metadata.estimatedCost = null;
     payload.metadata.workSummary = permit.description.slice(0, 120);
     payload.metadata.permit = {
@@ -170,12 +171,31 @@ export async function pollKentonPermits({
 
     let permits;
     try {
-        const response = await fetchImpl(buildKentonQueryUrl({ ...config, now }), { headers: { Accept: 'application/json' }, signal: AbortSignal.timeout(config.timeoutMs) });
-        if (!response.ok) throw new Error(`ArcGIS HTTP ${response.status}`);
-        const data = await response.json();
-        if (data?.error) throw new Error(`ArcGIS error ${data.error.code || ''} ${data.error.message || ''}`.trim());
-        if (!Array.isArray(data?.features)) throw new Error('ArcGIS response has no features array');
-        permits = data.features.map(normalizeKentonFeature);
+        const features = [];
+        const objectIds = new Set();
+        let resultOffset = 0;
+        let pageCount = 0;
+        while (true) {
+            if (pageCount >= 1000) throw new Error('ArcGIS pagination exceeded 1000 pages');
+            const response = await fetchImpl(buildKentonQueryUrl({ ...config, now, resultOffset }), { headers: { Accept: 'application/json' }, signal: AbortSignal.timeout(config.timeoutMs) });
+            if (!response.ok) throw new Error(`ArcGIS HTTP ${response.status}`);
+            const data = await response.json();
+            if (data?.error) throw new Error(`ArcGIS error ${data.error.code || ''} ${data.error.message || ''}`.trim());
+            if (!Array.isArray(data?.features)) throw new Error('ArcGIS response has no features array');
+            if (data.exceededTransferLimit && data.features.length === 0) throw new Error('ArcGIS pagination returned no features before completion');
+            for (const feature of data.features) {
+                const objectId = feature?.attributes?.FID;
+                if (objectId != null) {
+                    if (objectIds.has(String(objectId))) throw new Error('ArcGIS pagination returned duplicate FIDs before completion');
+                    objectIds.add(String(objectId));
+                }
+                features.push(feature);
+            }
+            if (!data.exceededTransferLimit) break;
+            resultOffset += data.features.length;
+            pageCount += 1;
+        }
+        permits = features.map(normalizeKentonFeature);
         stats.fetched = permits.length;
     } catch (error) {
         stats.status = 'degraded';
