@@ -409,3 +409,44 @@ Each entry has this format:
   > DM us your kitchen pic 📸
   > Rendering in a real kitchen, not a finished install · Urban Stone Collective
   > #quartzcountertops #countertops #backsplash #cincinnati #kitchentok
+
+## 2026-11-04 — 4:00 PM ET
+- Posted at: Instagram feed 4:05 PM ET, Story 4:07 PM ET, TikTok about 4:12 PM ET
+- Source: real-install (no AI)
+- Material: dark stone top (leathered, live edges) + stacked ledger stone island wall
+- Finish: leathered
+- Application: kitchen island
+- Format: carousel (2 photos)
+- Caption style: real_project
+- Location: Over-the-Rhine, Cincinnati
+- Tagged users: @the.unlearn.experiment (photo 1)
+- About: real loft kitchen island wrapped in stacked ledger stone with leathered dark stone top (real-job-01); loft available for rent
+- Queue folder: social/instagram/queue/2026-11-04-1600/
+- Image: https://www.urbanstone.co/social/2026-11-04-1600/slide_01_4x5.jpg
+- Instagram post: https://www.instagram.com/urbanstonec/p/DfVYZpAjyvr/ (AI label off)
+- Instagram Story: posted (post_9x16.jpg)
+- TikTok post: under review (2-photo carousel on @urbanstoneco, AI disclosure off)
+- Facebook: removed
+- Caption (Instagram, as posted):
+  > Stone on stone. 🔥 A stacked ledger stone wall wraps this loft island, finished with a dark stone top in a leathered finish with live edges.
+  >
+  > A real Cincinnati project by Urban Stone Collective: kitchen countertops and ledger stone walls. Swipe for the full room ➡️
+  >
+  > 🎁 Free 18-gauge stainless sink on kitchens 50+ sq ft · through Dec 15
+  >
+  > This Over-the-Rhine loft is available for rent. Questions? Reach out to @the.unlearn.experiment 🔑
+  >
+  > 👉 Call or text (513) 307-5840 for an estimate.
+  >
+  > Real project · Urban Stone Collective
+  >
+  > Premium Countertops. Fast Install. Built for Cincinnati.
+  > 📞 (513) 307-5840 · ✉️ sales@urbanstone.co · 🌐 urbanstone.co
+  >
+  > #kitchenisland #ledgerstone #stackedstone #cincinnati #cincinnatiohio
+- Caption (TikTok, as posted):
+  > Stone on stone: ledger stone island wall + leathered dark stone top with live edges. Real Cincinnati project 🔥
+  > 🎁 Free 18-gauge stainless sink on kitchens 50+ sq ft, through Dec 15.
+  > Call/text (513) 307-5840 📞
+  > Real project · Urban Stone Collective
+  > #kitchenisland #ledgerstone #kitchentok #cincinnati #countertops

@@ -1,6 +1,6 @@
 {
   "queue_id": "2026-11-04-1600",
-  "status": "queued",
+  "status": "published",
   "source": "real-install",
   "approved": false,
   "scheduled_at_local": "2026-11-04T16:00:00-05:00",
@@ -111,15 +111,28 @@
   "location_note": "Overrides the Cincinnati, Ohio default for real-job-01 only (Edward, Oct 31, 2026). IG caption mentions the rental and @the.unlearn.experiment (tagged in photo); no Zillow URL on social. TikTok captions carry no rental line. Never say 'for sale' for this unit.",
   "platforms": {
     "instagram": {
-      "status": "queued",
+      "status": "published",
       "location": "Over-the-Rhine, Cincinnati",
       "tag_users": [
         "the.unlearn.experiment"
-      ]
+      ],
+      "url": "https://www.instagram.com/urbanstonec/p/DfVYZpAjyvr/",
+      "posted_at_et": "2026-11-04 16:05",
+      "ai_label": false,
+      "format": "carousel (2 photos, 4:5)",
+      "story": {
+        "status": "posted",
+        "file": "post_9x16.jpg",
+        "posted_at_et": "2026-11-04 16:07"
+      }
     },
     "tiktok": {
-      "status": "queued"
+      "status": "under review",
+      "posted_at_et": "2026-11-04 16:12",
+      "format": "photo carousel (2 photos)",
+      "ai_disclosure": false
     }
   },
-  "posting_notes": ""
+  "posting_notes": "",
+  "hosted_url": "https://www.urbanstone.co/social/2026-11-04-1600/slide_01_4x5.jpg"
 }
