@@ -366,3 +366,46 @@ Each entry has this format:
   > Fast estimate: link in bio 🔗
   > Real project · Urban Stone Collective
   > #countertops #kitchenremodel #kitchentok #cincinnati #loftliving
+
+## 2026-11-04 — 6:00 AM ET
+- Posted at: Instagram feed 6:02 AM ET, Story ~6:05 AM ET, TikTok 6:10 AM ET
+- Material: quartz (Calacatta Dolce)
+- Finish: polished
+- Application: backsplash (full-height slab backsplash + countertops)
+- Format: single
+- Caption style: rendering on real photo
+- Location: Cincinnati, Ohio
+- About: Calacatta Dolce quartz (soft warm white, fine taupe/pale grey veins) on U-kitchen counters and full-height backsplash with walnut cabinets; rendering on real photo 04-white-granite-u-kitchen-walnut-cabinets.jpg (unsorted-2026-10-31, center crop extended to 9:16); fall sink promo
+- Queue folder: social/instagram/queue/2026-11-04-0600/
+- Image: https://www.urbanstone.co/social/2026-11-04-0600/post_4x5.jpg
+- Instagram post: https://www.instagram.com/urbanstonec/p/DfUTYptN78_/ (AI label off)
+- Instagram Story: posted (post_9x16.jpg)
+- TikTok post: under review (1-photo post, AI disclosure off)
+- Facebook: removed
+- Caption (Instagram, as posted):
+  > Imagine Calacatta Dolce in a kitchen like this. ✨ Rendering: Calacatta Dolce quartz shown in a real kitchen, with a full-height slab backsplash.
+  >
+  > Soft warm white with fine taupe and pale grey veins against rich walnut cabinets. Light stone keeps the room open; the veining adds movement without the busy feel.
+  >
+  > Polished finish: a high gloss that makes the color and veining pop.
+  > Quartz: consistent color, lower maintenance and no sealing requirement.
+  > Every install is backed by our 1-Year Workmanship Warranty.
+  > We narrow the slab options with you, so you don't have to sort through every warehouse alone.
+  > Available through our suppliers. Ask us about this slab for your project.
+  >
+  > 🎁 Fall offer: a complimentary 18-gauge stainless steel sink with kitchen projects of 50 sq ft and above. Undermount or top-mount, single or double basin. Through Dec 15.
+  >
+  > 👉 DM us a photo of your kitchen and we'll help you pick the slab.
+  >
+  > Design rendering, not a finished install.
+  >
+  > Premium Countertops. Fast Install. Built for Cincinnati.
+  > 📞 (513) 307-5840 · ✉️ sales@urbanstone.co · 🌐 urbanstone.co
+  >
+  > #quartzcountertops #calacattaquartz #backsplash #cincinnati #masonohio
+- Caption (TikTok, as posted):
+  > Imagine Calacatta Dolce in a kitchen like this: soft white quartz, walnut cabinets, full-height backsplash ✨
+  > 🎁 Free 18-gauge stainless sink on kitchens 50+ sq ft, through Dec 15.
+  > DM us your kitchen pic 📸
+  > Rendering in a real kitchen, not a finished install · Urban Stone Collective
+  > #quartzcountertops #countertops #backsplash #cincinnati #kitchentok
