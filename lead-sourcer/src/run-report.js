@@ -12,6 +12,7 @@ const SOURCES = [
     { key: 'permits-hamilton', label: 'Hamilton County permits', extra: permitExtra },
     { key: 'permits', label: 'Cincinnati permits', extra: (s) => [['Registry matched', num(s, 'registryMatched')]] },
     { key: 'permits-butler', label: 'Butler County permits', extra: permitExtra },
+    { key: 'permits-kenton', label: 'Kenton County permits', extra: () => [] },
 ];
 
 export const SOURCE_LABELS = Object.fromEntries(SOURCES.map((s) => [s.key, s.label]));

@@ -3,7 +3,7 @@
  * is enabled and either threw or reported a non-ok status (degraded, parse-error).
  */
 // Live sources are the permit feeds; Reddit, Craigslist and Apify were retired 2026-10-30.
-const LIVE_SOURCES = ['permits-hamilton', 'permits', 'permits-butler'];
+const LIVE_SOURCES = ['permits-hamilton', 'permits', 'permits-butler', 'permits-kenton'];
 
 export function assessRunHealth(summary, enabled = {}) {
     const unhealthySources = [];

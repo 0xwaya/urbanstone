@@ -1,0 +1,6 @@
+{"features":[
+ {"attributes":{"FID":1,"SUBDIVISIO":"Stonewater","PERMIT_TYP":"Residential","PERMIT_DAT":1792540800000,"PERMIT_SOU":"GovBuilt","COMMENT":"20263001","PIDN":"033-00-00-058.40","ADDRESS":"1400 TEST  WAY\r\n","MUNICIPALI":"Unincorporated","COUNTY":"Kenton","DEVELOPER":"Sample Homes LLC","PROJECT_ST":" ","BEDROOM_CO":4}},
+ {"attributes":{"FID":2,"SUBDIVISIO":"Single-Site Development","PERMIT_TYP":"Residential","PERMIT_DAT":1792540800000,"PERMIT_SOU":"GovBuilt","COMMENT":"20263002","PIDN":"041-30-00-001.00","ADDRESS":"10 SAMPLE AVE","MUNICIPALI":"Park Hills","COUNTY":"Kenton","DEVELOPER":" ","PROJECT_ST":" ","BEDROOM_CO":3}},
+ {"attributes":{"FID":3,"SUBDIVISIO":"Test Park","PERMIT_TYP":"Commercial - Proposed","PERMIT_DAT":1792540800000,"PERMIT_SOU":"GovBuilt","COMMENT":"20263003","PIDN":"","ADDRESS":"1 COMMERCE DR","MUNICIPALI":"Covington","COUNTY":"Kenton","DEVELOPER":" ","PROJECT_ST":" ","BEDROOM_CO":0}},
+ {"attributes":{"FID":4,"SUBDIVISIO":"Test Flats","PERMIT_TYP":"Multi Family","PERMIT_DAT":1792540800000,"PERMIT_SOU":"GovBuilt","COMMENT":"20263004","PIDN":"","ADDRESS":"5 FLATS ST","MUNICIPALI":"Covington","COUNTY":"Kenton","DEVELOPER":"Flats Dev","PROJECT_ST":" ","BEDROOM_CO":0}}
+]}

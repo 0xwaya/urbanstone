@@ -2,6 +2,7 @@ import { RETIRED_SOURCES } from '../src/config.js';
 import { resolveRunMode } from '../src/mode.js';
 import { isPermitsEnabled } from '../src/permits.js';
 import { isHamiltonPermitsEnabled, isButlerPermitsEnabled } from '../src/permits-accela.js';
+import { isKentonPermitsEnabled } from '../src/permits-kenton.js';
 
 // Prints names and ready/missing status only; never prints secret values.
 const has = (name) => Boolean(String(process.env[name] || '').trim());
@@ -16,6 +17,8 @@ const checks = [
     // Permits use public city open data (no key); default off. SOCRATA_APP_TOKEN is optional.
     ['LEAD_SOURCER_ENABLE_PERMITS', isPermitsEnabled(), true],
     ['LEAD_SOURCER_ENABLE_PERMITS_BUTLER', isButlerPermitsEnabled(), true],
+    // Kenton County, KY: public LINK-GIS ArcGIS layer (new construction only, no key); default off.
+    ['LEAD_SOURCER_ENABLE_PERMITS_KENTON', isKentonPermitsEnabled(), true],
     // Live mode must have at least one channel.
     ['delivery channel (RESEND_API_KEY)', mode === 'live', anyDelivery],
 ];

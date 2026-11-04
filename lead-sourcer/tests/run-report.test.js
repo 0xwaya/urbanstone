@@ -60,7 +60,7 @@ describe('run report', () => {
         expect(buildSourceRows(summary).find((r) => r.key === 'permits').status).toBe('error');
         expect(buildRunReportText(summary)).toContain('note: socrata timeout');
         delete summary.enabledSources;
-        expect(resolveEnabledSources(summary)).toEqual({ 'permits-hamilton': true, permits: true, 'permits-butler': true });
+        expect(resolveEnabledSources(summary)).toEqual({ 'permits-hamilton': true, permits: true, 'permits-butler': true, 'permits-kenton': false });
     });
 
     test('brand styling: navy header, gold accent, serif headings with fallbacks', () => {

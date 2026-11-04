@@ -17,6 +17,7 @@ export const LEAD_SOURCE_LABELS = {
     'permits-hamilton': 'Hamilton County permit',
     permits: 'Cincinnati permit',
     'permits-butler': 'Butler County permit',
+    'permits-kenton': 'Kenton County permit',
 };
 
 const EMPTY_VALUES = new Set(['', 'unknown', 'not listed', 'not stated', 'not in registry', 'n/a', 'none', 'anonymous']);
