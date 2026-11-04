@@ -14,6 +14,7 @@ const SUB_SOURCES = {
     permits: 'permit_cincinnati',
     'permits-hamilton': 'permit_hamilton',
     'permits-butler': 'permit_butler',
+    'permits-kenton': 'permit_kenton',
 };
 
 export function isCrmSyncEnabled(env = process.env) {

@@ -16,6 +16,7 @@ import { fileURLToPath } from 'node:url';
 import './config.js';
 import { pollPermits, isPermitsEnabled } from './permits.js';
 import { pollHamiltonPermits, pollButlerPermits, isHamiltonPermitsEnabled, isButlerPermitsEnabled } from './permits-accela.js';
+import { pollKentonPermits, isKentonPermitsEnabled } from './permits-kenton.js';
 import { resolveRunMode, sourceIsActive } from './mode.js';
 import { relay } from './relay.js';
 import { initializeTracing } from './tracing.js';
@@ -45,12 +46,14 @@ function envFlag(name, defaultValue = true) {
 const ENABLE_PERMITS = isPermitsEnabled();
 const ENABLE_PERMITS_HAMILTON = isHamiltonPermitsEnabled();
 const ENABLE_PERMITS_BUTLER = isButlerPermitsEnabled();
+const ENABLE_PERMITS_KENTON = isKentonPermitsEnabled();
 
 // Live sources in report order: Hamilton County first.
 const SOURCES = [
     { key: 'permits-hamilton', label: 'Hamilton County permits', enabled: ENABLE_PERMITS_HAMILTON, poll: pollHamiltonPermits, envName: 'LEAD_SOURCER_ENABLE_PERMITS_HAMILTON' },
     { key: 'permits', label: 'Cincinnati permits', enabled: ENABLE_PERMITS, poll: pollPermits, envName: 'LEAD_SOURCER_ENABLE_PERMITS' },
     { key: 'permits-butler', label: 'Butler County permits', enabled: ENABLE_PERMITS_BUTLER, poll: pollButlerPermits, envName: 'LEAD_SOURCER_ENABLE_PERMITS_BUTLER' },
+    { key: 'permits-kenton', label: 'Kenton County permits', enabled: ENABLE_PERMITS_KENTON, poll: pollKentonPermits, envName: 'LEAD_SOURCER_ENABLE_PERMITS_KENTON' },
 ];
 
 await initializeTracing();
@@ -267,7 +270,7 @@ async function scheduleDailyRunIfNeeded() {
 function markExitCode(summary) {
     const unhealthy = summary?.health?.unhealthySources || [];
     if (unhealthy.includes('permits')) console.warn('[lead-sourcer] Permits degraded (city data or registry unavailable); warn-only.');
-    for (const source of ['permits-hamilton', 'permits-butler']) {
+    for (const source of ['permits-hamilton', 'permits-butler', 'permits-kenton']) {
         if (unhealthy.includes(source)) console.warn(`[lead-sourcer] ${source} degraded (county portal unavailable or changed); warn-only.`);
     }
     // Permit sources are warn-only; fail the job only when every enabled source failed.

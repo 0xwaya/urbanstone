@@ -74,6 +74,7 @@ function buildSummary(records) {
             'permits-hamilton': sumBy(recent, 'permits-hamilton'),
             permits: sumBy(recent, 'permits'),
             'permits-butler': sumBy(recent, 'permits-butler'),
+            'permits-kenton': sumBy(recent, 'permits-kenton'),
         },
         zeroMatchRuns,
         zeroMatchStreak,
