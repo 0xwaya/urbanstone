@@ -1,0 +1,100 @@
+{
+  "queue_id": "2026-11-05-0600",
+  "status": "partially_published",
+  "approved": false,
+  "scheduled_at_local": "2026-11-05T06:00:00-05:00",
+  "scheduled_at_utc": "2026-11-05T11:00:00+00:00",
+  "created_at_utc": "2026-11-05T10:24:12.187081+00:00",
+  "feed_format": "4x5",
+  "files": {
+    "1x1": {
+      "png": "post_1x1.png",
+      "jpg": "post_1x1.jpg",
+      "logo_corner": "bottom-right"
+    },
+    "4x5": {
+      "png": "post_4x5.png",
+      "jpg": "post_4x5.jpg",
+      "logo_corner": "bottom-right"
+    },
+    "9x16": {
+      "png": "post_9x16.png",
+      "jpg": "post_9x16.jpg",
+      "logo_corner": "top-right"
+    }
+  },
+  "dimensions": {
+    "post_type": "kitchen island",
+    "application": "kitchen island",
+    "finish": "polished",
+    "format": "single",
+    "material": "quartz",
+    "stone": "Calacatta Nova",
+    "catalog_stone": true,
+    "style": "updated traditional",
+    "cabinets": "two-tone cabinets: white uppers, navy lower and island",
+    "lighting": "bright soft morning daylight from large windows",
+    "layout": "open-plan kitchen with long island and full-height slab backsplash",
+    "hardware": "matte black",
+    "cta": "link",
+    "brand_point": "fast_install",
+    "promo": true,
+    "caption_style": "rendering on real photo",
+    "hashtag_set_id": "18d68e12",
+    "slot": "6 AM"
+  },
+  "hashtags": [
+    "quartzcountertops",
+    "countertops",
+    "kitchenremodel",
+    "cincinnati",
+    "nky"
+  ],
+  "scene_full": {
+    "stone": "Calacatta Nova",
+    "material": "quartz",
+    "catalog": true,
+    "cabinets": "two-tone cabinets: white uppers, navy lower and island",
+    "style": "updated traditional",
+    "lighting": "bright soft morning daylight from large windows",
+    "layout": "open-plan kitchen with long island and full-height slab backsplash",
+    "hardware": "matte black",
+    "application": "kitchen island",
+    "finish": "polished",
+    "key": "Calacatta Nova|two-tone cabinets: white uppers, navy lower and island|updated traditional|bright soft morning daylight from large windows|open-plan kitchen with long island and full-height slab backsplash|kitchen island|polished",
+    "prompt": "Bright, airy, light-filled photorealistic interior photograph of an updated traditional kitchen, open-plan kitchen with long island and full-height slab backsplash. The hero is the countertop: Calacatta Nova quartz (white quartz with sweeping soft-grey veins), 3cm thick, a high-gloss polished surface with a clean eased edge, shown in full with no cropped ends or corners. Two-tone cabinets: white uppers, navy lower and island with matte black hardware, bright soft morning daylight from large windows. Light walls, styled minimally (a bowl of lemons, a small vase of greenery, a cutting board). Clean bright exposure, fresh and stunning, uncluttered, real materials and true-to-life reflections, eye-level architectural photography, 24-35mm lens, magazine quality. Tall vertical 9:16 composition: the stone surface sits in the vertical middle of the frame and spans no more than 85% of the width, with generous space above and below, so the image can also be cropped to 4:5 and 1:1 around it. Quiet, low-detail upper corners. No people, no text, no logos, no watermarks.",
+    "format": "single",
+    "id": "501aebb504",
+    "created_at": "2026-11-05T05:22:08.631251-05:00"
+  },
+  "scene": {
+    "id": "501aebb504",
+    "key": "Calacatta Nova|two-tone cabinets: white uppers, navy lower and island|updated traditional|bright soft morning daylight from large windows|open-plan kitchen with long island and full-height slab backsplash|kitchen island|polished",
+    "prompt": "Bright, airy, light-filled photorealistic interior photograph of an updated traditional kitchen, open-plan kitchen with long island and full-height slab backsplash. The hero is the countertop: Calacatta Nova quartz (white quartz with sweeping soft-grey veins), 3cm thick, a high-gloss polished surface with a clean eased edge, shown in full with no cropped ends or corners. Two-tone cabinets: white uppers, navy lower and island with matte black hardware, bright soft morning daylight from large windows. Light walls, styled minimally (a bowl of lemons, a small vase of greenery, a cutting board). Clean bright exposure, fresh and stunning, uncluttered, real materials and true-to-life reflections, eye-level architectural photography, 24-35mm lens, magazine quality. Tall vertical 9:16 composition: the stone surface sits in the vertical middle of the frame and spans no more than 85% of the width, with generous space above and below, so the image can also be cropped to 4:5 and 1:1 around it. Quiet, low-detail upper corners. No people, no text, no logos, no watermarks.",
+    "ai_generated": true,
+    "rendering_on_real_photo": true
+  },
+  "platforms": {
+    "instagram": {
+      "status": "failed — Instagram signed out in box Chrome (Nov 5 ~3:23 PM ET); not posted",
+      "ai_label": false,
+      "location": "Cincinnati, Ohio",
+      "story": {
+        "status": "not posted (Instagram signed out)"
+      }
+    },
+    "tiktok": {
+      "status": "under review (Only me until review), posted ~3:30 PM ET Nov 5 via Photos tab on @urbanstoneco",
+      "ai_disclosure": false,
+      "base_photo": "mason-island-modification/08-white-quartz-island-hex-kitchen.jpg (9:16 crop focused on island)"
+    },
+    "facebook": {
+      "status": "removed — Facebook dropped Oct 29"
+    }
+  },
+  "rendering_on_real_photo": true,
+  "base_photo": "mason-island-modification/08-white-quartz-island-hex-kitchen.jpg (9:16 crop focused on island)",
+  "ai_label": false,
+  "hosted_url": "https://www.urbanstone.co/social/2026-11-05-0600/post_4x5.jpg",
+  "posted_slot": "2026-11-05 16:00 (6 AM slot did not go out; posted in 4 PM slot)"
+}

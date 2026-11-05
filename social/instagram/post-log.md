@@ -450,3 +450,25 @@ Each entry has this format:
   > Call/text (513) 307-5840 📞
   > Real project · Urban Stone Collective
   > #kitchenisland #ledgerstone #kitchentok #cincinnati #countertops
+
+## 2026-11-05 — 4:00 PM ET
+- Posted at: TikTok about 3:30 PM ET; Instagram feed and Story NOT posted (Instagram signed out in box Chrome)
+- Material: quartz (Calacatta Nova)
+- Finish: polished
+- Application: kitchen island
+- Format: single
+- Caption style: rendering on real photo
+- Location: Cincinnati, Ohio (planned for Instagram; not used)
+- About: Calacatta Nova quartz on a large island with dark base; rendering on real photo mason-island-modification/08-white-quartz-island-hex-kitchen.jpg. Prepared for the 6 AM slot, which didn't go out; posted in the 4 PM slot.
+- Queue folder: social/instagram/queue/2026-11-05-0600/
+- Image: https://www.urbanstone.co/social/2026-11-05-0600/post_4x5.jpg
+- Instagram post: not posted (signed out)
+- Instagram Story: not posted (signed out)
+- TikTok post: under review (photo post on @urbanstoneco, AI disclosure off)
+- Facebook: removed
+- Caption (TikTok, as posted):
+  > Imagine Calacatta Nova in a kitchen like this: bright white quartz, crisp grey veins, dark island ✨
+  > 🎁 Free 18-gauge stainless sink on kitchens 50+ sq ft, through Dec 15.
+  > Fast estimate: link in bio 🔗
+  > Rendering in a real kitchen, not a finished install · Urban Stone Collective
+  > #quartzcountertops #countertops #kitchenremodel #cincinnati #kitchentok
