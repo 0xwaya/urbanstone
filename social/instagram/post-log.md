@@ -472,3 +472,43 @@ Each entry has this format:
   > Fast estimate: link in bio 🔗
   > Rendering in a real kitchen, not a finished install · Urban Stone Collective
   > #quartzcountertops #countertops #kitchenremodel #cincinnati #kitchentok
+
+## 2026-11-06 — 6:00 AM ET
+- Posted at: TikTok about 6:05–6:10 AM ET; Instagram feed and Story NOT posted (Instagram signed out in box Chrome)
+- Source: real-install (no AI)
+- Material: white vanity top (real install) + grey textured tile
+- Finish: n/a (real project bathroom)
+- Application: vanity (custom bathroom)
+- Format: single
+- Caption style: real_project
+- Location: Over-the-Rhine, Cincinnati (planned for Instagram; not used)
+- Tagged users: @the.unlearn.experiment (planned for photo 1; not tagged — Instagram not posted)
+- About: real custom bathroom — fluted wood floating vanity, white top, backlit oval mirror, grey textured tile, glass shower (real-job-01); loft available for rent
+- Queue folder: social/instagram/queue/2026-11-06-0600/
+- Image: https://www.urbanstone.co/social/2026-11-06-0600/post_4x5.jpg
+- Instagram post: not posted (signed out)
+- Instagram Story: not posted (signed out)
+- TikTok post: under review (https://www.tiktok.com/@urbanstoneco/video/7705012804335439134 — 1-photo on @urbanstoneco, AI disclosure off)
+- Facebook: removed
+- Caption (TikTok, as posted):
+  > Fluted wood, backlit mirror, grey tile: a real custom bathroom by Urban Stone Collective ✨
+  > DM us to plan yours 📸
+  > Real project · Urban Stone Collective
+  > #bathroomremodel #bathroomdesign #bathroomtok #cincinnati #floatingvanity
+- Caption (Instagram, prepared, not posted):
+  > Warm wood, cool grey and a soft glow. ✨ A custom bathroom by Urban Stone Collective, right here in Cincinnati.
+  >
+  > A fluted wood floating vanity with a clean white top, a backlit round mirror, grey textured tile and a glass shower.
+  >
+  > Thinking about a bathroom that feels like this? We manage the whole job, start to finish.
+  >
+  > This Over-the-Rhine loft is available for rent. Questions? Reach out to @the.unlearn.experiment 🔑
+  >
+  > 👉 DM us to plan yours.
+  >
+  > Real project · Urban Stone Collective
+  >
+  > Premium Countertops. Fast Install. Built for Cincinnati.
+  > 📞 (513) 307-5840 · ✉️ sales@urbanstone.co · 🌐 urbanstone.co
+  >
+  > #bathroomremodel #bathroomdesign #floatingvanity #cincinnati #northernkentucky

@@ -1,6 +1,6 @@
 {
   "queue_id": "2026-11-06-0600",
-  "status": "queued",
+  "status": "partial",
   "source": "real-install",
   "approved": false,
   "scheduled_at_local": "2026-11-06T06:00:00-05:00",
@@ -88,15 +88,26 @@
   "location_note": "Overrides the Cincinnati, Ohio default for real-job-01 only (Edward, Oct 31, 2026). IG caption mentions the rental and @the.unlearn.experiment (tagged in photo); no Zillow URL on social. TikTok captions carry no rental line. Never say 'for sale' for this unit.",
   "platforms": {
     "instagram": {
-      "status": "queued",
+      "status": "failed \u2014 signed out in box Chrome (same as Nov 5 4 PM)",
       "location": "Over-the-Rhine, Cincinnati",
       "tag_users": [
         "the.unlearn.experiment"
-      ]
+      ],
+      "story": {
+        "status": "skipped \u2014 Instagram signed out"
+      },
+      "ai_label": "off (planned; not posted)",
+      "attempted_at_et": "2026-11-06 ~6:02 AM ET"
     },
     "tiktok": {
-      "status": "queued"
-    }
+      "status": "under review",
+      "url": "https://www.tiktok.com/@urbanstoneco/video/7705012804335439134",
+      "posted_at_et": "2026-11-06 ~6:05\u20136:10 AM ET",
+      "ai_disclosure": "off",
+      "media": "slide_01_9x16.jpg (1-photo)",
+      "note": "Studio showed Content under review; privacy briefly Only me during review"
+    },
+    "facebook": "removed \u2014 Facebook dropped Oct 29"
   },
-  "posting_notes": ""
+  "posting_notes": "TikTok posted; Instagram feed+Story blocked \u2014 urbanstonec signed out in box Chrome. Assets hosted at urbanstone.co/social/2026-11-06-0600/."
 }
