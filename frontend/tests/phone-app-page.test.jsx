@@ -34,6 +34,7 @@ describe('phone app page', () => {
         delete window.navigator.share;
         window.navigator.serviceWorker = {
             getRegistrations: vi.fn().mockResolvedValue([]),
+            register: vi.fn().mockResolvedValue({}),
         };
     });
 

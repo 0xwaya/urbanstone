@@ -1,5 +1,6 @@
-import Link from 'next/link';
+import { useEffect, useState } from 'react';
 import supplierSummaries from '../data/supplier-summaries.json';
+import { captureInstallPrompt, registerAppWorker, runInstall } from '../lib/install-app';
 
 const HERO_COPY = {
   en: {
@@ -7,19 +8,37 @@ const HERO_COPY = {
     title: 'Premium Countertops. Fast Install. Built for Cincinnati.',
     intro: 'We source premium slabs from curated suppliers and fabricate custom quartz, granite, and quartzite countertops with a 3-5 day turnaround from deposit to install. Through the collective, we also run full remodels, flips, and custom bathrooms with our own crews.',
     install: '3-5 Day Install', suppliers: 'Curated Supplier Network', warranty: '1-Year Workmanship Warranty',
-    estimate: 'Request Estimate', app: 'Open the app', browse: 'Browse Curated Slabs', services: 'See All Services', days: 'Days to install', curated: 'Curated suppliers', warrantyLabel: 'Workmanship warranty',
+    estimate: 'Request Estimate', app: 'Download the app', browse: 'Browse Curated Slabs', services: 'See All Services', days: 'Days to install', curated: 'Curated suppliers', warrantyLabel: 'Workmanship warranty',
   },
   es: {
     eyebrow: 'Piedra, remodelaciones y gestión de obra en Cincinnati',
     title: 'Cubiertas premium. Instalación rápida. Hechas para Cincinnati.',
     intro: 'Seleccionamos losas premium de proveedores curados y fabricamos cubiertas de cuarzo, granito y cuarcita con un plazo de 3 a 5 días desde el depósito hasta la instalación. A través del colectivo, también realizamos remodelaciones completas, flips y baños personalizados con nuestros propios equipos.',
     install: 'Instalación en 3-5 días', suppliers: 'Red de proveedores curados', warranty: 'Garantía de mano de obra de 1 año',
-    estimate: 'Solicitar presupuesto', app: 'Abrir la app', browse: 'Ver losas seleccionadas', services: 'Ver todos los servicios', days: 'Días para instalar', curated: 'Proveedores curados', warrantyLabel: 'Garantía de mano de obra',
+    estimate: 'Solicitar presupuesto', app: 'Descargar la app', browse: 'Ver losas seleccionadas', services: 'Ver todos los servicios', days: 'Días para instalar', curated: 'Proveedores curados', warrantyLabel: 'Garantía de mano de obra',
   },
 };
 
 export default function Hero({ language = 'en' }) {
   const copy = HERO_COPY[language] || HERO_COPY.en;
+  const [installEvent, setInstallEvent] = useState(null);
+  const [needsSafari, setNeedsSafari] = useState(false);
+
+  useEffect(() => {
+    registerAppWorker();
+    return captureInstallPrompt(setInstallEvent);
+  }, []);
+
+  async function downloadApp() {
+    const started = await runInstall(installEvent);
+    if (started) {
+      setInstallEvent(null);
+      setNeedsSafari(false);
+      return;
+    }
+    setNeedsSafari(true);
+  }
+
   return (
     <section className="py-6 sm:py-8 lg:py-10">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
@@ -41,9 +60,9 @@ export default function Hero({ language = 'en' }) {
               <a className="brand-button-primary rounded-md px-5 py-3 font-semibold" href="#quote">
                 {copy.estimate}
               </a>
-              <Link className="inline-flex items-center justify-center rounded-md border border-border px-5 py-3 font-semibold transition hover:-translate-y-0.5 hover:border-accent" href="/app">
+              <button type="button" onClick={downloadApp} className="inline-flex items-center justify-center rounded-md border border-border px-5 py-3 font-semibold transition hover:-translate-y-0.5 hover:border-accent">
                 {copy.app}
-              </Link>
+              </button>
               <a className="inline-flex items-center justify-center rounded-md border border-border px-5 py-3 font-semibold transition hover:-translate-y-0.5 hover:border-accent" href="#suppliers">
                 {copy.browse}
               </a>
@@ -51,6 +70,13 @@ export default function Hero({ language = 'en' }) {
                 {copy.services}
               </a>
             </div>
+            {needsSafari ? (
+              <p className="mt-3 max-w-md text-sm text-muted">
+                {language === 'es'
+                  ? 'El iPhone no instala desde un botón. En Safari, toca Compartir abajo y luego Agregar a pantalla de inicio.'
+                  : 'iPhone will not install from a button. In Safari, tap Share at the bottom, then Add to Home Screen.'}
+              </p>
+            ) : null}
           </div>
 
           <div className="grid gap-4">
