@@ -3,6 +3,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 import LogoMark from '../components/LogoMark';
 import StoneHavenChat from '../components/StoneHavenChat';
+import { captureInstallPrompt, registerAppWorker, runInstall } from '../lib/install-app';
 
 const APP_URL = 'https://www.urbanstone.co/app';
 
@@ -15,27 +16,13 @@ export default function PublicPhoneApp() {
         const standalone = window.matchMedia('(display-mode: standalone)').matches
             || window.navigator.standalone === true;
         setInstalled(standalone);
-        const onPrompt = (event) => {
-            event.preventDefault();
-            setInstallEvent(event);
-        };
-        window.addEventListener('beforeinstallprompt', onPrompt);
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.getRegistrations()
-                .then((registrations) => Promise.all(
-                    registrations
-                        .filter((registration) => registration.scope.includes('/app'))
-                        .map((registration) => registration.unregister()),
-                ))
-                .catch(() => {});
-        }
-        return () => window.removeEventListener('beforeinstallprompt', onPrompt);
+        registerAppWorker();
+        return captureInstallPrompt(setInstallEvent);
     }, []);
 
     async function addToHome() {
-        if (!installEvent) return;
-        await installEvent.prompt();
-        setInstallEvent(null);
+        const started = await runInstall(installEvent);
+        if (started) setInstallEvent(null);
     }
 
     return (
