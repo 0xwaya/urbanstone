@@ -3,6 +3,32 @@ import LogoMark from './LogoMark';
 
 const MAX_MESSAGE_LENGTH = 1200;
 
+function readSessionJson(key) {
+    if (typeof window === 'undefined') {
+        return null;
+    }
+    try {
+        return JSON.parse(window.sessionStorage.getItem(key) || 'null');
+    } catch {
+        return null;
+    }
+}
+
+function getConversationId() {
+    if (typeof window === 'undefined') {
+        return '';
+    }
+    const existing = window.sessionStorage.getItem('onyx-convo');
+    if (existing) {
+        return existing;
+    }
+    const created = typeof crypto !== 'undefined' && crypto.randomUUID
+        ? crypto.randomUUID()
+        : `chat-${Date.now()}`;
+    window.sessionStorage.setItem('onyx-convo', created);
+    return created;
+}
+
 const initialMessages = [
     {
         role: 'assistant',
@@ -140,7 +166,12 @@ export default function StoneHavenChat({ embedded = false, showHeader = true }) 
             const response = await fetch('/api/chat', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: trimmed, history }),
+                body: JSON.stringify({
+                    message: trimmed,
+                    history,
+                    conversationId: getConversationId(),
+                    visit: readSessionJson('onyx-visit-v1'),
+                }),
             });
 
             const data = await response.json();

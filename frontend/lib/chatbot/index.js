@@ -108,6 +108,34 @@ function buildEntries() {
         tags: ['quote', 'pricing', 'provisional', 'templating', 'measurements', 'policy'],
     });
 
+    entries.push({
+        id: 'ops-warranty',
+        title: 'Workmanship warranty',
+        text: chatbotPolicies.warrantyPolicy,
+        tags: ['warranty', 'workmanship', 'lifetime', 'coverage', 'guarantee'],
+    });
+
+    entries.push({
+        id: 'ops-promo',
+        title: 'Free stainless sink offer',
+        text: chatbotPolicies.promoPolicy,
+        tags: ['sink', 'promo', '18-gauge', 'free sink', 'offer'],
+    });
+
+    entries.push({
+        id: 'ops-pricing',
+        title: 'Provisional installed price ranges',
+        text: chatbotPolicies.pricingPolicy,
+        tags: ['price', 'pricing', 'cost', 'sq ft', 'deposit', 'quote'],
+    });
+
+    entries.push({
+        id: 'ops-contact',
+        title: 'How to reach Urban Stone',
+        text: chatbotPolicies.contactPolicy,
+        tags: ['reach us', 'sales email', 'company phone', 'text us'],
+    });
+
     (chatbotPolicies.materialHandlingPolicies || []).forEach((policy, index) => {
         entries.push({
             id: `ops-material-handling-${index}`,
@@ -275,6 +303,63 @@ const BUILDER_CURATED = [
 
 const FAQ_INTENT_TEMPLATES = [
     {
+        id: 'warranty',
+        patterns: [
+            /lifetime warranty/,
+            /workmanship warranty/,
+            /how long.*warrant/,
+            /what.*warranty/,
+            /warranty/,
+        ],
+        sourceQuestion: 'Workmanship warranty',
+        reply:
+            'Workmanship is covered for 1 year. We do not offer a lifetime warranty. If a slab brand includes its own warranty, that comes from the manufacturer, not from us.\n\nNatural color, veining, etching, and staining are not workmanship defects.\n\nNext step: text or call (513) 307-5840, or email sales@urbanstone.co.',
+    },
+    {
+        id: 'sink-promo',
+        patterns: [
+            /free (stainless )?sink/,
+            /complimentary sink/,
+            /18-gauge/,
+            /18 gauge/,
+            /sink promo/,
+            /sink offer/,
+        ],
+        sourceQuestion: 'Free stainless sink offer',
+        reply:
+            'Through December 15, 2026, a kitchen of 50 sq ft or more includes a free 18-gauge stainless sink. Single or double basin, undermount or top-mount.\n\nA 16-gauge upgrade is $275 and is not part of the free offer.\n\nNext step: share city and rough sq ft, or start the estimate at https://urbanstone.co/#quote.',
+    },
+    {
+        id: 'provisional-price',
+        patterns: [
+            /how much/,
+            /price per/,
+            /per square/,
+            /per sq/,
+            /what does it cost/,
+            /ballpark/,
+            /installed price/,
+            /sq ft installed/,
+        ],
+        sourceQuestion: 'Provisional installed price ranges',
+        reply:
+            'These are planning ranges, not a quote. Installed, quartz is about $55–75 per sq ft, granite $60–85, quartzite $75–110, and marble $80–120. Eased edge is included. A sink cutout is $100, and an undermount sink we supply is $150.\n\nDeposit is 50% when you accept, and 50% the day of install after the work is done. Tax is on the written quote. The final number waits on the slab and on-site templating.\n\nNext step: city, rough sq ft, and material direction. Call or text (513) 307-5840.',
+    },
+    {
+        id: 'contact',
+        patterns: [
+            /phone number/,
+            /call you/,
+            /text you/,
+            /what is your (phone|email|number)/,
+            /how do i reach/,
+            /sales@/,
+        ],
+        sourceQuestion: 'How to reach Urban Stone',
+        reply:
+            'Call or text (513) 307-5840, or email sales@urbanstone.co. Edward is the person on the job.\n\nNext step: tell me the city and what you are replacing so I can point you the right way.',
+    },
+    {
         id: 'materials-compare',
         patterns: [
             /difference.*quartz.*granite.*quartzite/,
@@ -431,7 +516,7 @@ function maybeBuildFaqFirstReply(message, options = {}) {
         return null;
     }
 
-    if (!/(what|how|which|difference|compare|good|worth|install|serve|travel|estimate|quote|material|slab|kitchen|granite|quartz|quartzite)/.test(normalized)) {
+    if (!/(what|how|which|difference|compare|good|worth|install|serve|travel|estimate|quote|material|slab|kitchen|granite|quartz|quartzite|warranty|sink|price|cost|much|phone|text|email|ballpark)/.test(normalized)) {
         return null;
     }
 
@@ -759,7 +844,14 @@ export function getChatReply(message, options = {}) {
         .slice(0, 8);
 
     const cityMentioned = hasCityInMessage(message);
+    const promoAsked = /free sink|18-gauge|18 gauge|complimentary sink|sink offer|sink promo/.test(normalizedMessage);
     const contextScored = scored.filter((item) => {
+        if (item.entry.id === 'ops-promo' && !promoAsked) {
+            return false;
+        }
+        if (item.entry.id === 'ops-contact' && supplierIntent) {
+            return false;
+        }
         if (!isLocationBoundEntry(item.entry)) {
             return true;
         }
