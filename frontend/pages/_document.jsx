@@ -23,7 +23,7 @@ export default function Document(props) {
                 <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
                 <link rel="icon" type="image/svg+xml" href="/brand/urban-stone-favicon.svg?v=20260401e" />
                 <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png?v=20260401e" />
-                <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180" />
+                <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=20261107d" sizes="180x180" />
                 <link rel="manifest" href="/manifest.webmanifest" />
                 <meta name="application-name" content="Urban Stone" />
                 <meta name="apple-mobile-web-app-capable" content="yes" />

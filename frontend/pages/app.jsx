@@ -36,7 +36,7 @@ export default function PublicPhoneApp() {
                 <meta name="mobile-web-app-capable" content="yes" />
                 <meta name="apple-mobile-web-app-title" content="Urban Stone" />
                 <meta name="apple-mobile-web-app-status-bar-style" content="black" />
-                <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180" />
+                <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=20261107d" sizes="180x180" />
                 <link rel="manifest" href="/manifest.webmanifest" />
                 <link rel="canonical" href={APP_URL} />
                 <meta name="robots" content="index,follow" />
