@@ -22,21 +22,24 @@ const HERO_COPY = {
 export default function Hero({ language = 'en' }) {
   const copy = HERO_COPY[language] || HERO_COPY.en;
   const [installEvent, setInstallEvent] = useState(null);
-  const [needsSafari, setNeedsSafari] = useState(false);
+  const [installGuidance, setInstallGuidance] = useState(null);
 
   useEffect(() => {
     registerAppWorker();
-    return captureInstallPrompt(setInstallEvent);
+    return captureInstallPrompt((event) => {
+      setInstallEvent(event);
+      setInstallGuidance(null);
+    });
   }, []);
 
   async function downloadApp() {
     const started = await runInstall(installEvent);
     if (started) {
       setInstallEvent(null);
-      setNeedsSafari(false);
+      setInstallGuidance(null);
       return;
     }
-    setNeedsSafari(true);
+    setInstallGuidance(/iPhone/i.test(navigator.userAgent) ? 'iphone' : 'browser');
   }
 
   return (
@@ -70,11 +73,15 @@ export default function Hero({ language = 'en' }) {
                 {copy.services}
               </a>
             </div>
-            {needsSafari ? (
+            {installGuidance ? (
               <p className="mt-3 max-w-md text-sm text-muted">
-                {language === 'es'
-                  ? 'El iPhone no instala desde un botón. En Safari, toca Compartir abajo y luego Agregar a pantalla de inicio.'
-                  : 'iPhone will not install from a button. In Safari, tap Share at the bottom, then Add to Home Screen.'}
+                {installGuidance === 'iphone'
+                  ? language === 'es'
+                    ? 'En iPhone, abre esta página en Safari, toca Compartir y luego Agregar a pantalla de inicio.'
+                    : 'On iPhone, open this page in Safari, tap Share, then Add to Home Screen.'
+                  : language === 'es'
+                    ? 'Abre el menú de tu navegador y elige Instalar app o Agregar a pantalla de inicio, si está disponible.'
+                    : 'Open your browser menu and choose Install app or Add to Home Screen, if available.'}
               </p>
             ) : null}
           </div>

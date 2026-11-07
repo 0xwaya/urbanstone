@@ -1,14 +1,33 @@
+let pendingInstallPrompt = null;
+const installPromptSubscribers = new Set();
+let listeningForInstallPrompt = false;
+
+function notifyInstallPrompt(event) {
+    installPromptSubscribers.forEach((subscriber) => subscriber(event));
+}
+
+function onInstallPrompt(event) {
+    event.preventDefault();
+    pendingInstallPrompt = event;
+    notifyInstallPrompt(event);
+}
+
 export function captureInstallPrompt(onPrompt) {
-    const onPromptEvent = (event) => {
-        event.preventDefault();
-        onPrompt(event);
-    };
-    window.addEventListener('beforeinstallprompt', onPromptEvent);
-    return () => window.removeEventListener('beforeinstallprompt', onPromptEvent);
+    if (!listeningForInstallPrompt) {
+        window.addEventListener('beforeinstallprompt', onInstallPrompt);
+        listeningForInstallPrompt = true;
+    }
+    installPromptSubscribers.add(onPrompt);
+    if (pendingInstallPrompt) onPrompt(pendingInstallPrompt);
+    return () => installPromptSubscribers.delete(onPrompt);
 }
 
 export async function runInstall(promptEvent) {
     if (!promptEvent || typeof promptEvent.prompt !== 'function') return false;
+    if (pendingInstallPrompt === promptEvent) {
+        pendingInstallPrompt = null;
+        notifyInstallPrompt(null);
+    }
     await promptEvent.prompt();
     return true;
 }
