@@ -108,7 +108,7 @@ function Composer({
                 </button>
             </div>
             <div className="mt-2 flex items-center justify-between text-[11px] text-muted">
-                <span>Enter to send, Shift+Enter for newline</span>
+                {embedded ? <span /> : <span>Enter to send, Shift+Enter for newline</span>}
                 <span>{characterCount}/{MAX_MESSAGE_LENGTH}</span>
             </div>
         </form>
