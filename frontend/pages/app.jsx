@@ -33,17 +33,9 @@ export default function PublicPhoneApp() {
     }, []);
 
     async function addToHome() {
-        if (installEvent) {
-            await installEvent.prompt();
-            setInstallEvent(null);
-            return;
-        }
-        if (typeof navigator.share !== 'function') return;
-        try {
-            await navigator.share({ title: 'Urban Stone', url: APP_URL });
-        } catch {
-            /* dismissed */
-        }
+        if (!installEvent) return;
+        await installEvent.prompt();
+        setInstallEvent(null);
     }
 
     return (
@@ -57,6 +49,7 @@ export default function PublicPhoneApp() {
                 <meta name="mobile-web-app-capable" content="yes" />
                 <meta name="apple-mobile-web-app-title" content="Urban Stone" />
                 <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+                <link rel="apple-touch-icon" href="/brand/urban-stone-seal-solid-512.png" />
                 <link rel="manifest" href="/manifest.webmanifest" />
                 <link rel="canonical" href={APP_URL} />
                 <meta name="robots" content="index,follow" />
@@ -95,9 +88,15 @@ export default function PublicPhoneApp() {
                         <span className="nav-brand-secondary">Collective</span>
                     </div>
                     <h1 className="mt-2 font-display text-5xl leading-none">Add the app</h1>
-                    <button type="button" onClick={addToHome} className="brand-button-primary mt-8 rounded-md px-5 py-4 text-lg font-semibold">
-                        Add to Home Screen
-                    </button>
+                    {installEvent ? (
+                        <button type="button" onClick={addToHome} className="brand-button-primary mt-8 rounded-md px-5 py-4 text-lg font-semibold">
+                            Add to Home Screen
+                        </button>
+                    ) : (
+                        <p className="mt-6 max-w-sm text-base leading-relaxed text-muted">
+                            iPhone will not add the icon from a button. In Safari, tap Share at the bottom of the screen, then Add to Home Screen.
+                        </p>
+                    )}
                 </main>
             )}
         </>

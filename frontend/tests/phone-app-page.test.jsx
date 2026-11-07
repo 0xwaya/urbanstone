@@ -37,32 +37,18 @@ describe('phone app page', () => {
         };
     });
 
-    it('shows one Add to Home Screen button and the logo', () => {
-        render(<PublicPhoneApp />);
-
-        expect(screen.getByRole('button', { name: 'Add to Home Screen' })).toBeInTheDocument();
-        expect(screen.getByRole('img', { name: 'Urban Stone Collective brand icon' })).toBeInTheDocument();
-        expect(screen.queryByText(/Tap the Share button/i)).not.toBeInTheDocument();
-        expect(screen.queryByText(/Use the chat/i)).not.toBeInTheDocument();
-        expect(screen.getAllByRole('button')).toHaveLength(1);
-    });
-
-    it('shares the Urban Stone app URL on one click', async () => {
-        const share = vi.fn().mockResolvedValue(undefined);
+    it('does not open the share sheet on iPhone', async () => {
+        const share = vi.fn();
         window.navigator.share = share;
-        const user = userEvent.setup();
         render(<PublicPhoneApp />);
 
-        await user.click(screen.getByRole('button', { name: 'Add to Home Screen' }));
-
-        expect(share).toHaveBeenCalledTimes(1);
-        expect(share).toHaveBeenCalledWith({
-            title: 'Urban Stone',
-            url: 'https://www.urbanstone.co/app',
-        });
+        expect(screen.queryByRole('button', { name: 'Add to Home Screen' })).not.toBeInTheDocument();
+        expect(screen.getByRole('img', { name: 'Urban Stone Collective brand icon' })).toBeInTheDocument();
+        expect(screen.getByText(/tap Share at the bottom of the screen/i)).toBeInTheDocument();
+        expect(share).not.toHaveBeenCalled();
     });
 
-    it('uses the browser install prompt instead of share when one is waiting', async () => {
+    it('installs in one tap only when the browser offers an install prompt', async () => {
         const prompt = vi.fn().mockResolvedValue(undefined);
         const share = vi.fn();
         window.navigator.share = share;
