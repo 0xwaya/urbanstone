@@ -115,7 +115,7 @@ export default function Home({ reviews = [] }) {
         <meta name="twitter:image:alt" content="Urban Stone Collective social preview with brand wordmark on a dark stone-inspired background" />
         <link rel="icon" type="image/svg+xml" href="/brand/urban-stone-favicon.svg?v=20260401e" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png?v=20260401e" />
-        <link rel="apple-touch-icon" href="/favicon.png?v=20260401e" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
