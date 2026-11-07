@@ -7,7 +7,7 @@ const HERO_COPY = {
     title: 'Premium Countertops. Fast Install. Built for Cincinnati.',
     intro: 'We source premium slabs from curated suppliers and fabricate custom quartz, granite, and quartzite countertops with a 3-5 day turnaround from deposit to install. Through the collective, we also run full remodels, flips, and custom bathrooms with our own crews.',
     install: '3-5 Day Install', suppliers: 'Curated Supplier Network', warranty: '1-Year Workmanship Warranty',
-    estimate: 'Request Estimate', app: 'Download the app', browse: 'Browse Curated Slabs', services: 'See All Services', days: 'Days to install', curated: 'Curated suppliers', warrantyLabel: 'Workmanship warranty',
+    estimate: 'Request Estimate', app: 'Open the app', browse: 'Browse Curated Slabs', services: 'See All Services', days: 'Days to install', curated: 'Curated suppliers', warrantyLabel: 'Workmanship warranty',
   },
   es: {
     eyebrow: 'Piedra, remodelaciones y gestión de obra en Cincinnati',
