@@ -24,8 +24,10 @@ export default function Document(props) {
                 <link rel="icon" type="image/svg+xml" href="/brand/urban-stone-favicon.svg?v=20260401e" />
                 <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png?v=20260401e" />
                 <link rel="apple-touch-icon" href="/favicon.png?v=20260401e" />
-                <meta name="application-name" content="Urban Stone Collective | countertops specialists" />
-                <meta name="apple-mobile-web-app-title" content="Urban Stone Collective | countertops specialists" />
+                <link rel="manifest" href="/manifest.webmanifest" />
+                <meta name="application-name" content="Urban Stone" />
+                <meta name="apple-mobile-web-app-capable" content="yes" />
+                <meta name="apple-mobile-web-app-title" content="Urban Stone" />
                 <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
             </Head>
             <body>

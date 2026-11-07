@@ -6,14 +6,14 @@ const HERO_COPY = {
     title: 'Premium Countertops. Fast Install. Built for Cincinnati.',
     intro: 'We source premium slabs from curated suppliers and fabricate custom quartz, granite, and quartzite countertops with a 3-5 day turnaround from deposit to install. Through the collective, we also run full remodels, flips, and custom bathrooms with our own crews.',
     install: '3-5 Day Install', suppliers: 'Curated Supplier Network', warranty: '1-Year Workmanship Warranty',
-    estimate: 'Request Estimate', browse: 'Browse Curated Slabs', services: 'See All Services', days: 'Days to install', curated: 'Curated suppliers', warrantyLabel: 'Workmanship warranty',
+    estimate: 'Request Estimate', app: 'Get the phone app', browse: 'Browse Curated Slabs', services: 'See All Services', days: 'Days to install', curated: 'Curated suppliers', warrantyLabel: 'Workmanship warranty',
   },
   es: {
     eyebrow: 'Piedra, remodelaciones y gestión de obra en Cincinnati',
     title: 'Cubiertas premium. Instalación rápida. Hechas para Cincinnati.',
     intro: 'Seleccionamos losas premium de proveedores curados y fabricamos cubiertas de cuarzo, granito y cuarcita con un plazo de 3 a 5 días desde el depósito hasta la instalación. A través del colectivo, también realizamos remodelaciones completas, flips y baños personalizados con nuestros propios equipos.',
     install: 'Instalación en 3-5 días', suppliers: 'Red de proveedores curados', warranty: 'Garantía de mano de obra de 1 año',
-    estimate: 'Solicitar presupuesto', browse: 'Ver losas seleccionadas', services: 'Ver todos los servicios', days: 'Días para instalar', curated: 'Proveedores curados', warrantyLabel: 'Garantía de mano de obra',
+    estimate: 'Solicitar presupuesto', app: 'Abrir la app', browse: 'Ver losas seleccionadas', services: 'Ver todos los servicios', days: 'Días para instalar', curated: 'Proveedores curados', warrantyLabel: 'Garantía de mano de obra',
   },
 };
 
@@ -39,6 +39,9 @@ export default function Hero({ language = 'en' }) {
             <div className="mt-7 flex flex-col gap-3 sm:mt-6 sm:flex-row sm:flex-wrap sm:gap-4">
               <a className="brand-button-primary rounded-md px-5 py-3 font-semibold" href="#quote">
                 {copy.estimate}
+              </a>
+              <a className="inline-flex items-center justify-center rounded-md border border-border px-5 py-3 font-semibold transition hover:-translate-y-0.5 hover:border-accent" href="/app">
+                {copy.app}
               </a>
               <a className="inline-flex items-center justify-center rounded-md border border-border px-5 py-3 font-semibold transition hover:-translate-y-0.5 hover:border-accent" href="#suppliers">
                 {copy.browse}
