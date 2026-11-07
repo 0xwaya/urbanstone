@@ -64,10 +64,10 @@ export default function PublicPhoneApp() {
             {installed ? (
                 <div className="flex h-[100dvh] flex-col bg-bg text-text">
                     <header className="flex items-center gap-3 border-b border-border px-4 pb-3 pt-[max(0.75rem,env(safe-area-inset-top))]">
-                        <LogoMark className="h-11 w-11 shrink-0" />
-                        <div>
-                            <p className="text-xs font-semibold tracking-[0.18em] text-accent">URBAN STONE</p>
-                            <h1 className="font-display text-3xl leading-none">{screen === 'chat' ? 'Chat' : 'Collective'}</h1>
+                        <LogoMark className="h-12 w-12 shrink-0" />
+                        <div className="nav-brand-wordmark">
+                            <span>Urban Stone</span>
+                            <span className="nav-brand-secondary">Collective</span>
                         </div>
                     </header>
                     {screen === 'home' ? (
@@ -90,7 +90,10 @@ export default function PublicPhoneApp() {
             ) : (
                 <main className="flex min-h-[100dvh] flex-col bg-bg px-5 pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-[max(2rem,env(safe-area-inset-top))] text-text">
                     <LogoMark className="h-16 w-16" />
-                    <p className="mt-4 text-xs font-semibold tracking-[0.18em] text-accent">URBAN STONE</p>
+                    <div className="nav-brand-wordmark mt-4">
+                        <span>Urban Stone</span>
+                        <span className="nav-brand-secondary">Collective</span>
+                    </div>
                     <h1 className="mt-2 font-display text-5xl leading-none">Add the app</h1>
                     <button type="button" onClick={addToHome} className="brand-button-primary mt-8 rounded-md px-5 py-4 text-lg font-semibold">
                         Add to Home Screen
