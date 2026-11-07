@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import supplierSummaries from '../data/supplier-summaries.json';
 import { captureInstallPrompt, registerAppWorker, runInstall } from '../lib/install-app';
 
@@ -22,24 +23,25 @@ const HERO_COPY = {
 export default function Hero({ language = 'en' }) {
   const copy = HERO_COPY[language] || HERO_COPY.en;
   const [installEvent, setInstallEvent] = useState(null);
-  const [installGuidance, setInstallGuidance] = useState(null);
 
   useEffect(() => {
     registerAppWorker();
-    return captureInstallPrompt((event) => {
-      setInstallEvent(event);
-      setInstallGuidance(null);
-    });
+    return captureInstallPrompt(setInstallEvent);
   }, []);
 
-  async function downloadApp() {
-    const started = await runInstall(installEvent);
-    if (started) {
-      setInstallEvent(null);
-      setInstallGuidance(null);
+  async function downloadApp(event) {
+    if (!installEvent) return;
+    event.preventDefault();
+    try {
+      if (await runInstall(installEvent)) {
+        setInstallEvent(null);
+        return;
+      }
+    } catch {
+      window.location.assign('/app');
       return;
     }
-    setInstallGuidance(/iPhone/i.test(navigator.userAgent) ? 'iphone' : 'browser');
+    window.location.assign('/app');
   }
 
   return (
@@ -63,9 +65,9 @@ export default function Hero({ language = 'en' }) {
               <a className="brand-button-primary rounded-md px-5 py-3 font-semibold" href="#quote">
                 {copy.estimate}
               </a>
-              <button type="button" onClick={downloadApp} className="inline-flex items-center justify-center rounded-md border border-border px-5 py-3 font-semibold transition hover:-translate-y-0.5 hover:border-accent">
+              <Link href="/app" onClick={downloadApp} className="inline-flex items-center justify-center rounded-md border border-border px-5 py-3 font-semibold transition hover:-translate-y-0.5 hover:border-accent">
                 {copy.app}
-              </button>
+              </Link>
               <a className="inline-flex items-center justify-center rounded-md border border-border px-5 py-3 font-semibold transition hover:-translate-y-0.5 hover:border-accent" href="#suppliers">
                 {copy.browse}
               </a>
@@ -73,17 +75,6 @@ export default function Hero({ language = 'en' }) {
                 {copy.services}
               </a>
             </div>
-            {installGuidance ? (
-              <p className="mt-3 max-w-md text-sm text-muted">
-                {installGuidance === 'iphone'
-                  ? language === 'es'
-                    ? 'En iPhone, abre esta página en Safari, toca Compartir y luego Agregar a pantalla de inicio.'
-                    : 'On iPhone, open this page in Safari, tap Share, then Add to Home Screen.'
-                  : language === 'es'
-                    ? 'Abre el menú de tu navegador y elige Instalar app o Agregar a pantalla de inicio, si está disponible.'
-                    : 'Open your browser menu and choose Install app or Add to Home Screen, if available.'}
-              </p>
-            ) : null}
           </div>
 
           <div className="grid gap-4">

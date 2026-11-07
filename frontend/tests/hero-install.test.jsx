@@ -11,27 +11,10 @@ describe('homepage app download guidance', () => {
         });
     });
 
-    it('shows browser-neutral instructions when no install prompt is available', async () => {
-        const user = userEvent.setup();
+    it('navigates to the app page when no install prompt is available', () => {
         render(<Hero />);
 
-        await user.click(screen.getByRole('button', { name: 'Download the app' }));
-
-        expect(screen.getByText(/Open your browser menu and choose Install app or Add to Home Screen/)).toBeInTheDocument();
-        expect(screen.queryByText(/In Safari|On iPhone/)).not.toBeInTheDocument();
-    });
-
-    it('shows Safari instructions only on iPhone', async () => {
-        Object.defineProperty(window.navigator, 'userAgent', {
-            configurable: true,
-            value: 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X)',
-        });
-        const user = userEvent.setup();
-        render(<Hero />);
-
-        await user.click(screen.getByRole('button', { name: 'Download the app' }));
-
-        expect(screen.getByText(/On iPhone, open this page in Safari/)).toBeInTheDocument();
+        expect(screen.getByRole('link', { name: 'Download the app' })).toHaveAttribute('href', '/app');
     });
 
     it('does not show fallback guidance when an install prompt is pending', async () => {
@@ -42,7 +25,7 @@ describe('homepage app download guidance', () => {
             window.dispatchEvent(Object.assign(new Event('beforeinstallprompt'), { prompt }));
         });
 
-        await user.click(screen.getByRole('button', { name: 'Download the app' }));
+        await user.click(screen.getByRole('link', { name: 'Download the app' }));
 
         expect(prompt).toHaveBeenCalledTimes(1);
         expect(screen.queryByText(/Open your browser menu|On iPhone/)).not.toBeInTheDocument();
