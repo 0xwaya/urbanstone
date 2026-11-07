@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import supplierSummaries from '../data/supplier-summaries.json';
 
 const HERO_COPY = {
@@ -40,9 +41,9 @@ export default function Hero({ language = 'en' }) {
               <a className="brand-button-primary rounded-md px-5 py-3 font-semibold" href="#quote">
                 {copy.estimate}
               </a>
-              <a className="inline-flex items-center justify-center rounded-md border border-border px-5 py-3 font-semibold transition hover:-translate-y-0.5 hover:border-accent" href="/app">
+              <Link className="inline-flex items-center justify-center rounded-md border border-border px-5 py-3 font-semibold transition hover:-translate-y-0.5 hover:border-accent" href="/app">
                 {copy.app}
-              </a>
+              </Link>
               <a className="inline-flex items-center justify-center rounded-md border border-border px-5 py-3 font-semibold transition hover:-translate-y-0.5 hover:border-accent" href="#suppliers">
                 {copy.browse}
               </a>

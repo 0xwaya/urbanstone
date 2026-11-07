@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import Head from 'next/head';
+import Link from 'next/link';
 import StoneHavenChat from '../components/StoneHavenChat';
 
 export default function PublicPhoneApp() {
@@ -43,7 +44,7 @@ export default function PublicPhoneApp() {
                 <nav className="grid grid-cols-3 gap-2 border-t border-border px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3" aria-label="Contact">
                     <a className="brand-button-primary rounded-md px-3 py-3 text-center text-sm font-semibold" href="tel:+15133075840">Call</a>
                     <a className="rounded-md border border-border px-3 py-3 text-center text-sm font-semibold" href="sms:+15133075840">Text</a>
-                    <a className="rounded-md border border-border px-3 py-3 text-center text-sm font-semibold" href="/#quote">Estimate</a>
+                    <Link className="rounded-md border border-border px-3 py-3 text-center text-sm font-semibold" href="/#quote">Estimate</Link>
                 </nav>
             </div>
         </>
