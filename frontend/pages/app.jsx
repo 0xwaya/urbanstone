@@ -1,7 +1,10 @@
 import { useEffect, useState } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
+import LogoMark from '../components/LogoMark';
 import StoneHavenChat from '../components/StoneHavenChat';
+
+const APP_URL = 'https://www.urbanstone.co/app';
 
 export default function PublicPhoneApp() {
     const [installed, setInstalled] = useState(false);
@@ -18,26 +21,28 @@ export default function PublicPhoneApp() {
         };
         window.addEventListener('beforeinstallprompt', onPrompt);
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/app/sw.js').catch(() => {});
+            navigator.serviceWorker.getRegistrations()
+                .then((registrations) => Promise.all(
+                    registrations
+                        .filter((registration) => registration.scope.includes('/app'))
+                        .map((registration) => registration.unregister()),
+                ))
+                .catch(() => {});
         }
         return () => window.removeEventListener('beforeinstallprompt', onPrompt);
     }, []);
 
     async function addToHome() {
         if (installEvent) {
-            installEvent.prompt();
+            await installEvent.prompt();
             setInstallEvent(null);
             return;
         }
-        if (navigator.share) {
-            try {
-                await navigator.share({
-                    title: 'Urban Stone',
-                    url: 'https://www.urbanstone.co/app',
-                });
-            } catch {
-                /* dismissed */
-            }
+        if (typeof navigator.share !== 'function') return;
+        try {
+            await navigator.share({ title: 'Urban Stone', url: APP_URL });
+        } catch {
+            /* dismissed */
         }
     }
 
@@ -53,14 +58,17 @@ export default function PublicPhoneApp() {
                 <meta name="apple-mobile-web-app-title" content="Urban Stone" />
                 <meta name="apple-mobile-web-app-status-bar-style" content="black" />
                 <link rel="manifest" href="/manifest.webmanifest" />
-                <link rel="canonical" href="https://www.urbanstone.co/app" />
+                <link rel="canonical" href={APP_URL} />
                 <meta name="robots" content="index,follow" />
             </Head>
             {installed ? (
                 <div className="flex h-[100dvh] flex-col bg-bg text-text">
-                    <header className="border-b border-border px-4 pb-3 pt-[max(0.75rem,env(safe-area-inset-top))]">
-                        <p className="text-xs font-semibold tracking-[0.18em] text-accent">URBAN STONE</p>
-                        <h1 className="font-display text-3xl leading-none">{screen === 'chat' ? 'Chat' : 'Collective'}</h1>
+                    <header className="flex items-center gap-3 border-b border-border px-4 pb-3 pt-[max(0.75rem,env(safe-area-inset-top))]">
+                        <LogoMark className="h-11 w-11 shrink-0" />
+                        <div>
+                            <p className="text-xs font-semibold tracking-[0.18em] text-accent">URBAN STONE</p>
+                            <h1 className="font-display text-3xl leading-none">{screen === 'chat' ? 'Chat' : 'Collective'}</h1>
+                        </div>
                     </header>
                     {screen === 'home' ? (
                         <main className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto px-4 py-4">
@@ -81,7 +89,8 @@ export default function PublicPhoneApp() {
                 </div>
             ) : (
                 <main className="flex min-h-[100dvh] flex-col bg-bg px-5 pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-[max(2rem,env(safe-area-inset-top))] text-text">
-                    <p className="text-xs font-semibold tracking-[0.18em] text-accent">URBAN STONE</p>
+                    <LogoMark className="h-16 w-16" />
+                    <p className="mt-4 text-xs font-semibold tracking-[0.18em] text-accent">URBAN STONE</p>
                     <h1 className="mt-2 font-display text-5xl leading-none">Add the app</h1>
                     <button type="button" onClick={addToHome} className="brand-button-primary mt-8 rounded-md px-5 py-4 text-lg font-semibold">
                         Add to Home Screen
