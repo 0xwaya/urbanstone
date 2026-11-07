@@ -24,6 +24,7 @@ import {
 } from '../../lib/chat-intake';
 import { buildChatLeadEmail, sendLeadEmail } from '../../lib/lead-email';
 import { buildChatIntake, saveCrmIntake } from '../../lib/crm-intake';
+import { shareChatTurn } from '../../lib/chat-share';
 
 const OLLAMA_MODEL_NAME = process.env.OLLAMA_MODEL_NAME || 'llama3.1:8b';
 const OLLAMA_BASE_URL = process.env.OLLAMA_BASE_URL || 'http://localhost:11434';
@@ -105,8 +106,11 @@ function buildCompanyPlaybook() {
         '- Adapt guidance to segment: residential custom, contractor/home flipper, or builder/new construction multi-unit.',
         '- Workflow is shortlist slab direction -> on-site measurement/templating -> final quote confirmation -> fabrication -> install.',
         '- Ask for missing estimate essentials: contact details, segment, city, project type, project phase/status, tentative budget, rough measurements or sqft, material direction, and target timeline.',
-        '- Do not invent pricing, supplier inventory, or timeline guarantees.',
-        '- Do not provide price ranges in chat. Keep quote direction qualitative until onsite templating/measurement confirms final numbers.',
+        '- Do not invent supplier inventory or timeline guarantees.',
+        '- You may give the provisional installed ranges in the pricing policy when asked about cost. Always say they are not a final quote.',
+        '- Never say lifetime warranty. Workmanship is 1 year.',
+        '- Mention the free 18-gauge sink when the kitchen is 50 sq ft or more, or when they ask about sinks. It runs through December 15, 2026. 16-gauge upgrade is $275.',
+        '- If a visit research card is included, use it to understand why they are here. Do not mention tracking, IP addresses, or that you looked them up.',
         '- If user asks something outside available context, say what is unknown and ask a direct follow-up question.',
         '- Keep responses concise and client-facing with natural language, not scripted copy.',
         '- Response format: up to 2 short paragraphs, then optionally one practical "Next step:" line only when useful.',
@@ -114,6 +118,10 @@ function buildCompanyPlaybook() {
         `- Company history: ${chatbotPolicies.companyHistory}.`,
         `- Service policy: ${chatbotPolicies.serviceAreaPolicy}.`,
         `- Quote policy: ${chatbotPolicies.quotePolicy}.`,
+        `- Warranty: ${chatbotPolicies.warrantyPolicy}.`,
+        `- Current offer: ${chatbotPolicies.promoPolicy}.`,
+        `- Pricing: ${chatbotPolicies.pricingPolicy}.`,
+        `- Contact: ${chatbotPolicies.contactPolicy}.`,
         'Approved messaging:',
         approved,
         'Liability notes to apply when relevant:',
@@ -165,12 +173,15 @@ function getIntentCta(intent) {
     }
 }
 
-function buildPrompt(message, mempalaceContext) {
+function buildPrompt(message, mempalaceContext, visit) {
     const intent = detectIntent(message);
     const intentCta = getIntentCta(intent);
     const contextBlock = mempalaceContext && mempalaceContext.trim().length > 0
         ? `Workspace context:\n${mempalaceContext.trim()}\n`
         : 'Workspace context:\n(none)\n';
+    const visitBlock = visit?.summary
+        ? `Visit research (internal only):\n${visit.summary}\n`
+        : 'Visit research:\n(none)\n';
 
     return [
         '[SYSTEM]',
@@ -181,6 +192,7 @@ function buildPrompt(message, mempalaceContext) {
         '',
         '[CONTEXT]',
         contextBlock,
+        visitBlock,
         '[/CONTEXT]',
         '',
         '[USER]',
@@ -340,7 +352,7 @@ function getSegmentLabel(segment) {
 }
 
 // Natural LLM-powered greeting
-async function maybeHandleGreeting(res, message, history) {
+async function maybeHandleGreeting(res, message, history, visit) {
     if (!detectGreetingIntent(message)) {
         return false;
     }
@@ -354,7 +366,10 @@ async function maybeHandleGreeting(res, message, history) {
         return false;
     }
 
-    const reply = "Hi, I'm Onyx. Glad you're here. What project are you planning?";
+    const landed = visit?.intent && visit.intent !== 'general'
+        ? ` I can see you were looking at ${visit.intent.replace('-', ' ')}.`
+        : '';
+    const reply = `Hi, I'm Onyx. Glad you're here.${landed} What project are you planning?`;
 
     return res.status(200).json({
         reply,
@@ -606,7 +621,7 @@ export default async function handler(req, res) {
         return res.status(405).json({ error: 'Method not allowed' });
     }
 
-    const { message, history: rawHistory } = req.body || {};
+    const { message, history: rawHistory, visit: rawVisit, conversationId } = req.body || {};
     const history = Array.isArray(rawHistory)
         ? rawHistory
             .filter((entry) => entry && (entry.role === 'user' || entry.role === 'assistant'))
@@ -624,7 +639,21 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: `Message exceeds ${MAX_MESSAGE_LENGTH} characters.` });
     }
 
-    const greetingHandled = await maybeHandleGreeting(res, message, history);
+    const shared = await Promise.race([
+        shareChatTurn({
+            request: req,
+            conversationId,
+            message,
+            history,
+            visit: rawVisit && typeof rawVisit === 'object' ? rawVisit : null,
+        }),
+        new Promise((resolve) => {
+            setTimeout(() => resolve(null), 4000);
+        }),
+    ]);
+    const visit = shared?.visit || null;
+
+    const greetingHandled = await maybeHandleGreeting(res, message, history, visit);
     if (greetingHandled) {
         emitChatTelemetry('greeting_handled', { messageHash: hashForTelemetry(message) });
         return greetingHandled;
@@ -647,9 +676,7 @@ export default async function handler(req, res) {
         return respondWithKnowledge(res, message, history);
     }
 
-    const fullMessage = mempalaceContext && mempalaceContext.trim().length > 0
-        ? buildPrompt(message, mempalaceContext)
-        : buildPrompt(message, '');
+    const fullMessage = buildPrompt(message, mempalaceContext || '', visit);
 
     try {
         const ollamaReply = normalizeModelReply(await callOllamaChat(fullMessage));

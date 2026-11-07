@@ -146,6 +146,41 @@ export default function ChatWidget() {
     }, []);
 
     useEffect(() => {
+        if (!hasHydrated || typeof window === 'undefined') {
+            return undefined;
+        }
+        if (window.sessionStorage.getItem('onyx-visit-v1')) {
+            return undefined;
+        }
+
+        const params = new URLSearchParams(window.location.search);
+        const visit = {
+            path: `${window.location.pathname}${window.location.search}${window.location.hash}`,
+            referrer: document.referrer || '',
+            utmSource: params.get('utm_source') || '',
+            utmMedium: params.get('utm_medium') || '',
+            utmCampaign: params.get('utm_campaign') || '',
+        };
+
+        const controller = new AbortController();
+        fetch('/api/visit', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ visit }),
+            signal: controller.signal,
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                if (data?.research) {
+                    window.sessionStorage.setItem('onyx-visit-v1', JSON.stringify(data.research));
+                }
+            })
+            .catch(() => {});
+
+        return () => controller.abort();
+    }, [hasHydrated]);
+
+    useEffect(() => {
         if (typeof document === 'undefined') {
             return undefined;
         }

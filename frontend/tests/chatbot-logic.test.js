@@ -145,4 +145,32 @@ describe('chatbot operating logic', () => {
         expect(result.reply).toMatch(/share your city and project type/i);
         expect(result.reply).not.toMatch(/Best for:/i);
     });
+
+    it('states a 1-year workmanship warranty and refuses a lifetime warranty', () => {
+        const result = getChatReply('What warranty do you offer? Is it lifetime?');
+
+        expect(result.reply).toMatch(/1 year/i);
+        expect(result.reply).toMatch(/do not offer a lifetime warranty/i);
+        expect(result.reply).toMatch(/513\) 307-5840/);
+    });
+
+    it('explains the free 18-gauge sink offer without treating a ceramic sink note as the promo', () => {
+        const promo = getChatReply('Is the free stainless sink still available?');
+        expect(promo.reply).toMatch(/December 15, 2026/);
+        expect(promo.reply).toMatch(/18-gauge/);
+        expect(promo.reply).toMatch(/\$275/);
+
+        const scope = getChatReply('49 sf kitchen no island ceramic sink with 4 inch splash');
+        expect(scope.reply).not.toMatch(/December 15, 2026/);
+        expect(scope.reply).not.toMatch(/18-gauge/);
+    });
+
+    it('gives provisional installed ranges and says they are not a quote', () => {
+        const result = getChatReply('How much per sq ft for quartz installed?');
+
+        expect(result.reply).toMatch(/not a quote/i);
+        expect(result.reply).toMatch(/\$55/);
+        expect(result.reply).toMatch(/\$75/);
+        expect(result.reply).not.toMatch(/lifetime/i);
+    });
 });
