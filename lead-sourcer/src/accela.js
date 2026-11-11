@@ -8,8 +8,46 @@
  * on detail-page fetches per run (enforced by the caller via maxDetails).
  */
 
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
 const DEFAULT_USER_AGENT = 'UrbanStoneLeadSourcer/1.0 (+https://urbanstone.co; permit research, 1 req/sec)';
 const SEARCH_BUTTON_TARGET = 'ctl00$PlaceHolderMain$btnNewSearch';
+// NetScaler persistence for the ezTrak node that last served the search form.
+// GitHub Actions already caches lead-sourcer/runs between jobs. A failing node
+// is dropped for the rest of the attempt; the saved node is replaced only after
+// another request succeeds, so one bad response does not forget a working node.
+const DEFAULT_NODE_AFFINITY_FILE = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', 'runs', 'aca-node.json');
+
+export function readNodeAffinity(filePath, host) {
+    try {
+        const value = JSON.parse(fs.readFileSync(filePath, 'utf8'))?.[host];
+        return typeof value === 'string' && value.startsWith('NSC_') && value.includes('=') ? value : '';
+    } catch {
+        return '';
+    }
+}
+
+export function writeNodeAffinity(filePath, host, cookie) {
+    let data = {};
+    try {
+        const parsed = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+        if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) data = parsed;
+    } catch {
+        data = {};
+    }
+    if (cookie) data[host] = cookie;
+    else delete data[host];
+    const next = `${JSON.stringify(data, null, 2)}\n`;
+    try {
+        if (fs.readFileSync(filePath, 'utf8') === next) return;
+    } catch {
+        // The file is created below.
+    }
+    fs.mkdirSync(path.dirname(filePath), { recursive: true });
+    fs.writeFileSync(filePath, next);
+}
 
 export function decodeEntities(text) {
     return String(text ?? '')
@@ -67,7 +105,9 @@ export function formatAcaDate(date) {
 export function buildDateSearchForm(fields, { startDate, endDate }) {
     const startKey = findField(fields, 'txtGSStartDate');
     const endKey = findField(fields, 'txtGSEndDate');
-    if (!startKey || !endKey) throw new Error('ACA search form has no General Search date fields (markup changed or page blocked)');
+    if (!startKey || !endKey) {
+        throw new Error(`ACA search form has no General Search date fields (markup changed or page blocked); parsed ${Object.keys(fields).length} form control(s)`);
+    }
     return {
         ...fields,
         [startKey]: startDate,
@@ -287,6 +327,13 @@ class CookieJar {
     }
 
     header() { return [...this.cookies].map(([key, value]) => `${key}=${value}`).join('; '); }
+
+    nscCookie() {
+        for (const [key, value] of this.cookies) if (key.startsWith('NSC_')) return `${key}=${value}`;
+        return '';
+    }
+
+    clear() { this.cookies.clear(); }
 }
 
 /**
@@ -302,12 +349,40 @@ export function createAccelaClient({
     timeoutMs = 30000,
     retries = 2,
     userAgent = DEFAULT_USER_AGENT,
+    nodeAffinityPath = '',
 } = {}) {
     const origin = new URL(baseUrl).origin;
+    const host = new URL(baseUrl).host;
     const searchUrl = `${baseUrl}/Cap/CapHome.aspx?module=${encodeURIComponent(module)}&TabName=${encodeURIComponent(module)}`;
+    const affinityPath = nodeAffinityPath || (fetchImpl === fetch ? DEFAULT_NODE_AFFINITY_FILE : '');
     const jar = new CookieJar();
+    if (affinityPath) {
+        const seeded = readNodeAffinity(affinityPath, host);
+        const eq = seeded.indexOf('=');
+        if (eq > 0) jar.cookies.set(seeded.slice(0, eq).trim(), seeded.slice(eq + 1).trim());
+    }
     let lastRequestAt = 0;
     let requestCount = 0;
+
+    function rememberWorkingNode() {
+        if (!affinityPath) return;
+        const nsc = jar.nscCookie();
+        if (nsc) writeNodeAffinity(affinityPath, host, nsc);
+    }
+
+    function nodeErrorId(response, body) {
+        const url = String(response?.url || '');
+        const location = String(response?.headers?.get?.('location') || '');
+        const pointed = `${url}\n${location}`.match(/Error\.aspx\?ErrorId=([A-Za-z0-9-]+)/i);
+        if (pointed) return pointed[1];
+        const text = String(body || '').trim();
+        if (text.length < 800 && /The request failed with HTTP status\b/i.test(text)) return 'request-failed';
+        if (text.length < 2000 && /Object moved/i.test(text)) {
+            const moved = text.match(/Error\.aspx\?ErrorId=([A-Za-z0-9-]+)/i);
+            if (moved) return moved[1];
+        }
+        return '';
+    }
 
     async function request(url, { method = 'GET', form = null, referer = null } = {}) {
         let lastError;
@@ -335,6 +410,13 @@ export function createAccelaClient({
                 });
                 jar.store(response.headers);
                 const body = await response.text();
+                const nodeError = nodeErrorId(response, body);
+                if (nodeError) {
+                    // Drop the failing node's affinity cookie so the retry can land elsewhere.
+                    jar.clear();
+                    const error = new Error(`ACA node returned an application error page (ErrorId=${nodeError}); the load balancer sent the session to a failing server`);
+                    throw error;
+                }
                 if (response.status >= 500 || response.status === 429) throw new Error(`HTTP ${response.status}`);
                 if (!response.ok) {
                     const error = new Error(`HTTP ${response.status}`);
@@ -351,6 +433,7 @@ export function createAccelaClient({
                     error.permanent = true;
                     throw error;
                 }
+                rememberWorkingNode();
                 return body;
             } catch (error) {
                 lastError = error;
@@ -367,21 +450,31 @@ export function createAccelaClient({
         const records = parseResultRows(page, { origin });
         let pages = 1;
         let truncated = false;
+        let warning = '';
         while (pages < maxPages) {
             const next = findNextPageTarget(page);
             if (!next) break;
-            page = await request(searchUrl, { method: 'POST', form: { ...parseFormFields(page), __EVENTTARGET: next, __EVENTARGUMENT: '' } });
+            try {
+                page = await request(searchUrl, { method: 'POST', form: { ...parseFormFields(page), __EVENTTARGET: next, __EVENTARGUMENT: '' } });
+            } catch (error) {
+                // Keep permits already read. They are not marked seen until the caller accepts them,
+                // so a later page failure does not drop leads from this run or the next one.
+                warning = String(error?.message || error);
+                truncated = true;
+                break;
+            }
             const rows = parseResultRows(page, { origin });
             if (rows.length === 0) break;
             records.push(...rows);
             pages += 1;
         }
-        if (pages >= maxPages && findNextPageTarget(page)) truncated = true;
+        if (!warning && pages >= maxPages && findNextPageTarget(page)) truncated = true;
         const seen = new Set();
         return {
             records: records.filter((row) => (seen.has(row.recordNumber) ? false : seen.add(row.recordNumber))),
             pages,
             truncated,
+            ...(warning ? { warning } : {}),
         };
     }
 

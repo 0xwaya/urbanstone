@@ -236,7 +236,8 @@ export async function pollCountyPermits(countyKey, {
         records = result.records;
         stats.pages = result.pages;
         stats.fetched = records.length;
-        if (result.truncated) console.warn(`${tag} search hit the ${config.maxPages}-page cap; older records in the window were not read.`);
+        if (result.warning) console.warn(`${tag} kept ${records.length} permit(s) already read after a later page failed: ${result.warning}`);
+        else if (result.truncated) console.warn(`${tag} search hit the ${config.maxPages}-page cap; older records in the window were not read.`);
     } catch (error) {
         stats.status = 'degraded';
         stats.error = String(error?.message || error);
