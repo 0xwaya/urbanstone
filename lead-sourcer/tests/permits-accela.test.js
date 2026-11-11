@@ -97,7 +97,7 @@ describe('accela parsing', () => {
         const form = buildDateSearchForm(fields, { startDate: '10/22/2026', endDate: '10/29/2026' });
         expect(form['ctl00$PlaceHolderMain$generalSearchForm$txtGSStartDate']).toBe('10/22/2026');
         expect(form.__EVENTTARGET).toBe('ctl00$PlaceHolderMain$btnNewSearch');
-        expect(() => buildDateSearchForm({ __VIEWSTATE: 'x' }, { startDate: 'a', endDate: 'b' })).toThrow(/date fields/);
+        expect(() => buildDateSearchForm({ __VIEWSTATE: 'x' }, { startDate: 'a', endDate: 'b' })).toThrow(/date fields \(markup changed or page blocked\); parsed 1 form control/);
     });
 
     test('formats ACA dates in Eastern time', () => {
@@ -171,6 +171,86 @@ describe('accela client', () => {
         const blocked = createAccelaClient({ baseUrl: 'https://x.test/A', fetchImpl: csrf, sleep: async () => {}, retries: 2 });
         await expect(blocked.fetchDetail('https://x.test/A/Cap/CapDetail.aspx?id=1')).rejects.toThrow(/CSRF/);
         expect(csrf).toHaveBeenCalledTimes(1);
+    });
+
+    test('retries when a load-balanced node returns Error.aspx and drops that affinity cookie', async () => {
+        const affinity = path.join('/tmp', `aca-node-${process.pid}-${Date.now()}.json`);
+        fs.writeFileSync(affinity, JSON.stringify({ 'eztrak.cagis.org': 'NSC_fausbl_qspe_tsw=ffffffffseed' }));
+        let gets = 0;
+        const fetchImpl = jest.fn(async (url, init = {}) => {
+            if ((init.method || 'GET') === 'GET') {
+                gets += 1;
+                if (gets === 1) {
+                    return {
+                        ok: true,
+                        status: 200,
+                        url: 'https://eztrak.cagis.org/CitizenAccess/Error.aspx?ErrorId=abc123',
+                        headers: {
+                            getSetCookie: () => ['NSC_fausbl_qspe_tsw=ffffffffbad; path=/; HttpOnly'],
+                            get: (name) => (String(name).toLowerCase() === 'location' ? null : null),
+                        },
+                        text: async () => 'The request failed with HTTP status 404:x Not Found.',
+                    };
+                }
+                return htmlResponse(fixture('search.html'), { cookies: ['ASP.NET_SessionId=ok; path=/', 'NSC_fausbl_qspe_tsw=ffffffffgood; path=/'] });
+            }
+            return htmlResponse(fixture('hamilton-results-2.html'), { cookies: ['NSC_fausbl_qspe_tsw=ffffffffgood; path=/'] });
+        });
+        const client = createAccelaClient({
+            baseUrl: 'https://eztrak.cagis.org/CitizenAccess',
+            fetchImpl,
+            sleep: async () => {},
+            minIntervalMs: 0,
+            retries: 2,
+            nodeAffinityPath: affinity,
+        });
+        const result = await client.searchByDate({ startDate: '11/04/2026', endDate: '11/11/2026' });
+        expect(result.records.length).toBeGreaterThan(0);
+        expect(fetchImpl.mock.calls[0][1].headers.Cookie).toContain('ffffffffseed');
+        expect(fetchImpl.mock.calls[1][1].headers.Cookie || '').not.toMatch(/ffffffff(?:seed|bad)/);
+        expect(fetchImpl.mock.calls[2][1].headers.Cookie).toContain('ffffffffgood');
+        expect(fetchImpl.mock.calls[2][1].headers.Cookie).not.toMatch(/ffffffff(?:seed|bad)/);
+        expect(JSON.parse(fs.readFileSync(affinity, 'utf8'))['eztrak.cagis.org']).toBe('NSC_fausbl_qspe_tsw=ffffffffgood');
+
+        const stuck = jest.fn(async () => ({
+            ok: true,
+            status: 200,
+            url: 'https://eztrak.cagis.org/CitizenAccess/Error.aspx?ErrorId=abc123',
+            headers: { getSetCookie: () => [], get: () => null },
+            text: async () => fixture('node-error.html'),
+        }));
+        const failing = createAccelaClient({
+            baseUrl: 'https://eztrak.cagis.org/CitizenAccess',
+            fetchImpl: stuck,
+            sleep: async () => {},
+            minIntervalMs: 0,
+            retries: 1,
+            nodeAffinityPath: affinity,
+        });
+        await expect(failing.searchByDate({ startDate: '11/04/2026', endDate: '11/11/2026' })).rejects.toThrow(/ACA node returned an application error page \(ErrorId=abc123\)/);
+        // A failed attempt must not erase the last node that actually served the form.
+        expect(JSON.parse(fs.readFileSync(affinity, 'utf8'))['eztrak.cagis.org']).toBe('NSC_fausbl_qspe_tsw=ffffffffgood');
+        fs.rmSync(affinity, { force: true });
+    });
+
+    test('keeps permits already read when a later results page fails', async () => {
+        const fetchImpl = jest.fn(async (url, init = {}) => {
+            if ((init.method || 'GET') === 'GET') return htmlResponse(fixture('search.html'));
+            const target = new URLSearchParams(init.body).get('__EVENTTARGET');
+            if (target === 'ctl00$PlaceHolderMain$btnNewSearch') return htmlResponse(fixture('hamilton-results-1.html'));
+            throw new Error('node reset');
+        });
+        const client = createAccelaClient({
+            baseUrl: 'https://eztrak.cagis.org/CitizenAccess',
+            fetchImpl,
+            sleep: async () => {},
+            minIntervalMs: 0,
+            retries: 0,
+        });
+        const result = await client.searchByDate({ startDate: '11/04/2026', endDate: '11/11/2026' });
+        expect(result.records).toHaveLength(4);
+        expect(result.truncated).toBe(true);
+        expect(result.warning).toMatch(/node reset/);
     });
 });
 
@@ -275,13 +355,16 @@ describe('county permit sources', () => {
         expect(again.stats.matches).toBe(0);
 
         const down = fakeAca({ results: [], details: {}, failSearch: true });
-        const result = await pollCountyPermits('butler-county', harness({ fetchImpl: down.fetchImpl }));
+        const failed = harness({ fetchImpl: down.fetchImpl });
+        const result = await pollCountyPermits('butler-county', failed);
         expect(result.stats.status).toBe('degraded');
+        // A portal miss must not consume dedup, or the next live run would skip those leads.
+        expect(failed.markSeen).not.toHaveBeenCalled();
+        expect(result.matches).toEqual([]);
 
         const dry = harness({ fetchImpl: hamiltonServer().fetchImpl, mode: 'dry-run' });
         await pollCountyPermits('hamilton-county', dry);
         expect(dry.markSeen).not.toHaveBeenCalled();
-        expect(result.matches).toEqual([]);
     });
 
     test('lead builder works without a registry contact', () => {
