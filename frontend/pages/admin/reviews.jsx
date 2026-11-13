@@ -1,7 +1,6 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import Head from 'next/head';
 
-const KEY = 'urbanstone:review-admin';
 
 function Stars({ value }) {
     return <span className="text-accent" aria-label={`${value} out of 5 stars`}>{'★'.repeat(value)}<span className="text-border">{'★'.repeat(5 - value)}</span></span>;
@@ -38,7 +37,6 @@ export default function ReviewAdminPage() {
             return true;
         } catch (loadError) {
             if (loadError.status === 401) {
-                window.sessionStorage.removeItem(KEY);
                 setSecret('');
             }
             setError(loadError.message);
@@ -46,19 +44,9 @@ export default function ReviewAdminPage() {
         }
     }, [call, secret]);
 
-    useEffect(() => {
-        const saved = window.sessionStorage.getItem(KEY) || '';
-        if (saved) {
-            setSecret(saved);
-            load(saved);
-        }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
-
     const login = async (event) => {
         event.preventDefault();
         if (await load(input.trim())) {
-            window.sessionStorage.setItem(KEY, input.trim());
             setSecret(input.trim());
             setInput('');
         }
@@ -105,7 +93,7 @@ export default function ReviewAdminPage() {
                     <div className="mt-2 flex flex-wrap items-center gap-3 text-sm text-muted">
                         <span>Delivery: <strong className="text-text">{data?.delivery === 'resend' ? 'Approve & send emails from sales@ via Resend' : 'Manual (copy the email and send it from sales@)'}</strong></span>
                         <button className="underline" type="button" onClick={() => load()}>Refresh</button>
-                        <button className="underline" type="button" onClick={() => { window.sessionStorage.removeItem(KEY); setSecret(''); setData(null); }}>Sign out</button>
+                        <button className="underline" type="button" onClick={() => { setSecret(''); setData(null); setInput(''); }}>Sign out</button>
                     </div>
                 )}
 

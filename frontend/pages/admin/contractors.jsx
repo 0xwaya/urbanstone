@@ -1,8 +1,7 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import Head from 'next/head';
 
 // Shares the admin key with /admin/reviews.
-const KEY = 'urbanstone:review-admin';
 
 const FLAG_LABELS = {
     website_unreachable: 'Website unreachable',
@@ -47,7 +46,6 @@ export default function ContractorAdminPage() {
             return true;
         } catch (loadError) {
             if (loadError.status === 401) {
-                window.sessionStorage.removeItem(KEY);
                 setSecret('');
             }
             setError(loadError.message);
@@ -55,20 +53,10 @@ export default function ContractorAdminPage() {
         }
     }, [call, secret]);
 
-    useEffect(() => {
-        const saved = window.sessionStorage.getItem(KEY) || '';
-        if (saved) {
-            setSecret(saved);
-            load(saved);
-        }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
-
     const login = async (event) => {
         event.preventDefault();
         const token = input.trim();
         if (await load(token)) {
-            window.sessionStorage.setItem(KEY, token);
             setSecret(token);
             setInput('');
         }
@@ -117,7 +105,7 @@ export default function ContractorAdminPage() {
                             </button>
                         ))}
                         <button className="underline" type="button" onClick={() => load()}>Refresh</button>
-                        <button className="underline" type="button" onClick={() => { window.sessionStorage.removeItem(KEY); setSecret(''); setContractors(null); }}>Sign out</button>
+                        <button className="underline" type="button" onClick={() => { setSecret(''); setContractors(null); setInput(''); }}>Sign out</button>
                     </div>
                 )}
 

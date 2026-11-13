@@ -1,8 +1,7 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import Head from 'next/head';
 import { JOB_STAGES, installsThisWeek } from '../../lib/job-board';
 
-const KEY = 'urbanstone:review-admin'; // same admin key as /admin/reviews
 const money = (v) => (v == null ? '' : `$${Number(v).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}`);
 const day = (d) => (d ? new Date(`${String(d).slice(0, 10)}T12:00:00Z`).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', timeZone: 'UTC' }) : '');
 const etDay = (ts) => (ts ? new Date(ts).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', timeZone: 'America/New_York' }) : '');
@@ -106,20 +105,17 @@ export default function JobBoardPage() {
     const load = useCallback(async (token = secret) => {
         setError('');
         try { setData(await call('GET', null, token)); return true; } catch (e) {
-            if (e.status === 401) { window.sessionStorage.removeItem(KEY); setSecret(''); }
+            if (e.status === 401) setSecret('');
             setError(e.message); return false;
         }
     }, [call, secret]);
 
-    useEffect(() => {
-        const saved = window.sessionStorage.getItem(KEY) || '';
-        if (saved) { setSecret(saved); load(saved); }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
-
     const login = async (e) => {
         e.preventDefault();
-        if (await load(input.trim())) { window.sessionStorage.setItem(KEY, input.trim()); setSecret(input.trim()); setInput(''); }
+        if (await load(input.trim())) {
+            setSecret(input.trim());
+            setInput('');
+        }
     };
     const run = async (body) => {
         setBusy(true); setError('');
@@ -153,7 +149,7 @@ export default function JobBoardPage() {
                 ) : (
                     <div className="mt-2 flex flex-wrap gap-3 text-sm text-muted">
                         <button className="underline" type="button" onClick={() => load()}>Refresh</button>
-                        <button className="underline" type="button" onClick={() => { window.sessionStorage.removeItem(KEY); setSecret(''); setData(null); }}>Sign out</button>
+                        <button className="underline" type="button" onClick={() => { setSecret(''); setData(null); setInput(''); }}>Sign out</button>
                     </div>
                 )}
 
