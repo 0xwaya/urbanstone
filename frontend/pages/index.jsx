@@ -141,8 +141,7 @@ export default function Home({ reviews = [] }) {
         <div className="page-shell mx-auto max-w-7xl px-4 sm:px-8">
             <TopNav />
           <main className="pb-6">
-            <Hero />
-            <FeaturesBar announcement={homepageAnnouncement} />
+            <Hero aside={<FeaturesBar announcement={homepageAnnouncement} variant="compact" />} />
             <ProjectsGallery />
             <div className="my-8 h-px bg-gradient-to-r from-transparent via-accent/40 to-transparent sm:my-10" />
             <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">

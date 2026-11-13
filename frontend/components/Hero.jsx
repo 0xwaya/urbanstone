@@ -20,7 +20,7 @@ const HERO_COPY = {
   },
 };
 
-export default function Hero({ language = 'en' }) {
+export default function Hero({ language = 'en', aside = null }) {
   const copy = HERO_COPY[language] || HERO_COPY.en;
   const [installEvent, setInstallEvent] = useState(null);
 
@@ -47,7 +47,7 @@ export default function Hero({ language = 'en' }) {
   return (
     <section className="py-6 sm:py-8 lg:py-10">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
-        <div className="grid gap-6 lg:grid-cols-[1.05fr_0.95fr] lg:items-start">
+        <div className="grid gap-6 lg:grid-cols-[1.05fr_0.95fr] lg:items-stretch">
           <div className="rounded-[2rem] border border-border bg-surface/65 p-6 shadow-soft backdrop-blur sm:p-8">
             <div className="eyebrow">{copy.eyebrow}</div>
             <h1 className="max-w-[11ch] font-display text-[2.5rem] font-semibold leading-[0.94] sm:max-w-none sm:text-5xl md:text-6xl">
@@ -77,7 +77,7 @@ export default function Hero({ language = 'en' }) {
             </div>
           </div>
 
-          <div className="grid gap-4">
+          <div className="flex flex-col gap-4">
             <div className="rounded-[2rem] border border-border bg-panel/80 p-3 shadow-soft sm:p-6">
               <div className="grid grid-cols-3 gap-1.5 sm:gap-3">
                 <div className="min-w-0 rounded-[1.35rem] border border-border bg-surface/70 px-1 py-4 text-center sm:px-3">
@@ -94,6 +94,7 @@ export default function Hero({ language = 'en' }) {
                 </div>
               </div>
             </div>
+            {aside ? <div className="flex flex-1 flex-col">{aside}</div> : null}
           </div>
         </div>
       </div>
